@@ -1,0 +1,168 @@
+<!doctype html>
+<!-- The Time Machine GitHub pages theme was designed and developed by Jon Rohan, on Feb 7, 2012. -->
+<!-- Follow him for fun. http://twitter.com/jonrohan. Tail his code on https://github.com/jonrohan -->
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+
+  <link rel="stylesheet" href="stylesheets/stylesheet.css" media="screen">
+  <link rel="stylesheet" href="stylesheets/github-dark.css">
+  <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+  <script type="text/javascript" src="javascripts/script.js"></script>
+
+  <title>Charbrowser</title>
+  <meta name="description" content="Character Browser for EQEmulator Servers">
+
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+
+</head>
+
+<body>
+
+  <div class="wrapper">
+    <header>
+      <h1 class="title">Charbrowser</h1>
+    </header>
+    <div id="container">
+      <p class="tagline">Character Browser for EQEmulator Servers</p>
+      <div id="main" role="main">
+        <div class="download-bar">
+        <div class="inner">
+          <a href="https://github.com/maudigan/charbrowser/tarball/master" class="download-button tar"><span>Download</span></a>
+          <a href="https://github.com/maudigan/charbrowser/zipball/master" class="download-button zip"><span>Download</span></a>
+          <a href="https://github.com/maudigan/charbrowser" class="code">View Charbrowser on GitHub</a>
+        </div>
+        <span class="blc"></span><span class="trc"></span>
+        </div>
+        <article class="markdown-body">
+          <h3>
+<a id="what-is-this" class="anchor" href="#what-is-this" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>What is this?</h3>
+
+<p>CharBrowser is a character viewer for your EQ Emulator server. Once installed your users can look up each other's characters and see their Inventory, Bank, Alternate Abilities, Flags, Keys, Factions and Skills. In addition to viewing the profiles there is a Bazaar viewing utility, a Character Mover (which moves the characters location to one specified by the site admin), a signature builder that generates dynamic images (with character stats) to be used as a forum signature and an API to give developers programatic access to this data. User's can customize their display by interacting with a quest NPC on your server.</p>
+
+<h3>
+<a id="installation" class="anchor" href="#installation" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Installation</h3>
+
+<ul>
+<li>Download the files.</li>
+<li>Copy the contents of the /Project Files/ directory into a path on your web server.</li>
+<li>Config:
+
+<ul>
+<li>If this is a new installation, rename /includes/config.template to config.php.</li>
+<li>If you are overwriting an existing installation you can preserve your old config.php and delete config.template.</li>
+</ul>
+</li>
+<li>Open /includes/config.php in a text editor. In the "SQL Settings" section you will modify the four variables to reflect your own database settings.</li>
+<li>In a web browser navigate to the path you installed the files to and everything should be running.</li>
+</ul>
+
+<h3>
+<a id="extended-configuration" class="anchor" href="#extended-configuration" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Extended Configuration</h3>
+
+<p>You can customize the extended features of the tool in the config.php. Some basic knowledge about php variable and array syntax is required.</p>
+
+<ul>
+<li>
+<p>General Settings</p>
+
+<ul>
+<li>numToDisplay: how many search results will be displayed.</li>
+<li>highlightgm: A value of 1 will highlight GM inventories in gold; 0 will not highlight.</li>
+<li>blockbazaar: A value of 0 enables the bazaar; 1 will disable.</li>
+</ul>
+</li>
+<li>
+<p>Title Settings</p>
+
+<ul>
+<li>mytitle: Sets the title of the tool (a lot of people use their server name).</li>
+<li>subtitle: The subtitle that shows up after the title in a few places.</li>
+<li>version: This is displayed in a few locations. It's just the build version--you probably don't need to change this.</li>
+<li>titlefont: The font name you want to use for the title. It must match the name of a file (without extension) in the /fonts/ directory.</li>
+<li>titlefontR: The Red component of the titles RGB value.</li>
+<li>titlefontG: The Greencomponent of the titles RGB value.</li>
+<li>titlefontB: The Bluecomponent of the titles RGB value.</li>
+<li>titlefontsize: The font size of the title.</li>
+</ul>
+</li>
+<li>
+<p>Character mover settings</p>
+
+<ul>
+<li>blockcharmove: A value of 1 will disable to character movier; 0 enables it.</li>
+<li>charmovezones: This is a two dimensional array of locations your users can move their characters to. The index of the first dimension should be the short zone name (from the database). That points to a three element array with indexes of 'x', 'y' and 'z' which hold the move coordinates for that zone.</li>
+</ul>
+</li>
+<li>
+<p>Permissions: for all permissions a value of 0 displays and a value of 1 hides.</p>
+
+<ul>
+<li>PUBLIC: If a user has set the display to public using the quest NPC, their character will display with these settings.</li>
+<li>PRIVATE:  If a user has set the display to private using the quest NPC, their character will display with these settings.</li>
+<li>GM: If a character is not set to public or private, and they are a GM they will display with these settings.</li>
+<li>ROLEPLAY: If a character is not set to public or private, arent a GM, and they are Roleplaying they will display with these settings.</li>
+<li>ANON: If a character is not set to public or private, arent a GM, and they are Anonymouse they will display with these settings.</li>
+<li><p>ALL: All characters that haven't met the previous criteria will use these settings.</p></li>
+<li><p>inventory: Display the characters main inventory.</p></li>
+<li>coininventory: Display the characters coinage in their inventory.</li>
+<li>coinbank: Display the characters coinage in their bank.</li>
+<li>bags: Display the characters bags.</li>
+<li>bank: Display the characters bank contents.</li>
+<li>corpses: Display the characters corpses.</li>
+<li>flags: Display the characters flags.</li>
+<li>AAs: Display the characters alternate abilities.</li>
+<li>factions: Display the characters flags.</li>
+<li>advfactions: Display the characters factions with more advanced numeric values.</li>
+<li>skills: Display the characters non-language skills.</li>
+<li>languageskills: Display the characters language skills.</li>
+<li>keys: Display the characters keys.</li>
+<li>signatures: Display the characters signatures (which can display some items/stats).</li>
+</ul>
+</li>
+<li>
+<p>Ad Banners</p>
+
+<ul>
+<li>adscript: if you use advertisement banners you can embed the HTML for your banner here and it will be added to every page.</li>
+</ul>
+</li>
+<li>
+<p>DATABASE STATS</p>
+
+<ul>
+<li>DB_PERFORMANCE: if you uncomment this constant it will cause each page to dump out performance stats on how it interacts with the database. This will be publicly viewable.</li>
+</ul>
+</li>
+</ul>
+
+<h3>
+<a id="support-or-contact" class="anchor" href="#support-or-contact" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Support or Contact</h3>
+
+<p>We have forums setup at mqemulator: <a href="http://mqemulator.net/forum2/viewforum.php?f=20">http://mqemulator.net/forum2/viewforum.php?f=20</a></p>
+
+<p>You can download here or at the site: <a href="http://mqemulator.net/downloads.php">http://mqemulator.net/downloads.php</a></p>
+        </article>
+      </div>
+    </div>
+    <footer>
+      <div class="owner">
+      <p><a href="https://github.com/maudigan" class="avatar"><img src="https://avatars3.githubusercontent.com/u/20372957?v=3&amp;s=60" width="48" height="48"></a> <a href="https://github.com/maudigan">maudigan</a> maintains <a href="https://github.com/maudigan/charbrowser">Charbrowser</a></p>
+
+
+      </div>
+      <div class="creds">
+        <small>This page generated using <a href="https://pages.github.com/">GitHub Pages</a><br>theme by <a href="https://twitter.com/jonrohan/">Jon Rohan</a></small>
+      </div>
+    </footer>
+  </div>
+  <div class="current-section">
+    <a href="#top">Scroll to top</a>
+    <a href="https://github.com/maudigan/charbrowser/tarball/master" class="tar">tar</a><a href="https://github.com/maudigan/charbrowser/zipball/master" class="zip">zip</a><a href="" class="code">source code</a>
+    <p class="name"></p>
+  </div>
+
+  
+</body>
+</html>

@@ -1,0 +1,97 @@
+v2.5
+----------------------------------------------------------------------
+This release fixes the aa and corpse pages, but it is mostly to clean
+up the code and add features for developers who may want to alter or
+extend the code.
+
+September 30, 2014 - Added some new methods to the Template class that
+                     let developers access the magelo data in a JSON
+                     or XML format. The template values were never
+                     meant to be output this way so it's not the
+                     cleanest data. To see it, add a variable named
+                     "api" to your GET, i.e.
+                     corpse.php?char=Maudigan&api (Maudigan)
+October 4, 2014 -    Fixed a call to the nonexistant mymessage_die 
+                     in item.php. (Maudigan)
+                     Moved DB connection stuff out of the config
+                     file (Maudigan)
+May 22, 2016 -       Cleaned up the way queries are templated.
+                     Added wrappers on all the mysql functions which
+                     is mostly so future modifications can be done quicker
+                     when something changes. it also lets us gather
+                     database performance stats (when enabled) without
+                     having to run queries twice. It should also let
+                     people swap to non mysql databases and only have to 
+                     edit db.php instead of a whole mess of
+                     different modules. (Maudigan)
+                     The database performance code was rewritten to use
+                     the normal templating system instead of writing its
+                     own HTML. (Maudigan)
+                     General code cleanup, replaced tabs with spaces (they're
+                     better, so eat-it). Added some extra comments, removed 
+                     some old ones. I didn't mark all of it so if youre 
+                     curious you'll have to do a compare. (Maudigan)
+May 24, 2016 -       Functionized the code that converts directories into
+                     the list of options for the signature builder.
+                     Made a default return value for profile.php->GetValue()
+                     and set the value to 0 to fix the display of skills.php
+May 30, 2016 -       Updated aa.php to implement the new aa storage method.
+                     Updated corpse.php with the blob changes that I missed
+                     on the last update.
+
+
+v2.41
+----------------------------------------------------------------------
+September 28, 2014 - added a database stats gathering tool. Uncomment
+                     the setting at the bottom of config.php and it will
+                     cause every query, its runtime and an explanation
+                     to be dumped at the bottom of each page. WARNING:
+                     the dumped data is publicly viewable. (Maudigan)
+                     Altered the profile class to have a constructor
+                     that recieves the charname and populates the
+                     basic character data. This permitted the removal
+                     of an extra query on nearly every screen. (Maudigan)
+September 29, 2014 - completed the character blob modifications.
+                     this involved rewriting most of the profile.php
+                     script and putting a bandaid on aa.php (Maudigan)
+                     Added the missing AA tabs. (Maudigan)
+
+v2.4 (beta)
+----------------------------------------------------------------------
+September 26, 2014 - Akkadius removed the character blob from the
+                     database and triggered this update. All changes
+                     are to accomodate the new storage method.
+                     Rewrote profile.php, this involved removing old
+                     comments; see old versions to view them.
+                     Changed character_ table referenes to character_data
+                     in multiple files.
+                     Rewrote the code that grabbed a characters guild
+                     name and rank as the the blob doesn't exist and the
+                     new method doesnt track a character guild id. I used
+                     this as an opportunity to swap from a WHERE join to
+                     a standard JOIN. (Maudigan)
+
+
+v2.3
+----------------------------------------------------------------------
+February 24, 2014 - Changed item icons to use PNG instead of GIF (Maudigan/Warmonger)
+                    Added backstab damage to item display (Kinglykrab)
+                    Corrected spelling errors (Kinglykrab)
+                    Fixed syntax error in css (Kinglykrab)
+February 25, 2014 - Added Heroic stats and aug types (Kinglykrab)
+                    Added infinite charge text to items (Kinglykrab)
+                    Added Drakkin/Powersource to bazaar (Kinglykrab)
+
+
+
+v2.25 
+----------------------------------------------------------------------
+February 9, 2014 - Fixed charm item type getting set wrong (Maudigan)
+February 12, 2014 - Added/Updated item icons 2588-4819. (Maudigan)
+
+
+
+v1.0 - v2.24
+----------------------------------------------------------------------
+Visit Character Browser forum at http://mqemulator.net for details on
+changes before v2.25.

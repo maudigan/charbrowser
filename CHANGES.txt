@@ -1,3 +1,14 @@
+
+v2.5
+----------------------------------------------------------------------
+This release makes the item/spell links more customizable
+
+October 3, 2016 - Added new customizable link templates to the confi
+                  file. This is for servers that don't use the PEQ DB
+                  so they don't want to link to mqemu's database.
+                  (Maudigan)
+
+
 v2.5
 ----------------------------------------------------------------------
 This release fixes the aa and corpse pages, but it is mostly to clean

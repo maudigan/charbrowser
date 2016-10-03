@@ -207,7 +207,7 @@ function display(type, id, prefix) {
       <div class='ItemOuter' id='slot{item.SLOT}' style='display:none;'> 
         <div class='ItemTitle'> 
           <div class='ItemTitleLeft'></div> 
-          <div class='ItemTitleMid'><a href='http://mqemulator.net/item.php?id={item.ID}'>{item.NAME}</a></div> 
+          <div class='ItemTitleMid'><a href='{item.LINK}'>{item.NAME}</a></div> 
           <div class='ItemTitleRight'></div> 
         </div> 
         <div class='ItemInner' style='text-align:left;'>        
@@ -218,7 +218,7 @@ function display(type, id, prefix) {
             <table class='AugTable'> 
               <tr> 
                 <td align='center'> 
-                  <a href='http://mqemulator.net/item.php?id={item.augment.AUG_ID}'>{item.augment.AUG_NAME}</a> 
+                  <a href='{item.augment.AUG_LINK}'>{item.augment.AUG_NAME}</a> 
                 </td> 
               </tr> 
               <tr> 

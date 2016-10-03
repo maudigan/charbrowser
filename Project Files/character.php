@@ -26,6 +26,8 @@
  *      organized some code. A lot has changed, but not much functionally
  *      do a compare to 2.41 to see the differences. 
  *      Implemented new database wrapper.
+ *   October 3, 2016 - Maudigan
+ *      Made the item links customizable
  ***************************************************************************/
   
  
@@ -337,12 +339,14 @@ foreach ($allitems as $value) {
          'ICON' => $value->icon(),   
          'NAME' => $value->name(),
          'ID' => $value->id(),
+         'LINK' => QuickTemplate($link_item, array('ITEM_ID' => $value->id())),
          'HTML' => $value->html())
       );
    for ( $i = 0 ; $i < $value->augcount() ; $i++ ) {
       $template->assign_both_block_vars("item.augment", array(       
          'AUG_NAME' => $value->augname($i),
          'AUG_ID' => $value->augid($i),
+         'AUG_LINK' => QuickTemplate($link_item, array('ITEM_ID' => $value->augid($i))),
          'AUG_ICON' => $value->augicon($i),
          'AUG_HTML' => $value->aughtml($i))
       );

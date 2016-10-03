@@ -25,7 +25,7 @@
           </tr>
         <!-- BEGIN keys -->
           <tr>
-            <td nowrap><a href='http://mqemulator.net/item.php?id={keys.ITEM_ID}'>{keys.KEY}</a></td>
+            <td nowrap><a href='{keys.LINK}'>{keys.KEY}</a></td>
           </tr>
         <!-- END keys -->
       </table>

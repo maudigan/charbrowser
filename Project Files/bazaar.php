@@ -22,6 +22,8 @@
  *      organized some code. A lot has changed, but not much functionally
  *      do a compare to 2.41 to see the differences. 
  *      Implemented new database wrapper.
+ *   October 3, 2016 - Maudigan
+ *      Made the item links customizable
  ***************************************************************************/
  
  
@@ -200,6 +202,7 @@ foreach($lots as $lot) {
       'PRICE' => (($plat)?$plat."p ":"").(($silver)?$silver."s ":"").(($gold)?$gold."g ":"").(($copper)?$copper."c ":""),      
       'NAME' => $tempitem->name(),
       'ID' => $tempitem->id(),
+      'LINK' => QuickTemplate($link_item, array('ITEM_ID' => $tempitem->id())),
       'HTML' => $tempitem->html(),
       'SLOT' => $slotcounter)
    );

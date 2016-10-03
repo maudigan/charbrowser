@@ -27,6 +27,8 @@
  *   May 30, 2016 - Maudigan
  *      Swapped from player_corpses to character_corpses; this was part of
  *      blob conversion that I had missed
+ *   October 3, 2016 - Maudigan
+ *      Made the corpse links customizable
  ***************************************************************************/
   
  
@@ -118,12 +120,32 @@ $template->assign_vars(array(
 
 //dump corpses
 foreach($corpses as $corpse) {
+
+   //prepare the link to the map
+   $find = array(
+      'ZONE_SHORTNAME'  => $corpse['short_name'],
+      'ZONE_ID'         => $corpse["zoneidnumber"],
+      'TEXT'            => $name."`s%20Corpse",
+      'X'               => floor($corpse['x']),
+      'Y'               => floor($corpse['y'])
+   );
+   $link_to_map = QuickTemplate($link_map, $find);
+   
+   //prepare the link to the zone
+   $find = array(
+      'ZONE_SHORTNAME'  => $corpse['short_name'],
+      'ZONE_ID'         => $corpse["zoneidnumber"]
+   );
+   $link_to_zone = QuickTemplate($link_zone, $find);
+   
    $template->assign_both_block_vars("corpses", array( 
       'REZZED' => ((!$corpse['is_rezzed']) ? "0":"1"),      
       'TOD' => $corpse['time_of_death'],
       'LOC' => (($corpse['is_buried']) ?  "(buried)":"(".floor($corpse['y']).", ".floor($corpse['x']).")"),
       'ZONE' => (($corpse['is_buried']) ?  "shadowrest":$corpse['short_name']),
       'ZONE_ID' => $corpse["zoneidnumber"],
+      'LINK_MAP' => $link_to_map,
+      'LINK_ZONE' => $link_to_zone,
       'X' => floor($corpse['y']),
       'Y' => floor($corpse['x']))
    );

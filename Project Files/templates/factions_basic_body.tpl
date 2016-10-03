@@ -26,7 +26,7 @@
         </tr>	
         <!-- BEGIN factions -->
         <tr onMouseOver="this.style.background = '#7b714a '" onMouseOut ="this.style.background = 'none'" >
-          <td nowrap><a href='http://mqemulator.net/faction.php?id={factions.ID}' style='color:#8aa3ff ;'>{factions.NAME}</a></td>
+          <td nowrap><a href='{factions.LINK}' style='color:#8aa3ff ;'>{factions.NAME}</a></td>
 	  <td nowrap>{factions.FACTION}</td>
 	</tr>
         <!-- END factions -->

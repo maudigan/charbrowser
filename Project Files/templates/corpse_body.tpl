@@ -30,8 +30,8 @@
           <tr>
             <td align='center'><div class='check{corpses.REZZED}'></div></</td>
             <td>{corpses.TOD}</td>	      
-            <td><a href='http://mqemulator.net/zone.php?name={corpses.ZONE}'>{corpses.ZONE}</a> {corpses.LOC}</td>
-            <td align='center'><a href='http://mqemulator.net/map.php?zoneid={corpses.ZONE_ID}&poi={NAME}`s%20Corpse&poix={corpses.X}&poiy={corpses.Y}&grid=100'>[map]</a></td>
+            <td><a href='{corpses.LINK_ZONE}'>{corpses.ZONE}</a> {corpses.LOC}</td>
+            <td align='center'><a href='{corpses.LINK_MAP}'>[map]</a></td>
           </tr>
         <!-- END corpses -->
       </table>

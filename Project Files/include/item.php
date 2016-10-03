@@ -26,6 +26,8 @@
  *      organized some code. A lot has changed, but not much functionally
  *      do a compare to 2.41 to see the differences. 
  *      Implemented new database wrapper.
+ *   October 3, 2016 - Maudigan
+ *      Made the spell links customizable
  ***************************************************************************/
  
  
@@ -176,6 +178,7 @@ function GetItem($item)
    global $tbraces;
    global $dbbodytypes;
    global $dbbardskills;
+   global $link_spell;
    
    //return buffer, build item here
    $Output = "";
@@ -267,30 +270,38 @@ function GetItem($item)
    
    //item proc
    if (($item["proceffect"]>0) AND ($item["proceffect"]<65535)) { 
-      $Output .= $tab."Effect: <a href='http://mqemulator.net/spell.php?id=".$item["proceffect"]."'>".GetFieldByQuery("name","SELECT name FROM $tbspells WHERE id=".$item["proceffect"])."</a>";
+      //build the link from the spell template
+      $temp = QuickTemplate($link_spell, array('SPELL_ID' => $item["proceffect"]));
+      $Output .= $tab."Effect: <a href='".$temp."'>".GetFieldByQuery("name","SELECT name FROM $tbspells WHERE id=".$item["proceffect"])."</a>";
       $Output .= "&nbsp;(Combat)";
       $Output .= " <i>(Level ".$item["proclevel2"].")</i>"; 
       $Output .= "<br>\n";
    }
    
    // worn effect
-   if (($item["worneffect"]>0) AND ($item["worneffect"]<65535)) {  
-      $Output .= $tab."Effect: <a href='http://mqemulator.net/spell.php?id=".$item["worneffect"]."'>".GetFieldByQuery("name","SELECT name FROM $tbspells WHERE id=".$item["worneffect"])."</a>";
+   if (($item["worneffect"]>0) AND ($item["worneffect"]<65535)) { 
+      //build the link from the spell template
+      $temp = QuickTemplate($link_spell, array('SPELL_ID' => $item["worneffect"])); 
+      $Output .= $tab."Effect: <a href='".$temp."'>".GetFieldByQuery("name","SELECT name FROM $tbspells WHERE id=".$item["worneffect"])."</a>";
       $Output .= "&nbsp;(Worn)"; 
       $Output .= " <i>(Level ".$item["wornlevel"].")</i>"; 
       $Output .= "<br>\n";
    }
    
    // focus effect
-   if (($item["focuseffect"]>0) AND ($item["focuseffect"]<65535)) { 
-      $Output .= $tab."Focus: <a href='http://mqemulator.net/spell.php?id=".$item["focuseffect"]."'>".GetFieldByQuery("name","SELECT name FROM $tbspells WHERE id=".$item["focuseffect"])."</a>";
+   if (($item["focuseffect"]>0) AND ($item["focuseffect"]<65535)) {
+      //build the link from the spell template 
+      $temp = QuickTemplate($link_spell, array('SPELL_ID' => $item["focuseffect"])); 
+      $Output .= $tab."Focus: <a href='".$temp."'>".GetFieldByQuery("name","SELECT name FROM $tbspells WHERE id=".$item["focuseffect"])."</a>";
       if ($item["focuslevel"]>0) { $Output .= " <i>(Level ".$item["focuslevel"].")</i>";  }
       $Output .= "<br>\n";
    }
    
    // clicky effect
    if (($item["clickeffect"]>0) AND ($item["clickeffect"]<65535)) {  
-      $Output .= $tab."Effect: <a href='http://mqemulator.net/spell.php?id=".$item["clickeffect"]."'>".GetFieldByQuery("name","SELECT name FROM $tbspells WHERE id=".$item["clickeffect"])."</a>";
+      //build the link from the spell template
+      $temp = QuickTemplate($link_spell, array('SPELL_ID' => $item["clickeffect"])); 
+      $Output .= $tab."Effect: <a href='".$temp."'>".GetFieldByQuery("name","SELECT name FROM $tbspells WHERE id=".$item["clickeffect"])."</a>";
       $Output .= "&nbsp;(";
       if ($item["clicktype"]==1) { $Output .= "Any Slot, "; }
       if ($item["clicktype"]==4) { $Output .= "Must Equip, ";   }
@@ -404,7 +415,9 @@ function GetItem($item)
    
    // scroll
    if (($item["scrolleffect"]>0) AND ($item["scrolleffect"]<65535)) {  
-      $Output .= $tab."Effect: <a href='http://mqemulator.net/spell.php?id=".$item["scrolleffect"]."'>".GetFieldByQuery("name","SELECT name FROM $tbspells WHERE id=".$item["scrolleffect"])."</a>";
+      //build the link from the spell template
+      $temp = QuickTemplate($link_spell, array('SPELL_ID' => $item["scrolleffect"])); 
+      $Output .= $tab."Effect: <a href='".$temp."'>".GetFieldByQuery("name","SELECT name FROM $tbspells WHERE id=".$item["scrolleffect"])."</a>";
       $Output .= "<br>\n"; 
    }
 

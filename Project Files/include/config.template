@@ -202,6 +202,41 @@ $adscript = "";
 
 
 
+/*************************************************************************************************
+**                                        EXTERNAL LINKS                                        **
+**  Adjusting these values will cause links that point to external database, i.e., item and     **
+**  spell links to be redirected to the site of your choice. The curly braced items are values  **
+**  that will be replaced automatically based on the context. Order doesn't mater, and you can  **
+**  include multiple or leave some out. A list of valid values is above each link template.     **
+**************************************************************************************************/
+
+//a link to an item using the item id 
+//{ITEM_ID} - The ID of the item
+$link_item = "http://mqemulator.net/item.php?id={ITEM_ID}";
+
+//a link to a spell using the spell id 
+//{SPELL_ID} - The ID of the spell
+$link_spell = "http://mqemulator.net/spell.php?id={SPELL_ID}";
+
+//a link to a zone using a shortname or id 
+//{ZONE_SHORTNAME} - The shortname of the zone
+//{ZONE_ID} - The ID of the zone
+$link_zone = "http://mqemulator.net/zone.php?name={ZONE_SHORTNAME}";
+
+//a link to a map with a text marker on a specific x/y coordinate
+//this is used to show a player where their corpse is 
+//{ZONE_SHORTNAME} - The shortname of the zone
+//{ZONE_ID} - The ID of the zone
+//{TEXT} - The text of the marker on the map (corpse name)
+//{X} - The X coordinate of the marker on the map
+//{Y} - The Y coordinate of the marker on the map
+$link_map = "http://mqemulator.net/map.php?zoneid={ZONE_ID}&poi={TEXT}&poix={X}&poiy={Y}&grid=100";
+
+//a link to information about a faction using the faction id.
+//{FACTION_ID} - The ID of the faction group
+$link_faction = "http://mqemulator.net/faction.php?id={FACTION_ID}";
+/**************************************************************************************************/
+
 
 /****************************************************
 **                 DATABASE STATS                  **

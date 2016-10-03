@@ -19,6 +19,8 @@
  *      relocated the database monitoring functions to the db.php include
  *      & modified queries to use the new wrapper functions timer functions
  *      were kept here and renamed
+ *   October 3, 2016 - Maudigan
+ *      Added the QuickTemplate function which plugs values into a template
  *
  ***************************************************************************/
  
@@ -247,5 +249,25 @@ function IsAlphaNumericSpace($str)
    {
       return (false);
    }
+}
+
+//This plugs values from an array into a template
+//the first parameter is a string template with values
+//in it such as {X}, the second parm is an array with
+//matching values as indexes and what they should
+//be changed to, such as "X" => "255".
+function QuickTemplate($template, $values)
+{
+   //if the provided values aren't an array then
+   //just return the template
+   if (!is_array($values)) return $template;
+   
+   //find and replace each value
+   foreach($values as $find => $replace)
+   {
+      $template = str_replace("{".$find."}", $replace, $template);
+   }
+   
+   return $template;
 }
 ?>

@@ -105,7 +105,7 @@ function display(type, id, prefix) {
       <div class='ItemOuter' id='item{items.SLOT}' style='display:none;'>
 	<div class='ItemTitle'>
 	  <div class='ItemTitleLeft'></div>
-	  <div class='ItemTitleMid'><a href='http://mqemulator.net/item.php?id={items.ID}'>{items.NAME}</a></div>
+	  <div class='ItemTitleMid'><a href='{items.LINK}'>{items.NAME}</a></div>
 	  <div class='ItemTitleRight'></div>
 	</div>
 	<div class='ItemInner' style='text-align:left;'>

@@ -27,6 +27,8 @@
  *      organized some code. A lot has changed, but not much functionally
  *      do a compare to 2.41 to see the differences. 
  *      Implemented new database wrapper.
+ *   October 3, 2016 - Maudigan
+ *      Made the faction links customizable
  ***************************************************************************/
   
  
@@ -165,6 +167,7 @@ foreach($factions as $faction) {
    $total = $faction['base'] + $faction['charmod'] + $faction['classmod'] + $faction['racemod'] + $faction['deitymod'];
    $template->assign_both_block_vars("factions", array( 
       'ID'      => $faction['id'],
+      'LINK' => QuickTemplate($link_faction, array('FACTION_ID' => $faction['id'])),
       'NAME'    => $faction['name'],
       'FACTION' => FactionToString($total), 
       'BASE'    => $faction['base'],

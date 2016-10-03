@@ -24,6 +24,8 @@
  *      organized some code. A lot has changed, but not much functionally
  *      do a compare to 2.41 to see the differences. 
  *      Implemented new database wrapper.
+ *   October 3, 2016 - Maudigan
+ *      Made the item links customizable
  ***************************************************************************/ 
  
  
@@ -111,7 +113,8 @@ $template->assign_vars(array(
 foreach ($keys as $key) {
    $template->assign_both_block_vars("keys", array( 
       'KEY' => $key['key'],
-      'ITEM_ID' => $key["item_id"])
+      'ITEM_ID' => $key["item_id"],
+      'LINK' => QuickTemplate($link_item, array('ITEM_ID' => $key["item_id"])))
    );
 }
  

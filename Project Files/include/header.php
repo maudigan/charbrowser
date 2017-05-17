@@ -13,6 +13,9 @@
  *                                  Author:
  *                           Maudigan(Airwalking) 
  *
+ *   May 17, 2017 - added version.php include and changed the config.php
+ *                  include to include_once()
+ *
  ***************************************************************************/
  
 //dont make a header if there is an API request 
@@ -22,7 +25,8 @@ if ( !defined('INCHARBROWSER') )
 {
 	die("Hacking attempt");
 }
-include("config.php");
+include_once("config.php");
+include_once("version.php");
 
 $template->set_filenames(array(
   'header' => 'header_body.tpl')

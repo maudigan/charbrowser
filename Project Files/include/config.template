@@ -49,7 +49,6 @@ $blockbazaar  = 0  ;//disable bazaar 0=on 1=off
 *****************************************************/
 $mytitle      =    "Character Browser"; 
 $subtitle     =    " • Be Nosey";
-$version      =    "2.5"; 
 
 
 /*****************************************************

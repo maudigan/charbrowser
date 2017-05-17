@@ -28,6 +28,7 @@
 *********************************************/ 
 define('INCHARBROWSER', true);
 include_once("include/config.php");
+include_once("include/version.php");
 include_once("include/language.php");
 include_once("include/functions.php");
 include_once("include/global.php");

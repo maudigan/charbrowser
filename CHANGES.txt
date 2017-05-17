@@ -1,5 +1,21 @@
 
-v2.5
+v2.52
+----------------------------------------------------------------------
+Added omens of war flags, moved $version out of the config.
+
+May 17, 2017 - Added the OOW flags to language.php and flags.php
+               (Maudigan)
+               Some servers were keeping their old config file,
+               which has the version stamp in it. This made it hard
+               to identify what build a server was using. That value
+               was moved to a stand alone version.php. The order the
+               files are included means the variable in version.php
+               should overwrite the old one in your config, however
+               you should probably pull the new config.template or
+               remove the $version variable from config.php.
+               (Maudigan)
+
+v2.51
 ----------------------------------------------------------------------
 This release makes the item/spell links more customizable
 

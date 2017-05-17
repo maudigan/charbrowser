@@ -34,6 +34,8 @@
  *      organized some code. A lot has changed, but not much functionally
  *      do a compare to 2.41 to see the differences. 
  *      Implemented new database wrapper.
+ *   May 17, 2017 - Maudigan
+ *      Added omens of war flags.
  ***************************************************************************/ 
    
  
@@ -58,6 +60,15 @@ function getflag($condition, $flagname) {
    if (!array_key_exists($flagname,$quest_globals)) return 0; 
    if ($quest_globals[$flagname]<$condition) return 0; 
    return 1; 
+} 
+
+
+//check a quest global bit
+function getbitflag($bitset, $flagname) { 
+   global $quest_globals;    
+   if (!array_key_exists($flagname,$quest_globals)) return 0; 
+   if ($quest_globals[$flagname] & $bitset) return 1; 
+   return 0; 
 } 
 
 
@@ -153,6 +164,12 @@ $template->assign_vars(array(
 // use HasFlag in if statement and then set the $template then reuse $HasFlag 
 $HasFlag = 0; 
 
+
+/*********************************************
+              MAIN MENUS
+*********************************************/
+
+//POP
 $template->assign_both_block_vars( "mainhead" , array( 'TEXT' => $language['FLAG_PoP']) ); 
 
 if (getzoneflag(221) && getflag(1, "pop_pon_hedge_jezith") && getflag(1, "pop_pon_construct")) { $HasFlag = 1; } else { $HasFlag = 0; } 
@@ -192,6 +209,7 @@ if (getflag(1, "pop_time_maelin") && getflag(1, "pop_fire_fennin_projection") &&
 $template->assign_both_block_vars( "mainhead.main" , array( 'ID' => 12, 'FLAG' => $HasFlag, 'TEXT' => $language['FLAG_PoP_PoTime']) ); 
 
 
+//GoD
 $template->assign_both_block_vars( "mainhead" , array( 'TEXT' => $language['FLAG_GoD']) ); 
 $template->assign_both_block_vars( "mainhead.main" , array( 'ID' => 13, 'FLAG' => getflag(1,"god_vxed_access"), 'TEXT' => $language['FLAG_GoD_Vxed']) ); 
 $template->assign_both_block_vars( "mainhead.main" , array( 'ID' => 14, 'FLAG' => getflag(1,"god_tipt_access"), 'TEXT' => $language['FLAG_GoD_Tipt']) ); 
@@ -207,6 +225,22 @@ $template->assign_both_block_vars( "mainhead.main" , array( 'ID' => 18, 'FLAG' =
 if (getzoneflag(297) && getflag(1, "god_txevu_access")) { $HasFlag = 1; } else { $HasFlag = 0; } 
 $template->assign_both_block_vars( "mainhead.main" , array( 'ID' => 19, 'FLAG' => $HasFlag, 'TEXT' => $language['FLAG_GoD_Txevu_1']) ); 
 
+
+//OOW
+$template->assign_both_block_vars( "mainhead" , array( 'TEXT' => $language['FLAG_OOW']) ); 
+
+if (getflag(63, "mpg_group_trials")) { $HasFlag = 1; } else { $HasFlag = 0; } 
+$template->assign_both_block_vars( "mainhead.main" , array( 'ID' => 20, 'FLAG' => $HasFlag, 'TEXT' => $language['FLAG_OOW_MPG']) ); 
+
+//TODO get criteria for MPG, zone flags?
+if (getflag(63, "mpg_raid_trials") && getflag(1, "oow_rss_taromani_insignias")) { $HasFlag = 1; } else { $HasFlag = 0; } 
+$template->assign_both_block_vars( "mainhead.main" , array( 'ID' => 21, 'FLAG' => $HasFlag, 'TEXT' => $language['FLAG_OOW_COA']) ); 
+
+
+
+/*********************************************
+           SECONDARY/SUB MENUS POP
+*********************************************/
 //PoN B 
 $template->assign_both_block_vars( "head" , array( 'ID' => 1, 'NAME' => $language['FLAG_PoP_PoNB']) ); 
 $template->assign_both_block_vars( "head.flags" , array( 'FLAG' => getflag(1, "pop_pon_hedge_jezith"), 'TEXT' => $language['FLAG_PoP_PreHedge']) ); 
@@ -322,6 +356,12 @@ $template->assign_both_block_vars( "head.flags" , array( 'FLAG' => getflag(1, "p
 $template->assign_both_block_vars( "head.flags" , array( 'FLAG' => getflag(1, "pop_water_coirnav_projection"), 'TEXT' => $language['FLAG_PoP_Coirnav']) ); 
 $template->assign_both_block_vars( "head.flags" , array( 'FLAG' => getflag(1, "pop_eartha_arbitor_projection"), 'TEXT' => $language['FLAG_PoP_Arbitor']) ); 
 $template->assign_both_block_vars( "head.flags" , array( 'FLAG' => getflag(1, "pop_earthb_rathe"), 'TEXT' => $language['FLAG_PoP_Rathe']) ); 
+
+
+
+/*********************************************
+           SECONDARY/SUB MENUS GoD
+*********************************************/
 //Vxed 
 $template->assign_both_block_vars( "head" , array( 'ID' => 13, 'NAME' => $language['FLAG_GoD_Vxed']) ); 
 $template->assign_both_block_vars( "head.flags" , array( 'FLAG' => getflag(1, "god_vxed_access"), 'TEXT' => $language['FLAG_GoD_KT_2']) ); 
@@ -373,7 +413,31 @@ $template->assign_both_block_vars( "head.flags" , array( 'FLAG' => getflag(1, "g
 //Txevu 
 $template->assign_both_block_vars( "head" , array( 'ID' => 19, 'NAME' => $language['FLAG_GoD_Txevu_1']) ); 
 $template->assign_both_block_vars( "head.flags" , array( 'FLAG' => getflag(1, "god_txevu_access"), 'TEXT' => $language['FLAG_GoD_Txevu_2']) ); 
- 
+
+
+
+/*********************************************
+           SECONDARY/SUB MENUS OOW
+*********************************************/ 
+//Muramite Proving Grounds
+$template->assign_both_block_vars( "head" , array( 'ID' => 20, 'NAME' => $language['FLAG_OOW_MPG']) ); 
+$template->assign_both_block_vars( "head.flags" , array( 'FLAG' => getbitflag(1, "mpg_group_trials"), 'TEXT' => $language['FLAG_OOW_MPG_FEAR']) );  
+$template->assign_both_block_vars( "head.flags" , array( 'FLAG' => getbitflag(2, "mpg_group_trials"), 'TEXT' => $language['FLAG_OOW_MPG_INGENUITY']) ); 
+$template->assign_both_block_vars( "head.flags" , array( 'FLAG' => getbitflag(4, "mpg_group_trials"), 'TEXT' => $language['FLAG_OOW_MPG_WEAPONRY']) ); 
+$template->assign_both_block_vars( "head.flags" , array( 'FLAG' => getbitflag(8, "mpg_group_trials"), 'TEXT' => $language['FLAG_OOW_MPG_SUBVERSION']) ); 
+$template->assign_both_block_vars( "head.flags" , array( 'FLAG' => getbitflag(16, "mpg_group_trials"), 'TEXT' => $language['FLAG_OOW_MPG_EFFICIENCY']) );
+$template->assign_both_block_vars( "head.flags" , array( 'FLAG' => getbitflag(32, "mpg_group_trials"), 'TEXT' => $language['FLAG_OOW_MPG_DESTRUCTION']) );
+//Citadel of Anguish
+$template->assign_both_block_vars( "head" , array( 'ID' => 21, 'NAME' => $language['FLAG_OOW_COA']) ); 
+$template->assign_both_block_vars( "head.flags" , array( 'FLAG' => getbitflag(1, "mpg_raid_trials"), 'TEXT' => $language['FLAG_OOW_COA_HATE']) ); 
+$template->assign_both_block_vars( "head.flags" , array( 'FLAG' => getbitflag(2, "mpg_raid_trials"), 'TEXT' => $language['FLAG_OOW_COA_ENDURANCE']) ); 
+$template->assign_both_block_vars( "head.flags" , array( 'FLAG' => getbitflag(4, "mpg_raid_trials"), 'TEXT' => $language['FLAG_OOW_COA_FORESIGHT']) ); 
+$template->assign_both_block_vars( "head.flags" , array( 'FLAG' => getbitflag(8, "mpg_raid_trials"), 'TEXT' => $language['FLAG_OOW_COA_SPECIALIZATION']) ); 
+$template->assign_both_block_vars( "head.flags" , array( 'FLAG' => getbitflag(16, "mpg_raid_trials"), 'TEXT' => $language['FLAG_OOW_COA_ADAPTATION']) ); 
+$template->assign_both_block_vars( "head.flags" , array( 'FLAG' => getbitflag(32, "mpg_raid_trials"), 'TEXT' => $language['FLAG_OOW_COA_CORRUPTION']) ); 
+$template->assign_both_block_vars( "head.flags" , array( 'FLAG' => getbitflag(1, "oow_rss_taromani_insignias"), 'TEXT' => $language['FLAG_OOW_COA_TAROMANI']) ); 
+
+
  
 /*********************************************
            OUTPUT BODY AND FOOTER

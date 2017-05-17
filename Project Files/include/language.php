@@ -15,6 +15,7 @@
  * 
  *   February 25, 2014 - add Drakkin/Powersource (Maudigan c/o Kinglykrab)
  *   September 28, 2014 - added profile class error messages (Maudigan)
+ *   May 17, 2017 - added OOW flags (Maudigan)
  ***************************************************************************/ 
   
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             
@@ -312,6 +313,7 @@ $language['KEYS_KEY'] = "Keys";
 $language['FLAG_FLAGS'] = "Flags"; 
 $language['FLAG_PoP'] = "Planes of Power &nbsp;&nbsp;&nbsp;(click for details)"; 
 $language['FLAG_GoD'] = "Gates of Discord &nbsp;&nbsp;&nbsp;(click for details)"; 
+$language['FLAG_OOW'] = "Omens of War &nbsp;&nbsp;&nbsp;(click for details)"; 
 
 //flags language 
 $language['FLAG_PoP_PoNB'] = "Lair of Terris Thule (Plane of Nightmare B)"; 
@@ -409,6 +411,23 @@ $language['FLAG_GoD_Qvic_2'] = "You have given the Sliver of the High Temple to 
 $language['FLAG_GoD_Txevu_1'] = "Txevu, Lair of the Elite"; 
 $language['FLAG_GoD_Txevu_2'] = "You have given the three pieces of the high temple to Brevik Kalaner."; 
 /* End GoD Flags */ 
+
+//OOW flags
+$language['FLAG_OOW_MPG'] = "Muramite Proving Grounds Group Trials"; 
+$language['FLAG_OOW_MPG_FEAR'] = "You have completed The Mastery of Fear trial."; 
+$language['FLAG_OOW_MPG_INGENUITY'] = "You have completed The Mastery of Ingenuity trial.";
+$language['FLAG_OOW_MPG_WEAPONRY'] = "You have completed The Mastery of Weaponry trial."; 
+$language['FLAG_OOW_MPG_SUBVERSION'] = "You have completed The Mastery of Subversion trial."; 
+$language['FLAG_OOW_MPG_EFFICIENCY'] = "You have completed The Mastery of Efficiency trial.";  
+$language['FLAG_OOW_MPG_DESTRUCTION'] = "You have completed The Mastery of Destruction trial."; 
+$language['FLAG_OOW_COA'] = "The Citadel of Anguish"; 
+$language['FLAG_OOW_COA_HATE'] = "You have completed The Mastery of Hate trial.";
+$language['FLAG_OOW_COA_ENDURANCE'] = "You have completed The Mastery of Endurance trial.";
+$language['FLAG_OOW_COA_FORESIGHT'] = "You have completed The Mastery of Foresight trial.";
+$language['FLAG_OOW_COA_SPECIALIZATION'] = "You have completed The Mastery of Specialization trial."; 
+$language['FLAG_OOW_COA_ADAPTATION'] = "You have completed The Mastery of Adaptation trial.";
+$language['FLAG_OOW_COA_CORRUPTION'] = "You have completed The Mastery of Corruption trial.";
+$language['FLAG_OOW_COA_TAROMANI'] = "You have turned the seven signets into Taromani."; 
 
 //skills language 
 $language['SKILLS_SKILLS'] = "Skills"; 

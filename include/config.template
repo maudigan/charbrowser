@@ -1,0 +1,257 @@
+<?php
+/***************************************************************************
+ *
+ *   This program is free software; you can redistribute it and/or modify
+ *   it under the terms of the GNU General Public License as published by
+ *   the Free Software Foundation; either version 2 of the License, or
+ *   (at your option) any later version.
+ *
+ *   Portions of this program are derived from publicly licensed software
+ *   projects including, but not limited to phpBB, Magelo Clone, 
+ *   EQEmulator, EQEditor, and Allakhazam Clone.
+ *
+ *                                  Author:
+ *                           Maudigan(Airwalking) 
+ *
+ ***************************************************************************/
+ 
+ 
+ 
+ 
+
+if ( !defined('INCHARBROWSER') )
+{
+   die("Hacking attempt");
+}
+
+/****************************************************
+**                  SQL Settings                   **
+**  Database account only needs SELECT and UPDATE  **
+**  privelages                                     **
+****************************************************/
+$db     =   "peq";
+$host   =   "localhost";
+$user   =   "";
+$pass   =   "";
+/***************************************************/
+
+
+/*****************************************************
+**                  General Settings                **
+*****************************************************/
+$numToDisplay = 25 ;//search results per page                 
+$highlightgm  = 1  ;//highlight GM inventories 0=off 1=on
+$blockbazaar  = 0  ;//disable bazaar 0=on 1=off     
+    
+     
+/*****************************************************
+**                  Title  settings                 **
+*****************************************************/
+$mytitle      =    "Character Browser"; 
+$subtitle     =    " • Be Nosey";
+
+
+/*****************************************************
+**   The following 5 settings are for the dynamic   **
+**   title image(title.php). If you have freetype   **
+**   installed you use a fontname from the /fonts   **
+**   directory. If not use a fontname from the      **
+**   /fontsold directory. Don't include the file    **
+**   extension. Contact your system admin or use    **
+**   php_info() to find out if you have freetype.   **
+**   If you don't have freetype fontsize wont be    **
+**   changable.                                     **
+*****************************************************/
+$titlefont     =    "colchester";  
+$titlefontR    =    "35";
+$titlefontG    =    "35";
+$titlefontB    =    "1"; 
+$titlefontsize =    "45";
+
+
+/*****************************************************
+**  Character mover settings                        **
+** assuming the layout of zones is understandable   **
+** ask for help if needed.                          **
+*****************************************************/
+$blockcharmove = 0; //disable charmove 0=on 1=off
+$charmovezones = array(
+  'nexus'   => array( 'x' => 0, 'y' => 0, 'z' => 0 ),
+  'oot'     => array( 'x' => 1, 'y' => 1, 'z' => 1 ),
+);  
+
+
+/*****************************************************
+**  permissions for each user level. ALL applies to **
+**  users other than ROLEPLAY, ANON, and GM         **
+**  PUBLIC/PRIVATE are turned on using a quest      **
+**  variable. For more information there is a       **
+**  readme and example quest file in the Quest      **
+**  Permissions directory.                          **
+**      0 = display       1 = block                 **
+*****************************************************/
+$permissions = array(
+'ALL' => array( 
+    'inventory'         => 0,
+    'coininventory'     => 0,
+    'coinbank'          => 0,
+    'bags'              => 0,
+    'bank'              => 0,
+    'corpses'           => 0,
+    'flags'             => 0,
+    'AAs'               => 0,
+    'factions'          => 0,
+    'advfactions'       => 0,
+    'skills'            => 0,
+    'languageskills'    => 1,
+    'keys'              => 0,
+    'signatures'        => 0),
+'ROLEPLAY' => array(
+    'inventory'         => 0,
+    'coininventory'     => 0,
+    'coinbank'          => 1,
+    'bags'              => 0,
+    'bank'              => 1,
+    'corpses'           => 0,
+    'flags'             => 0,
+    'AAs'               => 0,
+    'factions'          => 0,
+    'advfactions'       => 1,
+    'skills'            => 0,
+    'languageskills'    => 1,
+    'keys'              => 1,
+    'signatures'        => 0),
+'ANON' => array(
+    'inventory'         => 0,
+    'coininventory'     => 1,
+    'coinbank'          => 1,
+    'bags'              => 1,
+    'bank'              => 1,
+    'corpses'           => 1,
+    'flags'             => 1,
+    'AAs'               => 1,
+    'factions'          => 1,
+    'advfactions'       => 1,
+    'skills'            => 1,
+    'languageskills'    => 1,
+    'keys'              => 1,
+    'signatures'        => 0),
+'GM' => array(
+    'inventory'         => 0,
+    'coininventory'     => 0,
+    'coinbank'          => 0,
+    'bags'              => 0,
+    'bank'              => 0,
+    'corpses'           => 0,
+    'flags'             => 0,
+    'AAs'               => 0,
+    'factions'          => 0,
+    'advfactions'       => 1,
+    'skills'            => 0,
+    'languageskills'    => 1,
+    'keys'              => 1,
+    'signatures'        => 0),
+'PUBLIC' => array(
+    'inventory'         => 0,
+    'coininventory'     => 0,
+    'coinbank'          => 0,
+    'bags'              => 0,
+    'bank'              => 0,
+    'corpses'           => 0,
+    'flags'             => 0,
+    'AAs'               => 0,
+    'factions'          => 0,
+    'advfactions'       => 1,
+    'skills'            => 0,
+    'languageskills'    => 1,
+    'keys'              => 0,
+    'signatures'        => 0),
+'PRIVATE' => array(
+    'inventory'         => 1,
+    'coininventory'     => 1,
+    'coinbank'          => 1,
+    'bags'              => 1,
+    'bank'              => 1,
+    'corpses'           => 1,
+    'flags'             => 1,
+    'AAs'               => 1,
+    'factions'          => 1,
+    'advfactions'       => 1,
+    'skills'            => 1,
+    'languageskills'    => 1,
+    'keys'              => 1,
+    'signatures'        => 0)
+);
+/*****************************************************/
+
+
+
+
+
+
+
+/*****************************************************
+**  If you use advertising banner paste the html    **
+**  into this variable and it will be a banner      **
+**  at the top of every page. Add <center> tags     **
+**  if you want it centered; default is left align. **
+*****************************************************/
+$adscript = "";
+/****************************************************/
+
+
+
+/*************************************************************************************************
+**                                        EXTERNAL LINKS                                        **
+**  Adjusting these values will cause links that point to external database, i.e., item and     **
+**  spell links to be redirected to the site of your choice. The curly braced items are values  **
+**  that will be replaced automatically based on the context. Order doesn't mater, and you can  **
+**  include multiple or leave some out. A list of valid values is above each link template.     **
+**************************************************************************************************/
+
+//a link to an item using the item id 
+//{ITEM_ID} - The ID of the item
+$link_item = "http://mqemulator.net/item.php?id={ITEM_ID}";
+
+//a link to a spell using the spell id 
+//{SPELL_ID} - The ID of the spell
+$link_spell = "http://mqemulator.net/spell.php?id={SPELL_ID}";
+
+//a link to a zone using a shortname or id 
+//{ZONE_SHORTNAME} - The shortname of the zone
+//{ZONE_ID} - The ID of the zone
+$link_zone = "http://mqemulator.net/zone.php?name={ZONE_SHORTNAME}";
+
+//a link to a map with a text marker on a specific x/y coordinate
+//this is used to show a player where their corpse is 
+//{ZONE_SHORTNAME} - The shortname of the zone
+//{ZONE_ID} - The ID of the zone
+//{TEXT} - The text of the marker on the map (corpse name)
+//{X} - The X coordinate of the marker on the map
+//{Y} - The Y coordinate of the marker on the map
+$link_map = "http://mqemulator.net/map.php?zoneid={ZONE_ID}&poi={TEXT}&poix={X}&poiy={Y}&grid=100";
+
+//a link to information about a faction using the faction id.
+//{FACTION_ID} - The ID of the faction group
+$link_faction = "http://mqemulator.net/faction.php?id={FACTION_ID}";
+/**************************************************************************************************/
+
+
+/****************************************************
+**                 DATABASE STATS                  **
+**  uncommenting this will dump database           **
+**  statistics at the bottom of each page          **
+**                                                 **
+**  WARNING: this will be publicly viewable        **
+****************************************************/
+//define('DB_PERFORMANCE',true);
+/****************************************************/
+
+
+
+/******************************************************
+*******************************************************
+****              STOP EDITING HERE                ****
+*******************************************************
+******************************************************/
+?>

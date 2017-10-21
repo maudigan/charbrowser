@@ -8,34 +8,32 @@
       alert ('{L_NEED_NAME}');
       return;
     }
-    
-    var sigdir = document.sigform.sigdir.value;																																								
 
-    var path = sigdir + "cbsig/" + 
-	document.sigform.fontone.value + "-" + 
-	document.sigform.sizeone.value + "-" + 
-	document.sigform.colorone.value + "-" + 
-	document.sigform.shadowone.value + "/" + 
-	document.sigform.fonttwo.value + "-" + 
-	document.sigform.sizetwo.value + "-" + 
-	document.sigform.colortwo.value + "-" + 
-	document.sigform.shadowtwo.value + "/" + 
-	document.sigform.epicborder.value + "/" + 
-	document.sigform.statborder.value + "-" + 
-	document.sigform.statcolor.value + "-" + 
-	document.sigform.statone.value + "-" + 
-	document.sigform.stattwo.value + "-" + 
-	document.sigform.statthree.value + "-" + 
-	document.sigform.statfour.value + "-" + 
-	document.sigform.statfive.value + "/" +  
-	document.sigform.border.value + "/" +  
-	document.sigform.bgcolor.value + "-" +  
-	document.sigform.mainbg.value + "-" +  
-	document.sigform.mainscreen.value + "/" +  
-	name + ".png";
+    var path = "{SIGNATURE_ROOT_URL}cbsig/" + 
+   document.sigform.fontone.value + "-" + 
+   document.sigform.sizeone.value + "-" + 
+   document.sigform.colorone.value + "-" + 
+   document.sigform.shadowone.value + "/" + 
+   document.sigform.fonttwo.value + "-" + 
+   document.sigform.sizetwo.value + "-" + 
+   document.sigform.colortwo.value + "-" + 
+   document.sigform.shadowtwo.value + "/" + 
+   document.sigform.epicborder.value + "/" + 
+   document.sigform.statborder.value + "-" + 
+   document.sigform.statcolor.value + "-" + 
+   document.sigform.statone.value + "-" + 
+   document.sigform.stattwo.value + "-" + 
+   document.sigform.statthree.value + "-" + 
+   document.sigform.statfour.value + "-" + 
+   document.sigform.statfive.value + "/" +  
+   document.sigform.border.value + "/" +  
+   document.sigform.bgcolor.value + "-" +  
+   document.sigform.mainbg.value + "-" +  
+   document.sigform.mainscreen.value + "/" +  
+   name + ".png";
 
-    document.sigform.bbcode.value = "[url=" + sigdir + "character.php?char=" + name + "][img]" + path + "[/img][/url]";
-    document.sigform.html.value = "<a href='" + sigdir + "character.php?char=" + name + "'><img src='" + path + "'></a>";
+    document.sigform.bbcode.value = "[url={SIGNATURE_INDEX_URL}?page=character&char=" + name + "][img]" + path + "[/img][/url]";
+    document.sigform.html.value = "<a href='{SIGNATURE_INDEX_URL}?page=character&char=" + name + "'><img src='" + path + "'></a>";
     document.preview.src = path;
 
   }
@@ -51,7 +49,6 @@
     </div>
     <div class='FlagInner'>  
       <form name='sigform' onsubmit="return false;"> 
-        <input type='hidden' name='sigdir' value='{SIGNATURE_DIR}'>
     	  <div class='FlagTabBox' >        
 	    <table class='StatTable' style='width:90%;'>
 	      <tr><td colspan='5'>
@@ -227,7 +224,7 @@
 	        <textarea name='html' class='SigBuilder' style="width:500px;height:50px;"></textarea><br>
 	        <br>
 	        {L_PREVIEW}<br>	        
-	        <img name='preview' src="{SIGNATURE_DIR}cbsig/0/0/0/0/0/0/0.png">
+	        <img name='preview' src="{SIGNATURE_ROOT_URL}cbsig/0/0/0/0/0/0/0.png">
 	      </td></tr>
 	    </table>
 	  </div>

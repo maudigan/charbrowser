@@ -39,12 +39,12 @@
                  INCLUDES
 *********************************************/ 
 define('INCHARBROWSER', true);
-include_once("include/config.php");
-include_once("include/profile.php");
-include_once("include/global.php");
-include_once("include/language.php");
-include_once("include/functions.php");
-include_once("include/db.php");
+include_once(__DIR__ . "/include/config.php");
+include_once(__DIR__ . "/include/profile.php");
+include_once(__DIR__ . "/include/global.php");
+include_once(__DIR__ . "/include/language.php");
+include_once(__DIR__ . "/include/functions.php");
+include_once(__DIR__ . "/include/db.php");
  
  
 /*********************************************
@@ -99,7 +99,7 @@ function getRankCost($first_rank, $value)
 /*********************************************
          SETUP PROFILE/PERMISSIONS
 *********************************************/
-if(!$_GET['char']) message_die($language['MESSAGE_ERROR'],$language['MESSAGE_NO_CHAR']);
+if(!$_GET['char']) cb_message_die($language['MESSAGE_ERROR'],$language['MESSAGE_NO_CHAR']);
 else $charName = $_GET['char'];
 
 //character initializations 
@@ -109,7 +109,7 @@ $name = $char->GetValue('name');
 $mypermission = GetPermissions($char->GetValue('gm'), $char->GetValue('anon'), $char->char_id());
 
 //block view if user level doesnt have permission
-if ($mypermission['AAs']) message_die($language['MESSAGE_ERROR'],$language['MESSAGE_ITEM_NO_VIEW']);
+if ($mypermission['AAs']) cb_message_die($language['MESSAGE_ERROR'],$language['MESSAGE_ITEM_NO_VIEW']);
  
  
 /*********************************************
@@ -183,23 +183,23 @@ while ($row = cbsql_nextrow($result))
                DROP HEADER
 *********************************************/
 $d_title = " - ".$name.$language['PAGE_TITLES_AAS'];
-include("include/header.php");
+include(__DIR__ . "/include/header.php");
  
  
 /*********************************************
               POPULATE BODY
 *********************************************/
-$template->set_filenames(array(
+$cb_template->set_filenames(array(
   'aas' => 'aas_body.tpl')
 );
 
 
-$template->assign_both_vars(array(  
+$cb_template->assign_both_vars(array(  
    'NAME' => $name,
    'AA_POINTS' => $char->GetValue("aa_points"), 
    'POINTS_SPENT' => $char->GetValue("aa_points_spent"))
 );
-$template->assign_vars(array(  
+$cb_template->assign_vars(array(  
    'L_ALTERNATE_ABILITIES' => $language['AAS_ALTERNATE_ABILITIES'], 
    'L_TITLE' => $language['AAS_TITLE'],
    'L_CUR_MAX' => $language['AAS_CUR_MAX'],
@@ -222,7 +222,7 @@ $template->assign_vars(array(
 //     get set using two stylesheet flags... maybe
 $Color = "7b714a";
 foreach ($aatabs as $key => $value) {
-  $template->assign_block_vars("tabs", array( 
+  $cb_template->assign_block_vars("tabs", array( 
     'COLOR' => $Color,      
     'ID' => $key,
     'TEXT' => $value)
@@ -239,7 +239,7 @@ foreach ($aa_abilities as $aa_ability)
    if ($aa_ability['TYPE'] != $lasttype)
    {
       $lasttype = $aa_ability['TYPE'];
-      $template->assign_both_block_vars("boxes", array(       
+      $cb_template->assign_both_block_vars("boxes", array(       
          'ID' => $lasttype,
          'DISPLAY' => $Display)
       );
@@ -247,16 +247,16 @@ foreach ($aa_abilities as $aa_ability)
    }
 
    //output the row
-   $template->assign_both_block_vars("boxes.aas", $aa_ability);
+   $cb_template->assign_both_block_vars("boxes.aas", $aa_ability);
 }
  
  
 /*********************************************
            OUTPUT BODY AND FOOTER
 *********************************************/
-$template->pparse('aas');
+$cb_template->pparse('aas');
 
-$template->destroy;
+$cb_template->destroy;
 
-include("include/footer.php");
+include(__DIR__ . "/include/footer.php");
 ?>

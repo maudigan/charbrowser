@@ -31,15 +31,15 @@
                  INCLUDES
 *********************************************/ 
 define('INCHARBROWSER', true);
-include_once("include/config.php");
-include_once("include/global.php");
-include_once("include/language.php");
-include_once("include/functions.php");
-include_once("include/profile.php");
-include_once("include/itemclass.php");
-include_once("include/statsclass.php");
-include_once("include/calculatestats.php");
-include_once("include/db.php");
+include_once(__DIR__ . "/include/config.php");
+include_once(__DIR__ . "/include/global.php");
+include_once(__DIR__ . "/include/language.php");
+include_once(__DIR__ . "/include/functions.php");
+include_once(__DIR__ . "/include/profile.php");
+include_once(__DIR__ . "/include/itemclass.php");
+include_once(__DIR__ . "/include/statsclass.php");
+include_once(__DIR__ . "/include/calculatestats.php");
+include_once(__DIR__ . "/include/db.php");
  
  
 /*********************************************
@@ -64,8 +64,8 @@ function HexToRGB($hex) {
 
 
 //used for outputting errors since any text output will cause broken image links
-//should be similar to message_die in functions.php
-function png_message_die($error, $message) {
+//should be similar to cb_message_die in functions.php
+function png_cb_message_die($error, $message) {
    global $signaturewidth, $signatureheight, $defaultcolor;
    $error_image = imagecreatetruecolor($signaturewidth, $signatureheight);
    $error_color = imagecolorallocate($error_image, $defaultcolor['r'], $defaultcolor['g'], $defaultcolor['b']);
@@ -160,7 +160,7 @@ $signatureheight = 100;
 /*********************************************
          SETUP PROFILE/PERMISSIONS
 *********************************************/
-if(!$_GET['char']) png_message_die($language['MESSAGE_ERROR'],$language['MESSAGE_NO_CHAR']);
+if(!$_GET['char']) png_cb_message_die($language['MESSAGE_ERROR'],$language['MESSAGE_NO_CHAR']);
 else $charName = $_GET['char'];
 
 //character initializations
@@ -170,7 +170,7 @@ $name = $char->GetValue('name');
 $mypermission = GetPermissions($char->GetValue('gm'), $char->GetValue('anon'), $char->char_id());
 
 //block view if user level doesnt have permission
-if ($mypermission['signatures']) png_message_die($language['MESSAGE_ERROR'],$language['MESSAGE_ITEM_NO_VIEW']);
+if ($mypermission['signatures']) png_cb_message_die($language['MESSAGE_ERROR'],$language['MESSAGE_ITEM_NO_VIEW']);
 
 
 /*********************************************
@@ -324,7 +324,7 @@ $stats = array(
 *********************************************/
 
 /**************************************************
-**  DO NOT USE png_message_die past this point   **
+**  DO NOT USE png_cb_message_die past this point   **
 **************************************************/
 
 //create image

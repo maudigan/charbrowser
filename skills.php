@@ -31,17 +31,17 @@
                  INCLUDES
 *********************************************/ 
 define('INCHARBROWSER', true);
-include_once("include/config.php");
-include_once("include/profile.php");
-include_once("include/global.php");
-include_once("include/language.php");
-include_once("include/functions.php");
+include_once(__DIR__ . "/include/config.php");
+include_once(__DIR__ . "/include/profile.php");
+include_once(__DIR__ . "/include/global.php");
+include_once(__DIR__ . "/include/language.php");
+include_once(__DIR__ . "/include/functions.php");
   
  
 /*********************************************
          SETUP PROFILE/PERMISSIONS
 *********************************************/
-if(!$_GET['char']) message_die($language['MESSAGE_ERROR'],$language['MESSAGE_NO_CHAR']);
+if(!$_GET['char']) cb_message_die($language['MESSAGE_ERROR'],$language['MESSAGE_NO_CHAR']);
 else $charName = $_GET['char'];
 
 //character initializations 
@@ -51,25 +51,25 @@ $name = $char->GetValue('name');
 $mypermission = GetPermissions($char->GetValue('gm'), $char->GetValue('anon'), $char->char_id());
 
 //block view if user level doesnt have permission
-if ($mypermission['skills']) message_die($language['MESSAGE_ERROR'],$language['MESSAGE_ITEM_NO_VIEW']);
+if ($mypermission['skills']) cb_message_die($language['MESSAGE_ERROR'],$language['MESSAGE_ITEM_NO_VIEW']);
  
  
 /*********************************************
                DROP HEADER
 *********************************************/
 $d_title = " - ".$name.$language['PAGE_TITLES_SKILLS'];
-include("include/header.php");
+include(__DIR__ . "/include/header.php");
 
  
  
 /*********************************************
               POPULATE BODY
 *********************************************/
-$template->set_filenames(array(
+$cb_template->set_filenames(array(
    'skills' => 'skills_body.tpl')
 );
 
-$template->assign_both_vars(array(  
+$cb_template->assign_both_vars(array(  
    'NAME' => $name,
    '1H_BLUNT' => $char->GetValue('1h_blunt'), //TODO all these are in multi row tables now, needs updates
    '1H_SLASHING' => $char->GetValue('1h_slashing'), 
@@ -156,7 +156,7 @@ $template->assign_both_vars(array(
    'POTTERY' => $char->GetValue('pottery'))
 );   
 
-$template->assign_vars(array( 
+$cb_template->assign_vars(array( 
    'L_TRADE' => $language['SKILLS_TRADE'],
    'L_OTHER' => $language['SKILLS_OTHER'], 
    'L_CLASS' => $language['SKILLS_CLASS'],
@@ -178,7 +178,7 @@ $template->assign_vars(array(
 
 
 if (!$mypermission['languageskills']) {
-   $template->assign_both_block_vars("switch_language", array( 
+   $cb_template->assign_both_block_vars("switch_language", array( 
       'COMMON_TONGUE' => $char->GetValue('common_tongue'), 
       'BARBARIAN' => $char->GetValue('barbarian'), 
       'ERUDIAN' => $char->GetValue('erudian'), 
@@ -211,9 +211,9 @@ if (!$mypermission['languageskills']) {
 /*********************************************
            OUTPUT BODY AND FOOTER
 *********************************************/
-$template->pparse('skills');
+$cb_template->pparse('skills');
 
-$template->destroy;
+$cb_template->destroy;
 
-include("include/footer.php");
+include(__DIR__ . "/include/footer.php");
 ?>

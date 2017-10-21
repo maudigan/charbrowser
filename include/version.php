@@ -25,6 +25,6 @@ if ( !defined('INCHARBROWSER') )
 }
 
 //version information
-$version      =    "2.52"; 
+$version      =    "2.6"; 
 
 ?>

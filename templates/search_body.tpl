@@ -15,8 +15,8 @@
           </tr>
         <!-- BEGIN characters -->
           <tr>
-            <td><a href="character.php?char={characters.NAME}">{characters.NAME}</a></td>
-            <td>{characters.GUILD_NAME}</td>	      
+            <td><a href="{INDEX_URL}?page=character&char={characters.NAME}">{characters.NAME}</a></td>
+            <td>{characters.GUILD_NAME}</td>      
             <td>{characters.LEVEL}</td>
             <td>{characters.CLASS}</td>
           </tr>

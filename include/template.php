@@ -28,8 +28,8 @@
    die("Hacking attempt");
 }
 
-class Template {
-   var $classname = "Template";
+class CB_Template {
+   var $classname = "CB_Template";
 
    // variable that holds all the data we'll be substituting into
    // the compiled templates.
@@ -62,7 +62,7 @@ class Template {
     * Constructor. Simply sets the root dir.
     *
     */
-   function Template($root = ".")
+   function CB_Template($root = ".")
    {
       $this->set_rootdir($root);
    }
@@ -133,7 +133,7 @@ class Template {
       
       if (!$this->loadfile($handle))
       {
-         die("Template->pparse(): Couldn't load template file for handle $handle");
+         die("CB_Template->pparse(): Couldn't load template file for handle $handle");
       }
 
       // actually compile the template now.
@@ -163,7 +163,7 @@ class Template {
       
       if (!$this->loadfile($handle))
       {
-         die("Template->pparse_str(): Couldn't load template file for handle $handle");
+         die("CB_Template->pparse_str(): Couldn't load template file for handle $handle");
       }
 
       // Compile it, with the "no echo statements" option on.
@@ -198,7 +198,7 @@ class Template {
    {
       if (!$this->loadfile($handle))
       {
-         die("Template->assign_var_from_handle(): Couldn't load template file for handle $handle");
+         die("CB_Template->assign_var_from_handle(): Couldn't load template file for handle $handle");
       }
 
       // Compile it, with the "no echo statements" option on.
@@ -404,7 +404,7 @@ class Template {
 
       if (!file_exists($filename))
       {
-         die("Template->make_filename(): Error - file $filename does not exist");
+         die("CB_Template->make_filename(): Error - file $filename does not exist");
       }
 
       return $filename;
@@ -426,7 +426,7 @@ class Template {
       // If we don't have a file assigned to this handle, die.
       if (!isset($this->files[$handle]))
       {
-         die("Template->loadfile(): No file specified for handle $handle");
+         die("CB_Template->loadfile(): No file specified for handle $handle");
       }
 
       $filename = $this->files[$handle];
@@ -434,7 +434,7 @@ class Template {
       $str = implode("", @file($filename));
       if (empty($str))
       {
-         die("Template->loadfile(): File $filename for handle $handle is empty");
+         die("CB_Template->loadfile(): File $filename for handle $handle is empty");
       }
 
       $this->uncompiled_code[$handle] = $str;

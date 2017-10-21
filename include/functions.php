@@ -32,8 +32,8 @@ if ( !defined('INCHARBROWSER') )
    die("Hacking attempt");
 }
 
-include_once("language.php");
-include_once("config.php");
+include_once(__DIR__ . "/language.php");
+include_once(__DIR__ . "/config.php");
 
 //holds timers
 $timers = array();
@@ -82,54 +82,58 @@ TPL;
    return $permissions['ALL'];
 }
 
-function message_die($dietitle, $text) {
+function cb_message_die($dietitle, $text) {
    global $language;
-   global $template;
+   global $cb_template;
+   //these have to be included to pass through to header.php
+   global $charbrowser_root_url;
+   global $charbrowser_wrapped;
+   global $charbrowser_simple_header;
    
    //drop page
    $d_title = " - ".$dietitle;
-   include("include/header.php");
+   include(__DIR__ . "/header.php");
    
-   $template->set_filenames(array(
+   $cb_template->set_filenames(array(
      'message' => 'message_body.tpl')
    );
    
-   $template->assign_both_vars(array(  
+   $cb_template->assign_both_vars(array(  
       'DIETITLE' => $dietitle,
       'TEXT' => $text)
    );
-   $template->assign_vars(array(      
+   $cb_template->assign_vars(array(      
       'L_BACK' => $language['BUTTON_BACK'])
    );
    
-   $template->pparse('message');
+   $cb_template->pparse('message');
    
    //dump footer
-   include("include/footer.php");
+   include(__DIR__ . "/footer.php");
    exit();
 }
 
-function message($title, $text) {
+function cb_message($title, $text) {
    global $language;
-   global $template;
-   $template->set_filenames(array(
+   global $cb_template;
+   $cb_template->set_filenames(array(
       'message' => 'message_body.tpl')
    );
 
-   $template->assign_both_vars(array(  
+   $cb_template->assign_both_vars(array(  
       'TITLE' => $title,
       'TEXT' => $text)
    );
-   $template->assign_vars(array( 
+   $cb_template->assign_vars(array( 
       'L_BACK' => $language['BUTTON_BACK'])
    );
 
-   $template->pparse('message');
+   $cb_template->pparse('message');
 
 }
 
 
-function generate_pagination($base_url, $num_items, $per_page, $start_item, $add_prevnext_text = TRUE)
+function cb_generate_pagination($base_url, $num_items, $per_page, $start_item, $add_prevnext_text = TRUE)
 {
    global $language;
 
@@ -256,18 +260,18 @@ function IsAlphaNumericSpace($str)
 //in it such as {X}, the second parm is an array with
 //matching values as indexes and what they should
 //be changed to, such as "X" => "255".
-function QuickTemplate($template, $values)
+function QuickTemplate($cb_template, $values)
 {
    //if the provided values aren't an array then
    //just return the template
-   if (!is_array($values)) return $template;
+   if (!is_array($values)) return $cb_template;
    
    //find and replace each value
    foreach($values as $find => $replace)
    {
-      $template = str_replace("{".$find."}", $replace, $template);
+      $cb_template = str_replace("{".$find."}", $replace, $cb_template);
    }
    
-   return $template;
+   return $cb_template;
 }
 ?>

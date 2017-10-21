@@ -36,12 +36,12 @@
                  INCLUDES
 *********************************************/ 
 define('INCHARBROWSER', true);
-include_once("include/config.php");
-include_once("include/profile.php");
-include_once("include/global.php");
-include_once("include/language.php");
-include_once("include/functions.php");
-include_once("include/db.php");
+include_once(__DIR__ . "/include/config.php");
+include_once(__DIR__ . "/include/profile.php");
+include_once(__DIR__ . "/include/global.php");
+include_once(__DIR__ . "/include/language.php");
+include_once(__DIR__ . "/include/functions.php");
+include_once(__DIR__ . "/include/db.php");
  
  
 /*********************************************
@@ -66,7 +66,7 @@ function FactionToString($character_value) {
 /*********************************************
          SETUP PROFILE/PERMISSIONS
 *********************************************/
-if(!$_GET['char']) message_die($language['MESSAGE_ERROR'],$language['MESSAGE_NO_CHAR']);
+if(!$_GET['char']) cb_message_die($language['MESSAGE_ERROR'],$language['MESSAGE_NO_CHAR']);
 else $charName = $_GET['char'];
 
 //character initializations 
@@ -76,7 +76,7 @@ $name = $char->GetValue('name');
 $mypermission = GetPermissions($char->GetValue('gm'), $char->GetValue('anon'), $char->char_id());
 
 //block view if user level doesnt have permission
-if ($mypermission['factions']) message_die($language['MESSAGE_ERROR'],$language['MESSAGE_ITEM_NO_VIEW']);
+if ($mypermission['factions']) cb_message_die($language['MESSAGE_ERROR'],$language['MESSAGE_ITEM_NO_VIEW']);
  
  
 /*********************************************
@@ -121,27 +121,27 @@ while ($row = cbsql_nextrow($result)) {
                DROP HEADER
 *********************************************/
 $d_title = " - ".$name.$language['PAGE_TITLES_FACTIONS'];
-include("include/header.php");
+include(__DIR__ . "/include/header.php");
  
  
 /*********************************************
               POPULATE BODY
 *********************************************/
 if (!$mypermission['advfactions']) {
-   $template->set_filenames(array(
+   $cb_template->set_filenames(array(
       'factions' => 'factions_advanced_body.tpl')
    );
 }
 else {
-   $template->set_filenames(array(
+   $cb_template->set_filenames(array(
       'factions' => 'factions_basic_body.tpl')
    );
 }
 
-$template->assign_both_vars(array(  
+$cb_template->assign_both_vars(array(  
    'NAME'        => $name)
 );
-$template->assign_vars(array(  
+$cb_template->assign_vars(array(  
    'L_FACTIONS'  => $language['FACTION_FACTIONS'],
    'L_NAME'      => $language['FACTION_NAME'],
    'L_FACTION'   => $language['FACTION_FACTION'],
@@ -165,7 +165,7 @@ $template->assign_vars(array(
   
 foreach($factions as $faction) {
    $total = $faction['base'] + $faction['charmod'] + $faction['classmod'] + $faction['racemod'] + $faction['deitymod'];
-   $template->assign_both_block_vars("factions", array( 
+   $cb_template->assign_both_block_vars("factions", array( 
       'ID'      => $faction['id'],
       'LINK' => QuickTemplate($link_faction, array('FACTION_ID' => $faction['id'])),
       'NAME'    => $faction['name'],
@@ -183,9 +183,9 @@ foreach($factions as $faction) {
 /*********************************************
            OUTPUT BODY AND FOOTER
 *********************************************/
-$template->pparse('factions');
+$cb_template->pparse('factions');
 
-$template->destroy;
+$cb_template->destroy;
 
-include("include/footer.php");
+include(__DIR__ . "/include/footer.php");
 ?>

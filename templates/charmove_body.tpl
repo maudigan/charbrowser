@@ -6,20 +6,21 @@
       <div class='FlagTitleRight'></div>
     </div>
     <div class='FlagInner'>  
-      <form name='charmoveform' method='GET' action='charmove.php'> 
-                <br>
-                <table class='StatTable' style='width:auto'>
-                  <tr>
-                    <td valign='bottom' align='right'>
-                      <div id='inputboxes' style="float: right;"></div>
-                    </td>
-                    <td valign='bottom' align='left'>
-                      &nbsp;&nbsp;&nbsp;<a href=# onclick="addInput();">[{L_ADD_CHARACTER}]</a>
-                    </td>
-                  </tr>
-                </table>
-                <br>
-                <div class='FreeButton' onclick="document.charmoveform.submit();">{L_MOVE}</div>
+      <form name='charmoveform' method='GET' action='{INDEX_URL}'>
+         <input type='hidden' name='page' value='charmove'> 
+          <br>
+          <table class='StatTable' style='width:auto'>
+            <tr>
+              <td valign='bottom' align='right'>
+                <div id='inputboxes' style="float: right;"></div>
+              </td>
+              <td valign='bottom' align='left'>
+                &nbsp;&nbsp;&nbsp;<a href=# onclick="addInput();">[{L_ADD_CHARACTER}]</a>
+              </td>
+            </tr>
+          </table>
+          <br>
+          <div class='FreeButton' onclick="document.charmoveform.submit();">{L_MOVE}</div>
       </form>
     </div>
   </div>

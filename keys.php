@@ -33,18 +33,18 @@
                  INCLUDES
 *********************************************/ 
 define('INCHARBROWSER', true); 
-include_once("include/config.php");
-include_once("include/profile.php");
-include_once("include/global.php");
-include_once("include/language.php");
-include_once("include/functions.php");
-include_once("include/db.php");
+include_once(__DIR__ . "/include/config.php");
+include_once(__DIR__ . "/include/profile.php");
+include_once(__DIR__ . "/include/global.php");
+include_once(__DIR__ . "/include/language.php");
+include_once(__DIR__ . "/include/functions.php");
+include_once(__DIR__ . "/include/db.php");
   
  
 /*********************************************
          SETUP PROFILE/PERMISSIONS
 *********************************************/
-if(!$_GET['char']) message_die($language['MESSAGE_ERROR'],$language['MESSAGE_NO_CHAR']); 
+if(!$_GET['char']) cb_message_die($language['MESSAGE_ERROR'],$language['MESSAGE_NO_CHAR']); 
 else $charName = $_GET['char']; 
 
 //character initializations
@@ -54,7 +54,7 @@ $name = $char->GetValue('name');
 $mypermission = GetPermissions($char->GetValue('gm'), $char->GetValue('anon'), $char->char_id());
 
 //block view if user level doesnt have permission 
-if ($mypermission['keys']) message_die($language['MESSAGE_ERROR'],$language['MESSAGE_ITEM_NO_VIEW']); 
+if ($mypermission['keys']) cb_message_die($language['MESSAGE_ERROR'],$language['MESSAGE_ITEM_NO_VIEW']); 
  
  
 /*********************************************
@@ -76,27 +76,27 @@ if (cbsql_rows($result))
    while($row = cbsql_nextrow($result)) 
       $keys[] = $row;
 else
-   message_die($language['KEYS_KEY']." - ".$name,$language['MESSAGE_NO_KEYS']);
+   cb_message_die($language['KEYS_KEY']." - ".$name,$language['MESSAGE_NO_KEYS']);
  
  
 /*********************************************
                DROP HEADER
 *********************************************/
 $d_title = " - ".$name.$language['PAGE_TITLES_KEYS']; 
-include("include/header.php"); 
+include(__DIR__ . "/include/header.php"); 
  
  
 /*********************************************
               POPULATE BODY
 *********************************************/
-$template->set_filenames(array( 
+$cb_template->set_filenames(array( 
    'keys' => 'keys_body.tpl') 
 ); 
 
-$template->assign_both_vars(array(  
+$cb_template->assign_both_vars(array(  
    'NAME' => $name)
 );
-$template->assign_vars(array(  
+$cb_template->assign_vars(array(  
    'L_KEY' => $language['KEYS_KEY'],
    'L_KEYS' => $language['BUTTON_KEYS'],
    'L_AAS' => $language['BUTTON_AAS'],
@@ -111,7 +111,7 @@ $template->assign_vars(array(
 );
 
 foreach ($keys as $key) {
-   $template->assign_both_block_vars("keys", array( 
+   $cb_template->assign_both_block_vars("keys", array( 
       'KEY' => $key['key'],
       'ITEM_ID' => $key["item_id"],
       'LINK' => QuickTemplate($link_item, array('ITEM_ID' => $key["item_id"])))
@@ -122,9 +122,9 @@ foreach ($keys as $key) {
 /*********************************************
            OUTPUT BODY AND FOOTER
 *********************************************/
-$template->pparse('keys');
+$cb_template->pparse('keys');
 
-$template->destroy;
+$cb_template->destroy;
 
-include("include/footer.php"); 
+include(__DIR__ . "/include/footer.php"); 
 ?>

@@ -35,21 +35,21 @@
                  INCLUDES
 *********************************************/ 
 define('INCHARBROWSER', true);
-include_once("include/config.php");
-include_once("include/global.php");
-include_once("include/language.php");
-include_once("include/functions.php");
-include_once("include/profile.php");
-include_once("include/itemclass.php");
-include_once("include/statsclass.php");
-include_once("include/calculatestats.php");
-include_once("include/db.php");
+include_once(__DIR__ . "/include/config.php");
+include_once(__DIR__ . "/include/global.php");
+include_once(__DIR__ . "/include/language.php");
+include_once(__DIR__ . "/include/functions.php");
+include_once(__DIR__ . "/include/profile.php");
+include_once(__DIR__ . "/include/itemclass.php");
+include_once(__DIR__ . "/include/statsclass.php");
+include_once(__DIR__ . "/include/calculatestats.php");
+include_once(__DIR__ . "/include/db.php");
   
  
 /*********************************************
          SETUP PROFILE/PERMISSIONS
 *********************************************/
-if(!$_GET['char']) message_die($language['MESSAGE_ERROR'],$language['MESSAGE_NO_CHAR']);
+if(!$_GET['char']) cb_message_die($language['MESSAGE_ERROR'],$language['MESSAGE_NO_CHAR']);
 else $charName = $_GET['char'];
      
 //character initializations 
@@ -59,7 +59,7 @@ $name = $char->GetValue('name');
 $mypermission = GetPermissions($char->GetValue('gm'), $char->GetValue('anon'), $char->char_id());
 
 //block view if user level doesnt have permission
-if ($mypermission['inventory']) message_die($language['MESSAGE_ERROR'],$language['MESSAGE_ITEM_NO_VIEW']);
+if ($mypermission['inventory']) cb_message_die($language['MESSAGE_ERROR'],$language['MESSAGE_ITEM_NO_VIEW']);
  
  
 /*********************************************
@@ -161,17 +161,17 @@ while ($row = cbsql_nextrow($result)) {
                DROP HEADER
 *********************************************/
 $d_title = " - ".$name.$language['PAGE_TITLES_CHARACTER'];
-include("include/header.php");
+include(__DIR__ . "/include/header.php");
  
  
 /*********************************************
               POPULATE BODY
 *********************************************/
-$template->set_filenames(array(
+$cb_template->set_filenames(array(
   'character' => 'character_body.tpl')
 );
 
-$template->assign_both_vars(array(  
+$cb_template->assign_both_vars(array(  
    'HIGHLIGHT_GM' => (($highlightgm && $gm)? "GM":""),
    'REGEN' => $itemstats->regen(),
    'FT' => $itemstats->FT(),
@@ -226,7 +226,7 @@ $template->assign_both_vars(array(
    'BCP' => (($mypermission['coinbank'])?$language['MESSAGE_DISABLED']:$bcp))
 );
 
-$template->assign_vars(array(  
+$cb_template->assign_vars(array(  
    'L_HEADER_INVENTORY' => $language['CHAR_INVENTORY'],
    'L_HEADER_BANK' => $language['CHAR_BANK'],
    'L_REGEN' => $language['CHAR_REGEN'],
@@ -282,7 +282,7 @@ $template->assign_vars(array(
 foreach ($allitems as $value) {
    if ($value->type() == INVENTORY && $mypermission['bags']) continue; 
    if ($value->type() == EQUIPMENT || $value->type() == INVENTORY)
-      $template->assign_block_vars("invitem", array( 
+      $cb_template->assign_block_vars("invitem", array( 
          'SLOT' => $value->slot(),      
          'ICON' => $value->icon(),
          'ISBAG' => (($value->slotcount() > 0) ? "true":"false"))
@@ -297,19 +297,19 @@ foreach ($allitems as $value) {
    if ($value->type() == BANK && $mypermission['bank']) continue;
    if ($value->slotcount() > 0)  {
   
-      $template->assign_block_vars("bags", array( 
+      $cb_template->assign_block_vars("bags", array( 
          'SLOT' => $value->slot(),      
          'ROWS' => floor($value->slotcount()/2))
       );
        
       for ($i = 1;$i <= $value->slotcount(); $i++) 
-         $template->assign_block_vars("bags.bagslots", array( 
+         $cb_template->assign_block_vars("bags.bagslots", array( 
             'BS_SLOT' => $i)
          );
          
       foreach ($allitems as $subvalue) 
          if ($subvalue->type() == $value->slot()) 
-            $template->assign_block_vars("bags.bagitems", array( 
+            $cb_template->assign_block_vars("bags.bagitems", array( 
                'BI_SLOT' => $subvalue->slot(),
                'BI_RELATIVE_SLOT' => $subvalue->vslot(),
                'BI_ICON' => $subvalue->icon())
@@ -322,7 +322,7 @@ foreach ($allitems as $value) {
 if (!$mypermission['bank']) {
    foreach ($allitems as $value) {
       if ($value->type() == BANK) 
-         $template->assign_block_vars("bankitem", array( 
+         $cb_template->assign_block_vars("bankitem", array( 
             'SLOT' => $value->slot(),  
             'ICON' => $value->icon(),
             'ISBAG' => (($value->slotcount() > 0) ? "true":"false"))
@@ -334,7 +334,7 @@ if (!$mypermission['bank']) {
 foreach ($allitems as $value) {
    if ($value->type() == INVENTORY && $mypermission['bags']) continue; 
    if ($value->type() == BANK && $mypermission['bank']) continue;
-      $template->assign_both_block_vars("item", array(
+      $cb_template->assign_both_block_vars("item", array(
          'SLOT' => $value->slot(),     
          'ICON' => $value->icon(),   
          'NAME' => $value->name(),
@@ -343,7 +343,7 @@ foreach ($allitems as $value) {
          'HTML' => $value->html())
       );
    for ( $i = 0 ; $i < $value->augcount() ; $i++ ) {
-      $template->assign_both_block_vars("item.augment", array(       
+      $cb_template->assign_both_block_vars("item.augment", array(       
          'AUG_NAME' => $value->augname($i),
          'AUG_ID' => $value->augid($i),
          'AUG_LINK' => QuickTemplate($link_item, array('ITEM_ID' => $value->augid($i))),
@@ -357,9 +357,9 @@ foreach ($allitems as $value) {
 /*********************************************
            OUTPUT BODY AND FOOTER
 *********************************************/
-$template->pparse('character');
+$cb_template->pparse('character');
 
-$template->destroy;
+$cb_template->destroy;
 
-include("include/footer.php");
+include(__DIR__ . "/include/footer.php");
 ?>

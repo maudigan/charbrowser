@@ -29,10 +29,10 @@
                  INCLUDES
 *********************************************/ 
 define('INCHARBROWSER', true);
-include_once("include/config.php");
-include_once("include/language.php");
-include_once("include/functions.php");
-include_once("include/global.php");
+include_once(__DIR__ . "/include/config.php");
+include_once(__DIR__ . "/include/language.php");
+include_once(__DIR__ . "/include/functions.php");
+include_once(__DIR__ . "/include/global.php");
  
  
 /*********************************************
@@ -68,22 +68,22 @@ function DirectoryToOptions($directory) {
 //don't bother letting them build a signature
 //if the server doesnt have GD installed
 if (!SERVER_HAS_GD) {
-   message_die($language['MESSAGE_ERROR'], $language['MESSAGE_NO_GD']);
+   cb_message_die($language['MESSAGE_ERROR'], $language['MESSAGE_NO_GD']);
 }
 
 //build all the option lists for the dropdown boxes
 //most are based off the files present in a directory
 //some are static.
-$epicborders = DirectoryToOptions("./images/signatures/epicborders");
-$statborders = DirectoryToOptions("./images/signatures/statborders");
-$borders = DirectoryToOptions("./images/signatures/borders");
-$backgrounds = DirectoryToOptions("./images/signatures/backgrounds");
-$screens = DirectoryToOptions("./images/signatures/screens");
+$epicborders = DirectoryToOptions(__DIR__."/images/signatures/epicborders");
+$statborders = DirectoryToOptions(__DIR__."/images/signatures/statborders");
+$borders = DirectoryToOptions(__DIR__."/images/signatures/borders");
+$backgrounds = DirectoryToOptions(__DIR__."/images/signatures/backgrounds");
+$screens = DirectoryToOptions(__DIR__."/images/signatures/screens");
 
 if (SERVER_HAS_FREETYPE) 
-   $fonts = DirectoryToOptions("./fonts");
+   $fonts = DirectoryToOptions(__DIR__."/fonts");
 else 
-   $fonts = DirectoryToOptions("./fontsold"); //use old fonts if we can't handle TTF
+   $fonts = DirectoryToOptions(__DIR__."/fontsold"); //use old fonts if we can't handle TTF
 
 $stats = array(
    'REGEN', 'FT', 'DS', 'HASTE', 'HP', 'MANA', 'ENDR', 'AC', 'ATK', 'STR', 'STA', 'DEX',
@@ -95,22 +95,23 @@ $stats = array(
                DROP HEADER
 *********************************************/
 $d_title = " - ".$language['PAGE_TITLES_SIGBUILD'];
-include("include/header.php");
+include(__DIR__ . "/include/header.php");
  
  
 /*********************************************
               POPULATE BODY
 *********************************************/
-$template->set_filenames(array(
+$cb_template->set_filenames(array(
    'settings' => 'settings_body.tpl')
 );
 
-$template->set_filenames(array(
+$cb_template->set_filenames(array(
    'sigbuild' => 'signature_builder_body.tpl')
 );
 
-$template->assign_vars(array( 
-   'SIGNATURE_DIR' => "http://".$_SERVER['HTTP_HOST'].GetFileDir($_SERVER['PHP_SELF']),
+$cb_template->assign_vars(array( 
+   'SIGNATURE_ROOT_URL' => ($charbrowser_root_url) ? $charbrowser_root_url : "http://".$_SERVER['HTTP_HOST'].GetFileDir($_SERVER['PHP_SELF']),
+   'SIGNATURE_INDEX_URL' => "http://".$_SERVER['HTTP_HOST'].GetFileDir($_SERVER['PHP_SELF']) . (($charbrowser_wrapped) ? $_SERVER['SCRIPT_NAME'] : "index.php"),
    'CAN_CHANGE_FONT_SIZE' => (SERVER_HAS_FREETYPE) ? "" : "Disabled",
 
    'L_SIGNATURE_BUILDER' => $language['SIGNATURE_SIGNATURE_BUILDER'],
@@ -141,80 +142,80 @@ $template->assign_vars(array(
 
 //fonts
 foreach($fonts as $value)      
-   $template->assign_block_vars("font", array( 
+   $cb_template->assign_block_vars("font", array( 
       'TEXT' => $value,
       'VALUE' => $value)
    );
 
 //epic borders
-$template->assign_block_vars("epicborders", array(  //insert an "off" option first
+$cb_template->assign_block_vars("epicborders", array(  //insert an "off" option first
    'TEXT' => $language['SIGNATURE_OPTION_EPIC'],
    'VALUE' => 0)
 );
 foreach($epicborders as $value)      
-   $template->assign_block_vars("epicborders", array( 
+   $cb_template->assign_block_vars("epicborders", array( 
       'TEXT' => $value,
       'VALUE' => $value)
    );
 
 //stat borders
-$template->assign_block_vars("statborders", array(  //insert an "off" option first
+$cb_template->assign_block_vars("statborders", array(  //insert an "off" option first
    'TEXT' => $language['SIGNATURE_OPTION_STAT_ALL'],
    'VALUE' => 0)
 );
 foreach($statborders as $value)      
-   $template->assign_block_vars("statborders", array( 
+   $cb_template->assign_block_vars("statborders", array( 
       'TEXT' => $value,
       'VALUE' => $value)
    );
 
 //stats
-$template->assign_block_vars("stats", array(  //insert an "off" option first
+$cb_template->assign_block_vars("stats", array(  //insert an "off" option first
    'TEXT' => $language['SIGNATURE_OPTION_STAT_IND'],
    'VALUE' => 0)
 );
 foreach($stats as $value)      
-   $template->assign_block_vars("stats", array( 
+   $cb_template->assign_block_vars("stats", array( 
       'TEXT' => $value,
       'VALUE' => $value)
    );
 
 //borders
-$template->assign_block_vars("borders", array(  //insert an "off" option first
+$cb_template->assign_block_vars("borders", array(  //insert an "off" option first
    'TEXT' => $language['SIGNATURE_OPTION_BORDER'],
    'VALUE' => 0)
 );
 foreach($borders as $value)      
-   $template->assign_block_vars("borders", array( 
+   $cb_template->assign_block_vars("borders", array( 
       'TEXT' => $value,
       'VALUE' => $value)
    );
 
 //backgrounds
-$template->assign_block_vars("backgrounds", array(  //insert an "off" option first
+$cb_template->assign_block_vars("backgrounds", array(  //insert an "off" option first
   'TEXT' => $language['SIGNATURE_OPTION_BACKGROUND'],
   'VALUE' => 0)
 );
 foreach($backgrounds as $value)      
-   $template->assign_block_vars("backgrounds", array( 
+   $cb_template->assign_block_vars("backgrounds", array( 
       'TEXT' => $value,
       'VALUE' => $value)
    );
 
 //screen filters
-$template->assign_block_vars("screens", array( //insert an "off" option first
+$cb_template->assign_block_vars("screens", array( //insert an "off" option first
    'TEXT' => $language['SIGNATURE_OPTION_SCREEN'],
    'VALUE' => 0)
 );
 foreach($screens as $value)      
-   $template->assign_block_vars("screens", array( 
+   $cb_template->assign_block_vars("screens", array( 
       'TEXT' => $value,
       'VALUE' => $value)
    );
 
 //font sizes
 for ($i = 5; $i <= 40; $i++ ) {
-   $template->assign_block_vars("fontsize", array(  
+   $cb_template->assign_block_vars("fontsize", array(  
       'TEXT' => $i,
       'VALUE' => $i)
    );
@@ -224,9 +225,9 @@ for ($i = 5; $i <= 40; $i++ ) {
 /*********************************************
            OUTPUT BODY AND FOOTER
 *********************************************/
-$template->pparse('sigbuild');
+$cb_template->pparse('sigbuild');
 
-$template->destroy;
+$cb_template->destroy;
 
-include("include/footer.php");
+include(__DIR__ . "/include/footer.php");
 ?>

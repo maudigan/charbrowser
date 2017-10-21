@@ -13,6 +13,8 @@
  *                                  Author:
  *                           Maudigan(Airwalking) 
  *
+ *   September 16, 2017 - added an optional simple footer.
+ *
  ***************************************************************************/
  
 //dont make a header if there is an API request 
@@ -30,18 +32,27 @@ if (defined('DB_PERFORMANCE'))
 }
 
 
-$template->set_filenames(array(
-  'footer' => 'footer_body.tpl')
-);
+if ($charbrowser_simple_header)
+{
+   $cb_template->set_filenames(array(
+     'footer' => 'footer_simple_body.tpl')
+   );
+}
+else
+{
+   $cb_template->set_filenames(array(
+     'footer' => 'footer_body.tpl')
+   );
+}
 
-$template->assign_vars(array(  
+$cb_template->assign_vars(array(  
   'TITLE' => $mytitle,
   'VERSION' => $version,
   'DATABASE_PERFORMANCE' => $dbp_output,
   'ADVERTISEMENT' => $adscript)
 );
 
-$template->pparse('footer');
+$cb_template->pparse('footer');
 
-$template->destroy;
+$cb_template->destroy;
 ?>

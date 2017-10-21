@@ -20,7 +20,7 @@
  *   September 28, 2014 - Maudigan
  *      added code to monitor database performance
  *   October 4, 2014 - Maudigan
- *      fixed call to nonexistent function mymessage_die
+ *      fixed call to nonexistent function mycb_message_die
  *   May 24, 2016 - Maudigan
  *      general code cleanup, whitespace correction, removed old comments,
  *      organized some code. A lot has changed, but not much functionally
@@ -37,8 +37,8 @@
 {
    die("Hacking attempt");
 }
-include_once('global.php');
-include_once("include/db.php");
+include_once(__DIR__ . "/global.php");
+include_once(__DIR__ . "/db.php");
 
 
  

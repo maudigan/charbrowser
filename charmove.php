@@ -18,7 +18,7 @@
  *   September 28, 2014 - Maudigan
  *      added code to monitor database performance
  *   October 4, 2014 - Maudigan
- *      renamed sql $template to $query_tpl so as to not interfere with  
+ *      renamed sql $cb_template to $query_tpl so as to not interfere with  
  *      the html template object
  *   May 24, 2016 - Maudigan
  *      general code cleanup, whitespace correction, removed old comments,
@@ -33,18 +33,18 @@
                  INCLUDES
 *********************************************/ 
 define('INCHARBROWSER', true);
-include_once("include/config.php");
-include_once("include/language.php");
-include_once("include/functions.php");
-include_once("include/global.php");
-include_once("include/db.php");
+include_once(__DIR__ . "/include/config.php");
+include_once(__DIR__ . "/include/language.php");
+include_once(__DIR__ . "/include/functions.php");
+include_once(__DIR__ . "/include/global.php");
+include_once(__DIR__ . "/include/db.php");
  
  
 //do not let anyone use the API on this screen
 //we don't want to make it easier for people to brute
 //force guess a login
 //dont make a header if there is an API request 
-if (isset($_GET['api']))  message_die($language['MESSAGE_ERROR'],$language['MESSAGE_NOAPI']);
+if (isset($_GET['api']))  cb_message_die($language['MESSAGE_ERROR'],$language['MESSAGE_NOAPI']);
  
 /*********************************************
              SUPPORT FUNCTIONS
@@ -122,7 +122,7 @@ TPL;
         GATHER RELEVANT PAGE DATA
 *********************************************/
 //dont display if blocked in config.php 
-if ($blockcharmove) message_die($language['MESSAGE_ERROR'],$language['MESSAGE_ITEM_NO_VIEW']);
+if ($blockcharmove) cb_message_die($language['MESSAGE_ERROR'],$language['MESSAGE_ITEM_NO_VIEW']);
 
 $names = $_GET['name'];
 $zones = $_GET['zone'];
@@ -134,7 +134,7 @@ $char = $_GET['char'];
                DROP HEADER
 *********************************************/
 $d_title = " - ".$language['PAGE_TITLES_CHARMOVE'];
-include("include/header.php");
+include(__DIR__ . "/include/header.php");
  
  
 /*********************************************
@@ -144,28 +144,28 @@ include("include/header.php");
  actually executed in this section.
 *********************************************/
 if ($names && $logins && $zones) {
-   $template->set_filenames(array(
+   $cb_template->set_filenames(array(
       'mover' => 'charmove_result_body.tpl')
    );
    
-   $template->assign_vars(array( 
+   $cb_template->assign_vars(array( 
       'L_CHARACTER_MOVER' => $language['CHARMOVE_CHARACTER_MOVER'],
       'L_BOOKMARK' => $language['CHARMOVE_BOOKMARK'],
       'L_BACK' => $language['BUTTON_BACK'])
    );
    
    foreach ($names as $key => $value) {
-      $template->assign_block_vars( "results", array( 
+      $cb_template->assign_block_vars( "results", array( 
          'OUTPUT' => trymove($value, $logins[$key], $zones[$key]))
       );
    }
 }
 else {
-   $template->set_filenames(array(
+   $cb_template->set_filenames(array(
       'mover' => 'charmove_body.tpl')
    );
    
-   $template->assign_vars(array( 
+   $cb_template->assign_vars(array( 
       'CHARNAME' => $char, 
       'L_CHARACTER_MOVER' => $language['CHARMOVE_CHARACTER_MOVER'],
       'L_LOGIN' => $language['CHARMOVE_LOGIN'],
@@ -176,7 +176,7 @@ else {
    );
 
    foreach($charmovezones as $key => $value) {
-      $template->assign_block_vars( "zones", array(
+      $cb_template->assign_block_vars( "zones", array(
          'VALUE' => $key)
       );
    }
@@ -186,9 +186,9 @@ else {
 /*********************************************
            OUTPUT BODY AND FOOTER
 *********************************************/
-$template->pparse('mover');
+$cb_template->pparse('mover');
 
-$template->destroy;
+$cb_template->destroy;
 
-include("include/footer.php");
+include(__DIR__ . "/include/footer.php");
 ?>

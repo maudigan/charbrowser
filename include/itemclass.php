@@ -25,7 +25,7 @@
 { 
         die("Hacking attempt"); 
 } 
-Include_once("include/item.php"); 
+Include_once(__DIR__ . "/item.php"); 
 // holds all the items 
 class item { 
   

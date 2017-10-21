@@ -27,10 +27,10 @@
                  INCLUDES
 *********************************************/ 
 define('INCHARBROWSER', true);
-include_once("include/config.php");
-include_once("include/language.php");
-include_once("include/functions.php");
-include_once("include/global.php");
+include_once(__DIR__ . "/include/config.php");
+include_once(__DIR__ . "/include/language.php");
+include_once(__DIR__ . "/include/functions.php");
+include_once(__DIR__ . "/include/global.php");
 
 
 /*********************************************
@@ -69,46 +69,46 @@ $l_users = array (
                DROP HEADER
 *********************************************/
 $d_title = " - ".$language['PAGE_TITLES_SETTINGS'];
-include("include/header.php");
+include(__DIR__ . "/include/header.php");
  
  
 /*********************************************
               POPULATE BODY
 *********************************************/
-$template->set_filenames(array(
+$cb_template->set_filenames(array(
    'settings' => 'settings_body.tpl')
 );
 //column heads
-$template->assign_both_block_vars( "rows" , array());
-$template->assign_both_block_vars( "rows.cols" , array(
+$cb_template->assign_both_block_vars( "rows" , array());
+$cb_template->assign_both_block_vars( "rows.cols" , array(
    'VALUE' => "" )
 );  
 foreach ($l_users as $key => $value) {
-   $template->assign_both_block_vars( "rows.cols" , array(
+   $cb_template->assign_both_block_vars( "rows.cols" , array(
       'VALUE' => $value )
    );    
 }
 
 //column data
 foreach ($l_permission as $key => $value) {
-   $template->assign_both_block_vars( "rows" , array());
-   $template->assign_both_block_vars( "rows.cols" , array(
+   $cb_template->assign_both_block_vars( "rows" , array());
+   $cb_template->assign_both_block_vars( "rows.cols" , array(
       'VALUE' => $value)
    );   
    foreach ($l_users as $key2 => $value2) {
-      $template->assign_both_block_vars( "rows.cols" , array(
+      $cb_template->assign_both_block_vars( "rows.cols" , array(
          'VALUE' => ($permissions[$key2][$key]) ? "" : "x" )
       );    
    }
 }
 
-$template->assign_both_vars(array(  
+$cb_template->assign_both_vars(array(  
    'S_RESULTS' => $numToDisplay,
    'S_HIGHLIGHT_GM' => (($highlightgm)?$language['SETTINGS_ENABLED']:$language['SETTINGS_DISABLED']),
    'S_BAZAAR' => (($blockbazaar)?$language['SETTINGS_DISABLED']:$language['SETTINGS_ENABLED']),
    'S_CHARMOVE' => (($blockcharmove)?$language['SETTINGS_DISABLED']:$language['SETTINGS_ENABLED']))
 );
-$template->assign_vars(array(  
+$cb_template->assign_vars(array(  
    'L_RESULTS' => $language['SETTINGS_RESULTS'],
    'L_CHARMOVE' => $language['SETTINGS_CHARMOVE'],
    'L_HIGHLIGHT_GM' => $language['SETTINGS_HIGHLIGHT_GM'],
@@ -121,9 +121,9 @@ $template->assign_vars(array(
 /*********************************************
            OUTPUT BODY AND FOOTER
 *********************************************/
-$template->pparse('settings');
+$cb_template->pparse('settings');
 
-$template->destroy;
+$cb_template->destroy;
 
-include("include/footer.php");
+include(__DIR__ . "/include/footer.php");
 ?>

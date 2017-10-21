@@ -30,11 +30,11 @@
                  INCLUDES
 *********************************************/ 
 define('INCHARBROWSER', true);
-include_once("include/config.php");
-include_once("include/global.php");
-include_once("include/language.php");
-include_once("include/functions.php");
-include_once("include/db.php");
+include_once(__DIR__ . "/include/config.php");
+include_once(__DIR__ . "/include/global.php");
+include_once(__DIR__ . "/include/language.php");
+include_once(__DIR__ . "/include/functions.php");
+include_once(__DIR__ . "/include/db.php");
 
  
 /*********************************************
@@ -47,13 +47,13 @@ $name       = $_GET['name'];
 $guild      = $_GET['guild'];
 
 //build baselink
-$baselink="search.php?name=$name&guild=$guild";
+$baselink= (($charbrowser_wrapped) ? $_SERVER['SCRIPT_NAME'] : "index.php") . "?page=search&name=$name&guild=$guild";
 
 //security for injection attacks
-if (!IsAlphaSpace($name)) message_die($language['MESSAGE_ERROR'],$language['MESSAGE_NAME_ALPHA']);
-if (!IsAlphaSpace($guild)) message_die($language['MESSAGE_ERROR'],$language['MESSAGE_GUILD_ALPHA']);
-if (!IsAlphaSpace($orderby)) message_die($language['MESSAGE_ERROR'],$language['MESSAGE_ORDER_ALPHA']);
-if (!is_numeric($start)) message_die($language['MESSAGE_ERROR'],$language['MESSAGE_START_NUMERIC']);
+if (!IsAlphaSpace($name)) cb_message_die($language['MESSAGE_ERROR'],$language['MESSAGE_NAME_ALPHA']);
+if (!IsAlphaSpace($guild)) cb_message_die($language['MESSAGE_ERROR'],$language['MESSAGE_GUILD_ALPHA']);
+if (!IsAlphaSpace($orderby)) cb_message_die($language['MESSAGE_ERROR'],$language['MESSAGE_ORDER_ALPHA']);
+if (!is_numeric($start)) cb_message_die($language['MESSAGE_ERROR'],$language['MESSAGE_START_NUMERIC']);
  
  
 /*********************************************
@@ -92,7 +92,7 @@ TPL;
 $query = sprintf($tpl, $where, '');
 $result = cbsql_query($query);
 $totalchars = cbsql_rows($result);
-if (!$totalchars) message_die($language['MESSAGE_ERROR'],$language['MESSAGE_NO_RESULTS']);
+if (!$totalchars) cb_message_die($language['MESSAGE_ERROR'],$language['MESSAGE_NO_RESULTS']);
 
 //now add on the limit & ordering and query again for just this page
 $query = sprintf($tpl, $where, $order);
@@ -107,20 +107,20 @@ while ($row = cbsql_nextrow($result)) {
                DROP HEADER
 *********************************************/
 $d_title = " - ".$language['PAGE_TITLES_SEARCH'];
-include("include/header.php");
+include(__DIR__ . "/include/header.php");
  
  
 /*********************************************
               POPULATE BODY
 *********************************************/
 //build body template
-$template->set_filenames(array(
+$cb_template->set_filenames(array(
    'body' => 'search_body.tpl')
 );
 
-$template->assign_vars(array(  
+$cb_template->assign_vars(array(  
    'ORDER_LINK' => $baselink."&start=$start&direction=".(($direction=="ASC") ? "DESC":"ASC"), 
-   'PAGINATION' => generate_pagination("$baselink&orderby=$orderby&direction=$direction", $totalchars, $numToDisplay, $start, true),
+   'PAGINATION' => cb_generate_pagination("$baselink&orderby=$orderby&direction=$direction", $totalchars, $numToDisplay, $start, true),
    
    'L_RESULTS' => $language['SEARCH_RESULTS'],
    'L_NAME' => $language['SEARCH_NAME'],
@@ -129,7 +129,7 @@ $template->assign_vars(array(
 );
 
 foreach ($characters as $character) {
-   $template->assign_both_block_vars("characters", array( 
+   $cb_template->assign_both_block_vars("characters", array( 
       'CLASS' => $dbclassnames[$character["class"]],      
       'LEVEL' => $character["level"],
       'NAME' => $character["name"],
@@ -141,9 +141,9 @@ foreach ($characters as $character) {
 /*********************************************
            OUTPUT BODY AND FOOTER
 *********************************************/
-$template->pparse('body');
+$cb_template->pparse('body');
 
-$template->destroy;
+$cb_template->destroy;
 
-include("include/footer.php");
+include(__DIR__ . "/include/footer.php");
 ?>

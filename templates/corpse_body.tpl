@@ -1,13 +1,13 @@
 <div class='NavOuter'>
 <div class='NavInner'>
-  <div class='FreeButton' onclick="window.location='character.php?char={NAME}';" style="margin:3px">{L_INVENTORY}</div>
-  <div class='FreeButton' onclick="window.location='aas.php?char={NAME}';" style="margin:3px">{L_AAS}</div>
-  <div class='FreeButton' onclick="window.location='keys.php?char={NAME}';" style="margin:3px">{L_KEYS}</div>
-  <div class='FreeButton' onclick="window.location='flags.php?char={NAME}';" style="margin:3px">{L_FLAGS}</div>
-  <div class='FreeButton' onclick="window.location='skills.php?char={NAME}';" style="margin:3px">{L_SKILLS}</div>
+  <div class='FreeButton' onclick="window.location='{INDEX_URL}?page=character&char={NAME}';" style="margin:3px">{L_INVENTORY}</div>
+  <div class='FreeButton' onclick="window.location='{INDEX_URL}?page=aas&char={NAME}';" style="margin:3px">{L_AAS}</div>
+  <div class='FreeButton' onclick="window.location='{INDEX_URL}?page=keys&char={NAME}';" style="margin:3px">{L_KEYS}</div>
+  <div class='FreeButton' onclick="window.location='{INDEX_URL}?page=flags&char={NAME}';" style="margin:3px">{L_FLAGS}</div>
+  <div class='FreeButton' onclick="window.location='{INDEX_URL}?page=skills&char={NAME}';" style="margin:3px">{L_SKILLS}</div>
   <div class='FreeButton' style="color:606060;margin:3px">{L_CORPSE}</div>
-  <div class='FreeButton' onclick="window.location='factions.php?char={NAME}';" style="margin:3px">{L_FACTION}</div>
-  <div class='FreeButton' onclick="window.location='charmove.php?char={NAME}';" style="margin:3px">{L_CHARMOVE}</div>
+  <div class='FreeButton' onclick="window.location='{INDEX_URL}?page=factions&char={NAME}';" style="margin:3px">{L_FACTION}</div>
+  <div class='FreeButton' onclick="window.location='{INDEX_URL}?page=charmove&char={NAME}';" style="margin:3px">{L_CHARMOVE}</div>
   <div class='FreeButton' onclick="window.external.AddFavorite(location.href, document.title);" style="margin:3px">{L_BOOKMARK}</div>
 </div>
 </div>
@@ -36,7 +36,7 @@
         <!-- END corpses -->
       </table>
       <br><br>
-      <div class='FreeButton' onclick="window.location='character.php?char={NAME}';">{L_DONE}</div>
+      <div class='FreeButton' onclick="window.location='{INDEX_URL}?page=character&char={NAME}';">{L_DONE}</div>
     </div>
   </div>
 </center>

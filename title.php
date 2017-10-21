@@ -25,8 +25,8 @@
                  INCLUDES
 *********************************************/ 
 define('INCHARBROWSER', true);
-include_once("include/config.php");
-include_once("include/global.php");
+include_once(__DIR__ . "/include/config.php");
+include_once(__DIR__ . "/include/global.php");
 
 
 

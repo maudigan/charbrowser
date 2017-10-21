@@ -35,9 +35,9 @@ define("BANK", 3);
 define("SERVER_HAS_GD", function_exists("imagecreatetruecolor"));
 define("SERVER_HAS_FREETYPE", function_exists("imagettfbbox"));
 
-include_once ( "template.php" );
+include_once ( __DIR__ . "/template.php" );
 //templates
-$template = new Template("./templates");
+$cb_template = new CB_Template(__DIR__ . "/../templates");
 
 // elements
 $dbelements=array("Unknown","Magic","Fire","Cold","Poison","Disease");

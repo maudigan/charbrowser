@@ -24,17 +24,17 @@ if ( !defined('INCHARBROWSER') )
 	die("Hacking attempt");
 }
 
-include_once("language.php");
-include_once("functions.php");
-include_once("config.php");
-include_once("template.php");
+include_once(__DIR__ . "/language.php");
+include_once(__DIR__ . "/functions.php");
+include_once(__DIR__ . "/config.php");
+include_once(__DIR__ . "/template.php");
 
 
 //------------------------------------
 //          CONNECT TO DB
 //------------------------------------
-mysql_connect($host, $user, $pass) or message_die($language['MESSAGE_ERROR'], $language['MESSAGE_DB_NOCONNECT']);
-mysql_select_db("$db") or message_die($language['MESSAGE_ERROR'], $language['MESSAGE_DB_NODB']);  
+mysql_connect($cb_host, $cb_user, $cb_pass) or cb_message_die($language['MESSAGE_ERROR'], $language['MESSAGE_DB_NOCONNECT']);
+mysql_select_db("$cb_db") or cb_message_die($language['MESSAGE_ERROR'], $language['MESSAGE_DB_NODB']);  
 
 
 
@@ -151,7 +151,7 @@ function cbsql_query($query)
    //report errors
    if (!$return)
    {
-      message_die($language['MESSAGE_ERROR'], mysql_error());
+      cb_message_die($language['MESSAGE_ERROR'], mysql_error());
    }
    
    //get an explanation of the query

@@ -36,6 +36,7 @@ $language['HEADER_CHARMOVE'] = "Character Mover";
 $language['HEADER_SIGBUILD'] = "Signature Builder"; 
 $language['HEADER_REPORT_ERRORS'] = "Report Errors"; 
 $language['HEADER_HELP'] = "Help"; 
+$language['HEADER_NAVIGATE'] = "Navigate"; 
 
 //page title languages 
 $language['PAGE_TITLES_AAS'] ="'s Alternate Abilities"; 
@@ -537,5 +538,6 @@ $language['MESSAGE_PROF_NOTABKEY'] = "Table '%s' requested but does not exist in
 $language['MESSAGE_DB_CONNECT'] = "The database host/user/password supplied were invalid.";
 $language['MESSAGE_DB_NODB'] = "Could not find designated database.";
 $language['MESSAGE_NOAPI'] = "The API is unavailable on this page.";
+$language['MESSAGE_NOPAGE'] = "You've requested an invalid page.";
 
 ?>

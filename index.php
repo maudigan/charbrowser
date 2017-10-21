@@ -20,6 +20,9 @@
  *      organized some code. A lot has changed, but not much functionally
  *      do a compare to 2.41 to see the differences. 
  *      Implemented new database wrapper.
+ *   September 16, 2017 - Maudigan
+ *      Modify script to be able to redirect to the other pages using the
+ *      "page" variable.
  ***************************************************************************/
   
  
@@ -27,44 +30,82 @@
                  INCLUDES
 *********************************************/ 
 define('INCHARBROWSER', true);
-include_once("include/config.php");
-include_once("include/version.php");
-include_once("include/language.php");
-include_once("include/functions.php");
-include_once("include/global.php");
+include_once(__DIR__ . "/include/config.php");
+include_once(__DIR__ . "/include/version.php");
+include_once(__DIR__ . "/include/language.php");
+include_once(__DIR__ . "/include/functions.php");
+include_once(__DIR__ . "/include/global.php");
  
- 
-/*********************************************
-               DROP HEADER
-*********************************************/
-$d_title = $subtitle;
-include("include/header.php");
  
  
 /*********************************************
-              POPULATE BODY
+               INDEX REQUESTED
 *********************************************/
-$template->set_filenames(array(
-  'index' => 'index_body.tpl')
-);
+if (empty($_REQUEST['page']))
+{ 
+   /*********************************************
+                  DROP INDEX HEADER
+   *********************************************/
+   $d_title = $subtitle;
+   include(__DIR__ . "/include/header.php");
+    
+    
+   /*********************************************
+                 POPULATE BODY
+   *********************************************/  
+   $cb_template->set_filenames(array(
+     'index' => 'index_body.tpl')
+   );
 
-$template->assign_both_vars(array(  
-   'TITLE' => $mytitle,
-   'VERSION' => $version)
-);
-$template->assign_vars(array(  
-   'L_VERSION' => $language['INDEX_VERSION'],
-   'L_BY' => $language['INDEX_BY'],
-   'L_INTRO' => $language['INDEX_INTRO'])
-);
+   $cb_template->assign_both_vars(array(  
+      'TITLE' => $mytitle,
+      'VERSION' => $version)
+   );
+   $cb_template->assign_vars(array(  
+      'L_VERSION' => $language['INDEX_VERSION'],
+      'L_BY' => $language['INDEX_BY'],
+      'L_INTRO' => $language['INDEX_INTRO'])
+   );
  
  
+   /*********************************************
+              OUTPUT BODY AND FOOTER
+   *********************************************/
+   $cb_template->pparse('index');
+
+   $cb_template->destroy;
+
+   include(__DIR__ . "/include/footer.php");   
+}
+
+
 /*********************************************
-           OUTPUT BODY AND FOOTER
+             OTHER PAGE REQUESTED
 *********************************************/
-$template->pparse('index');
+else
+{
+   /*********************************************
+                INPUT VALIDATION
+   *********************************************/ 
+   //we use the page variable to redirect this script to one of the other php scripts
+   //this permits us to use index.php to display every single page in the utility
+    
+   // Make sure the request isn't escaping to another unintended directory 
+   if (strpos($_REQUEST['page'], '.') > 0 || strpos($_REQUEST['page'], '/') > 0 || strpos($_REQUEST['page'], '\\') > 0)
+   { 
+      cb_message_die($language['MESSAGE_ERROR'],$language['MESSAGE_NOPAGE']);
+   } 
 
-$template->destroy;
+   //get the absolute path to the requested script
+   $page = __DIR__ . "/" . $_REQUEST['page'] . ".php";
 
-include("include/footer.php");
+   //make sure the script exists so the include doesn't error
+   if (!file_exists($page))
+   { 
+      cb_message_die($language['MESSAGE_ERROR'],$language['MESSAGE_NOPAGE']);
+   } 
+   
+   include($page);
+} 
+
 ?>

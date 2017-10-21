@@ -18,7 +18,7 @@
  *       character blob. The load function was removed and a constructor
  *       was added instead.
  *   October 4, 2014 - Maudigan
- *      renamed sql $template to $query_tpl so as to not interfere with 
+ *      renamed sql $cb_template to $query_tpl so as to not interfere with 
  *      the html template object it shouldn't be a problem here, just 
  *      done to be consistent.
  *   May 24, 2016 - maudigan
@@ -37,7 +37,7 @@ if ( !defined('INCHARBROWSER') )
 }
 
 //in case the including pageg didn't already include the db wrapper
-include_once("db.php");
+include_once(__DIR__ . "/db.php");
 
 define('PROF_NOROWS', false);
 
@@ -717,7 +717,7 @@ class profile {
       $table_name = "character_data";
       
       //don't go sticking just anything in the database
-      if (!IsAlphaSpace($name)) message_die($language['MESSAGE_ERROR'],$language['MESSAGE_NAME_ALPHA']);
+      if (!IsAlphaSpace($name)) cb_message_die($language['MESSAGE_ERROR'],$language['MESSAGE_NAME_ALPHA']);
       
       //build the query
       $tpl = <<<TPL
@@ -740,7 +740,7 @@ TPL;
          $this->account_id = $row['account_id'];
          $this->char_id = $row['id'];
       }   
-      else message_die($language['MESSAGE_ERROR'],$language['MESSAGE_NO_FIND']); 
+      else cb_message_die($language['MESSAGE_ERROR'],$language['MESSAGE_NO_FIND']); 
    
    }
    
@@ -802,7 +802,7 @@ TPL;
       // Pull Profile Info
       if (!array_key_exists($data_key, $locator))
       {
-         message_die('profile.php', sprintf($language['MESSAGE_PROF_NOKEY'], $data_key),$language['MESSAGE_ERROR']);
+         cb_message_die('profile.php', sprintf($language['MESSAGE_PROF_NOKEY'], $data_key),$language['MESSAGE_ERROR']);
       }
       
       //get the locator data for this setting so we can find it
@@ -845,7 +845,7 @@ TPL;
       //make sure our column exists in the record
       if (!array_key_exists($column_name, $cached_record))
       {
-            message_die('profile.php', sprintf($language['MESSAGE_PROF_NOCACHE'], $data_key, $table_name, $column_name),$language['MESSAGE_ERROR']);
+            cb_message_die('profile.php', sprintf($language['MESSAGE_PROF_NOCACHE'], $data_key, $table_name, $column_name),$language['MESSAGE_ERROR']);
       }
       
       //return the value
@@ -864,7 +864,7 @@ TPL;
       //get the name of the second pk on the table
       if (!array_key_exists($table_name, $locator_pk))
       {
-         message_die('profile.php', sprintf($language['MESSAGE_PROF_NOTABKEY'], $table_name),$language['MESSAGE_ERROR']);
+         cb_message_die('profile.php', sprintf($language['MESSAGE_PROF_NOTABKEY'], $table_name),$language['MESSAGE_ERROR']);
       }
       $second_column_name = $locator_pk[$table_name];
       
@@ -920,7 +920,7 @@ TPL;
             //we just store it in the root structure
             $this->cached_records[$table_name] = cbsql_nextrow($result);
          } 
-         else message_die('profile.php', sprintf($language['MESSAGE_PROF_NOROWS'], $table_name),$language['MESSAGE_ERROR']);
+         else cb_message_die('profile.php', sprintf($language['MESSAGE_PROF_NOROWS'], $table_name),$language['MESSAGE_ERROR']);
       }
       
       //hand the table/record over

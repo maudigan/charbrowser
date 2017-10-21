@@ -3,9 +3,13 @@
   padding: 0px;
 }
 
-BODY {
-  background: #ffffff url(../images/fbg.png) 0px 70px repeat-x;
+DIV.body {
+  background: #ffffff url(../images/fbg.png) 0px 0px repeat-x;
   color: #FFFFFF;
+  font-family:arial;
+}
+
+DIV.body_simple {
   font-family:arial;
 }
 

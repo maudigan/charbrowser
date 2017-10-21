@@ -29,10 +29,10 @@ if ( !defined('INCHARBROWSER') )
 **  Database account only needs SELECT and UPDATE  **
 **  privelages                                     **
 ****************************************************/
-$db     =   "peq";
-$host   =   "localhost";
-$user   =   "";
-$pass   =   "";
+$cb_db     =   "peq";
+$cb_host   =   "localhost";
+$cb_user   =   "";
+$cb_pass   =   "";
 /***************************************************/
 
 

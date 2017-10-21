@@ -31,12 +31,12 @@
                  INCLUDES
 *********************************************/ 
 define('INCHARBROWSER', true);
-include_once("include/config.php");
-include_once("include/global.php");
-include_once("include/language.php");
-include_once("include/functions.php");
-include_once("include/itemclass.php");
-include_once("include/db.php");
+include_once(__DIR__ . "/include/config.php");
+include_once(__DIR__ . "/include/global.php");
+include_once(__DIR__ . "/include/language.php");
+include_once(__DIR__ . "/include/functions.php");
+include_once(__DIR__ . "/include/itemclass.php");
+include_once(__DIR__ . "/include/db.php");
 
 
 /*********************************************
@@ -56,21 +56,21 @@ $direction  = (($_GET['direction']=="DESC") ? "DESC" : "ASC");
 $perpage=25;
 
 //build baselink
-$baselink="bazaar.php?class=$class&race=$race&slot=$slot&type=$type&pricemin=$pricemin&pricemax=$pricemax&item=$item";
+$baselink=(($charbrowser_wrapped) ? $_SERVER['SCRIPT_NAME'] : "index.php") . "?page=bazaar&class=$class&race=$race&slot=$slot&type=$type&pricemin=$pricemin&pricemax=$pricemax&item=$item";
 
 //security against sql injection  
-if (!IsAlphaSpace($item)) message_die($language['MESSAGE_ERROR'],$language['MESSAGE_ITEM_ALPHA']);
-if (!IsAlphaSpace($orderby)) message_die($language['MESSAGE_ERROR'],$language['MESSAGE_ORDER_ALPHA']);
-if (!is_numeric($start)) message_die($language['MESSAGE_ERROR'],$language['MESSAGE_START_NUMERIC']);
-if (!is_numeric($pricemin) && $pricemin != "") message_die($language['MESSAGE_ERROR'],$language['MESSAGE_PRICE_NUMERIC']);
-if (!is_numeric($pricemax) && $pricemax != "") message_die($language['MESSAGE_ERROR'],$language['MESSAGE_PRICE_NUMERIC']);
-if (!is_numeric($class)) message_die($language['MESSAGE_ERROR'],$language['MESSAGE_CLASS_NUMERIC']);
-if (!is_numeric($race)) message_die($language['MESSAGE_ERROR'],$language['MESSAGE_RACE_NUMERIC']);
-if (!is_numeric($slot)) message_die($language['MESSAGE_ERROR'],$language['MESSAGE_SLOT_NUMERIC']);
-if (!is_numeric($type)) message_die($language['MESSAGE_ERROR'],$language['MESSAGE_TYPE_NUMERIC']);
+if (!IsAlphaSpace($item)) cb_message_die($language['MESSAGE_ERROR'],$language['MESSAGE_ITEM_ALPHA']);
+if (!IsAlphaSpace($orderby)) cb_message_die($language['MESSAGE_ERROR'],$language['MESSAGE_ORDER_ALPHA']);
+if (!is_numeric($start)) cb_message_die($language['MESSAGE_ERROR'],$language['MESSAGE_START_NUMERIC']);
+if (!is_numeric($pricemin) && $pricemin != "") cb_message_die($language['MESSAGE_ERROR'],$language['MESSAGE_PRICE_NUMERIC']);
+if (!is_numeric($pricemax) && $pricemax != "") cb_message_die($language['MESSAGE_ERROR'],$language['MESSAGE_PRICE_NUMERIC']);
+if (!is_numeric($class)) cb_message_die($language['MESSAGE_ERROR'],$language['MESSAGE_CLASS_NUMERIC']);
+if (!is_numeric($race)) cb_message_die($language['MESSAGE_ERROR'],$language['MESSAGE_RACE_NUMERIC']);
+if (!is_numeric($slot)) cb_message_die($language['MESSAGE_ERROR'],$language['MESSAGE_SLOT_NUMERIC']);
+if (!is_numeric($type)) cb_message_die($language['MESSAGE_ERROR'],$language['MESSAGE_TYPE_NUMERIC']);
 
 //dont display bazaaar if blocked in config.php 
-if ($blockbazaar) message_die($language['MESSAGE_ERROR'],$language['MESSAGE_ITEM_NO_VIEW']);
+if ($blockbazaar) cb_message_die($language['MESSAGE_ERROR'],$language['MESSAGE_ITEM_NO_VIEW']);
  
  
 /*********************************************
@@ -131,7 +131,7 @@ TPL;
 $query = sprintf($tpl, $where, '');
 $result = cbsql_query($query);
 $totalitems = cbsql_rows($result);
-if (!$totalitems) message_die($language['MESSAGE_ERROR'],$language['MESSAGE_NO_RESULTS_ITEMS']);
+if (!$totalitems) cb_message_die($language['MESSAGE_ERROR'],$language['MESSAGE_NO_RESULTS_ITEMS']);
 
 //now add on the limit & ordering and query again for just this page
 $query = sprintf($tpl, $where, $order);
@@ -146,18 +146,18 @@ while ($row = cbsql_nextrow($result)) {
                DROP HEADER
 *********************************************/
 $d_title = " - ".$language['PAGE_TITLES_BAZAAR'];
-include("include/header.php");
+include(__DIR__ . "/include/header.php");
  
  
 /*********************************************
               POPULATE BODY
 *********************************************/
 //build body template
-$template->set_filenames(array(
+$cb_template->set_filenames(array(
   'bazaar' => 'bazaar_body.tpl')
 );
 
-$template->assign_both_vars(array(  
+$cb_template->assign_both_vars(array(  
    'ORDERBY' => $orderby,
    'DIRECTION' => $direction, 
    'START' => $start,
@@ -165,10 +165,10 @@ $template->assign_both_vars(array(
    'TOTALITEMS' => $totalitems)
 );
 
-$template->assign_vars(array(  
+$cb_template->assign_vars(array(  
    'ITEM' => $item,
    'ORDER_LINK' => $baselink."&start=$start&direction=".(($direction=="ASC") ? "DESC":"ASC"), 
-   'PAGINATION' => generate_pagination("$baselink&orderby=$orderby&direction=$direction", $totalitems, $perpage, $start, true),
+   'PAGINATION' => cb_generate_pagination("$baselink&orderby=$orderby&direction=$direction", $totalitems, $perpage, $start, true),
    'PRICE_MIN' => $pricemin,
    'PRICE_MAX' => $pricemax,
 
@@ -197,7 +197,7 @@ foreach($lots as $lot) {
    $price = $price % 100;
    $silver = floor($price/10);
    $copper  = $price % 10;
-   $template->assign_both_block_vars("items", array( 
+   $cb_template->assign_both_block_vars("items", array( 
       'SELLER' => $lot['charactername'],
       'PRICE' => (($plat)?$plat."p ":"").(($silver)?$silver."s ":"").(($gold)?$gold."g ":"").(($copper)?$copper."c ":""),      
       'NAME' => $tempitem->name(),
@@ -212,28 +212,28 @@ foreach($lots as $lot) {
 
 //built combo box options
 foreach ($language['BAZAAR_ARRAY_SEARCH_TYPE'] as $key => $value ) {
-   $template->assign_block_vars("select_type", array( 
+   $cb_template->assign_block_vars("select_type", array( 
       'VALUE' => $key,
       'OPTION' => $value,
       'SELECTED' => (($type == $key) ? "selected":""))
    );
 }
 foreach ($language['BAZAAR_ARRAY_SEARCH_CLASS'] as $key => $value ) {
-   $template->assign_block_vars("select_class", array( 
+   $cb_template->assign_block_vars("select_class", array( 
       'VALUE' => $key,
       'OPTION' => $value,
       'SELECTED' => (($class == $key) ? "selected":""))
    );
 }
 foreach ($language['BAZAAR_ARRAY_SEARCH_RACE'] as $key => $value ) {
-   $template->assign_block_vars("select_race", array( 
+   $cb_template->assign_block_vars("select_race", array( 
       'VALUE' => $key,
       'OPTION' => $value,
       'SELECTED' => (($race == $key) ? "selected":""))
    );
 }
 foreach ($language['BAZAAR_ARRAY_SEARCH_SLOT'] as $key => $value ) {
-   $template->assign_block_vars("select_slot", array( 
+   $cb_template->assign_block_vars("select_slot", array( 
       'VALUE' => $key,
       'OPTION' => $value,
       'SELECTED' => (($slot == $key) ? "selected":""))
@@ -244,9 +244,9 @@ foreach ($language['BAZAAR_ARRAY_SEARCH_SLOT'] as $key => $value ) {
 /*********************************************
            OUTPUT BODY AND FOOTER
 *********************************************/
-$template->pparse('bazaar');
+$cb_template->pparse('bazaar');
 
-$template->destroy;
+$cb_template->destroy;
 
-include("include/footer.php");
+include(__DIR__ . "/include/footer.php");
 ?>

@@ -27,30 +27,30 @@
                  INCLUDES
 *********************************************/ 
 define('INCHARBROWSER', true);
-include_once("include/config.php");
-include_once("include/language.php");
-include_once("include/functions.php");
-include_once("include/global.php");
+include_once(__DIR__ . "/include/config.php");
+include_once(__DIR__ . "/include/language.php");
+include_once(__DIR__ . "/include/functions.php");
+include_once(__DIR__ . "/include/global.php");
 
 //no point in having the api on this page
-if (isset($_GET['api']))  message_die($language['MESSAGE_ERROR'],$language['MESSAGE_NOAPI']);
+if (isset($_GET['api']))  cb_message_die($language['MESSAGE_ERROR'],$language['MESSAGE_NOAPI']);
  
  
 /*********************************************
                DROP HEADER
 *********************************************/
 $d_title = " - ".$language['PAGE_TITLES_HELP'];
-include("include/header.php");
+include(__DIR__ . "/include/header.php");
  
  
 /*********************************************
               POPULATE BODY
 *********************************************/
-$template->set_filenames(array(
+$cb_template->set_filenames(array(
   'help' => 'help_body.tpl')
 );
 
-$template->assign_vars(array(  
+$cb_template->assign_vars(array(  
    'TITLE' => $mytitle,
    'VERSION' => $version,
    'L_VERSION' => $language['HELP_VERSION'],
@@ -63,9 +63,9 @@ $template->assign_vars(array(
 /*********************************************
            OUTPUT BODY AND FOOTER
 *********************************************/
-$template->pparse('help');
+$cb_template->pparse('help');
 
-$template->destroy;
+$cb_template->destroy;
 
-include("include/footer.php");
+include(__DIR__ . "/include/footer.php");
 ?>

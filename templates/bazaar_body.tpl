@@ -3,7 +3,7 @@ function display(type, id, prefix) {
   if (target = document.getElementById(prefix + id))
     if (type) target.style.display = (target.style.display == 'none') ? 'block' : 'none';
   else {
-    for(var i=0; i < 2190; i++) if (hideme = document.getElementById(prefix + i)) hideme.style.display = 'none';	    
+    for(var i=0; i < 2190; i++) if (hideme = document.getElementById(prefix + i)) hideme.style.display = 'none';    
     target.style.display = 'block';
   }
 }
@@ -22,7 +22,8 @@ function display(type, id, prefix) {
           <td align='center' width='150px' valign='top'>          
             <table class='StatTable' style='width:90%;'>
               <tr><td align='left' nowrap>
-                <form method='GET' name='bazaar' action='bazaar.php'>
+                <form method='GET' name='bazaar' action='{INDEX_URL}'>
+                  <input type='hidden' name='page' value='bazaar'>
                   {L_SEARCH_NAME}<br>
                   <input class='Bazaar' name='item' value='{ITEM}'><br>
                   <br>
@@ -84,7 +85,7 @@ function display(type, id, prefix) {
                 <tr onMouseOver="this.style.background = '#7b714a '" onMouseOut ="this.style.background = 'none'" >
 	          <td nowrap><a href=# onclick="display(0, {items.SLOT}, 'item');"  style='color:#8aa3ff ;'>{items.NAME}</a></td>
 	          <td nowrap>{items.PRICE}</td>
-                  <td nowrap><a href='character.php?char={items.SELLER}' style='color:#8aa3ff ;'>{items.SELLER}</a></td>
+                  <td nowrap><a href='{INDEX_URL}?page=character&char={items.SELLER}' style='color:#8aa3ff ;'>{items.SELLER}</a></td>
 	        </tr>
                 <!-- END items -->
                 <tr>

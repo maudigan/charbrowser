@@ -14,13 +14,13 @@ function display(type, id, prefix) {
 <div class='NavOuter'> 
 <div class='NavInner'> 
   <div class='FreeButton' style="color:606060;margin:3px">{L_INVENTORY}</div> 
-  <div class='FreeButton' onclick="window.location='aas.php?char={FIRST_NAME}';" style="margin:3px">{L_AAS}</div> 
-  <div class='FreeButton' onclick="window.location='keys.php?char={FIRST_NAME}';" style="margin:3px">{L_KEYS}</div>
-  <div class='FreeButton' onclick="window.location='flags.php?char={FIRST_NAME}';" style="margin:3px">{L_FLAGS}</div> 
-  <div class='FreeButton' onclick="window.location='skills.php?char={FIRST_NAME}';" style="margin:3px">{L_SKILLS}</div> 
-  <div class='FreeButton' onclick="window.location='corpse.php?char={FIRST_NAME}';" style="margin:3px">{L_CORPSE}</div> 
-  <div class='FreeButton' onclick="window.location='factions.php?char={FIRST_NAME}';" style="margin:3px">{L_FACTION}</div> 
-  <div class='FreeButton' onclick="window.location='charmove.php?char={FIRST_NAME}';" style="margin:3px">{L_CHARMOVE}</div> 
+  <div class='FreeButton' onclick="window.location='{INDEX_URL}?page=aas&char={FIRST_NAME}';" style="margin:3px">{L_AAS}</div> 
+  <div class='FreeButton' onclick="window.location='{INDEX_URL}?page=keys&char={FIRST_NAME}';" style="margin:3px">{L_KEYS}</div>
+  <div class='FreeButton' onclick="window.location='{INDEX_URL}?page=flags&char={FIRST_NAME}';" style="margin:3px">{L_FLAGS}</div> 
+  <div class='FreeButton' onclick="window.location='{INDEX_URL}?page=skills&char={FIRST_NAME}';" style="margin:3px">{L_SKILLS}</div> 
+  <div class='FreeButton' onclick="window.location='{INDEX_URL}?page=corpse&char={FIRST_NAME}';" style="margin:3px">{L_CORPSE}</div> 
+  <div class='FreeButton' onclick="window.location='{INDEX_URL}?page=factions&char={FIRST_NAME}';" style="margin:3px">{L_FACTION}</div> 
+  <div class='FreeButton' onclick="window.location='{INDEX_URL}?page=charmove&char={FIRST_NAME}';" style="margin:3px">{L_CHARMOVE}</div> 
   <div class='FreeButton' onclick="window.external.AddFavorite(location.href, document.title);" style="margin:3px">{L_BOOKMARK}</div> 
 </div> 
 </div> 
@@ -40,7 +40,7 @@ function display(type, id, prefix) {
         <div class='Slot bagslotloc{bags.bagslots.BS_SLOT} slotimage'></div> 
         <!-- END bagslots --> 
         <!-- BEGIN bagitems --> 
-        <div onclick="display(0, {bags.bagitems.BI_SLOT}, 'slot');" class='Slot bagslotloc{bags.bagitems.BI_RELATIVE_SLOT}' style='background-image: url(images/items/item_{bags.bagitems.BI_ICON}.png);'></div> 
+        <div onclick="display(0, {bags.bagitems.BI_SLOT}, 'slot');" class='Slot bagslotloc{bags.bagitems.BI_RELATIVE_SLOT}' style='background-image: url({ROOT_URL}images/items/item_{bags.bagitems.BI_ICON}.png);'></div> 
         <!-- END bagitems --> 
 
         <div class='Button bagbuttonrow{bags.ROWS}' onclick="document.getElementById('bag{bags.SLOT}').style.display = 'none';">{L_DONE}</div> 
@@ -107,12 +107,12 @@ function display(type, id, prefix) {
             </table> 
           </div> 
 
-          <div class='InventoryMonogram'><img src='images/monograms/{CLASS_NUM}.gif'></div> 
+          <div class='InventoryMonogram'><img src='{ROOT_URL}images/monograms/{CLASS_NUM}.gif'></div> 
 
-          <div class='Coin' style='top: 116px;left: 317px;'><table class='StatTable'><tr><td align='left'><img src='images/pp.gif'></td><td align='center' width='100%'>{PP}</td></tr></table></div> 
-          <div class='Coin' style='top: 144px;left: 317px;'><table class='StatTable'><tr><td align='left'><img src='images/gp.gif'></td><td align='center' width='100%'>{GP}</td></tr></table></div> 
-          <div class='Coin' style='top: 172px;left: 317px;'><table class='StatTable'><tr><td align='left'><img src='images/sp.gif'></td><td align='center' width='100%'>{SP}</td></tr></table></div> 
-          <div class='Coin' style='top: 200px;left: 317px;'><table class='StatTable'><tr><td align='left'><img src='images/cp.gif'></td><td align='center' width='100%'>{CP}</td></tr></table></div> 
+          <div class='Coin' style='top: 116px;left: 317px;'><table class='StatTable'><tr><td align='left'><img src='{ROOT_URL}images/pp.gif'></td><td align='center' width='100%'>{PP}</td></tr></table></div> 
+          <div class='Coin' style='top: 144px;left: 317px;'><table class='StatTable'><tr><td align='left'><img src='{ROOT_URL}images/gp.gif'></td><td align='center' width='100%'>{GP}</td></tr></table></div> 
+          <div class='Coin' style='top: 172px;left: 317px;'><table class='StatTable'><tr><td align='left'><img src='{ROOT_URL}images/sp.gif'></td><td align='center' width='100%'>{SP}</td></tr></table></div> 
+          <div class='Coin' style='top: 200px;left: 317px;'><table class='StatTable'><tr><td align='left'><img src='{ROOT_URL}images/cp.gif'></td><td align='center' width='100%'>{CP}</td></tr></table></div> 
 
           <div class='Slot slotloc0 slotimage0'></div> 
           <div class='Slot slotloc1 slotimage1'></div> 
@@ -148,7 +148,7 @@ function display(type, id, prefix) {
 
 
           <!-- BEGIN invitem --> 
-          <div onclick="display(0, {invitem.SLOT}, 'slot');if ({invitem.ISBAG}) display(0, {invitem.SLOT}, 'bag');" class='Slot slotloc{invitem.SLOT}' style='background-image: url(images/items/item_{invitem.ICON}.png);'></div> 
+          <div onclick="display(0, {invitem.SLOT}, 'slot');if ({invitem.ISBAG}) display(0, {invitem.SLOT}, 'bag');" class='Slot slotloc{invitem.SLOT}' style='background-image: url({ROOT_URL}images/items/item_{invitem.ICON}.png);'></div> 
           <!-- END invitem --> 
         </div> 
       </div> 
@@ -186,14 +186,14 @@ function display(type, id, prefix) {
         <div class='Slot slotloc2023 slotimage'></div> 
 
         <!-- BEGIN bankitem --> 
-        <div onclick="display(0, {bankitem.SLOT}, 'slot'); if ({bankitem.ISBAG}) display(0, {bankitem.SLOT}, 'bag');" class='Slot slotloc{bankitem.SLOT}' style='background-image: url(images/items/item_{bankitem.ICON}.png);'></div> 
+        <div onclick="display(0, {bankitem.SLOT}, 'slot'); if ({bankitem.ISBAG}) display(0, {bankitem.SLOT}, 'bag');" class='Slot slotloc{bankitem.SLOT}' style='background-image: url({ROOT_URL}images/items/item_{bankitem.ICON}.png);'></div> 
         <!-- END bankitem --> 
         
 
-        <div class='Coin' style='top: 200px;left: 6px;'><table class='StatTable'><tr><td align='left'><img src='images/pp.gif'></td><td align='center' width='100%'>{BPP}</td></tr></table></div> 
-        <div class='Coin' style='top: 228px;left: 6px;'><table class='StatTable'><tr><td align='left'><img src='images/gp.gif'></td><td align='center' width='100%'>{BGP}</td></tr></table></div> 
-        <div class='Coin' style='top: 256px;left: 6px;'><table class='StatTable'><tr><td align='left'><img src='images/sp.gif'></td><td align='center' width='100%'>{BSP}</td></tr></table></div> 
-        <div class='Coin' style='top: 284px;left: 6px;'><table class='StatTable'><tr><td align='left'><img src='images/cp.gif'></td><td align='center' width='100%'>{BCP}</td></tr></table></div> 
+        <div class='Coin' style='top: 200px;left: 6px;'><table class='StatTable'><tr><td align='left'><img src='{ROOT_URL}images/pp.gif'></td><td align='center' width='100%'>{BPP}</td></tr></table></div> 
+        <div class='Coin' style='top: 228px;left: 6px;'><table class='StatTable'><tr><td align='left'><img src='{ROOT_URL}images/gp.gif'></td><td align='center' width='100%'>{BGP}</td></tr></table></div> 
+        <div class='Coin' style='top: 256px;left: 6px;'><table class='StatTable'><tr><td align='left'><img src='{ROOT_URL}images/sp.gif'></td><td align='center' width='100%'>{BSP}</td></tr></table></div> 
+        <div class='Coin' style='top: 284px;left: 6px;'><table class='StatTable'><tr><td align='left'><img src='{ROOT_URL}images/cp.gif'></td><td align='center' width='100%'>{BCP}</td></tr></table></div> 
 
       </div> 
     </td> 

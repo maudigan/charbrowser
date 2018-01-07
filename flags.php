@@ -36,6 +36,8 @@
  *      Implemented new database wrapper.
  *   May 17, 2017 - Maudigan
  *      Added omens of war flags.
+ *   January 7, 2018 - Maudigan
+ *      Modified database to use a class.
  ***************************************************************************/ 
    
  
@@ -106,9 +108,9 @@ FROM quest_globals
 WHERE charid = %s
 TPL;
 $query = sprintf($tpl, $charID);
-$result = cbsql_query($query);
+$result = $cbsql->query($query);
 $quest_globals = array();
-while($row = cbsql_nextrow($result)) 
+while($row = $cbsql->nextrow($result)) 
    $quest_globals[$row['name']] = $row['value']; 
 
 //get zone flags from the db
@@ -118,9 +120,9 @@ FROM zone_flags
 WHERE charID = %s
 TPL;
 $query = sprintf($tpl, $charID);
-$result = cbsql_query($query);
+$result = $cbsql->query($query);
 $zone_flags = array();
-while($row = cbsql_nextrow($result)) 
+while($row = $cbsql->nextrow($result)) 
    $zone_flags[] = $row['zoneID']; 
  
  

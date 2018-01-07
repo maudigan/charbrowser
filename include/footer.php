@@ -14,6 +14,8 @@
  *                           Maudigan(Airwalking) 
  *
  *   September 16, 2017 - added an optional simple footer.
+ *   January 7, 2018 - Maudigan
+ *      Modified database to use a class.
  *
  ***************************************************************************/
  
@@ -26,9 +28,9 @@ if ( !defined('INCHARBROWSER') )
 }
 
 //if db performance is turned on fetch the output
-if (defined('DB_PERFORMANCE'))
+if (defined('DB_PERFORMANCE') && $cbsql)
 {
-   $dbp_output = dbp_fetch_parsed();
+   $dbp_output = $cbsql->dbp_fetch_parsed();
 }
 
 

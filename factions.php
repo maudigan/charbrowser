@@ -29,6 +29,8 @@
  *      Implemented new database wrapper.
  *   October 3, 2016 - Maudigan
  *      Made the faction links customizable
+ *   January 7, 2018 - Maudigan
+ *      Modified database to use a class.
  ***************************************************************************/
   
  
@@ -110,9 +112,9 @@ $query = sprintf($tpl, $char->GetValue('class'),
                        $char->GetValue('race'), 
                        ($char->GetValue('deity')==396) ? "140" : $char->GetValue('deity'), 
                        $charID);
-$result = cbsql_query($query);
+$result = $cbsql->query($query);
 $factions = array();
-while ($row = cbsql_nextrow($result)) {
+while ($row = $cbsql->nextrow($result)) {
    $factions[] = $row;
 }
  

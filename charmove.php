@@ -25,6 +25,8 @@
  *      organized some code. A lot has changed, but not much functionally
  *      do a compare to 2.41 to see the differences. 
  *      Implemented new database wrapper.
+ *   January 7, 2018 - Maudigan
+ *      Modified database to use a class.
  *  
  ***************************************************************************/
   
@@ -52,6 +54,7 @@ if (isset($_GET['api']))  cb_message_die($language['MESSAGE_ERROR'],$language['M
 //TRYMOVE - attempts to move a character
 function trymove($name, $login, $zone) {
    global $language, $charmovezones;
+   global $cbsql;
 
    if (!$login || !$zone || !$name) return $login." / ".$name." / ".$zone." - one or more fields was left blank";
    if (!preg_match("/^[a-zA-Z]*\z/", $name)) return $login." / ".$name." / ".$zone." - character name contains illegal characters";
@@ -66,11 +69,11 @@ FROM zone
 WHERE LCASE(short_name) = LCASE('%s') 
 LIMIT 1
 TPL;
-   $query = sprintf($tpl, cbsql_escape_string($zone));
-   $result = cbsql_query($query);  
-   if (!cbsql_rows($result))  return $login." / ".$name." / ".$zone." - zone database error";  
+   $query = sprintf($tpl, $cbsql->escape_string($zone));
+   $result = $cbsql->query($query);  
+   if (!$cbsql->rows($result))  return $login." / ".$name." / ".$zone." - zone database error";  
   
-   $row = cbsql_nextrow($result);
+   $row = $cbsql->nextrow($result);
    $zonesn = $row['short_name'];
    $zoneln = $row['long_name'];
    $zoneid = $row['zoneidnumber'];
@@ -85,16 +88,16 @@ WHERE LCASE(account.name) = LCASE('%s')
 AND LCASE(character_data.name) = LCASE('%s') 
 LIMIT 1
 TPL;
-   $query = sprintf($tpl, cbsql_escape_string($login),
-                          cbsql_escape_string($name));
-   $result = cbsql_query($query); 
+   $query = sprintf($tpl, $cbsql->escape_string($login),
+                          $cbsql->escape_string($name));
+   $result = $cbsql->query($query); 
 
-   if (!cbsql_rows($result))  { 
+   if (!$cbsql->rows($result))  { 
       sleep(2);
       return $login." / ".$name." / ".$zone." - Login or character name was not correct";  
    }
 
-   $row = cbsql_nextrow($result);
+   $row = $cbsql->nextrow($result);
    $charid = $row['id'];
 
    //move em
@@ -106,12 +109,12 @@ SET zone_id = '%s',
     z = '%s', 
 WHERE id = '%s'
 TPL;
-   $query = sprintf($tpl, cbsql_escape_string($zoneid),
-                          cbsql_escape_string($charmovezones[$zone]['x']),
-                          cbsql_escape_string($charmovezones[$zone]['y']),
-                          cbsql_escape_string($charmovezones[$zone]['z']),
-                          cbsql_escape_string($charid));
-   $result = cbsql_query($query);
+   $query = sprintf($tpl, $cbsql->escape_string($zoneid),
+                          $cbsql->escape_string($charmovezones[$zone]['x']),
+                          $cbsql->escape_string($charmovezones[$zone]['y']),
+                          $cbsql->escape_string($charmovezones[$zone]['z']),
+                          $cbsql->escape_string($charid));
+   $result = $cbsql->query($query);
 
 
    return $login." / ".$name." - moved to ".$zoneln;

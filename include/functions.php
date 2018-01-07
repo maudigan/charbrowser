@@ -21,6 +21,8 @@
  *      were kept here and renamed
  *   October 3, 2016 - Maudigan
  *      Added the QuickTemplate function which plugs values into a template
+ *   January 7, 2018 - Maudigan
+ *      Modified database to use a class.
  *
  ***************************************************************************/
  
@@ -60,6 +62,7 @@ function timer_stop($index)
 
 function GetPermissions($gm, $anonlevel, $char_id) {
    global $permissions;
+   global $cbsql;
  
    $tpl = <<<TPL
 SELECT `value`
@@ -68,10 +71,10 @@ WHERE `charid` = %d
 AND `name` = 'charbrowser_profile';
 TPL;
    $query = sprintf($tpl, $char_id);
-   $result = cbsql_query($query);
-   if(cbsql_rows($result))
+   $result = $cbsql->query($query);
+   if($cbsql->rows($result))
    { 
-      $row = cbsql_nextrow($result);
+      $row = $cbsql->nextrow($result);
       if ($row['value'] == 1) return $permissions['PUBLIC'];
       if ($row['value'] == 2) return $permissions['PRIVATE'];
    }

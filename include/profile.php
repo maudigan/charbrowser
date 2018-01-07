@@ -25,6 +25,8 @@
  *      added a second parameter to GetValue, it lets you specify the
  *      value that is returned when no record is found. The default 
  *      was set to 0 for the skills.php page to display correctly
+ *   January 7, 2018 - Maudigan
+ *      Modified database to use a class.
  *  
  ***************************************************************************/
  
@@ -711,6 +713,7 @@ class profile {
    function __construct($name) 
    {
       global $language;
+      global $cbsql;
       
       //we can't call the local query method as it assumes the character id
       //which we need to get in the first place
@@ -728,13 +731,13 @@ TPL;
       $query = sprintf($tpl, $table_name, $name);
       
       //get the result/error
-      $result = cbsql_query($query);
+      $result = $cbsql->query($query);
       
       //collect the data from returned row
-      if(cbsql_rows($result))
+      if($cbsql->rows($result))
       { 
          //fetch the row
-         $row = cbsql_nextrow($result);
+         $row = $cbsql->nextrow($result);
          //save it
          $this->cached_records[$table_name] = $row;
          $this->account_id = $row['account_id'];
@@ -774,9 +777,11 @@ TPL;
    //gets a single record for a character from a table
    public function GetRecord($table_name)
    {
+      global $cbsql;
+      
       //table name goes straight into a query 
       // so we need to escape it
-      $table_name = cbsql_escape_string($table_name);
+      $table_name = $cbsql->escape_string($table_name);
       
       return $this->_getRecordCache($table_name);
    }   
@@ -860,6 +865,7 @@ TPL;
    private function _getTableCache($table_name)
    {
       global $locator_pk, $language;
+      global $cbsql;
       
       //get the name of the second pk on the table
       if (!array_key_exists($table_name, $locator_pk))
@@ -876,12 +882,12 @@ TPL;
          $result = $this->_doCharacterQuery($table_name);
 
          //parse the result
-         if(cbsql_rows($result))
+         if($cbsql->rows($result))
          { 
             //this is a table with two primary keys, we need to load it
             //into a supporting array, indexed by it's second pk
             $temp_array = array();
-            while($row = cbsql_nextrow($result))
+            while($row = $cbsql->nextrow($result))
             {
                $temp_array[$row[$second_column_name]] = $row;
             }
@@ -905,6 +911,7 @@ TPL;
    private function _getRecordCache($table_name)
    {
       global $language;
+      global $cbsql;
       
       //if we haven't already loaded data from this table then load it
       if (!array_key_exists($table_name, $this->cached_records))
@@ -914,11 +921,11 @@ TPL;
          $result = $this->_doCharacterQuery($table_name);
 
          //parse the result
-         if(cbsql_rows($result))
+         if($cbsql->rows($result))
          { 
             //this is a simple table with only 1 row per character
             //we just store it in the root structure
-            $this->cached_records[$table_name] = cbsql_nextrow($result);
+            $this->cached_records[$table_name] = $cbsql->nextrow($result);
          } 
          else cb_message_die('profile.php', sprintf($language['MESSAGE_PROF_NOROWS'], $table_name),$language['MESSAGE_ERROR']);
       }
@@ -931,6 +938,8 @@ TPL;
    //we even get ones we dont need; they'll get cached for later use
    private function _doCharacterQuery($table_name)
    {
+      global $cbsql;
+   
       //build the query
       $tpl = <<<TPL
 SELECT * 
@@ -940,7 +949,7 @@ TPL;
       $query = sprintf($tpl, $table_name, $this->char_id);   
       
       //get the result/error
-      $result = cbsql_query($query);
+      $result = $cbsql->query($query);
       
       //serve em up
       return $result;

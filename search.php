@@ -23,6 +23,8 @@
  *      organized some code. A lot has changed, but not much functionally
  *      do a compare to 2.41 to see the differences. 
  *      Implemented new database wrapper.
+ *   January 7, 2018 - Maudigan
+ *      Modified database to use a class.
  ***************************************************************************/
  
  
@@ -90,15 +92,15 @@ TPL;
  
 //query once with no limit by just to get the count
 $query = sprintf($tpl, $where, '');
-$result = cbsql_query($query);
-$totalchars = cbsql_rows($result);
+$result = $cbsql->query($query);
+$totalchars = $cbsql->rows($result);
 if (!$totalchars) cb_message_die($language['MESSAGE_ERROR'],$language['MESSAGE_NO_RESULTS']);
 
 //now add on the limit & ordering and query again for just this page
 $query = sprintf($tpl, $where, $order);
-$result = cbsql_query($query);
+$result = $cbsql->query($query);
 $characters = array();
-while ($row = cbsql_nextrow($result)) {
+while ($row = $cbsql->nextrow($result)) {
    $characters[] = $row;
 }
  

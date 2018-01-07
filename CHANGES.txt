@@ -1,3 +1,42 @@
+v2.6.1
+----------------------------------------------------------------------
+Fixed the bazaar, database performance, forum wrapping, and
+database wrapper.
+
+Jan 7, 2017 - Fixed a typo in the bazaar script that was preventing
+              any results from showing up.
+              (Maudigan)
+              Fixed a reference to the template class in db.php that
+              was preventing the database performane stats from
+              dumping out.
+              (Maudigan)
+              Updated db.php wrappers for PHP7
+              (Athrogate)
+              Updated db wrapper to be an object so it wouldn't
+              interfere with header/footer db object
+
+v2.6
+----------------------------------------------------------------------
+Modified some of the code to allow you to embed charbrowser into
+a forum header/footer.
+
+Oct 21, 2017 - Between your forum headers include charbrowser
+               index.php. Prior to the include turn the simple 
+               headers on with:
+               $charbrowser_simple_header = true;
+               Tell charbrowser that it's being wrapped with:
+               $charbrowser_wrapped = true;
+               Lastly, you need to set the root path of charbrowser
+               so it can correctly find the other images/stylesheets
+               to include when the page renders:
+               $charbrowser_root_url = "http://eg.com/charbrowser/";
+               Those steps are only necessary if you want to wrap
+               Charbrowser in your forums.
+               The other changes are pretty widespread. A lot of 
+               objects have been renamed to reduce the chance that it
+               conflicts with your forum objects. Do a version
+               compare to see what all changed.
+               (Maudigan)
 
 v2.52
 ----------------------------------------------------------------------

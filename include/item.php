@@ -28,6 +28,8 @@
  *      Implemented new database wrapper.
  *   October 3, 2016 - Maudigan
  *      Made the spell links customizable
+ *   January 7, 2018 - Maudigan
+ *      Modified database to use a class.
  ***************************************************************************/
  
  
@@ -47,9 +49,10 @@ include_once(__DIR__ . "/db.php");
  */
 function GetFieldByQuery($field, $query)
 { 
-   $QueryResult = cbsql_query($query);
-   if(cbsql_rows($QueryResult) > 0) { 
-      $rows=cbsql_nextrow($QueryResult);
+   global $cbsql;
+   $QueryResult = $cbsql->query($query);
+   if($cbsql->rows($QueryResult) > 0) { 
+      $rows=$cbsql->nextrow($QueryResult);
       $Result = $rows[$field];
    }
    else

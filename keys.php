@@ -26,6 +26,8 @@
  *      Implemented new database wrapper.
  *   October 3, 2016 - Maudigan
  *      Made the item links customizable
+ *   January 7, 2018 - Maudigan
+ *      Modified database to use a class.
  ***************************************************************************/ 
  
  
@@ -70,10 +72,10 @@ WHERE char_id =  %s
 ORDER BY i.Name
 TPL;
 $query = sprintf($tpl, $charID);
-$result = cbsql_query($query);
+$result = $cbsql->query($query);
 $keys = array();
-if (cbsql_rows($result))
-   while($row = cbsql_nextrow($result)) 
+if ($cbsql->rows($result))
+   while($row = $cbsql->nextrow($result)) 
       $keys[] = $row;
 else
    cb_message_die($language['KEYS_KEY']." - ".$name,$language['MESSAGE_NO_KEYS']);

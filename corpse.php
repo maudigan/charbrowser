@@ -29,6 +29,8 @@
  *      blob conversion that I had missed
  *   October 3, 2016 - Maudigan
  *      Made the corpse links customizable
+ *   January 7, 2018 - Maudigan
+ *      Modified database to use a class.
  ***************************************************************************/
   
  
@@ -75,10 +77,10 @@ WHERE cc.charid = %s
 ORDER BY cc.time_of_death DESC
 TPL;
 $query = sprintf($tpl, $charID);
-$result = cbsql_query($query);
-if (!cbsql_rows($result)) cb_message_die($language['CORPSE_CORPSES']." - ".$name,$language['MESSAGE_NO_CORPSES']);
+$result = $cbsql->query($query);
+if (!$cbsql->rows($result)) cb_message_die($language['CORPSE_CORPSES']." - ".$name,$language['MESSAGE_NO_CORPSES']);
 $corpses = array();
-while ($row = cbsql_nextrow($result)) {
+while ($row = $cbsql->nextrow($result)) {
    $corpses[] = $row;
 }
  

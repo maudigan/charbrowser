@@ -24,6 +24,8 @@
  *      organized some code. A lot has changed, but not much functionally
  *      do a compare to 2.41 to see the differences. 
  *      Implemented new database wrapper.
+ *   January 7, 2018 - Maudigan
+ *      Modified database to use a class.
  ***************************************************************************/
  
  
@@ -211,10 +213,10 @@ WHERE guild_members.char_id = %s
 LIMIT 1
 TPL;
 $query = sprintf($tpl, $charID);
-$result = cbsql_query($query);
-if(cbsql_rows($result))
+$result = $cbsql->query($query);
+if($cbsql->rows($result))
 { 
-   $row = cbsql_nextrow($result);
+   $row = $cbsql->nextrow($result);
    $guild_name = $row['name'];
    $guild_rank = $guildranks[$row['rank']];
 }
@@ -235,7 +237,7 @@ JOIN inventory
 WHERE inventory.charid = '%s' 
 TPL;
 $query = sprintf($tpl, $charID);
-$result = cbsql_query($query);
+$result = $cbsql->query($query);
 // loop through inventory results saving Name, Icon, and preload HTML for each
 // item to be pasted into its respective div later
 $tpl = <<<TPL
@@ -244,13 +246,13 @@ FROM items
 WHERE id = '%s' 
 LIMIT 1
 TPL;
-while ($row = cbsql_nextrow($result)) {
+while ($row = $cbsql->nextrow($result)) {
    $tempitem = new item($row);
    for ($i = 1; $i <= 5; $i++) {
       if ($row["augslot".$i]) {
          $query = sprintf($tpl, $row["augslot".$i]);
-         $augresult = cbsql_query($query);
-         $augrow = cbsql_nextrow($augresult);
+         $augresult = $cbsql->query($query);
+         $augrow = $cbsql->nextrow($augresult);
          $tempitem->addaug($augrow);
          $itemstats->additem($augrow);
       }
@@ -275,8 +277,8 @@ ORDER BY items.id DESC
 LIMIT 0, 1;
 TPL;
    $query = sprintf($tpl, $charID, $class);
-   $result = cbsql_query($query);
-   if ($row = cbsql_nextrow($result)) $epicicon = sprintf($path['EPIC'], $row['icon']);
+   $result = $cbsql->query($query);
+   if ($row = $cbsql->nextrow($result)) $epicicon = sprintf($path['EPIC'], $row['icon']);
 }
 
 

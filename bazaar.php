@@ -24,6 +24,10 @@
  *      Implemented new database wrapper.
  *   October 3, 2016 - Maudigan
  *      Made the item links customizable
+ *   January 7, 2018 - Maudigan
+ *      fixed a typo when loading the $lots array
+ *   January 7, 2018 - Maudigan
+ *      Modified database to use a class.
  ***************************************************************************/
  
  
@@ -129,16 +133,16 @@ TPL;
  
 //query once with no limit by just to get the count
 $query = sprintf($tpl, $where, '');
-$result = cbsql_query($query);
-$totalitems = cbsql_rows($result);
+$result = $cbsql->query($query);
+$totalitems = $cbsql->rows($result);
 if (!$totalitems) cb_message_die($language['MESSAGE_ERROR'],$language['MESSAGE_NO_RESULTS_ITEMS']);
 
 //now add on the limit & ordering and query again for just this page
 $query = sprintf($tpl, $where, $order);
-$result = cbsql_query($query);
+$result = $cbsql->query($query);
 $lots = array();
-while ($row = cbsql_nextrow($result)) {
-   $lot[] = $row;
+while ($row = $cbsql->nextrow($result)) {
+   $lots[] = $row;
 }
  
  

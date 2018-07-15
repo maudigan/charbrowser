@@ -23,6 +23,8 @@
  *   September 16, 2017 - Maudigan
  *      Modify script to be able to redirect to the other pages using the
  *      "page" variable.
+ *   July 15, 2018 - Maudigan
+ *      Made the 'page' variable validation more strict to prevent abuse
  ***************************************************************************/
   
  
@@ -91,7 +93,8 @@ else
    //this permits us to use index.php to display every single page in the utility
     
    // Make sure the request isn't escaping to another unintended directory 
-   if (strpos($_REQUEST['page'], '.') > 0 || strpos($_REQUEST['page'], '/') > 0 || strpos($_REQUEST['page'], '\\') > 0)
+   // this is risky, so we're super strict and only allow alpha characters
+   if (!preg_match('/^[a-zA-Z]+$/', $_REQUEST['page']))
    { 
       cb_message_die($language['MESSAGE_ERROR'],$language['MESSAGE_NOPAGE']);
    } 

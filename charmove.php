@@ -27,6 +27,8 @@
  *      Implemented new database wrapper.
  *   January 7, 2018 - Maudigan
  *      Modified database to use a class.
+ *   September 6, 2018 - Maudigan
+ *      Removed the extra comma from the UPDATE statement
  *  
  ***************************************************************************/
   
@@ -106,7 +108,7 @@ UPDATE character_data
 SET zone_id = '%s', 
     x = '%s', 
     y = '%s', 
-    z = '%s', 
+    z = '%s' 
 WHERE id = '%s'
 TPL;
    $query = sprintf($tpl, $cbsql->escape_string($zoneid),

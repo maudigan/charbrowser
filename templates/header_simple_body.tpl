@@ -1,3 +1,4 @@
+<div id='charbrowser'>
 <link rel='stylesheet' href='{ROOT_URL}templates/style.css' type='text/css'/>
 
 <center>

@@ -53,6 +53,7 @@
 	  <tr onMouseOver="this.style.background = '#7b714a'" onMouseOut="this.style.background = 'none'" >    <td>1H Blunt</td>    <td> {1H_BLUNT}</td>  </tr> 
 	  <tr onMouseOver="this.style.background = '#7b714a'" onMouseOut="this.style.background = 'none'" >    <td>1H Slashing</td>    <td> {1H_SLASHING}</td>  </tr> 
 	  <tr onMouseOver="this.style.background = '#7b714a'" onMouseOut="this.style.background = 'none'" >    <td>2H Blunt</td>    <td> {2H_BLUNT}</td>  </tr> 
+	  <tr onMouseOver="this.style.background = '#7b714a'" onMouseOut="this.style.background = 'none'" >    <td>2H Piercing</td>    <td> {2H_PIERCING}</td>  </tr>
 	  <tr onMouseOver="this.style.background = '#7b714a'" onMouseOut="this.style.background = 'none'" >    <td>2H Slashing</td>    <td> {2H_SLASHING}</td>  </tr>
 	  <tr onMouseOver="this.style.background = '#7b714a'" onMouseOut="this.style.background = 'none'" >    <td>Archery</td>    <td> {ARCHERY}</td>  </tr> 
 	  <tr onMouseOver="this.style.background = '#7b714a'" onMouseOut="this.style.background = 'none'" >    <td>Bash</td>    <td> {BASH}</td>  </tr> 
@@ -69,6 +70,7 @@
 	  <tr onMouseOver="this.style.background = '#7b714a'" onMouseOut="this.style.background = 'none'" >    <td>Piercing</td>    <td> {PIERCING}</td>  </tr> 
 	  <tr onMouseOver="this.style.background = '#7b714a'" onMouseOut="this.style.background = 'none'" >    <td>Riposte</td>    <td> {RIPOSTE}</td>  </tr> 
 	  <tr onMouseOver="this.style.background = '#7b714a'" onMouseOut="this.style.background = 'none'" >    <td>Throwing</td>    <td> {THROWING}</td>  </tr> 
+	  <tr onMouseOver="this.style.background = '#7b714a'" onMouseOut="this.style.background = 'none'" >    <td>Tripple Attack</td>    <td> {TRIPPLE_ATTACK}</td>  </tr> 
 	  <tr onMouseOver="this.style.background = '#7b714a'" onMouseOut="this.style.background = 'none'" >    <td>Intimidation</td>    <td> {INTIMIDATION}</td>  </tr> 
 	  <tr onMouseOver="this.style.background = '#7b714a'" onMouseOut="this.style.background = 'none'" >    <td>Taunt</td>    <td> {TAUNT}</td>  </tr>
 	
@@ -98,6 +100,7 @@
 	  <tr onMouseOver="this.style.background = '#7b714a'" onMouseOut="this.style.background = 'none'" >    <td>Backstab</td>    <td> {BACKSTAB}</td>  </tr>
 	  <tr onMouseOver="this.style.background = '#7b714a'" onMouseOut="this.style.background = 'none'" >    <td>Disarm Traps</td>    <td> {DISARM_TRAPS}</td>  </tr>
 	  <tr onMouseOver="this.style.background = '#7b714a'" onMouseOut="this.style.background = 'none'" >    <td>Pick Pockets</td>    <td> {PICK_POCKETS}</td>  </tr>
+	  <tr onMouseOver="this.style.background = '#7b714a'" onMouseOut="this.style.background = 'none'" >    <td>Remove Traps</td>    <td> {REMOVE_TRAPS}</td>  </tr>
 	  <tr onMouseOver="this.style.background = '#7b714a'" onMouseOut="this.style.background = 'none'" >    <td>Sense Traps</td>    <td> {SENSE_TRAPS}</td>  </tr>
 	  <tr onMouseOver="this.style.background = '#7b714a'" onMouseOut="this.style.background = 'none'" >    <td>Berserking</td>    <td> {BERSERKING}</td>  </tr>
 	  <tr onMouseOver="this.style.background = '#7b714a'" onMouseOut="this.style.background = 'none'" >    <td>Frenzy</td>    <td> {FRENZY}</td>  </tr>

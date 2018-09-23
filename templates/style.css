@@ -1,15 +1,23 @@
-* {
+#charbrowser * {
   margin: 0px;
   padding: 0px;
 }
 
-DIV.body {
+/* ----------------------------------------------
+         wraps around the entire page
+         to help prevent naming collisions
+         added 9/23/2018
+-------------------------------------------------*/
+#charbrowser {
+}
+
+#charbrowser DIV.body {
   background: #ffffff url(../images/fbg.png) 0px 0px repeat-x;
   color: #FFFFFF;
   font-family:arial;
 }
 
-DIV.body_simple {
+#charbrowser DIV.body_simple {
   font-family:arial;
 }
 
@@ -18,57 +26,57 @@ DIV.body_simple {
          don't get rid of these!
          added 9/28/2014
 -------------------------------------------------*/
-DIV.db_dump
+#charbrowser DIV.db_dump
 {
    padding: 50px;
 }
-DIV.db_query
+#charbrowser DIV.db_query
 {
   background-color: #444;
   border-radius:  10px;
   padding: 15px;
   margin: 15px auto;
 }
-DIV.db_sql,
-DIV.db_time,
-TABLE.db_explain  
+#charbrowser DIV.db_sql,
+#charbrowser DIV.db_time,
+#charbrowser TABLE.db_explain  
 {
   margin: 20px;
 }
 
-TABLE.db_explain  
+#charbrowser TABLE.db_explain  
 {
   border-collapse: collapse;
 }
 
-TABLE.db_explain  TD 
+#charbrowser TABLE.db_explain  TD 
 {
   border-top: 1px #777 solid;
 }
 
-TABLE.db_explain  TD,
-TABLE.db_explain  TH 
+#charbrowser TABLE.db_explain  TD,
+#charbrowser TABLE.db_explain  TH 
 {
   padding: 5px;
 }
 
-DIV.db_sql P,
-DIV.db_time P,
-TABLE.db_explain  TD
+#charbrowser DIV.db_sql P,
+#charbrowser DIV.db_time P,
+#charbrowser TABLE.db_explain  TD
 {
   color: #aaa;
   font-family: "Courier New";
   font-size: 10pt;
 }
 
-TABLE.db_explain  THEAD TH:nth-child(even),
-TABLE.db_explain  TBODY TD:nth-child(even)
+#charbrowser TABLE.db_explain  THEAD TH:nth-child(even),
+#charbrowser TABLE.db_explain  TBODY TD:nth-child(even)
 {
   background-color: #666;
 }
 
 
-TABLE.db_explain  TH
+#charbrowser TABLE.db_explain  TH
 {
   color: #bbb;
   font-family: "Courier New";
@@ -76,9 +84,9 @@ TABLE.db_explain  TH
   font-weight: bold;
 }
 
-DIV.db_sql H1,
-DIV.db_time H1,
-TABLE.db_explain CAPTION
+#charbrowser DIV.db_sql H1,
+#charbrowser DIV.db_time H1,
+#charbrowser TABLE.db_explain CAPTION
 {
   color: #cca;
   font-family: "Courier New";
@@ -88,7 +96,7 @@ TABLE.db_explain CAPTION
 }
  
  
-DIV.searchbar {
+#charbrowser DIV.searchbar {
   padding: 0px;
   width: 100%;
   background: #222222 url(../images/weave.png);
@@ -97,14 +105,14 @@ DIV.searchbar {
   font-size: 8pt;
 }
 
-DIV.logo {
+#charbrowser DIV.logo {
   background: url(../images/headerlogowithbg.png) 0 0 no-repeat;
   height: 70px;
   max-height: 55px;
   padding: 10px 50px 5px 50px;
 }
 
-.Bazaar {
+#charbrowser .Bazaar {
   border: 1px #555555 solid;
   background-color: #0b0b10;
   height: 15px;
@@ -115,7 +123,7 @@ DIV.logo {
   font-size: 8pt; 
 }
 
-.SigBuilder {
+#charbrowser .SigBuilder {
   border: 1px #555555 solid;
   background-color: #0b0b10;
   height: 15px;
@@ -126,7 +134,7 @@ DIV.logo {
   font-size: 8pt; 
 }
 
-INPUT.search {
+#charbrowser INPUT.search {
   border: 1px #000000 solid;
   background-color: #dddddd;
   color: #222222;
@@ -137,7 +145,7 @@ INPUT.search {
 }
 
 /* static placed buttons */
-.Button {
+#charbrowser .Button {
   height: 23px;
   width: 48px;
   border: 0px;
@@ -150,7 +158,7 @@ INPUT.search {
 }
 
 /* dynamically placed buttons */
-.FreeButton {
+#charbrowser .FreeButton {
   height: 23px;
   width: 48px;
   border: 0px ;
@@ -162,14 +170,14 @@ INPUT.search {
 }
 
 /* the byline in the footer*/
-.Footer {
+#charbrowser .Footer {
   font-family:		georgia;
   font-size: 9pt ;
   color: #555555 ;
 }
 
 /* stylesheet for column headers*/
-.ColumnHead {
+#charbrowser .ColumnHead {
   font-family:		arial;
   font-size: 9pt ;
   font-weight: bold;
@@ -183,13 +191,13 @@ INPUT.search {
 /* ----------------------------------------------
               checkboxes
 -------------------------------------------------*/
-.check0 {
+#charbrowser .check0 {
   height: 16px;
   width: 16px;
   margin: 1px;
   background-image:url(../images/check_0.png);
 }
-.check1 {  
+#charbrowser .check1 {  
   height: 16px;
   width: 16px;
   margin: 1px;
@@ -197,7 +205,7 @@ INPUT.search {
 }
 
 /* stylesheet for tables */
-.StatTable {
+#charbrowser .StatTable {
   font-family:		arial;
   font-size: 9pt ;
   color: #FFFFFF ;
@@ -210,7 +218,7 @@ INPUT.search {
 }
 
 /* table for augments */
-.AugTable {
+#charbrowser .AugTable {
   font-family:		arial;
   font-size: 7pt ;
   color: #FFFFFF ;
@@ -223,7 +231,7 @@ INPUT.search {
 }
 
 /* divider in tables uses a <td>*/
-.Divider {
+#charbrowser .Divider {
   background-color: #7b714a ;
   width: 100%;
   height: 2px;
@@ -233,7 +241,7 @@ INPUT.search {
 }
 
 /* for item icons in inventory */
-.Slot {
+#charbrowser .Slot {
   height: 40px;
   width: 40px;
   border: 0px ;
@@ -244,7 +252,7 @@ INPUT.search {
 
 
 /* coin boxes in bank and innventory */
-.Coin {
+#charbrowser .Coin {
   height: 25px;
   width: 83px;
   border: 0px ;
@@ -259,7 +267,7 @@ INPUT.search {
 /* ----------------------------------------------
           side nav bar
 ------------------------------------------------- */
-.NavOuter {
+#charbrowser .NavOuter {
   position: absolute;	
   background-image: url(../images/light.gif);
   width: 80px;
@@ -272,7 +280,7 @@ INPUT.search {
   font-size: 9pt ;
   color: #FFFFFF ;
 }
-.NavInner {
+#charbrowser .NavInner {
   background-image: url(../images/dark.gif);
   border: 1px #444444 solid;
   padding: 6px;
@@ -285,7 +293,7 @@ INPUT.search {
 /* ----------------------------------------------
           Item $ Error window stylesheets
 ------------------------------------------------- */
-.ItemOuter {
+#charbrowser .ItemOuter {
   position: relative;	
   background-image: url(../images/light.gif);
   width: 364px;
@@ -296,7 +304,7 @@ INPUT.search {
   font-size: 9pt ;
   color: #FFFFFF ;
 }
-.ItemInner {
+#charbrowser .ItemInner {
   background-image: url(../images/dark.gif);
   border: 1px #444444 solid;
   padding: 6px;
@@ -304,7 +312,7 @@ INPUT.search {
   font-size: 9pt ;
   color: #FFFFFF ;
 }
-.ItemTitle {
+#charbrowser .ItemTitle {
   position: absolute;
   top: -11px;
   left: 4px;
@@ -316,7 +324,7 @@ INPUT.search {
   font-size: 9pt ;
   color: #FFFFFF ;
 }
-.ItemTitleLeft {
+#charbrowser .ItemTitleLeft {
   background-image: url(../images/leftt.gif);
   position: absolute;
   top: 0px;
@@ -326,7 +334,7 @@ INPUT.search {
   border: 0px;
   padding: 0px;
 }
-.ItemTitleMid {
+#charbrowser .ItemTitleMid {
   background-image: url(../images/midt.gif);
   position: absolute;
   text-align: center;
@@ -338,7 +346,7 @@ INPUT.search {
   border: 0px;
   padding: 0px;
 }
-.ItemTitleRight {
+#charbrowser .ItemTitleRight {
   background-image: url(../images/rightt.gif);
   position: absolute;
   top: 0px;
@@ -353,7 +361,7 @@ INPUT.search {
 /* ----------------------------------------------
           Inventory window stylesheets
 ------------------------------------------------- */
-.IventoryOuterGM {
+#charbrowser .IventoryOuterGM {
   position: relative;	
   background-image: url(../images/lightgm.jpg);
   width: 430px;
@@ -366,7 +374,7 @@ INPUT.search {
   font-size: 9pt ;
   color: #FFFFFF ;
 }
-.IventoryOuter {
+#charbrowser .IventoryOuter {
   position: relative;	
   background-image: url(../images/light.gif);
   width: 430px;
@@ -379,7 +387,7 @@ INPUT.search {
   font-size: 9pt ;
   color: #FFFFFF ;
 }
-.InventoryInner {
+#charbrowser .InventoryInner {
   background-image: url(../images/light.gif);
   border: 2px #40434e solid;
   position: absolute;
@@ -394,7 +402,7 @@ INPUT.search {
   font-size: 9pt ;
   color: #FFFFFF ;
 }
-.IventoryTitle {
+#charbrowser .IventoryTitle {
   position: absolute;
   top: -11px;
   left: 4px;
@@ -406,7 +414,7 @@ INPUT.search {
   font-size: 9pt ;
   color: #FFFFFF ;
 }
-.IventoryTitleLeft {
+#charbrowser .IventoryTitleLeft {
   background-image: url(../images/leftt.gif);
   position: absolute;
   top: 0px;
@@ -416,7 +424,7 @@ INPUT.search {
   border: 0px;
   padding: 0px;
 }
-.IventoryTitleMid {
+#charbrowser .IventoryTitleMid {
   background-image: url(../images/midt.gif);
   position: absolute;
   text-align: center;
@@ -428,7 +436,7 @@ INPUT.search {
   border: 0px;
   padding: 0px;
 }
-.IventoryTitleRight {
+#charbrowser .IventoryTitleRight {
   background-image: url(../images/rightt.gif);
   position: absolute;
   top: 0px;
@@ -438,7 +446,7 @@ INPUT.search {
   border: 0px;
   padding: 0px;
 }
-.InventoryStats {
+#charbrowser .InventoryStats {
   height: 370px;
   width: 115px;
   margin: 0px;
@@ -447,7 +455,7 @@ INPUT.search {
   top: 14px;
   left: 10px;
 }
-.InventoryStats2 {
+#charbrowser .InventoryStats2 {
   height: 100px;
   width: 100px;
   margin: 0px;
@@ -456,7 +464,7 @@ INPUT.search {
   top: 14px;
   left: 315px;
 }
-.InventoryMonogram {
+#charbrowser .InventoryMonogram {
   background-image: url(../images/dark.gif);
   border: 1px #444444 solid;
   position: absolute;
@@ -477,7 +485,7 @@ INPUT.search {
 /* ----------------------------------------------
           Bank window stylesheets
 ------------------------------------------------- */
-.BankOuter {
+#charbrowser .BankOuter {
   position: relative;	
   background-image: url(../images/light.gif);
   width: 191px;
@@ -490,7 +498,7 @@ INPUT.search {
   font-size: 9pt ;
   color: #FFFFFF ;
 }
-.BankTitle {
+#charbrowser .BankTitle {
   position: absolute;
   top: -11px;
   left: 4px;
@@ -502,7 +510,7 @@ INPUT.search {
   font-size: 9pt ;
   color: #FFFFFF ;
 }
-.BankTitleLeft {
+#charbrowser .BankTitleLeft {
   background-image: url(../images/leftt.gif);
   position: absolute;
   top: 0px;
@@ -512,7 +520,7 @@ INPUT.search {
   border: 0px;
   padding: 0px;
 }
-.BankTitleMid {
+#charbrowser .BankTitleMid {
   background-image: url(../images/midt.gif);
   position: absolute;
   text-align: center;
@@ -524,7 +532,7 @@ INPUT.search {
   border: 0px;
   padding: 0px;
 }
-.BankTitleRight {
+#charbrowser .BankTitleRight {
   background-image: url(../images/rightt.gif);
   position: absolute;
   top: 0px;
@@ -539,7 +547,7 @@ INPUT.search {
 /* ----------------------------------------------
           Bag window stylesheets
 ------------------------------------------------- */
-.BagOuter {
+#charbrowser .BagOuter {
   position: relative;	
   display: none;
   background-image: url(../images/light.gif);
@@ -551,47 +559,47 @@ INPUT.search {
   font-size: 9pt ;
   color: #FFFFFF ;
 }
-.bagbuttonrow1 {
+#charbrowser .bagbuttonrow1 {
   top: 74;
   left: 25px
 }
-.bagbuttonrow2 {
+#charbrowser #charbrowser .bagbuttonrow2 {
   top: 117;
   left: 25px
 }
-.bagbuttonrow3 {
+#charbrowser .bagbuttonrow3 {
   top: 160;
   left: 25px
 }
-.bagbuttonrow4 {
+#charbrowser .bagbuttonrow4 {
   top: 202;
   left: 25px
 }
-.bagbuttonrow5 {
+#charbrowser .bagbuttonrow5 {
   top: 245;
   left: 25px
 }
-.bagrow1 {
+#charbrowser .bagrow1 {
   height: 107px;
   max-height: 83px;
 }
-.bagrow2 {
+#charbrowser .bagrow2 {
   height: 150px;
   max-height: 126px;
 }
-.bagrow3 {
+#charbrowser .bagrow3 {
   height: 193px;
   max-height: 169px;
 }
-.bagrow4 {
+#charbrowser .bagrow4 {
   height: 235px;
   max-height: 211px;
 }
-.bagrow5 {
+#charbrowser .bagrow5 {
   height: 278px;
   max-height: 254px;
 }
-.BagTitle {
+#charbrowser .BagTitle {
   position: absolute;
   top: -11px;
   left: 4px;
@@ -603,7 +611,7 @@ INPUT.search {
   font-size: 9pt ;
   color: #FFFFFF ;
 }
-.BagTitleLeft {
+#charbrowser .BagTitleLeft {
   background-image: url(../images/leftt.gif);
   position: absolute;
   top: 0px;
@@ -613,7 +621,7 @@ INPUT.search {
   border: 0px;
   padding: 0px;
 }
-.BagTitleMid {
+#charbrowser .BagTitleMid {
   background-image: url(../images/midt.gif);
   position: absolute;
   text-align: center;
@@ -625,7 +633,7 @@ INPUT.search {
   border: 0px;
   padding: 0px;
 }
-.BagTitleRight {
+#charbrowser .BagTitleRight {
   background-image: url(../images/rightt.gif);
   position: absolute;
   top: 0px;
@@ -640,7 +648,7 @@ INPUT.search {
 /* ----------------------------------------------
           AAs and Flags window stylesheets
 ------------------------------------------------- */
-.FlagOuter {
+#charbrowser .FlagOuter {
   position: relative;	
   background-image: url(../images/light.gif);
   width: 664px;
@@ -651,7 +659,7 @@ INPUT.search {
   font-size: 9pt ;
   color: #FFFFFF ;
 }
-.FlagInner {
+#charbrowser .FlagInner {
   background-image: url(../images/light.gif);
   border: 1px #40434e solid;
   padding: 6px;
@@ -659,7 +667,7 @@ INPUT.search {
   font-size: 9pt ;
   color: #FFFFFF ;
 }
-.FlagTitle {
+#charbrowser .FlagTitle {
   position: absolute;
   top: -11px;
   left: 4px;
@@ -671,7 +679,7 @@ INPUT.search {
   font-size: 9pt ;
   color: #FFFFFF ;
 }
-.FlagTitleLeft {
+#charbrowser .FlagTitleLeft {
   background-image: url(../images/leftt.gif);
   position: absolute;
   top: 0px;
@@ -681,7 +689,7 @@ INPUT.search {
   border: 0px;
   padding: 0px;
 }
-.FlagTitleMid {
+#charbrowser .FlagTitleMid {
   background-image: url(../images/midt.gif);
   position: absolute;
   text-align: center;
@@ -693,7 +701,7 @@ INPUT.search {
   border: 0px;
   padding: 0px;
 }
-.FlagTitleRight {
+#charbrowser .FlagTitleRight {
   background-image: url(../images/rightt.gif);
   position: absolute;
   top: 0px;
@@ -703,7 +711,7 @@ INPUT.search {
   border: 0px;
   padding: 0px;
 }
-.FlagTabBox {
+#charbrowser .FlagTabBox {
   background-image: url(../images/dark.gif);
   border: 1px #6b7194 solid;
   padding: 6px 0px 6px 0px;
@@ -721,27 +729,27 @@ INPUT.search {
               anchor stylesheets
 ------------------------------------------------- */
 
-A { 
+#charbrowser A { 
   text-decoration:  none; 
   font-weight:	    none;
   color: 		    #7b714a ; 
 }
-A:link { 
+#charbrowser A:link { 
   text-decoration:  none; 
   font-weight:	    none;
   color: 		    #7b714a ; 
 }
-A:active { 
+#charbrowser A:active { 
   text-decoration:  none; 
   font-weight:	    none;
   color: 		    #7b714a ; 
 }
-A:visited { 
+#charbrowser A:visited { 
   text-decoration:  none; 
   font-weight:	    none;
   color: 		    #6b614a ; 
 }
-A:hover { 
+#charbrowser A:hover { 
   text-decoration:  underline; 
   font-weight:	    none;
   color: 		    #7b714a ; 
@@ -752,43 +760,43 @@ A:hover {
          locations for bag slots
 ------------------------------------------------- */
 
-.bagslotloc1 {
+#charbrowser .bagslotloc1 {
   top: 20px;
   left: 6px;
 }
-.bagslotloc2 {
+#charbrowser .bagslotloc2 {
   top: 20px;
   left: 49px;
 }
-.bagslotloc3 {
+#charbrowser .bagslotloc3 {
   top: 63px;
   left: 6px;
 }
-.bagslotloc4 {
+#charbrowser .bagslotloc4 {
   top: 63px;
   left: 49px;
 }
-.bagslotloc5 {
+#charbrowser .bagslotloc5 {
   top: 106px;
   left: 6px;
 }
-.bagslotloc6 {
+#charbrowser .bagslotloc6 {
   top: 106px;
   left: 49px;
 }
-.bagslotloc7 {
+#charbrowser .bagslotloc7 {
   top: 148px;
   left: 6px;
 }
-.bagslotloc8 {
+#charbrowser .bagslotloc8 {
   top: 148px;
   left: 49px;
 }
-.bagslotloc9 {
+#charbrowser .bagslotloc9 {
   top: 191px;
   left: 6px;
 }
-.bagslotloc10 {
+#charbrowser .bagslotloc10 {
   top: 191px;
   left: 49px;
 }
@@ -798,223 +806,223 @@ A:hover {
          locations for inventory slots
 ------------------------------------------------- */
 
-.slotloc1 {
+#charbrowser .slotloc1 {
   top: 14px;
   left: 137px;
 }
-.slotloc2 {
+#charbrowser .slotloc2 {
   top: 14px;
   left: 180px;
 }
-.slotloc3 {
+#charbrowser .slotloc3 {
   top: 14px;
   left: 223px;
 }
-.slotloc4 {
+#charbrowser .slotloc4 {
   top: 14px;
   left: 267px;
 }
-.slotloc17 {
+#charbrowser .slotloc17 {
   top: 57px;
   left: 137px;
 }
-.slotloc5 {
+#charbrowser .slotloc5 {
   top: 57px;
   left: 267px;
 }
-.slotloc7 {
+#charbrowser .slotloc7 {
   top: 100px;
   left: 137px;
 }
-.slotloc8 {
+#charbrowser .slotloc8 {
   top: 100px;
   left: 267px;
 }
-.slotloc20 {
+#charbrowser .slotloc20 {
   top: 143px;
   left: 137px;
 }
-.slotloc6 {
+#charbrowser .slotloc6 {
   top: 143px;
   left: 267px;
 }
-.slotloc9 {
+#charbrowser .slotloc9 {
   top: 186px;
   left: 137px;
 }
-.slotloc10 {
+#charbrowser .slotloc10 {
   top: 186px;
   left: 267px;
 }
-.slotloc18 {
+#charbrowser .slotloc18 {
   top: 229px;
   left: 137px;
 }
-.slotloc12 {
+#charbrowser .slotloc12 {
   top: 229px;
   left: 180px;
 }
-.slotloc0 {
+#charbrowser .slotloc0 {
   top: 229px;
   left: 223px;
 }
-.slotloc19 {
+#charbrowser .slotloc19 {
   top: 229px;
   left: 267px;
 }
-.slotloc15 {
+#charbrowser .slotloc15 {
   top: 272px;
   left: 180px;
 }
-.slotloc16 {
+#charbrowser .slotloc16 {
   top: 272px;
   left: 223px;
 }
-.slotloc13 {
+#charbrowser .slotloc13 {
   top: 315px;
   left: 137px;
 }
-.slotloc14 {
+#charbrowser .slotloc14 {
   top: 315px;
   left: 180px;
 }
-.slotloc11 {
+#charbrowser .slotloc11 {
   top: 315px;
   left: 223px;
 }
-.slotloc21 {
+#charbrowser .slotloc21 {
   top: 315px;
   left: 267px;
 }
-.slotloc22 {
+#charbrowser .slotloc22 {
   top: 229px;
   left: 317px;
 }
-.slotloc23 {
+#charbrowser .slotloc23 {
   top: 272px;
   left: 317px;
 }
-.slotloc24 {
+#charbrowser .slotloc24 {
   top: 315px;
   left: 317px;
 }
-.slotloc25 {
+#charbrowser .slotloc25 {
   top: 358px;
   left: 317px;
 }
-.slotloc26 {
+#charbrowser .slotloc26 {
   top: 229px;
   left: 360px;
 }
-.slotloc27 {
+#charbrowser .slotloc27 {
   top: 272px;
   left: 360px;
 }
-.slotloc28 {
+#charbrowser .slotloc28 {
   top: 315px;
   left: 360px;
 }
-.slotloc29 {
+#charbrowser .slotloc29 {
   top: 358px;
   left: 360px;
 }
-.slotloc9999 { /* added powersource slot 2/5/2014 */ 
+#charbrowser .slotloc9999 { /* added powersource slot 2/5/2014 */ 
   top: 272px; 
   left: 267px; 
 } 
-.slotloc2000 {
+#charbrowser .slotloc2000 {
   top: 20px;
   left: 6px;
 }
-.slotloc2001 {
+#charbrowser .slotloc2001 {
   top: 63px;
   left: 6px;
 }
-.slotloc2002 {
+#charbrowser .slotloc2002 {
   top: 106px;
   left: 6px;
 }
-.slotloc2003 {
+#charbrowser .slotloc2003 {
   top: 148px;
   left: 6px;
 }
-.slotloc2004 {
+#charbrowser .slotloc2004 {
   top: 20px;
   left: 50px;
 }
-.slotloc2005 {
+#charbrowser .slotloc2005 {
   top: 63px;
   left: 50px;
 }
-.slotloc2006 {
+#charbrowser .slotloc2006 {
   top: 106px;
   left: 50px;
 }
-.slotloc2007 {
+#charbrowser .slotloc2007 {
   top: 148px;
   left: 50px;
 }
-.slotloc2008 {
+#charbrowser .slotloc2008 {
   top: 20px;
   left: 97px;
 }
-.slotloc2009 {
+#charbrowser .slotloc2009 {
   top: 63px;
   left: 97px;
 }
-.slotloc2010 {
+#charbrowser .slotloc2010 {
   top: 106px;
   left: 97px;
 }
-.slotloc2011 {
+#charbrowser .slotloc2011 {
   top: 148px;
   left: 97px;
 }
-.slotloc2012 {
+#charbrowser .slotloc2012 {
   top: 20px;
   left: 141px;
 }
-.slotloc2013 {
+#charbrowser .slotloc2013 {
   top: 63px;
   left: 141px;
 }
-.slotloc2014 {
+#charbrowser .slotloc2014 {
   top: 106px;
   left: 141px;
 }
-.slotloc2015 {
+#charbrowser .slotloc2015 {
   top: 148px;
   left: 141px;
 }
-.slotloc2016 {
+#charbrowser .slotloc2016 {
   top: 200px;
   left: 97px;
 }
-.slotloc2017 {
+#charbrowser .slotloc2017 {
   top: 243px;
   left: 97px;
 }
-.slotloc2018 {
+#charbrowser .slotloc2018 {
   top: 286px;
   left: 97px;
 }
-.slotloc2019 {
+#charbrowser .slotloc2019 {
   top: 329px;
   left: 97px;
 }
-.slotloc2020 {
+#charbrowser .slotloc2020 {
   top: 200px;
   left: 141px;
 }
-.slotloc2021 {
+#charbrowser .slotloc2021 {
   top: 243px;
   left: 141px;
 }
-.slotloc2022 {
+#charbrowser .slotloc2022 {
   top: 286px;
   left: 141px;
 }
-.slotloc2023 {
+#charbrowser .slotloc2023 {
   top: 328px;
   left: 141px;
 }
@@ -1022,75 +1030,75 @@ A:hover {
 /* ----------------------------------------------
          inventory slot images
 ------------------------------------------------- */
-.slotimage0 {
+#charbrowser .slotimage0 {
   background-image: url(../images/slots/slot_0.gif);
 }
-.slotimage1 {
+#charbrowser .slotimage1 {
   background-image: url(../images/slots/slot_1.gif);
 }
-.slotimage2 {
+#charbrowser .slotimage2 {
   background-image: url(../images/slots/slot_2.gif);
 }
-.slotimage3 {
+#charbrowser .slotimage3 {
   background-image: url(../images/slots/slot_3.gif);
 }
-.slotimage4 {
+#charbrowser .slotimage4 {
   background-image: url(../images/slots/slot_4.gif);
 }
-.slotimage5 {
+#charbrowser .slotimage5 {
   background-image: url(../images/slots/slot_5.gif);
 }
-.slotimage6 {
+#charbrowser .slotimage6 {
   background-image: url(../images/slots/slot_6.gif);
 }
-.slotimage7 {
+#charbrowser .slotimage7 {
   background-image: url(../images/slots/slot_7.gif);
 }
-.slotimage8 {
+#charbrowser .slotimage8 {
   background-image: url(../images/slots/slot_8.gif);
 }
-.slotimage9 {
+#charbrowser .slotimage9 {
   background-image: url(../images/slots/slot_9.gif);
 }
-.slotimage10 {
+#charbrowser .slotimage10 {
   background-image: url(../images/slots/slot_10.gif);
 }
-.slotimage11 {
+#charbrowser .slotimage11 {
   background-image: url(../images/slots/slot_11.gif);
 }
-.slotimage12 {
+#charbrowser .slotimage12 {
   background-image: url(../images/slots/slot_12.gif);
 }
-.slotimage13 {
+#charbrowser .slotimage13 {
   background-image: url(../images/slots/slot_13.gif);
 }
-.slotimage14 {
+#charbrowser .slotimage14 {
   background-image: url(../images/slots/slot_14.gif);
 }
-.slotimage15 {
+#charbrowser .slotimage15 {
   background-image: url(../images/slots/slot_15.gif);
 }
-.slotimage16 {
+#charbrowser .slotimage16 {
   background-image: url(../images/slots/slot_16.gif);
 }
-.slotimage17 {
+#charbrowser .slotimage17 {
   background-image: url(../images/slots/slot_17.gif);
 }
-.slotimage18 {
+#charbrowser .slotimage18 {
   background-image: url(../images/slots/slot_18.gif);
 }
-.slotimage19 {
+#charbrowser .slotimage19 {
   background-image: url(../images/slots/slot_19.gif);
 }
-.slotimage20 {
+#charbrowser .slotimage20 {
   background-image: url(../images/slots/slot_20.gif);
 }
-.slotimage21 {
+#charbrowser .slotimage21 {
   background-image: url(../images/slots/slot_21.gif);
 }
-.slotimage9999 {
+#charbrowser .slotimage9999 {
   background-image: url(../images/slots/slot_9999.gif);
 }
-.slotimage {
+#charbrowser .slotimage {
   background-image: url(../images/slots/slot_.gif);
 }

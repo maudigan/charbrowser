@@ -24,6 +24,9 @@
  *      organized some code. A lot has changed, but not much functionally
  *      do a compare to 2.41 to see the differences. 
  *      Implemented new database wrapper.
+ *   September 23, 2018 - Maudigan
+ *      Added 2h piercing, remove traps and tripple attack.
+ *
  ***************************************************************************/
  
  
@@ -74,6 +77,7 @@ $cb_template->assign_both_vars(array(
    '1H_BLUNT' => $char->GetValue('1h_blunt'), //TODO all these are in multi row tables now, needs updates
    '1H_SLASHING' => $char->GetValue('1h_slashing'), 
    '2H_BLUNT' => $char->GetValue('2h_blunt'), 
+   '2H_PIERCING' => $char->GetValue('2h_piercing'), 
    '2H_SLASHING' => $char->GetValue('2h_slashing'),
    'ARCHERY' => $char->GetValue('archery'), 
    'BASH' => $char->GetValue('bash'), 
@@ -90,6 +94,7 @@ $cb_template->assign_both_vars(array(
    'PIERCING' => $char->GetValue('piercing'), 
    'RIPOSTE' => $char->GetValue('riposte'), 
    'THROWING' => $char->GetValue('throwing'), 
+   'TRIPPLE_ATTACK' => $char->GetValue('tripple_attack'), 
    'INTIMIDATION' => $char->GetValue('intimidation'), 
    'TAUNT' => $char->GetValue('taunt'),
 
@@ -119,6 +124,7 @@ $cb_template->assign_both_vars(array(
    'BACKSTAB' => $char->GetValue('backstab'),
    'DISARM_TRAPS' => $char->GetValue('disarm_traps'),
    'PICK_POCKETS' => $char->GetValue('pick_pockets'),
+   'REMOVE_TRAPS' => $char->GetValue('remove_traps'),
    'SENSE_TRAPS' => $char->GetValue('sense_traps'),
    'BERSERKING' => $char->GetValue('berserking'),
    'FRENZY' => $char->GetValue('frenzy'),

@@ -5,7 +5,8 @@
 <link rel='stylesheet' href='{ROOT_URL}templates/style.css' type='text/css'/>
 <meta http-equiv='Content-Type' content='text/html; charset=iso-8859-1'>
 <meta http-equiv='Content-Style-Type' content='text/css'>
-<body>
+<body style='padding: 0px;margin: 0px;'>
+<div id='charbrowser'>
 <div class='searchbar'><div class='logo'>
 
   <div style='float:right;' align='center'>  

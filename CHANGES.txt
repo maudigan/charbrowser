@@ -1,3 +1,14 @@
+v2.6.3
+----------------------------------------------------------------------
+Added missing skills and worked on the wrapper functionality
+
+Sep 23, 2018 - Added 2h piercing, tripple attack and remove traps.
+               (Maudigan)
+               Added a #charbrowser wrapper around all the content
+               to prevent stylesheet naming collisions when you
+               wrap the page in your forum header/footer
+               (Maudigan)
+
 v2.6.2
 ----------------------------------------------------------------------
 Fixed charmover

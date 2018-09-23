@@ -27,6 +27,8 @@
  *      was set to 0 for the skills.php page to display correctly
  *   January 7, 2018 - Maudigan
  *      Modified database to use a class.
+ *   September 23, 2018 - Maudigan
+ *      Added 2h piercing, remove traps and tripple attack.
  *  
  ***************************************************************************/
  
@@ -270,6 +272,9 @@ $locator = array (
    "berserking" => array("character_skills", "value", 72),
    "taunt" => array("character_skills", "value", 73),
    "frenzy" => array("character_skills", "value", 74),
+   "remove_traps" => array("character_skills", "value", 75),
+   "tripple_attack" => array("character_skills", "value", 76),
+   "2h_piercing" => array("character_skills", "value", 77),
    "common_tongue" => array("character_languages", "value", 0),
    "barbarian" => array("character_languages", "value", 1),
    "erudian" => array("character_languages", "value", 2),

@@ -1,3 +1,11 @@
+v2.6.4
+----------------------------------------------------------------------
+made the api so it can be turned off
+
+Sep 23, 2018 - set $api_enabled = false in the config to disable
+               the api.
+               (Maudigan)
+
 v2.6.3
 ----------------------------------------------------------------------
 Added missing skills and worked on the wrapper functionality

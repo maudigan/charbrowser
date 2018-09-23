@@ -52,6 +52,16 @@ $subtitle     =    " • Be Nosey";
 
 
 /*****************************************************
+**                       API                        **
+** If this is set to true you can append "&api" to  **
+** any of the url requests to get the pages data    **
+** as json. The data is not raw, it's only the data **
+** normally showed in the HTML rendering.           **
+*****************************************************/
+$api_enabled = true;
+
+
+/*****************************************************
 **   The following 5 settings are for the dynamic   **
 **   title image(title.php). If you have freetype   **
 **   installed you use a fontname from the /fonts   **

@@ -15,8 +15,10 @@
  *
  *   February 5, 2014 - Updated for Powersource (Maudigan c/o Natedog)
  *   February 25, 2014 - added heroic/aug (Maudigan c/o Kinglykrab)
+ *   September 23, 2018 - make the API able to be disabled (Maudigan)
+ *
  ***************************************************************************/
- 																																	
+
  
  
  
@@ -38,6 +40,15 @@ define("SERVER_HAS_FREETYPE", function_exists("imagettfbbox"));
 include_once ( __DIR__ . "/template.php" );
 //templates
 $cb_template = new CB_Template(__DIR__ . "/../templates");
+
+//the template class will allow data to be output as json
+//if this is an API request and API is not enabled kill the api
+//request and then show an error saying api is unavailable
+if (isset($_GET['api']) && !$api_enabled) 
+{
+   unset($_GET['api']);
+   cb_message_die($language['MESSAGE_ERROR'],$language['MESSAGE_NOAPI']); 
+}
 
 // elements
 $dbelements=array("Unknown","Magic","Fire","Cold","Poison","Disease");

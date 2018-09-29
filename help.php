@@ -53,8 +53,6 @@ $cb_template->set_filenames(array(
 $cb_template->assign_vars(array(  
    'TITLE' => $mytitle,
    'VERSION' => $version,
-   'L_VERSION' => $language['HELP_VERSION'],
-   'L_BY' => $language['HELP_BY'],
    'L_HELP_TEXT' => $language['HELP_TEXT'],
    'L_HELP' => $language['HELP_HELP'])
 );

@@ -1,433 +1,1105 @@
 <?php
-/***************************************************************************
- *
- *   This program is free software; you can redistribute it and/or modify
- *   it under the terms of the GNU General Public License as published by
- *   the Free Software Foundation; either version 2 of the License, or
- *   (at your option) any later version.
- *
- *   Portions of this program are derived from publicly licensed software
- *   projects including, but not limited to phpBB, Magelo Clone, 
- *   EQEmulator, EQEditor, and Allakhazam Clone.
- *
- *                                  Author:
- *                           Maudigan(Airwalking) 
- *
- *   February 5, 2014 - Updated for Powersource (Maudigan c/o Natedog)
- *   February 25, 2014 - added heroic/aug (Maudigan c/o Kinglykrab)
- *   September 23, 2018 - make the API able to be disabled (Maudigan)
- *
- ***************************************************************************/
-
- 
- 
- 
-if ( !defined('INCHARBROWSER') )
-{
-	die("Hacking attempt");
-}
-
-
-//few constants for allitems.type
-define("EQUIPMENT", 1);
-define("INVENTORY", 2);
-define("BANK", 3);
-
-//wether or not the server has GD and freetype installed
-define("SERVER_HAS_GD", function_exists("imagecreatetruecolor"));
-define("SERVER_HAS_FREETYPE", function_exists("imagettfbbox"));
-
-include_once ( __DIR__ . "/template.php" );
-//templates
-$cb_template = new CB_Template(__DIR__ . "/../templates");
-
-//the template class will allow data to be output as json
-//if this is an API request and API is not enabled kill the api
-//request and then show an error saying api is unavailable
-if (isset($_GET['api']) && !$api_enabled) 
-{
-   unset($_GET['api']);
-   cb_message_die($language['MESSAGE_ERROR'],$language['MESSAGE_NOAPI']); 
-}
-
-// elements
-$dbelements=array("Unknown","Magic","Fire","Cold","Poison","Disease");
-
-$guildranks=array("Member", "Officer", "Leader");
-
-// ItemClasses 2^(class-1)
-$dbiclasses=array();
-$dbiclasses[65535]="ALL";
-$dbiclasses[32768]="BER";
-$dbiclasses[16384]="BST";
-$dbiclasses[8192]="ENC";
-$dbiclasses[4096]="MAG";
-$dbiclasses[2048]="WIZ";
-$dbiclasses[1024]="NEC";
-$dbiclasses[512]="SHM";
-$dbiclasses[256]="ROG";
-$dbiclasses[128]="BRD";
-$dbiclasses[64]="MNK";
-$dbiclasses[32]="DRU";
-$dbiclasses[16]="SHD";
-$dbiclasses[8]="RNG";
-$dbiclasses[4]="PAL";
-$dbiclasses[2]="CLR";
-$dbiclasses[1]="WAR";
-
-
-
-
-// races
-$dbraces=array();
-$dbraces[65535]="ALL";
-$dbraces[32768]="DRK";
-$dbraces[16384]="FRG";
-$dbraces[8192]="VAH";
-$dbraces[4096]="IKS";
-$dbraces[2048]="GNM";
-$dbraces[1024]="HFL";
-$dbraces[512]="OGR";
-$dbraces[256]="TRL";
-$dbraces[128]="DWF";
-$dbraces[64]="HEF";
-$dbraces[32]="DEF";
-$dbraces[16]="HIE";
-$dbraces[8]="ELF";
-$dbraces[4]="ERU";
-$dbraces[2]="BAR";
-$dbraces[1]="HUM";
-
-// skills
-$dbskills=array();
-$dbskills[0]='1H_BLUNT';
-$dbskills[1]='1H_SLASHING';
-$dbskills[2]='2H_BLUNT';
-$dbskills[3]='2H_SLASHING';
-$dbskills[4]='ABJURATION';
-$dbskills[5]='ALTERATION';
-$dbskills[6]='APPLY_POISON';
-$dbskills[7]='ARCHERY';
-$dbskills[8]='BACKSTAB';
-$dbskills[9]='BIND_WOUND';
-$dbskills[10]='BASH';
-$dbskills[11]='BLOCKSKILL';
-$dbskills[12]='BRASS_INSTRUMENTS';
-$dbskills[13]='CHANNELING';
-$dbskills[14]='CONJURATION';
-$dbskills[15]='DEFENSE';
-$dbskills[16]='DISARM';
-$dbskills[17]='DISARM_TRAPS';
-$dbskills[18]='DIVINATION';
-$dbskills[19]='DODGE';
-$dbskills[20]='DOUBLE_ATTACK';
-$dbskills[21]='DRAGON_PUNCH';
-$dbskills[22]='DUEL_WIELD';
-$dbskills[23]='EAGLE_STRIKE';
-$dbskills[24]='EVOCATION';
-$dbskills[25]='FEIGN_DEATH';
-$dbskills[26]='FLYING_KICK';
-$dbskills[27]='FORAGE';
-$dbskills[28]='HAND_TO_HAND';
-$dbskills[29]='HIDE';
-$dbskills[30]='KICK';
-$dbskills[31]='MEDITATE';
-$dbskills[32]='MEND';
-$dbskills[33]='OFFENSE';
-$dbskills[34]='PARRY';
-$dbskills[35]='PICK_LOCK';
-$dbskills[36]='PIERCING';
-$dbskills[37]='RIPOSTE';
-$dbskills[38]='ROUND_KICK';
-$dbskills[39]='SAFE_FALL';
-$dbskills[40]='SENSE_HEADING';
-$dbskills[41]='SINGING';
-$dbskills[42]='SNEAK';
-$dbskills[43]='SPECIALIZE_ABJURE';
-$dbskills[44]='SPECIALIZE_ALTERATION';
-$dbskills[45]='SPECIALIZE_CONJURATION';
-$dbskills[46]='SPECIALIZE_DIVINATION';
-$dbskills[47]='SPECIALIZE_EVOCATION';
-$dbskills[48]='PICK_POCKETS';
-$dbskills[49]='STRINGED_INSTRUMENTS';
-$dbskills[50]='SWIMMING';
-$dbskills[51]='THROWING';
-$dbskills[52]='CLICKY';
-$dbskills[53]='TRACKING';
-$dbskills[54]='WIND_INSTRUMENTS';
-$dbskills[55]='FISHING';
-$dbskills[56]='POISON_MAKING';
-$dbskills[57]='TINKERING';
-$dbskills[58]='RESEARCH';
-$dbskills[59]='ALCHEMY';
-$dbskills[60]='BAKING';
-$dbskills[61]='TAILORING';
-$dbskills[62]='SENSE_TRAPS';
-$dbskills[63]='BLACKSMITHING';
-$dbskills[64]='FLETCHING';
-$dbskills[65]='BREWING';
-$dbskills[66]='ALCOHOL_TOLERANCE';
-$dbskills[67]='BEGGING';
-$dbskills[68]='JEWELRY_MAKING';
-$dbskills[69]='POTTERY';
-$dbskills[70]='PERCUSSION_INSTRUMENTS';
-$dbskills[71]='INTIMIDATION';
-$dbskills[72]='BERSERKING';
-$dbskills[73]='TAUNT';
-
-// damage bonuses 2Hands at 65
-//http://lucy.allakhazam.com/dmgbonus.html
-$dam2h=array( 0,14,14,14,14,14,14,14,14,14, // 0->9
-             14,14,14,14,14,14,14,14,14,14, // 10->19
-             14,14,14,14,14,14,14,14,35,35, // 20->29
-             36,36,37,37,38,38,39,39,40,40, // 30->39
-             42,42,42,45,45,47,48,49,49,51, // 40->49
-             51,52,53,54,54,56,56,57,58,59, // 50->59
-             59, 0, 0, 0, 0, 0, 0, 0, 0, 0, // 60->69
-             68, 0, 0, 0, 0, 0, 0, 0, 0, 0, // 70->79
-              0, 0, 0, 0, 0,80, 0, 0, 0, 0, // 80->89
-              0, 0, 0, 0, 0,88, 0, 0, 0, 0, // 90->99
-              0, 0, 0, 0, 0, 0, 0, 0, 0, 0, // 100->109
-              0, 0, 0, 0, 0, 0, 0, 0, 0, 0, // 110->119
-              0, 0, 0, 0, 0, 0, 0, 0, 0, 0, // 120->129
-              0, 0, 0, 0, 0, 0, 0, 0, 0, 0, // 130->139
-              0, 0, 0, 0, 0, 0, 0, 0, 0, 0, // 140->149
-            132); // 150
-            
-// item types
-$dbitypes=array();
-$dbitypes[3]="1H Blunt";
-$dbitypes[0]="1H Slashing";
-$dbitypes[4]="2H Blunt";
-$dbitypes[35]="2H Piercing";
-$dbitypes[1]="2H Slashing";
-$dbitypes[38]="Alcohol";
-$dbitypes[5]="Archery";
-$dbitypes[10]="Armor";
-$dbitypes[27]="Arrow";
-$dbitypes[54]="Augmentation";
-$dbitypes[18]="Bandages";
-$dbitypes[25]="Brass Instrument";
-$dbitypes[52]="Charm";
-$dbitypes[34]="Coin";
-$dbitypes[17]="Combinable";
-$dbitypes[40]="Compass";
-$dbitypes[15]="Drink";
-$dbitypes[37]="Fishing Bait";
-$dbitypes[36]="Fishing Pole";
-$dbitypes[14]="Food";
-$dbitypes[11]="Gems";
-$dbitypes[29]="Jewelry";
-$dbitypes[33]="Key";
-$dbitypes[39]="Key (bis)";
-$dbitypes[16]="Light";
-$dbitypes[12]="Lockpicks";
-$dbitypes[45]="Martial";
-$dbitypes[32]="Note";
-$dbitypes[26]="Percussion Instrument";
-$dbitypes[2]="Piercing";
-$dbitypes[42]="Poison";
-$dbitypes[21]="Potion";
-$dbitypes[20]="Scroll";
-$dbitypes[8]="Shield";
-$dbitypes[30]="Skull";
-$dbitypes[24]="Stringed Instrument";
-$dbitypes[19]="Throwing";
-$dbitypes[7]="Throwing range items";
-$dbitypes[31]="Tome";
-$dbitypes[23]="Wind Instrument";
-
-$tbraces="races";
-$tbspells="spells_new";
-
-// Body types (bodytypes.h)
-$dbbodytypes=array(
-  "Unknown", // 0
-  "Humanoid", // 1 
-  "Lycanthrope", // 2
-  "Undead",  // 3
-  "Giant", // 4
-  "Construct", // 5
-  "Extra planar", //6
-  "Magical", // 7
-  "Summoned undead", // 8
-  "Unknown", //9
-  "Unknown", //10
-  "No target", //11
-  "Vampire", //12
-  "Atenha Ra", // 13
-  "Greater Akheva", // 14
-  "Khati Sha", // 15
-  "Unknown", //16
-  "Unknown", //17
-  "Unknown", //18
-  "Zek", // 19
-  "Unkownn", // 20
-  "Animal", // 21
-  "Insect", // 22 
-  "Monster", // 23
-  "Summoned", // 24
-  "Plant", // 25
-  "Dragon", // 26
-  "Summoned 2", // 27
-  "Summoned 3", // 28 
-  "Unknown", //29
-  "Velious Dragon", //30
-  "Unknown", //31
-  "Dragon 3", //32
-  "Boxes", //33
-  "Discord Mob"); //34
-$dbbodytypes[60]="No Target 2"; 
-$dbbodytypes[63]="Swarm pet"; 
-$dbbodytypes[67]="Special"; 
-
-$dbbardskills[23]="Wind Instruments";
-$dbbardskills[24]="Stringed Instruments";
-$dbbardskills[25]="Brass Instruments";
-$dbbardskills[26]="Percussion Instruments";
-$dbbardskills[51]="All instruments";
-
-//classes
-$dbclassnames=array("UNKNOWN","Warrior","Cleric","Paladin","Ranger","Shadowknight","Druid",
-                       "Monk","Bard","Rogue","Shaman","Necromancer","Wizard","Magician",
-                       "Enchanter","Beastlord","Berserker");
-                       //classes
-
-
-
-
-
-
-$dbracenames=array();
-$dbracenames[1]="Human";
-$dbracenames[2]="Barbarian";
-$dbracenames[3]="Erudite";
-$dbracenames[4]="Wood Elf";
-$dbracenames[5]="High Elf";
-$dbracenames[6]="Dark Elf";
-$dbracenames[7]="Half Elf";
-$dbracenames[8]="Dwarf";
-$dbracenames[9]="Troll";
-$dbracenames[10]="Ogre";
-$dbracenames[11]="Halfling";
-$dbracenames[12]="Gnome";
-$dbracenames[14]="Werewolf";
-$dbracenames[60]="Skeleton";
-$dbracenames[75]="Elemental";
-$dbracenames[108]="Eye of Zomm";
-$dbracenames[120]="Wolf Elemental";
-$dbracenames[128]="Iksar";
-$dbracenames[130]="Vahshir";
-$dbracenames[161]="Iksar Skeleton";
-$dbracenames[330]="Froglok";
-$dbracenames[74]="Froglok";
-$dbracenames[65533]="EMU Race NPC";
-$dbracenames[65534]="EMU Race Pet";
-$dbracenames[65535]="EMU Race Unknown";
-
-                                           
-                       
-// deities
-$dbdeities=array();
-$dbdeities[0]="Unknown";
-$dbdeities[201]="Bertoxxulous";
-$dbdeities[202]="Brell-Serilis";
-$dbdeities[203]="Cazic-Thule";
-$dbdeities[204]="Erollisi-Marr";
-$dbdeities[205]="Bristlebane";
-$dbdeities[206]="Innoruuk";
-$dbdeities[207]="Karana";
-$dbdeities[208]="Mithaniel-Marr";
-$dbdeities[209]="Prexus";
-$dbdeities[210]="Quellious";
-$dbdeities[211]="Rallos-Zek";
-$dbdeities[213]="Solusek-Ro";
-$dbdeities[212]="Rodcet-Nife";
-$dbdeities[215]="Tunare";
-$dbdeities[214]="The-Tribunal";
-$dbdeities[216]="Veeshan";
-$dbdeities[140]="Agnostic";//EQEditor shows this as 140...
-$dbdeities[396]="Agnostic";
-
-// deities (items)
-$dbideities=array();
-$dbideities[65536]="Veeshan";
-$dbideities[32768]="Tunare";
-$dbideities[16384]="The Tribunal";
-$dbideities[8192]="Solusek Ro";
-$dbideities[4096]="Rodcet Nife";
-$dbideities[2048]="Rallos Zek";
-$dbideities[1024]="Quellious";
-$dbideities[512]="Prexus";
-$dbideities[256]="Mithaniel Marr";
-$dbideities[128]="Karana";
-$dbideities[64]="Innoruuk";
-$dbideities[32]="Bristlebane";
-$dbideities[16]="Erollisi Marr";
-$dbideities[8]="Cazic Thule";
-$dbideities[4]="Brell Serilis";
-$dbideities[2]="Bertoxxulous";
-                       
-
-$dbslots=array(); $dbslotsid=array();
-$dbslots[4194304]="Powersource";   // added line 2/5/2014 
-$dbslots[2097152]="Ammo"; 
-$dbslots[1048576]="Waist"; 
-$dbslots[524288]="Feet"; 
-$dbslots[262144]="Legs"; 
-$dbslots[131072]="Chest"; 
-$dbslots[98304]="Fingers";
-$dbslots[65536]="Finger"; 
-$dbslots[32768]="Finger"; 
-$dbslots[16384]="Secondary"; 
-$dbslots[8192]="Primary"; 
-$dbslots[4096]="Hands";
-$dbslots[2048]="Range"; 
-$dbslots[1536]="Wrists"; 
-$dbslots[1024]="Wrist"; 
-$dbslots[512]="Wrist"; 
-$dbslots[256]="Back";
-$dbslots[128]="Arms";
-$dbslots[64]="Shoulders"; 
-$dbslots[32]="Neck";
-$dbslots[18]="Ears"; 
-$dbslots[16]="Ear"; 
-$dbslots[8]="Face";
-$dbslots[4]="Head";
-$dbslots[2]="Ear"; 
-$dbslots[1]="Charm"; 
-
-//added all $augtypes 2/25/2014
-$augtypes = array(); 
-$augtypes[2147483647] = "All Types"; 
-$augtypes[536870912] = "Type 30"; 
-$augtypes[268435456] = "Type 29"; 
-$augtypes[134217728] = "Type 28"; 
-$augtypes[67108864] = "Type 27"; 
-$augtypes[33554432] = "Type 26"; 
-$augtypes[16777216] = "Type 25"; 
-$augtypes[8388608] = "Type 24"; 
-$augtypes[4194304] = "Type 23"; 
-$augtypes[2097152] = "Type 22"; 
-$augtypes[1048576] = "Type 21"; 
-$augtypes[524288] = "Type 20"; 
-$augtypes[262144] = "Type 19"; 
-$augtypes[131072] = "Type 18"; 
-$augtypes[65536] = "Type 17"; 
-$augtypes[32768] = "Type 16"; 
-$augtypes[16384] = "Type 15"; 
-$augtypes[8192] = "Type 14"; 
-$augtypes[4096] = "Type 13"; 
-$augtypes[2048] = "Type 12"; 
-$augtypes[1024] = "Type 11"; 
-$augtypes[512] = "Type 10"; 
-$augtypes[256] = "Type 9"; 
-$augtypes[128] = "Type 8"; 
-$augtypes[64] = "Type 7"; 
-$augtypes[32] = "Type 6"; 
-$augtypes[16] = "Type 5"; 
-$augtypes[8] = "Type 4"; 
-$augtypes[4] = "Type 3"; 
-$augtypes[2] = "Type 2"; 
-$augtypes[1] = "Type 1"; 
+	/***************************************************************************
+	*
+	*   This program is free software; you can redistribute it and/or modify
+	*   it under the terms of the GNU General Public License as published by
+	*   the Free Software Foundation; either version 2 of the License, or
+	*   (at your option) any later version.
+	*
+	*   Portions of this program are derived from publicly licensed software
+	*   projects including, but not limited to phpBB, Magelo Clone, 
+	*   EQEmulator, EQEditor, and Allakhazam Clone.
+	*
+	*                                  Author:
+	*                           Maudigan(Airwalking) 
+	*
+	*   February 5, 2014 - Updated for Powersource (Maudigan c/o Natedog)
+	*   February 25, 2014 - added heroic/aug (Maudigan c/o Kinglykrab)
+	*   September 23, 2018 - make the API able to be disabled (Maudigan)
+	*
+	***************************************************************************/	
+	
+	if (!defined('INCHARBROWSER'))
+		die("Hacking attempt");
+	
+	// Constants for all items
+	define("EQUIPMENT", 1);
+	define("INVENTORY", 2);
+	define("BANK", 3);
+	
+	// Whether or not the server has GD and freetype installed
+	define("SERVER_HAS_GD", function_exists("imagecreatetruecolor"));
+	define("SERVER_HAS_FREETYPE", function_exists("imagettfbbox"));	
+	
+	// Templates
+	include_once ( __DIR__ . "/template.php" );
+	$cb_template = new CB_Template(__DIR__ . "/../templates");
+	
+	// The template class will allow data to be output as json
+	// if this is an API request and API is not enabled kill the api
+	// request and then show an error saying api is unavailable
+	if (isset($_GET['api']) && !$api_enabled)  {
+		unset($_GET['api']);
+		cb_message_die($language['MESSAGE_ERROR'], $language['MESSAGE_NOAPI']); 
+	}
+	
+	// Elements
+	$dbelements = array(
+	1 =>"Magic",
+	2 => "Fire",
+	3 => "Cold",
+	4 => "Poison",
+	5 => "Disease",
+	6 => "Corruption"
+	);
+	
+	// Guild Ranks
+	$guildranks = array(
+	0 => "Member",
+	1 => "Officer",
+	2 => "Leader"
+	);
+	
+	// Classes (Items)
+	$dbiclasses = array(
+	1 => "Warrior",
+	2 => "Cleric",
+	4 => "Paladin",
+	8 => "Ranger",
+	16 => "Shadow Knight",
+	32 => "Druid",
+	64 => "Monk",
+	128 => "Bard",
+	256 => "Rogue",
+	512 => "Shaman",
+	1024 => "Necromancer",
+	2048 => "Wizard",
+	4096 => "Magician",
+	8192 => "Enchanter",
+	16384 => "Beastlord",
+	32768 => "Berserker",
+	65535 => "All"
+	);
+	
+	// Races (Items)
+	$dbraces = array(
+	1 => "Human",
+	2 => "Barbarian",
+	4 => "Erudite",
+	8 => "Wood Elf",
+	16 => "High Elf",
+	32 => "Dark Elf",
+	64 => "Half Elf",
+	128 => "Dwarf",
+	256 => "Troll",
+	512 => "Ogre",
+	1024 => "Halfling",
+	2048 => "Gnome",
+	4096 => "Iksar",
+	8192 => "Vah Shir",
+	16384 => "Froglok",
+	32768 => "Drakkin",
+	65535 => "All"
+	);
+	
+	// Skills
+	$dbskills = array(
+	0 => "1H Blunt",
+	1 => "1H Slashing",
+	2 => "2H Blunt",
+	3 => "2H Slashing",
+	4 => "Abjuration",
+	5 => "Alteration",
+	6 => "Apply Poison",
+	7 => "Archery",
+	8 => "Backstab",
+	9 => "Bind Wound",
+	10 => "Bash",
+	11 => "Block",
+	12 => "Brass Instruments",
+	13 => "Channeling",
+	14 => "Conjuration",
+	15 => "Defense",
+	16 => "Disarm",
+	17 => "Disarm Traps",
+	18 => "Divination",
+	19 => "Dodge",
+	20 => "Double Attack",
+	21 => "Dragon Punch",
+	22 => "Dual Wield",
+	23 => "Eagle Strike",
+	24 => "Evocation",
+	25 => "Feign Death",
+	26 => "Flying Kick",
+	27 => "Forage",
+	28 => "Hand to Hand",
+	29 => "Hide",
+	30 => "Kick",
+	31 => "Meditate",
+	32 => "Mend",
+	33 => "Offense",
+	34 => "Parry",
+	35 => "Pick Lock",
+	36 => "Piercing",
+	37 => "Riposte",
+	38 => "Round Kick",
+	39 => "Safe Fall",
+	40 => "Sense Heading",
+	41 => "Singing",
+	42 => "Sneak",
+	43 => "Specialize Abjuration",
+	44 => "Specialize Alteration",
+	45 => "Specialize Conjuration",
+	46 => "Specialize Divination",
+	47 => "Specialize Evocation",
+	48 => "Pick Pocket",
+	49 => "Stringer Instruments",
+	50 => "Swimming",
+	51 => "Throwing",
+	52 => "Clicky",
+	53 => "Tracking",
+	54 => "Wind Instruments",
+	55 => "Fishing",
+	56 => "Poison Making",
+	57 => "Tinkering",
+	58 => "Research",
+	59 => "Alchemy",
+	60 => "Baking",
+	61 => "Tailoring",
+	62 => "Sense Traps",
+	63 => "Blacksmithing",
+	64 => "Fletching",
+	65 => "Brewing",
+	66 => "Alcohol Tolerance",
+	67 => "Begging",
+	68 => "Jewelry Making",
+	69 => "Pottery",
+	70 => "Percussion Instruments",
+	71 => "Intimidation",
+	72 => "Berserking",
+	73 => "Taunt",
+	74 => "Frenzy",
+	75 => "Remove Traps",
+	76 => "Triple Attack",
+	77 => "2H Piercing"
+	);
+	
+	// Damage Bonuses for 2Handed Weapons at Level 65
+	//http://lucy.allakhazam.com/dmgbonus.html
+	$dam2h = array(
+	0, 14, 14, 14, 14, 14, 14, 14, 14, 14, // 0->9
+	14, 14, 14, 14, 14, 14, 14, 14, 14, 14, // 10->19
+	14, 14, 14, 14, 14, 14, 14, 14, 35, 35, // 20->29
+	36, 36, 37, 37, 38, 38, 39, 39, 40, 40, // 30->39
+	42, 42, 42, 45, 45, 47, 48, 49, 49, 51, // 40->49
+	51, 52, 53, 54, 54, 56, 56, 57, 58, 59, // 50->59
+	59, 0, 0, 0, 0, 0, 0, 0, 0, 0, // 60->69
+	68, 0, 0, 0, 0, 0, 0, 0, 0, 0, // 70->79
+	0, 0, 0, 0, 0, 80, 0, 0, 0, 0, // 80->89
+	0, 0, 0, 0, 0, 88, 0, 0, 0, 0, // 90->99
+	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, // 100->109
+	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, // 110->119
+	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, // 120->129
+	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, // 130->139
+	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, // 140->149
+	132 // 150
+	);
+				
+	// Item Types
+	$dbitypes = array(
+	0 => "1H Slashing",
+	1 => "2H Slashing",
+	2 => "Piercing",
+	3 => "1H Blunt",
+	4 => "2H Blunt",
+	5 => "Archery",
+	7 => "Throwing",
+	8 => "Shield",
+	10 => "Armor",
+	11 => "Gems",
+	12 => "Lockpicks",
+	14 => "Food",
+	15 => "Drink",
+	16 => "Light",
+	17 => "Combinable",
+	18 => "Bandages",
+	19 => "Throwing",
+	20 => "Scroll",
+	21 => "Potion",
+	23 => "Wind Instrument",
+	24 => "Stringed Instrument",
+	25 => "Brass Instrument",
+	26 => "Percussion Instrument",
+	27 => "Arrow",
+	29 => "Jewelry",
+	30 => "Skull",
+	31 => "Tome",
+	32 => "Note",
+	33 => "Key",
+	34 => "Coin",
+	35 => "2H Piercing",
+	36 => "Fishing Pole",
+	37 => "Fishing Bait",
+	38 => "Alcohol",
+	39 => "Key",
+	40 => "Compass",
+	42 => "Poison",
+	45 => "Martial",
+	52 => "Charm",
+	54 => "Augmentation"
+	);
+	
+	// Races Table
+	$tbraces = "races";
+	
+	// Spell Table
+	$tbspells = "spells_new";
+	
+	// Body Types
+	$dbbodytypes = array(
+	1 => "Normal",
+	2 => "Lycanthrope",
+	3 => "Undead",
+	4 => "Giant",
+	5 => "Construct",
+	6 => "Extra Planar",
+	7 => "Monster",
+	8 => "Flying Monsters",
+	11 => "Untargetable",
+	12 => "Vampire",
+	13 => "Atenha Ra",
+	14 => "Greater Akheva",
+	15 => "Khati Sha",
+	19 => "God",
+	21 => "Animal",
+	22 => "Insect",
+	23 => "Fire Creature",
+	24 => "Construct, Elemental, or Gargoyle",
+	25 => "Plant",
+	26 => "Dragon",
+	28 => "Summoned Creature",
+	32 => "Illusion"
+	);
+	
+	// Bard Skills
+	$dbbardskills = array(
+	23 => "Wind Instruments",
+	24 => "Stringed Instruments",
+	25 => "Brass Instruments",
+	26 => "Percussion Instruments",
+	51 => "All Instruments"
+	);
+	
+	// Classes
+	$dbclassnames=array(
+	1 => "Warrior",
+	2 => "Cleric",
+	3 => "Paladin",
+	4 => "Ranger",
+	5 => "Shadowknight",
+	6 => "Druid",
+	7 => "Monk",
+	8 => "Bard",
+	9 => "Rogue",
+	10 => "Shaman",
+	11 => "Necromancer",
+	12 => "Wizard",
+	13 => "Magician",
+	14 => "Enchanter",
+	15 => "Beastlord",
+	16 => "Berserker"
+	);
+	
+	// Races
+	$dbracenames = array(
+	1 => "Human",
+    2 => "Barbarian",
+    3 => "Erudite",
+    4 => "Wood Elf",
+    5 => "High Elf",
+    6 => "Dark Elf",
+    7 => "Half Elf",
+    8 => "Dwarf",
+    9 => "Troll",
+    10 => "Ogre",
+    11 => "Halfling",
+    12 => "Gnome",
+    13 => "Aviak",
+    14 => "Werewolf",
+    15 => "Brownie",
+    16 => "Centaur",
+    17 => "Golem",
+    18 => "Giant",
+    19 => "Trakanon",
+    20 => "Venril Sathir",
+    21 => "Evil Eye",
+    22 => "Beetle",
+    23 => "Kerran",
+    24 => "Fish",
+    25 => "Fairy",
+    26 => "Froglok",
+    27 => "Froglok",
+    28 => "Fungusman",
+    29 => "Gargoyle",
+    30 => "Gasbag",
+    31 => "Gelatinous Cube",
+    32 => "Ghost",
+    33 => "Ghoul",
+    34 => "Bat",
+    35 => "Eel",
+    36 => "Rat",
+    37 => "Snake",
+    38 => "Spider",
+    39 => "Gnoll",
+    40 => "Goblin",
+    41 => "Gorilla",
+    42 => "Wolf",
+    43 => "Bear",
+    44 => "Guard",
+    45 => "Demi Lich",
+    46 => "Imp",
+    47 => "Griffin",
+    48 => "Kobold",
+    49 => "Dragon",
+    50 => "Lion",
+    51 => "Lizard Man",
+    52 => "Mimic",
+    53 => "Minotaur",
+    54 => "Orc",
+    55 => "Beggar",
+    56 => "Pixie",
+    57 => "Drachnid",
+    58 => "Solusek Ro",
+    59 => "Goblin",
+    60 => "Skeleton",
+    61 => "Shark",
+    62 => "Tunare",
+    63 => "Tiger",
+    64 => "Treant",
+    65 => "Vampire",
+    66 => "Rallos Zek",
+    67 => "Human",
+    68 => "Tentacle Terror",
+    69 => "Will-O-Wisp",
+    70 => "Zombie",
+    71 => "Human",
+    72 => "Ship",
+    73 => "Launch",
+    74 => "Piranha",
+    75 => "Elemental",
+    76 => "Puma",
+    77 => "Dark Elf",
+    78 => "Erudite",
+    79 => "Bixie",
+    80 => "Reanimated Hand",
+    81 => "Halfling",
+    82 => "Scarecrow",
+    83 => "Skunk",
+    84 => "Snake Elemental",
+    85 => "Spectre",
+    86 => "Sphinx",
+    87 => "Armadillo",
+    88 => "Clockwork Gnome",
+    89 => "Drake",
+    90 => "Barbarian",
+    91 => "Alligator",
+    92 => "Troll",
+    93 => "Ogre",
+    94 => "Dwarf",
+    95 => "Cazic Thule",
+    96 => "Cockatrice",
+    97 => "Daisy Man",
+    98 => "Vampire",
+    99 => "Amygdalan",
+    100 => "Dervish",
+    101 => "Efreeti",
+    102 => "Tadpole",
+    103 => "Kedge",
+    104 => "Leech",
+    105 => "Swordfish",
+    106 => "Guard",
+    107 => "Mammoth",
+    108 => "Eye",
+    109 => "Wasp",
+    110 => "Mermaid",
+    111 => "Harpy",
+    112 => "Guard",
+    113 => "Drixie",
+    114 => "Ghost Ship",
+    115 => "Clam",
+    116 => "Seahorse",
+    117 => "Ghost",
+    118 => "Ghost",
+    119 => "Sabertooth",
+    120 => "Wolf",
+    121 => "Gorgon",
+    122 => "Dragon",
+    123 => "Innoruuk",
+    124 => "Unicorn",
+    125 => "Pegasus",
+    126 => "Djinn",
+    127 => "Invisible Man",
+    128 => "Iksar",
+    129 => "Scorpion",
+    130 => "Vah Shir",
+    131 => "Sarnak",
+    132 => "Draglock",
+    133 => "Drolvarg",
+    134 => "Mosquito",
+    135 => "Rhinoceros",
+    136 => "Xalgoz",
+    137 => "Goblin",
+    138 => "Yeti",
+    139 => "Iksar",
+    140 => "Giant",
+    141 => "Boat",
+    144 => "Burynai",
+    145 => "Goo",
+    146 => "Sarnak Spirit",
+    147 => "Iksar Spirit",
+    148 => "Fish",
+    149 => "Scorpion",
+    150 => "Erollisi",
+    151 => "Tribunal",
+    152 => "Bertoxxulous",
+    153 => "Bristlebane",
+    154 => "Fay Drake",
+    155 => "Undead Sarnak",
+    156 => "Ratman",
+    157 => "Wyvern",
+    158 => "Wurm",
+    159 => "Devourer",
+    160 => "Iksar Golem",
+    161 => "Undead Iksar",
+    162 => "Man-Eating Plant",
+    163 => "Raptor",
+    164 => "Sarnak Golem",
+    165 => "Dragon",
+    166 => "Animated Hand",
+    167 => "Succulent",
+    168 => "Holgresh",
+    169 => "Brontotherium",
+    170 => "Snow Dervish",
+    171 => "Dire Wolf",
+    172 => "Manticore",
+    173 => "Totem",
+    174 => "Ice Spectre",
+    175 => "Enchanted Armor",
+    176 => "Snow Rabbit",
+    177 => "Walrus",
+    178 => "Geonid",
+    181 => "Yakkar",
+    182 => "Faun",
+    183 => "Coldain",
+    184 => "Dragon",
+    185 => "Hag",
+    186 => "Hippogriff",
+    187 => "Siren",
+    188 => "Giant",
+    189 => "Giant",
+    190 => "Othmir",
+    191 => "Ulthork",
+    192 => "Dragon",
+    193 => "Abhorrent",
+    194 => "Sea Turtle",
+    195 => "Dragon",
+    196 => "Dragon",
+    197 => "Ronnie Test",
+    198 => "Dragon",
+    199 => "Shik'Nar",
+    200 => "Rockhopper",
+    201 => "Underbulk",
+    202 => "Grimling",
+    203 => "Worm",
+    204 => "Evan Test",
+    205 => "Shadel",
+    206 => "Owlbear",
+    207 => "Rhino Beetle",
+    208 => "Vampire",
+    209 => "Earth Elemental",
+    210 => "Air Elemental",
+    211 => "Water Elemental",
+    212 => "Fire Elemental",
+    213 => "Wetfang Minnow",
+    214 => "Thought Horror",
+    215 => "Tegi",
+    216 => "Horse",
+    217 => "Shissar",
+    218 => "Fungal Fiend",
+    219 => "Vampire",
+    220 => "Stonegrabber",
+    221 => "Scarlet Cheetah",
+    222 => "Zelniak",
+    223 => "Lightcrawler",
+    224 => "Shade",
+    225 => "Sunfbelow",
+    226 => "Sun Revenant",
+    227 => "Shrieker",
+    228 => "Galorian",
+    229 => "Netherbian",
+    230 => "Akheva",
+    231 => "Grieg Veneficus",
+    232 => "Sonic Wolf",
+    233 => "Ground Shaker",
+    234 => "Vah Shir Skeleton",
+    235 => "Wretch",
+    236 => "Seru",
+    237 => "Recuso",
+    238 => "Vah Shir",
+    239 => "Guard",
+    240 => "Teleport Man",
+    241 => "Werewolf",
+    242 => "Nymph",
+    243 => "Dryad",
+    244 => "Treant",
+    245 => "Fly",
+    246 => "Tarew Marr",
+    247 => "Solusek Ro",
+    248 => "Clockwork Golem",
+    249 => "Clockwork Brain",
+    250 => "Banshee",
+    251 => "Guard of Justice",
+    252 => "Mini POM",
+    253 => "Diseased Fiend",
+    254 => "Solusek Ro Guard",
+    255 => "Bertoxxulous",
+    256 => "The Tribunal",
+    257 => "Terris Thule",
+    258 => "Vegerog",
+    259 => "Crocodile",
+    260 => "Bat",
+    261 => "Hraquis",
+    262 => "Tranquilion",
+    263 => "Tin Soldier",
+    264 => "Nightmare Wraith",
+    265 => "Malarian",
+    266 => "Knight of Pestilence",
+    267 => "Lepertoloth",
+    268 => "Bubonian",
+    269 => "Bubonian Underling",
+    270 => "Pusling",
+    271 => "Water Mephit",
+    272 => "Stormrider",
+    273 => "Junk Beast",
+    274 => "Broken Clockwork",
+    275 => "Giant Clockwork",
+    276 => "Clockwork Beetle",
+    277 => "Nightmare Goblin",
+    278 => "Karana",
+    279 => "Blood Raven",
+    280 => "Nightmare Gargoyle",
+    281 => "Mouth of Insanity",
+    282 => "Skeletal Horse",
+    283 => "Saryrn",
+    284 => "Fennin Ro",
+    285 => "Tormentor",
+    286 => "Soul Devourer",
+    287 => "Nightmare",
+    288 => "Rallos Zek",
+    289 => "Vallon Zek",
+    290 => "Tallon Zek",
+    291 => "Air Mephit",
+    292 => "Earth Mephit",
+    293 => "Fire Mephit",
+    294 => "Nightmare Mephit",
+    295 => "Zebuxoruk",
+    296 => "Mithaniel Marr",
+    297 => "Undead Knight",
+    298 => "The Rathe",
+    299 => "Xegony",
+    300 => "Fiend",
+    301 => "Test Object",
+    302 => "Crab",
+    303 => "Phoenix",
+    304 => "Dragon",
+    305 => "Bear",
+    306 => "Giant",
+    307 => "Giant",
+    308 => "Giant",
+    309 => "Giant",
+    310 => "Giant",
+    311 => "Giant",
+    312 => "Giant",
+    313 => "War Wraith",
+    314 => "Wrulon",
+    315 => "Kraken",
+    316 => "Poison Frog",
+    317 => "Nilborien",
+    318 => "Valorian",
+    319 => "War Boar",
+    320 => "Efreeti",
+    321 => "War Boar",
+    322 => "Valorian",
+    323 => "Animated Armor",
+    324 => "Undead Footman",
+    325 => "Rallos Zek Minion",
+    326 => "Arachnid",
+    327 => "Crystal Spider",
+    328 => "Zebuxoruk's Cage",
+    329 => "BoT Portal",
+    330 => "Froglok",
+    331 => "Troll",
+    332 => "Troll",
+    333 => "Troll",
+    334 => "Ghost",
+    335 => "Pirate",
+    336 => "Pirate",
+    337 => "Pirate",
+    338 => "Pirate",
+    339 => "Pirate",
+    340 => "Pirate",
+    341 => "Pirate",
+    342 => "Pirate",
+    343 => "Frog",
+    344 => "Troll Zombie",
+    345 => "Luggald",
+    346 => "Luggald",
+    347 => "Luggalds",
+    348 => "Drogmore",
+    349 => "Froglok Skeleton",
+    350 => "Undead Froglok",
+    351 => "Knight of Hate",
+    352 => "Arcanist of Hate",
+    353 => "Veksar",
+    354 => "Veksar",
+    355 => "Veksar",
+    356 => "Chokidai",
+    357 => "Undead Chokidai",
+    358 => "Undead Veksar",
+    359 => "Vampire",
+    360 => "Vampire",
+    361 => "Rujarkian Orc",
+    362 => "Bone Golem",
+    363 => "Synarcana",
+    364 => "Sand Elf",
+    365 => "Vampire",
+    366 => "Rujarkian Orc",
+    367 => "Skeleton",
+    368 => "Mummy",
+    369 => "Goblin",
+    370 => "Insect",
+    371 => "Froglok Ghost",
+    372 => "Dervish",
+    373 => "Shade",
+    374 => "Golem",
+    375 => "Evil Eye",
+    376 => "Box",
+    377 => "Barrel",
+    378 => "Chest",
+    379 => "Vase",
+    380 => "Table",
+    381 => "Weapon Rack",
+    382 => "Coffin",
+    383 => "Bones",
+    384 => "Jokester",
+    385 => "Nihil",
+    386 => "Trusik",
+    387 => "Stone Worker",
+    388 => "Hynid",
+    389 => "Turepta",
+    390 => "Cragbeast",
+    391 => "Stonemite",
+    392 => "Ukun",
+    393 => "Ixt",
+    394 => "Ikaav",
+    395 => "Aneuk",
+    396 => "Kyv",
+    397 => "Noc",
+    398 => "Ra`tuk",
+    399 => "Taneth",
+    400 => "Huvul",
+    401 => "Mutna",
+    402 => "Mastruq",
+    403 => "Taelosian",
+    404 => "Discord Ship",
+    405 => "Stone Worker",
+    406 => "Mata Muram",
+    407 => "Lightning Warrior",
+    408 => "Succubus",
+    409 => "Bazu",
+    410 => "Feran",
+    411 => "Pyrilen",
+    412 => "Chimera",
+    413 => "Dragorn",
+    414 => "Murkglider",
+    415 => "Rat",
+    416 => "Bat",
+    417 => "Gelidran",
+    418 => "Discordling",
+    419 => "Girplan",
+    420 => "Minotaur",
+    421 => "Dragorn Box",
+    422 => "Runed Orb",
+    423 => "Dragon Bones",
+    424 => "Muramite Armor Pile",
+    425 => "Crystal Shard",
+    426 => "Portal",
+    427 => "Coin Purse",
+    428 => "Rock Pile",
+    429 => "Murkglider Egg Sack",
+    430 => "Drake",
+    431 => "Dervish",
+    432 => "Drake",
+    433 => "Goblin",
+    434 => "Kirin",
+    435 => "Dragon",
+    436 => "Basilisk",
+    437 => "Dragon",
+    438 => "Dragon",
+    439 => "Puma",
+    440 => "Spider",
+    441 => "Spider Queen",
+    442 => "Animated Statue",
+    445 => "Dragon Egg",
+    446 => "Dragon Statue",
+    447 => "Lava Rock",
+    448 => "Animated Statue",
+    449 => "Spider Egg Sack",
+    450 => "Lava Spider",
+    451 => "Lava Spider Queen",
+    452 => "Dragon",
+    453 => "Giant",
+    454 => "Werewolf",
+    455 => "Kobold",
+    456 => "Sporali",
+    457 => "Gnomework",
+    458 => "Orc",
+    459 => "Corathus",
+    460 => "Coral",
+    461 => "Drachnid",
+    462 => "Drachnid Cocoon",
+    463 => "Fungus Patch",
+    464 => "Gargoyle",
+    465 => "Witheran",
+    466 => "Dark Lord",
+    467 => "Shiliskin",
+    468 => "Snake",
+    469 => "Evil Eye",
+    470 => "Minotaur",
+    471 => "Zombie",
+    472 => "Clockwork Boar",
+    473 => "Fairy",
+    474 => "Witheran",
+    475 => "Air Elemental",
+    476 => "Earth Elemental",
+    477 => "Fire Elemental",
+    478 => "Water Elemental",
+    479 => "Alligator",
+    480 => "Bear",
+    481 => "Scaled Wolf",
+    482 => "Wolf",
+    483 => "Spirit Wolf",
+    484 => "Skeleton",
+    485 => "Spectre",
+    486 => "Bolvirk",
+    487 => "Banshee",
+    488 => "Banshee",
+    489 => "Elddar",
+    490 => "Forest Giant",
+    491 => "Bone Golem",
+    492 => "Horse",
+    493 => "Pegasus",
+    494 => "Shambling Mound",
+    495 => "Scrykin",
+    496 => "Treant",
+    497 => "Vampire",
+    498 => "Ayonae Ro",
+    499 => "Sullon Zek",
+    500 => "Banner",
+    501 => "Flag",
+    502 => "Rowboat",
+    503 => "Bear Trap",
+    504 => "Clockwork Bomb",
+    505 => "Dynamite Keg",
+    506 => "Pressure Plate",
+    507 => "Puffer Spore",
+    508 => "Stone Ring",
+    509 => "Root Tentacle",
+    510 => "Runic Symbol",
+    511 => "Saltpetter Bomb",
+    512 => "Floating Skull",
+    513 => "Spike Trap",
+    514 => "Totem",
+    515 => "Web",
+    516 => "Wicker Basket",
+    517 => "Nightmare/Unicorn",
+    518 => "Horse",
+    519 => "Nightmare/Unicorn",
+    520 => "Bixie",
+    521 => "Centaur",
+    522 => "Drakkin",
+    523 => "Giant",
+    524 => "Gnoll",
+    525 => "Griffin",
+    526 => "Giant Shade",
+    527 => "Harpy",
+    528 => "Mammoth",
+    529 => "Satyr",
+    530 => "Dragon",
+    531 => "Dragon",
+    532 => "Dyn'Leth",
+    533 => "Boat",
+    534 => "Weapon Rack",
+    535 => "Armor Rack",
+    536 => "Honey Pot",
+    537 => "Jum Jum Bucket",
+    538 => "Toolbox",
+    539 => "Stone Jug",
+    540 => "Small Plant",
+    541 => "Medium Plant",
+    542 => "Tall Plant",
+    543 => "Wine Cask",
+    544 => "Elven Boat",
+    545 => "Gnomish Boat",
+    546 => "Barrel Barge Ship",
+    547 => "Goo",
+    548 => "Goo",
+    549 => "Goo",
+    550 => "Merchant Ship",
+    551 => "Pirate Ship",
+    552 => "Ghost Ship",
+    553 => "Banner",
+    554 => "Banner",
+    555 => "Banner",
+    556 => "Banner",
+    557 => "Banner",
+    558 => "Aviak",
+    559 => "Beetle",
+    560 => "Gorilla",
+    561 => "Kedge",
+    562 => "Kerran",
+    563 => "Shissar",
+    564 => "Siren",
+    565 => "Sphinx",
+    566 => "Human",
+    567 => "Campfire",
+    568 => "Brownie",
+    569 => "Dragon",
+    570 => "Exoskeleton",
+    571 => "Ghoul",
+    572 => "Clockwork Guardian",
+    573 => "Mantrap",
+    574 => "Minotaur",
+    575 => "Scarecrow",
+    576 => "Shade",
+    577 => "Rotocopter",
+    578 => "Tentacle Terror",
+    579 => "Wereorc",
+    580 => "Worg",
+    581 => "Wyvern",
+    582 => "Chimera",
+    583 => "Kirin",
+    584 => "Puma",
+    585 => "Boulder",
+    586 => "Banner",
+    587 => "Elven Ghost",
+    588 => "Human Ghost",
+    589 => "Chest",
+    590 => "Chest",
+    591 => "Crystal",
+    592 => "Coffin",
+    593 => "Guardian CPU",
+    594 => "Worg",
+    595 => "Mansion",
+    596 => "Floating Island",
+    597 => "Cragslither",
+    598 => "Wrulon",
+    600 => "Invisible Man of Zomm",
+    601 => "Robocopter of Zomm",
+    602 => "Burynai",
+    603 => "Frog",
+    604 => "Dracolich",
+    605 => "Iksar Ghost",
+    606 => "Iksar Skeleton",
+    607 => "Mephit",
+    608 => "Muddite",
+    609 => "Raptor",
+    610 => "Sarnak",
+    611 => "Scorpion",
+    612 => "Tsetsian",
+    613 => "Wurm",
+    614 => "Nekhon",
+    615 => "Hydra Crystal",
+    616 => "Crystal Sphere",
+    617 => "Gnoll",
+    618 => "Sokokar",
+    619 => "Stone Pylon",
+    620 => "Demon Vulture",
+    621 => "Wagon",
+    622 => "God of Discord",
+    623 => "Feran Mount",
+    624 => "Ogre NPC",
+    625 => "Sokokar Mount",
+    626 => "Giant",
+    627 => "Sokokar",
+    628 => "10th Anniversary Banner",
+    629 => "10th Anniversary Cake",
+    630 => "Wine Cask",
+    631 => "Hydra Mount",
+    632 => "Hydra NPC",
+    633 => "Wedding Fbelows",
+    634 => "Wedding Arbor",
+    635 => "Wedding Altar",
+    636 => "Powder Keg",
+    637 => "Apexus",
+    638 => "Bellikos",
+    639 => "Brell's First Creation",
+    640 => "Brell",
+    641 => "Crystalskin Ambuloid",
+    642 => "Cliknar Queen",
+    643 => "Cliknar Soldier",
+    644 => "Cliknar Worker",
+    645 => "Coldain",
+    646 => "Coldain",
+    647 => "Crystalskin Sessiloid",
+    648 => "Genari",
+    649 => "Gigyn",
+    650 => "Greken",
+    651 => "Greken",
+    652 => "Cliknar Mount",
+    653 => "Telmira",
+    654 => "Spider Mount",
+    655 => "Bear Mount",
+    656 => "Rat Mount",
+    657 => "Sessiloid Mount",
+    658 => "Morell Thule",
+    659 => "Marionette",
+    660 => "Book Dervish",
+    661 => "Topiary Lion",
+    662 => "Rotdog",
+    663 => "Amygdalan",
+    664 => "Sandman",
+    665 => "Grandfather Clock",
+    666 => "Gingerbread Man",
+    667 => "Royal Guard",
+    668 => "Rabbit",
+    669 => "Blind Dreamer",
+    670 => "Cazic Thule",
+    671 => "Topiary Lion Mount",
+    672 => "Rot Dog Mount",
+    673 => "Goral Mount",
+    674 => "Selyrah Mount",
+    675 => "Sclera Mount",
+    676 => "Braxi Mount",
+    677 => "Kangon Mount",
+    678 => "Erudite",
+    679 => "Wurm Mount",
+    680 => "Raptor Mount",
+    681 => "Invisible Man",
+    682 => "Whirligig",
+    683 => "Gnomish Balloon",
+    684 => "Gnomish Rocket Pack",
+    685 => "Gnomish Hovering Transport",
+    686 => "Selyrah",
+    687 => "Goral",
+    688 => "Braxi",
+    689 => "Kangon",
+    690 => "Invisible Man",
+    691 => "Floating Tower",
+    692 => "Explosive Cart",
+    693 => "Blimp Ship",
+    694 => "Tumbleweed",
+    695 => "Alaran",
+    696 => "Swinetor",
+    697 => "Triumvirate",
+    698 => "Hadal",
+    699 => "Hovering Platform",
+    700 => "Parasitic Scavenger",
+    701 => "Grendlaen",
+    702 => "Ship in a Bottle",
+    703 => "Alaran Sentry Stone",
+    704 => "Dervish",
+    705 => "Regeneration Pool",
+    706 => "Teleportation Stand",
+    707 => "Relic Case",
+    708 => "Alaran Ghost",
+    709 => "Skystrider",
+    710 => "Water Spout",
+    711 => "Aviak Pull Along",
+    712 => "Gelatinous Cube",
+    713 => "Cat",
+    714 => "Elk Head",
+    715 => "Holgresh",
+    716 => "Beetle",
+    717 => "Vine Maw",
+    718 => "Ratman",
+    719 => "Fallen Knight",
+    720 => "Flying Carpet",
+    721 => "Carrier Hand",
+    722 => "Akheva",
+    723 => "Servant of Shadow",
+    724 => "Luclin"
+	);									
+						
+	// Deities
+	$dbdeities = array(
+	140 => "Agnostic", // EQEditor shows this as 140...
+	201 => "Bertoxxulous",
+	202 => "Brell-Serilis",
+	203 => "Cazic-Thule",
+	204 => "Erollisi-Marr",
+	205 => "Bristlebane",
+	206 => "Innoruuk",
+	207 => "Karana",
+	208 => "Mithaniel-Marr",
+	209 => "Prexus",
+	210 => "Quellious",
+	211 => "Rallos-Zek",
+	213 => "Solusek-Ro",
+	212 => "Rodcet-Nife",
+	215 => "Tunare",
+	214 => "The-Tribunal",
+	216 => "Veeshan",
+	396 => "Agnostic"
+	);
+	
+	// Deities (Items)
+	$dbideities = array(
+	2 => "Bertoxxulous",
+	4 => "Brell Serilis",
+	8 => "Cazic Thule",
+	16 => "Erollisi Marr",
+	32 => "Bristlebane",
+	64 => "Innoruuk",
+	128 => "Karana",
+	256 => "Mithaniel Marr",
+	512 => "Prexus",
+	1024 => "Quellious",
+	2048 => "Rallos Zek",
+	4096 => "Rodcet Nife",
+	8192 => "Solusek Ro",
+	16384 => "The Tribunal",
+	32768 => "Tunare",
+	65536 => "Veeshan",
+	);
+						
+	// Slots (Items)
+	$dbslots = array(
+	1 => "Charm", 
+	2 => "Ear",
+	4 => "Head",
+	8 => "Face",
+	16 => "Ear",
+	18 => "Ears", 
+	32 => "Neck",
+	64 => "Shoulders",
+	128 => "Arms",
+	256 => "Back",
+	512 => "Wrist",
+	1024 => "Wrist",
+	1536 => "Wrists",
+	2048 => "Range", 
+	4096 => "Hands",
+	8192 => "Primary",
+	16384 => "Secondary",
+	32768 => "Finger", 
+	65536 => "Finger",
+	98304 => "Fingers",
+	131072 => "Chest", 
+	262144 => "Legs", 
+	524288 => "Feet",
+	1048576 => "Waist",
+	2097152 => "Powersource",
+	4194304 => "Ammo"
+	);
 ?>

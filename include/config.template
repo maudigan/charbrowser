@@ -58,7 +58,7 @@ $subtitle     =    " • Be Nosey";
 ** as json. The data is not raw, it's only the data **
 ** normally showed in the HTML rendering.           **
 *****************************************************/
-$api_enabled = true;
+$api_enabled = false;
 
 
 /*****************************************************

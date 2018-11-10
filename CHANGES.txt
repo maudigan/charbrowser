@@ -1,3 +1,12 @@
+v2.6.6
+----------------------------------------------------------------------
+added uleats inventory changes
+
+November 10,2018 - Reordered general slots from top to bottom
+                   into left to right (Maudigan)
+                   Fixed type on bagbuttonrow where 'px' was missing
+
+
 v2.6.5
 ----------------------------------------------------------------------
 added uleats inventory changes

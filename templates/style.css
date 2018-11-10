@@ -22,6 +22,10 @@
  *                         Bags moved 22-29 to 23-32 (+1 and two new slots)
  *                         Cursor bag contents moved 331-340 to 351-360
  *                         New bags contents are in 331-340 and 341-350
+ *   November 10,2018 - Reordered general slots from top to bottom
+ *                      into left to right (Maudigan)
+ *                      Fixed type on bagbuttonrow where 'px' was missing
+ *                      
  ***************************************************************************/ 
 
 #charbrowser * {
@@ -586,23 +590,23 @@
   color: #FFFFFF ;
 }
 #charbrowser .bagbuttonrow1 {
-  top: 74;
+  top: 74px;
   left: 25px
 }
-#charbrowser #charbrowser .bagbuttonrow2 {
-  top: 117;
+#charbrowser .bagbuttonrow2 {
+  top: 117px;
   left: 25px
 }
 #charbrowser .bagbuttonrow3 {
-  top: 160;
+  top: 160px;
   left: 25px
 }
 #charbrowser .bagbuttonrow4 {
-  top: 202;
+  top: 202px;
   left: 25px
 }
 #charbrowser .bagbuttonrow5 {
-  top: 245;
+  top: 245px;
   left: 25px
 }
 #charbrowser .bagrow1 {
@@ -930,36 +934,36 @@
   left: 317px;
 }
 #charbrowser .slotloc24 {
-  top: 229px;
-  left: 317px;
-}
-#charbrowser .slotloc25 {
-  top: 272px;
-  left: 317px;
-}
-#charbrowser .slotloc26 {
-  top: 315px;
-  left: 317px;
-}
-#charbrowser .slotloc27 {
-  top: 358px;
-  left: 317px;
-}
-#charbrowser .slotloc28 {
   top: 186px;
   left: 360px;
 }
-#charbrowser .slotloc29 {
+#charbrowser .slotloc25 {
+  top: 229px;
+  left: 317px;
+}
+#charbrowser .slotloc26 {
   top: 229px;
   left: 360px;
 }
-#charbrowser .slotloc30 {
+#charbrowser .slotloc27 {
+  top: 272px;
+  left: 317px;
+}
+#charbrowser .slotloc28 {
   top: 272px;
   left: 360px;
 }
-#charbrowser .slotloc31 {
+#charbrowser .slotloc29 {
+  top: 315px;
+  left: 317px;
+}
+#charbrowser .slotloc30 {
   top: 315px;
   left: 360px;
+}
+#charbrowser .slotloc31 {
+  top: 358px;
+  left: 317px;
 }
 #charbrowser .slotloc32 {
   top: 358px;

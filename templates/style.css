@@ -1,3 +1,29 @@
+/*************************************************************************** 
+ * 
+ *   This program is free software; you can redistribute it and/or modify 
+ *   it under the terms of the GNU General Public License as published by 
+ *   the Free Software Foundation; either version 2 of the License, or 
+ *   (at your option) any later version. 
+ * 
+ *   Portions of this program are derived from publicly licensed software 
+ *   projects including, but not limited to phpBB, Magelo Clone, 
+ *   EQEmulator, EQEditor, and Allakhazam Clone. 
+ * 
+ *                                  Author: 
+ *                           Maudigan(Airwalking) 
+ * 
+ *   September 23, 2018 - added wrapper class for the entire html page
+ *                        to help prevent naming colisions when doing
+ *                        a wrapped index (Maudigan).
+ *   November 10,2018 - Added uleats inventory changes (Maudigan): 
+ *                         Ammo moved 21 to 22
+ *                         Power source moved 9999 to 21 
+ *                         Cursor moves 30 to 33
+ *                         Bags moved 22-29 to 23-32 (+1 and two new slots)
+ *                         Cursor bag contents moved 331-340 to 351-360
+ *                         New bags contents are in 331-340 and 341-350
+ ***************************************************************************/ 
+
 #charbrowser * {
   margin: 0px;
   padding: 0px;
@@ -456,12 +482,12 @@
   left: 10px;
 }
 #charbrowser .InventoryStats2 {
-  height: 100px;
+  height: 57px;
   width: 100px;
   margin: 0px;
   padding: 0px;
   position: absolute;
-  top: 14px;
+  top: 10px;
   left: 315px;
 }
 #charbrowser .InventoryMonogram {
@@ -890,46 +916,55 @@
   top: 315px;
   left: 223px;
 }
-#charbrowser .slotloc21 {
-  top: 315px;
-  left: 267px;
-}
-#charbrowser .slotloc22 {
-  top: 229px;
-  left: 317px;
-}
-#charbrowser .slotloc23 {
-  top: 272px;
-  left: 317px;
-}
-#charbrowser .slotloc24 {
-  top: 315px;
-  left: 317px;
-}
-#charbrowser .slotloc25 {
-  top: 358px;
-  left: 317px;
-}
-#charbrowser .slotloc26 {
-  top: 229px;
-  left: 360px;
-}
-#charbrowser .slotloc27 {
-  top: 272px;
-  left: 360px;
-}
-#charbrowser .slotloc28 {
-  top: 315px;
-  left: 360px;
-}
-#charbrowser .slotloc29 {
-  top: 358px;
-  left: 360px;
-}
-#charbrowser .slotloc9999 { /* added powersource slot 2/5/2014 */ 
+
+#charbrowser .slotloc21 { 
   top: 272px; 
   left: 267px; 
 } 
+#charbrowser .slotloc22 {
+  top: 315px;
+  left: 267px;
+}
+#charbrowser .slotloc23 {
+  top: 186px;
+  left: 317px;
+}
+#charbrowser .slotloc24 {
+  top: 229px;
+  left: 317px;
+}
+#charbrowser .slotloc25 {
+  top: 272px;
+  left: 317px;
+}
+#charbrowser .slotloc26 {
+  top: 315px;
+  left: 317px;
+}
+#charbrowser .slotloc27 {
+  top: 358px;
+  left: 317px;
+}
+#charbrowser .slotloc28 {
+  top: 186px;
+  left: 360px;
+}
+#charbrowser .slotloc29 {
+  top: 229px;
+  left: 360px;
+}
+#charbrowser .slotloc30 {
+  top: 272px;
+  left: 360px;
+}
+#charbrowser .slotloc31 {
+  top: 315px;
+  left: 360px;
+}
+#charbrowser .slotloc32 {
+  top: 358px;
+  left: 360px;
+}
 #charbrowser .slotloc2000 {
   top: 20px;
   left: 6px;
@@ -1096,8 +1131,8 @@
 #charbrowser .slotimage21 {
   background-image: url(../images/slots/slot_21.gif);
 }
-#charbrowser .slotimage9999 {
-  background-image: url(../images/slots/slot_9999.gif);
+#charbrowser .slotimage22 {
+  background-image: url(../images/slots/slot_22.gif);
 }
 #charbrowser .slotimage {
   background-image: url(../images/slots/slot_.gif);

@@ -5,8 +5,7 @@ function display(type, id, prefix) {
   if (target = document.getElementById(prefix + id)) 
     if (type) target.style.display = (target.style.display == 'none') ? 'block' : 'none'; 
   else {      
-    for(var i=0; i <= 2270; i++)    if (hideme = document.getElementById(prefix + i)) hideme.style.display = 'none';    
-    for(var i=9999; i < 10000; i++) if (hideme = document.getElementById(prefix + i)) hideme.style.display = 'none';           
+    for(var i=0; i <= 2270; i++)    if (hideme = document.getElementById(prefix + i)) hideme.style.display = 'none';       
     target.style.display = 'block'; 
   } 
 } 
@@ -109,10 +108,10 @@ function display(type, id, prefix) {
 
           <div class='InventoryMonogram'><img src='{ROOT_URL}images/monograms/{CLASS_NUM}.gif'></div> 
 
-          <div class='Coin' style='top: 116px;left: 317px;'><table class='StatTable'><tr><td align='left'><img src='{ROOT_URL}images/pp.gif'></td><td align='center' width='100%'>{PP}</td></tr></table></div> 
-          <div class='Coin' style='top: 144px;left: 317px;'><table class='StatTable'><tr><td align='left'><img src='{ROOT_URL}images/gp.gif'></td><td align='center' width='100%'>{GP}</td></tr></table></div> 
-          <div class='Coin' style='top: 172px;left: 317px;'><table class='StatTable'><tr><td align='left'><img src='{ROOT_URL}images/sp.gif'></td><td align='center' width='100%'>{SP}</td></tr></table></div> 
-          <div class='Coin' style='top: 200px;left: 317px;'><table class='StatTable'><tr><td align='left'><img src='{ROOT_URL}images/cp.gif'></td><td align='center' width='100%'>{CP}</td></tr></table></div> 
+          <div class='Coin' style='top: 73px;left: 317px;'><table class='StatTable'><tr><td align='left'><img src='{ROOT_URL}images/pp.gif'></td><td align='center' width='100%'>{PP}</td></tr></table></div> 
+          <div class='Coin' style='top: 101px;left: 317px;'><table class='StatTable'><tr><td align='left'><img src='{ROOT_URL}images/gp.gif'></td><td align='center' width='100%'>{GP}</td></tr></table></div> 
+          <div class='Coin' style='top: 129px;left: 317px;'><table class='StatTable'><tr><td align='left'><img src='{ROOT_URL}images/sp.gif'></td><td align='center' width='100%'>{SP}</td></tr></table></div> 
+          <div class='Coin' style='top: 157px;left: 317px;'><table class='StatTable'><tr><td align='left'><img src='{ROOT_URL}images/cp.gif'></td><td align='center' width='100%'>{CP}</td></tr></table></div> 
 
           <div class='Slot slotloc0 slotimage0'></div> 
           <div class='Slot slotloc1 slotimage1'></div> 
@@ -136,7 +135,7 @@ function display(type, id, prefix) {
           <div class='Slot slotloc19 slotimage19'></div> 
           <div class='Slot slotloc20 slotimage20'></div> 
           <div class='Slot slotloc21 slotimage21'></div> 
-          <div class='Slot slotloc22 slotimage'></div> 
+          <div class='Slot slotloc22 slotimage22'></div> 
           <div class='Slot slotloc23 slotimage'></div> 
           <div class='Slot slotloc24 slotimage'></div> 
           <div class='Slot slotloc25 slotimage'></div> 
@@ -144,7 +143,9 @@ function display(type, id, prefix) {
           <div class='Slot slotloc27 slotimage'></div> 
           <div class='Slot slotloc28 slotimage'></div> 
           <div class='Slot slotloc29 slotimage'></div> 
-          <div class='Slot slotloc9999 slotimage9999'></div> 
+          <div class='Slot slotloc30 slotimage'></div> 
+          <div class='Slot slotloc31 slotimage'></div> 
+          <div class='Slot slotloc32 slotimage'></div> 
 
 
           <!-- BEGIN invitem --> 

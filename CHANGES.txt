@@ -1,3 +1,21 @@
+v2.6.5
+----------------------------------------------------------------------
+added uleats inventory changes
+
+November 10,2018 - Added uleats inventory changes (Maudigan): 
+
+                      Ammo moved 21 to 22
+
+                      Power source moved 9999 to 21 
+
+                      Cursor moves 30 to 33
+ 
+                      Bags moved 22-29 to 23-32 (+1 and two new slots)
+
+                      Cursor bag contents moved 331-340 to 351-360
+
+                      New bags contents are in 331-340 and 341-350
+
 v2.6.4
 ----------------------------------------------------------------------
 made the api so it can be turned off

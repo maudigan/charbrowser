@@ -94,7 +94,7 @@ $cb_template->assign_both_vars(array(
    'PIERCING' => $char->GetValue('piercing'), 
    'RIPOSTE' => $char->GetValue('riposte'), 
    'THROWING' => $char->GetValue('throwing'), 
-   'TRIPPLE_ATTACK' => $char->GetValue('tripple_attack'), 
+   'TRIPLE_ATTACK' => $char->GetValue('triple_attack'), 
    'INTIMIDATION' => $char->GetValue('intimidation'), 
    'TAUNT' => $char->GetValue('taunt'),
 

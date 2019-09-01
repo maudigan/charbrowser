@@ -3,19 +3,19 @@
  * 
  *   This program is free software; you can redistribute it and/or modify 
  *   it under the terms of the GNU General Public License as published by 
- *   the Free Software Foundation; either version 2 of the License, or 
+ *   the Free Software Foundation; either version 2 of the License,or 
  *   (at your option) any later version. 
  * 
  *   Portions of this program are derived from publicly licensed software 
- *   projects including, but not limited to phpBB, Magelo Clone, 
- *   EQEmulator, EQEditor, and Allakhazam Clone. 
+ *   projects including,but not limited to phpBB,Magelo Clone,
+ *   EQEmulator,EQEditor,and Allakhazam Clone. 
  * 
  *                                  Author: 
  *                           Maudigan(Airwalking) 
  * 
- *   February 25, 2014 - add Drakkin/Powersource (Maudigan c/o Kinglykrab)
- *   September 28, 2014 - added profile class error messages (Maudigan)
- *   May 17, 2017 - added OOW flags (Maudigan)
+ *   February 25,2014 - add Drakkin/Powersource (Maudigan c/o Kinglykrab)
+ *   September 28,2014 - added profile class error messages (Maudigan)
+ *   May 17,2017 - added OOW flags (Maudigan)
  ***************************************************************************/ 
   
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             
@@ -98,10 +98,10 @@ $language['SIGNATURE_NEED_NAME'] = "You must at least enter a valid character na
 $language['INDEX_INTRO'] ="Welcome to the newest build of Character Browser. Many new features have been added to streamline the software to make customazation even easier than before. Languages have been modularized to better serve our growing Chinese community. Modifying the language.php file can now rapidly customize the tool in a way that used to take days. 
                            <br> 
                    <br> 
-                   In addition to languages, all of the HTML has been modularized using a system you may recognize from phpbb. System admins can now edit easy to understand templates to quickly get a custom feel for their install. 
+                   In addition to languages,all of the HTML has been modularized using a system you may recognize from phpbb. System admins can now edit easy to understand templates to quickly get a custom feel for their install. 
                    <br> 
                    <br> 
-                   Various other navigational upgrades have been made, and security upgrades making it safer for the whole community. For more details check out the readme."; 
+                   Various other navigational upgrades have been made,and security upgrades making it safer for the whole community. For more details check out the readme."; 
 $language['INDEX_VERSION'] = "Version"; 
 $language['INDEX_BY'] = "By"; 
 
@@ -128,112 +128,112 @@ $language['BAZAAR_SEARCH_SLOT'] = "Slot";
 $language['BAZAAR_SEARCH_TYPE'] = "Type"; 
 //the following 4 arrays are for the dropdown select boxes on the bazaar search page 
 $language['BAZAAR_ARRAY_SEARCH_TYPE'] = array ( 
-  -1   => 'Any Type', 
-  3   => '1H Blunt', 
-  0   => '1H Slashing', 
-  4   => '2H Blunt', 
-  35   => '2H Piercing', 
-  1   => '2H Slashing', 
-  38   => 'Alcohol', 
-  5   => 'Archery', 
-  10   => 'Armor', 
-  27   => 'Arrow', 
-  54   => 'Augmentation', 
-  18   => 'Bandages', 
-  25   => 'Brass Instrument', 
-  52   => 'Charm', 
-  34   => 'Coin', 
-  17   => 'Combinable', 
-  40   => 'Compass', 
-  15   => 'Drink', 
-  37   => 'Fishing Bait', 
-  36   => 'Fishing Pole', 
-  14   => 'Food', 
-  11   => 'Gems', 
-  29   => 'Jewelry', 
-  33   => 'Key', 
-  39   => 'Key (bis)', 
-  16   => 'Light', 
-  12   => 'Lockpicks', 
-  45   => 'Martial', 
-  32   => 'Note', 
-  26   => 'Percussion Instrument', 
-  2   => 'Piercing', 
-  42   => 'Poison', 
-  21   => 'Potion', 
-  20   => 'Scroll', 
-  8   => 'Shield', 
-  30   => 'Skull', 
-  24   => 'Stringed Instrument', 
-  19   => 'Throwing', 
-  7   => 'Throwing range items', 
-  31   => 'Tome', 
-  23   => 'Wind Instrument' 
+  -1   => 'Any Type',
+  0   => '1H Slashing',
+  1   => '2H Slashing',
+  2   => 'Piercing',
+  3   => '1H Blunt',
+  4   => '2H Blunt',
+  5   => 'Archery',
+  7   => 'Throwing range items',
+  8   => 'Shield',
+  10   => 'Armor',
+  11   => 'Gems',
+  12   => 'Lockpicks',
+  14   => 'Food',
+  15   => 'Drink',
+  16   => 'Light',
+  17   => 'Combinable',
+  18   => 'Bandages',
+  19   => 'Throwing',
+  20   => 'Scroll',
+  21   => 'Potion',
+  23   => 'Wind Instrument',
+  24   => 'Stringed Instrument',
+  25   => 'Brass Instrument',
+  26   => 'Percussion Instrument',
+  27   => 'Arrow',
+  29   => 'Jewelry',
+  30   => 'Skull',
+  31   => 'Tome',
+  32   => 'Note',
+  33   => 'Key',
+  34   => 'Coin',
+  35   => '2H Piercing',
+  36   => 'Fishing Pole',
+  37   => 'Fishing Bait',
+  38   => 'Alcohol',
+  39   => 'Key',
+  40   => 'Compass',
+  42   => 'Poison',
+  45   => 'Martial',
+  52   => 'Charm',
+  54   => 'Augmentation'
 ); 
 $language['BAZAAR_ARRAY_SEARCH_SLOT'] = array ( 
-  -1 => 'Any Slot', 
-  4194304 => 'Powersource', //added 2/25/2014
-  2097152 => 'Ammo', 
-  1048576 => 'Waist', 
-  524288 => 'Feet', 
-  262144 => 'Legs', 
-  131072 => 'Chest', 
-  98304 => 'Fingers', 
-  65536 => 'Finger', 
-  32768 => 'Finger', 
-  16384 => 'Secondary', 
-  8192 => 'Primary', 
-  4096 => 'Hands', 
-  2048 => 'Range', 
-  1536 => 'Wrists', 
-  1024 => 'Wrist', 
-  512 => 'Wrist', 
-  256 => 'Back', 
-  128 => 'Arms', 
-  64 => 'Shoulders', 
-  32 => 'Neck', 
-  18 => 'Ears', 
-  16 => 'Ear', 
-  8 => 'Face', 
-  4 => 'Head', 
-  2 => 'Ear', 
+  -1 => 'Any Slot',
+  4194304 => 'Powersource',//added 2/25/2014
+  2097152 => 'Ammo',
+  1048576 => 'Waist',
+  524288 => 'Feet',
+  262144 => 'Legs',
+  131072 => 'Chest',
+  98304 => 'Fingers',
+  65536 => 'Finger',
+  32768 => 'Finger',
+  16384 => 'Secondary',
+  8192 => 'Primary',
+  4096 => 'Hands',
+  2048 => 'Range',
+  1536 => 'Wrists',
+  1024 => 'Wrist',
+  512 => 'Wrist',
+  256 => 'Back',
+  128 => 'Arms',
+  64 => 'Shoulders',
+  32 => 'Neck',
+  18 => 'Ears',
+  16 => 'Ear',
+  8 => 'Face',
+  4 => 'Head',
+  2 => 'Ear',
   1 => 'Charm' 
 ); 
 $language['BAZAAR_ARRAY_SEARCH_CLASS'] = array ( 
-  -1 => 'Any Class', 
-  1 => 'WAR', 
-  2 => 'CLR', 
-  4 => 'PAL', 
-  8 => 'RNG', 
-  16 => 'SHD', 
-  32 => 'DRU', 
-  64 => 'MNK', 
-  128 => 'BRD', 
-  256 => 'ROG', 
-  512 => 'SHM', 
-  1024 => 'NEC', 
-  2048 => 'WIZ', 
-  4096 => 'MAG', 
-  8192 => 'ENC', 
-  16384 => 'BST', 
+  -1 => 'Any Class',
+  1 => 'WAR',
+  2 => 'CLR',
+  4 => 'PAL',
+  8 => 'RNG',
+  16 => 'SHD',
+  32 => 'DRU',
+  64 => 'MNK',
+  128 => 'BRD',
+  256 => 'ROG',
+  512 => 'SHM',
+  1024 => 'NEC',
+  2048 => 'WIZ',
+  4096 => 'MAG',
+  8192 => 'ENC',
+  16384 => 'BST',
   32768 => 'BER' 
 ); 
 $language['BAZAAR_ARRAY_SEARCH_RACE'] = array ( 
-  -1 => 'Any Race', 
-  1 => 'HUM', 
-  2 => 'BAR', 
-  4 => 'ERU', 
-  8 => 'ELF', 
-  16 => 'HIE', 
-  32 => 'DEF', 
-  64 => 'HEF', 
-  128 => 'DWF', 
-  256 => 'TRL', 
-  512 => 'OGR', 
-  1024 => 'HFL', 
-  2048 => 'GNM', 
-  4096 => 'IKS', 
-  8192 => 'VAH', 
+  -1 => 'Any Race',
+  1 => 'HUM',
+  2 => 'BAR',
+  4 => 'ERU',
+  8 => 'ELF',
+  16 => 'HIE',
+  32 => 'DEF',
+  64 => 'HEF',
+  128 => 'DWF',
+  256 => 'TRL',
+  512 => 'OGR',
+  1024 => 'HFL',
+  2048 => 'GNM',
+  4096 => 'IKS',
+  8192 => 'VAH',
   16384 => 'FRG',
   32768 => 'DRK' //added 2/25/2014
 ); 
@@ -255,28 +255,28 @@ $language['HELP_HELP'] = "Help";
 $language['HELP_VERSION'] = "Version"; 
 $language['HELP_BY'] = "By"; 
 $language['HELP_TEXT'] = "<b>Note:</b><br> 
-                          Great efforts have been made for this software to function as close to <i>in-game</i> as possible. Some noteable things will be covered here, for further assitance, ask the guy sitting next to you first, if he doesnt know please visit the 'Magelo Clone' forum on MQEmulator.net. 
+                          Great efforts have been made for this software to function as close to <i>in-game</i> as possible. Some noteable things will be covered here,for further assitance,ask the guy sitting next to you first,if he doesnt know please visit the 'Magelo Clone' forum on MQEmulator.net. 
                           <br><br> 
                           <b>Blocking your profile:</b><br> 
                           When installed this software can be setup to hide the accounts of role players and/or anonymous players. To view if either of these options are enabled click the settings link in the top right. 
                           <br><br> 
                           <b>Information Hiding:</b><br> 
-                          Just like blocked profiles the server op can choose to block a number of other sections for ALL players such as factions, aas, skills, etc. Again, to view the settings for your server, and to see the full list of options click the settings link in the top right. 
+                          Just like blocked profiles the server op can choose to block a number of other sections for ALL players such as factions,aas,skills,etc. Again,to view the settings for your server,and to see the full list of options click the settings link in the top right. 
                           <br><br> 
                           <b>Searching:</b><br> 
                           Searching no longer requires the use of wildcards as any spaces are now translated into wildcards. A blank search will return all characters. A search for 'lon ar' will return 'lonestar'. Search results can be sorted by clicking the column headers(only ascending order). 
                           <br><br> 
-                          <b>Inventory, AA, Skills:</b><br> 
+                          <b>Inventory,AA,Skills:</b><br> 
                           These should all be strikingly similar to the use in game.<br> 
                           <br><br> 
                           <b>Corpses:</b><br> 
-                          In the rezzed column, a filled radio button indicates the corpse has been rezzed. If the radio buttons are displayed incorrectly with a white background then you are using IE and a fix for IE's problem can be found <a href='http://www.mozilla.com/en-US/'>here</a>.  The zone-name link now takes you to a page with information about the zone instead of a map. Now the [map] link will display a map and attempt to pinpoint your corpse on it for easier location. 
+                          In the rezzed column,a filled radio button indicates the corpse has been rezzed. If the radio buttons are displayed incorrectly with a white background then you are using IE and a fix for IE's problem can be found <a href='http://www.mozilla.com/en-US/'>here</a>.  The zone-name link now takes you to a page with information about the zone instead of a map. Now the [map] link will display a map and attempt to pinpoint your corpse on it for easier location. 
                           <br><br> 
                           <b>Flags:</b><br> 
-                          The top flags box will display the flag for each zone you have access to. A filled radio button indicates you have access to that zone. If the radio buttons are displayed incorrectly with a white background then you are using IE and a fix for IE's problem can be found <a href='http://www.mozilla.com/en-US/'>here</a>.  Clicking the name on one of these flags will open a subwindow of all the flags required to get access to that zone. This truth table was created from the planar projection quest file and because of this some flags are repeated even when verified in a prerequisite. For instance Askr's flags are checked to get into bot, and then checked again to get into Elementals. 
+                          The top flags box will display the flag for each zone you have access to. A filled radio button indicates you have access to that zone. If the radio buttons are displayed incorrectly with a white background then you are using IE and a fix for IE's problem can be found <a href='http://www.mozilla.com/en-US/'>here</a>.  Clicking the name on one of these flags will open a subwindow of all the flags required to get access to that zone. This truth table was created from the planar projection quest file and because of this some flags are repeated even when verified in a prerequisite. For instance Askr's flags are checked to get into bot,and then checked again to get into Elementals. 
                           <br><br> 
                           <b>Faction:</b><br> 
-                          Faction display can vary based on the server admins settings. A basic view shows the faction name, and your faction level in text. In advanced mode your entire faction table is broken down. Base will show the starting value of the faction, char shows your modifier(from killing/questing/etc), race shows your particular races modifer(frogs hate trolls), class shows your classes modifer for that faction, and deity shows your deity's modifier.  
+                          Faction display can vary based on the server admins settings. A basic view shows the faction name,and your faction level in text. In advanced mode your entire faction table is broken down. Base will show the starting value of the faction,char shows your modifier(from killing/questing/etc),race shows your particular races modifer(frogs hate trolls),class shows your classes modifer for that faction,and deity shows your deity's modifier.  
                           "; 
                         
 
@@ -319,23 +319,23 @@ $language['FLAG_OOW'] = "Omens of War &nbsp;&nbsp;&nbsp;(click for details)";
 //flags language 
 $language['FLAG_PoP_PoNB'] = "Lair of Terris Thule (Plane of Nightmare B)"; 
 $language['FLAG_PoP_Hedge'] = "You have killed the construct of nightmares in the Hedge event in the Plane of Nightmare."; 
-$language['FLAG_PoP_PreHedge'] = "You have said 'Tortured by nightmares' to Adroha Jezith, in the Plane of Tranquility sick bay."; 
-$language['FLAG_PoP_PoTactics'] = "Drunder, Fortress of Zek (Plane of Tactics)"; 
+$language['FLAG_PoP_PreHedge'] = "You have said 'Tortured by nightmares' to Adroha Jezith,in the Plane of Tranquility sick bay."; 
+$language['FLAG_PoP_PoTactics'] = "Drunder,Fortress of Zek (Plane of Tactics)"; 
 $language['FLAG_PoP_Xana'] = "(optional) You have killed Xanamech Nezmirthafen and hailed Nitram Anizok in the Plane of Innovation."; 
-$language['FLAG_PoP_PreMB'] = "You have told Giwin Mirakon, 'I will test the machine' within the Plane of Innovation factory."; 
+$language['FLAG_PoP_PreMB'] = "You have told Giwin Mirakon,'I will test the machine' within the Plane of Innovation factory."; 
 $language['FLAG_PoP_MB'] = "You have defeated the Behemoth within Plane of Innovation and then QUICKLY hailed Giwin Mirakon in the factory."; 
 $language['FLAG_PoP_CoD'] = "Ruins of Lxanvom (Crypt of Decay)"; 
 $language['FLAG_PoP_PreGrummus'] = "You have talked to Adler Fuirstel outside of the Plane of Disease."; 
 $language['FLAG_PoP_Grummus'] = "You have defeated Grummus"; 
 $language['FLAG_PoP_PostGrummus'] = "You have talked to Elder Fuirstel in the plane of Tranquility sick bay."; 
 $language['FLAG_PoP_PoSPoV'] = "Plane of Valor & Plane of Storms"; 
-$language['FLAG_PoP_PreTrial'] = "You have talked to Mavuin, and have agreed to plea his case to The Tribunal."; 
+$language['FLAG_PoP_PreTrial'] = "You have talked to Mavuin,and have agreed to plea his case to The Tribunal."; 
 $language['FLAG_PoP_Trial'] = "You have showed the Tribunal the mark from the trail you have completed."; 
-$language['FLAG_PoP_PostTrial'] = "You have returned to Mavuin, letting him know the tribunal will hear his case."; 
+$language['FLAG_PoP_PostTrial'] = "You have returned to Mavuin,letting him know the tribunal will hear his case."; 
 $language['FLAG_PoP_HoHA'] = "Halls of Honor"; 
-$language['FLAG_PoP_AD'] = "You have defeated the prysmatic dragon, Aerin`Dar within the Plane of Valor."; 
+$language['FLAG_PoP_AD'] = "You have defeated the prysmatic dragon,Aerin`Dar within the Plane of Valor."; 
 $language['FLAG_PoP_BoT'] = "Bastion of Thunder"; 
-$language['FLAG_PoP_Askr1'] = "You have shown your prowess in battle to Askr, now you must make strides to get to the Bastion of Thunder."; 
+$language['FLAG_PoP_Askr1'] = "You have shown your prowess in battle to Askr,now you must make strides to get to the Bastion of Thunder."; 
 $language['FLAG_PoP_Askr2'] = "You have obtained the Talisman of Thunderous Foyer from Askr."; 
 $language['FLAG_PoP_HoHB'] = "Temple of Marr"; 
 $language['FLAG_PoP_Faye'] = "You have completed Trydan Faye's trial by defeating Rydda'Dar."; 
@@ -362,20 +362,20 @@ $language['FLAG_PoP_Jiva'] = "You have defeated Jiva within the Tower of Solusk 
 $language['FLAG_PoP_Rizlona'] = "You have defeated Rizlona within the Tower of Solusk Ro."; 
 $language['FLAG_PoP_Xusl'] = "You have defeated Xuzl within the Tower of Solusk Ro."; 
 $language['FLAG_PoP_SolRo'] = "You have defeated Soluesk Ro within his own tower."; 
-$language['FLAG_PoP_PoAirEarthWater'] = "Planes of Air, Earth and Water"; 
-$language['FLAG_PoP_Agnarr'] = "You have defeated Agnarr, the Storm Lord."; 
+$language['FLAG_PoP_PoAirEarthWater'] = "Planes of Air,Earth and Water"; 
+$language['FLAG_PoP_Agnarr'] = "You have defeated Agnarr,the Storm Lord."; 
 $language['FLAG_PoP_PreSaryrn'] = "You have said 'I will go' to Fahlia Shadyglade in the Plane of Tranquility"; 
 $language['FLAG_PoP_Maelin'] = "You have spoken with the grand librarian to receive access to the Elemental Planes."; 
 $language['FLAG_PoP_PoTime'] = "Plane of Time"; 
-$language['FLAG_PoP_Fennin'] = "You have defeated Fennin Ro, the Tyrant of Fire."; 
-$language['FLAG_PoP_Xegony'] = "You have defeated Xegony, the Queen of Air."; 
-$language['FLAG_PoP_Coirnav'] = "You have defeated Coirnav, the Avatar of Water."; 
+$language['FLAG_PoP_Fennin'] = "You have defeated Fennin Ro,the Tyrant of Fire."; 
+$language['FLAG_PoP_Xegony'] = "You have defeated Xegony,the Queen of Air."; 
+$language['FLAG_PoP_Coirnav'] = "You have defeated Coirnav,the Avatar of Water."; 
 $language['FLAG_PoP_Arbitor'] = "You have defeated the arbitor within Plane of Earth A."; 
 $language['FLAG_PoP_Rathe'] = "You have defeated the Rathe Council within Plane of Earth B"; 
 
 /************* GoD Flags for Progression ************* 
    Updated by Sorvani 
-   April 15, 2011 
+   April 15,2011 
    Complete  
 ******************************************************/ 
 $language['FLAG_GoD_Sewer_1_1'] = "You have hailed Ansharu after defeating the Ancient Kayserops in the Purifying Plant!"; 
@@ -386,9 +386,9 @@ $language['FLAG_GoD_Sewer_3_1'] = "You have returned Alej's tools to him in the 
 $language['FLAG_GoD_Sewer_3_2'] = "You have hailed Scribe Gurru in Barindu after completing the Lair of Trapped Ones!"; 
 $language['FLAG_GoD_Sewer_4_1'] = "You have returned the map pieces to Utandi in the Pool of Sludge!"; 
 $language['FLAG_GoD_Sewer_4_2'] = "You have hailed Scribe Gurru in Barindu after completing the Pool of Sludge!"; 
-$language['FLAG_GoD_Vxed'] = "Vxed, The Crumbling Caverns"; 
-$language['FLAG_GoD_Tipt'] = "Tipt, Treacherous Crags"; 
-$language['FLAG_GoD_KT_1'] = "Kod'Taz, Broken Trial Grounds"; 
+$language['FLAG_GoD_Vxed'] = "Vxed,The Crumbling Caverns"; 
+$language['FLAG_GoD_Tipt'] = "Tipt,Treacherous Crags"; 
+$language['FLAG_GoD_KT_1'] = "Kod'Taz,Broken Trial Grounds"; 
 $language['FLAG_GoD_KT_2'] = "You have completed the 4 sewer trials or defeated Smith Rondo!"; 
 $language['FLAG_GoD_KT_3'] = "You have hailed Stonespiritist Ekikoa in Vxed!"; 
 $language['FLAG_GoD_KT_4'] = "You have hailed Master Stonespiritist Okkanu in Tipt!"; 
@@ -407,9 +407,9 @@ $language['FLAG_GoD_Ikky_12'] = "You've rescued the artifact from the Ageless Re
 $language['FLAG_GoD_Ikky_R4'] = "(optional) Able to request Ikkinz: Chambers of Destruction"; 
 $language['FLAG_GoD_Ikky_13'] = "You have completed the three raid trials!"; 
 $language['FLAG_GoD_Ikky_14'] = "You have crafted the Icon of the Altar!";  
-$language['FLAG_GoD_Qvic_1'] = "Qvic, Prayer Grounds of Calling"; 
+$language['FLAG_GoD_Qvic_1'] = "Qvic,Prayer Grounds of Calling"; 
 $language['FLAG_GoD_Qvic_2'] = "You have given the Sliver of the High Temple to Tublik Narwethar after defeating Vrex Barxt Qurat in Uqua."; 
-$language['FLAG_GoD_Txevu_1'] = "Txevu, Lair of the Elite"; 
+$language['FLAG_GoD_Txevu_1'] = "Txevu,Lair of the Elite"; 
 $language['FLAG_GoD_Txevu_2'] = "You have given the three pieces of the high temple to Brevik Kalaner."; 
 /* End GoD Flags */ 
 
@@ -494,6 +494,7 @@ $language['CHAR_MAGIC'] = "MAGIC";
 $language['CHAR_DISEASE'] = "DISEASE  "; 
 $language['CHAR_FIRE'] = "FIRE"; 
 $language['CHAR_COLD'] = "COLD"; 
+$language['CHAR_CORRUPT'] = "CORRUPT"; 
 $language['CHAR_WEIGHT'] = "WEIGHT"; 
 
 
@@ -530,7 +531,7 @@ $language['MESSAGE_NO_FIND'] = "Could not find that character.";
 $language['MESSAGE_ITEM_NO_VIEW'] = "Server settings prevent you from viewing this item."; 
 $language['MESSAGE_NO_CORPSES'] = "This character has no corpses"; 
 $language['MESSAGE_NO_KEYS'] = "This character has no keys on the keyring"; 
-$language['MESSAGE_NO_GD'] = "This server does not appear to have GD installed, and it is required for image generation. Please contact your system admin."; 
+$language['MESSAGE_NO_GD'] = "This server does not appear to have GD installed,and it is required for image generation. Please contact your system admin."; 
 $language['MESSAGE_PROF_NOKEY'] = "Profile value '%s' requested but does not exist in the locator."; //added 4 "PROF" rows for new profile class rewrite 9/26/2014
 $language['MESSAGE_PROF_NOROWS'] = "The '%s' table was requested but no rows were found."; 
 $language['MESSAGE_PROF_NOCACHE'] = "Profile value '%s' requested from the '%s' table. A matching row is cached but the '%s' column is not present.";

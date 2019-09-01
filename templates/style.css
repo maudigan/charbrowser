@@ -394,9 +394,9 @@
 #charbrowser .IventoryOuterGM {
   position: relative;	
   background-image: url(../images/lightgm.jpg);
-  width: 430px;
+  width: 530px;
   height: 435px;
-  max-width: 426px;
+  max-width: 526px;
   max-height: 431px;
   padding: 0px;
   border: 2px #4b414a solid;
@@ -407,9 +407,9 @@
 #charbrowser .IventoryOuter {
   position: relative;	
   background-image: url(../images/light.gif);
-  width: 430px;
+  width: 530px;
   height: 435px;
-  max-width: 426px;
+  max-width: 526px;
   max-height: 431px;
   padding: 0px;
   border: 2px #7b714a solid;
@@ -423,9 +423,9 @@
   position: absolute;
   top: 13px;
   left: 8px;
-  width: 412px;
+  width: 512px;
   height: 409px;
-  max-width: 408px;
+  max-width: 508px;
   max-height: 405px;
   padding: 0px;
   font-family:		arial;
@@ -438,7 +438,7 @@
   left: 4px;
   border: 0px;
   padding: 0px;
-  width: 418px;
+  width: 518px;
   height: 21px;
   font-family:		arial;
   font-size: 9pt ;
@@ -449,7 +449,7 @@
   position: absolute;
   top: 0px;
   left: 0px;
-  width: 14px;
+  width: 114px;
   height: 21px;
   border: 0px;
   padding: 0px;
@@ -461,7 +461,7 @@
   line-height:21px;
   top: 0px;
   left: 14px;
-  width: 390px;
+  width: 490px;
   height: 21px;
   border: 0px;
   padding: 0px;
@@ -470,7 +470,7 @@
   background-image: url(../images/rightt.gif);
   position: absolute;
   top: 0px;
-  left: 404px;
+  left: 504px;
   width: 14px;
   height: 21px;
   border: 0px;
@@ -478,7 +478,7 @@
 }
 #charbrowser .InventoryStats {
   height: 370px;
-  width: 115px;
+  width: 150px;
   margin: 0px;
   padding: 0px;
   position: absolute;
@@ -492,7 +492,7 @@
   padding: 0px;
   position: absolute;
   top: 10px;
-  left: 315px;
+  left: 350px;
 }
 #charbrowser .InventoryMonogram {
   background-image: url(../images/dark.gif);
@@ -500,7 +500,7 @@
   position: absolute;
   text-align: center;
   top: 57px;
-  left: 180px;
+  left: 215px;
   width: 82px;
   height: 168px;
   max-height: 146px;
@@ -838,136 +838,136 @@
 
 #charbrowser .slotloc1 {
   top: 14px;
-  left: 137px;
+  left: 172px;
 }
 #charbrowser .slotloc2 {
   top: 14px;
-  left: 180px;
+  left: 215px;
 }
 #charbrowser .slotloc3 {
   top: 14px;
-  left: 223px;
+  left: 258px;
 }
 #charbrowser .slotloc4 {
   top: 14px;
-  left: 267px;
+  left: 302px;
 }
 #charbrowser .slotloc17 {
   top: 57px;
-  left: 137px;
+  left: 172px;
 }
 #charbrowser .slotloc5 {
   top: 57px;
-  left: 267px;
+  left: 302px;
 }
 #charbrowser .slotloc7 {
   top: 100px;
-  left: 137px;
+  left: 172px;
 }
 #charbrowser .slotloc8 {
   top: 100px;
-  left: 267px;
+  left: 302px;
 }
 #charbrowser .slotloc20 {
   top: 143px;
-  left: 137px;
+  left: 172px;
 }
 #charbrowser .slotloc6 {
   top: 143px;
-  left: 267px;
+  left: 302px;
 }
 #charbrowser .slotloc9 {
   top: 186px;
-  left: 137px;
+  left: 172px;
 }
 #charbrowser .slotloc10 {
   top: 186px;
-  left: 267px;
+  left: 302px;
 }
 #charbrowser .slotloc18 {
   top: 229px;
-  left: 137px;
+  left: 172px;
 }
 #charbrowser .slotloc12 {
   top: 229px;
-  left: 180px;
+  left: 215px;
 }
 #charbrowser .slotloc0 {
   top: 229px;
-  left: 223px;
+  left: 258px;
 }
 #charbrowser .slotloc19 {
   top: 229px;
-  left: 267px;
+  left: 302px;
 }
 #charbrowser .slotloc15 {
   top: 272px;
-  left: 180px;
+  left: 215px;
 }
 #charbrowser .slotloc16 {
   top: 272px;
-  left: 223px;
+  left: 258px;
 }
 #charbrowser .slotloc13 {
   top: 315px;
-  left: 137px;
+  left: 172px;
 }
 #charbrowser .slotloc14 {
   top: 315px;
-  left: 180px;
+  left: 215px;
 }
 #charbrowser .slotloc11 {
   top: 315px;
-  left: 223px;
+  left: 258px;
 }
 
 #charbrowser .slotloc21 { 
   top: 272px; 
-  left: 267px; 
+  left: 302px; 
 } 
 #charbrowser .slotloc22 {
   top: 315px;
-  left: 267px;
+  left: 302px;
 }
 #charbrowser .slotloc23 {
   top: 186px;
-  left: 317px;
+  left: 352px;
 }
 #charbrowser .slotloc24 {
   top: 186px;
-  left: 360px;
+  left: 395px;
 }
 #charbrowser .slotloc25 {
   top: 229px;
-  left: 317px;
+  left: 352px;
 }
 #charbrowser .slotloc26 {
   top: 229px;
-  left: 360px;
+  left: 395px;
 }
 #charbrowser .slotloc27 {
   top: 272px;
-  left: 317px;
+  left: 352px;
 }
 #charbrowser .slotloc28 {
   top: 272px;
-  left: 360px;
+  left: 395px;
 }
 #charbrowser .slotloc29 {
   top: 315px;
-  left: 317px;
+  left: 352px;
 }
 #charbrowser .slotloc30 {
   top: 315px;
-  left: 360px;
+  left: 395px;
 }
 #charbrowser .slotloc31 {
   top: 358px;
-  left: 317px;
+  left: 352px;
 }
 #charbrowser .slotloc32 {
   top: 358px;
-  left: 360px;
+  left: 395px;
 }
 #charbrowser .slotloc2000 {
   top: 20px;

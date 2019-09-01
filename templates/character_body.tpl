@@ -46,7 +46,7 @@ function display(type, id, prefix) {
       </div> 
       <!-- END bags --> 
     </td> 
-    <td width='460px' align='center'> 
+    <td width='560px' align='center'> 
       <div class='IventoryOuter{HIGHLIGHT_GM}'> 
         <div class='IventoryTitle'> 
           <div class='IventoryTitleLeft'></div> 
@@ -94,9 +94,9 @@ function display(type, id, prefix) {
               </tr> 
               <tr><td class='Divider' colspan='2'></td></tr> 
               <tr> 
-                <td>{L_POISON}<br>{L_MAGIC}<br>{L_DISEASE}<br>{L_FIRE}<br>{L_COLD}</td> 
-                <!-- <td>{POISON}<br>{MAGIC}<br>{DISEASE}<br>{FIRE}<br>{COLD}</td> -->
-                <td><font color='#00FF00'>{POISON} <font color='Gold'>+{HPOISON}</font><br>{MAGIC} <font color='Gold'>+{HMAGIC}</font><br>{DISEASE} <font color='Gold'>+{HDISEASE}</font><br>{FIRE} <font color='Gold'>+{HFIRE}</font><br>{COLD} <font color='Gold'>+{HCOLD}</font></font></td> 
+                <td>{L_POISON}<br>{L_MAGIC}<br>{L_DISEASE}<br>{L_FIRE}<br>{L_COLD}<br>{L_CORRUPT}</td> 
+                <!-- <td>{POISON}<br>{MAGIC}<br>{DISEASE}<br>{FIRE}<br>{COLD}<br>{CORRUPT}</td> -->
+                <td><font color='#00FF00'>{POISON} <font color='Gold'>+{HPOISON}</font><br>{MAGIC} <font color='Gold'>+{HMAGIC}</font><br>{DISEASE} <font color='Gold'>+{HDISEASE}</font><br>{FIRE} <font color='Gold'>+{HFIRE}</font><br>{COLD} <font color='Gold'>+{HCOLD}</font><br>{CORRUPT} <font color='Gold'>+{HCORRUPT}</font></font></td> 
               </tr> 
               <tr><td class='Divider' colspan='2'></td></tr> 
               <tr> 
@@ -108,10 +108,10 @@ function display(type, id, prefix) {
 
           <div class='InventoryMonogram'><img src='{ROOT_URL}images/monograms/{CLASS_NUM}.gif'></div> 
 
-          <div class='Coin' style='top: 73px;left: 317px;'><table class='StatTable'><tr><td align='left'><img src='{ROOT_URL}images/pp.gif'></td><td align='center' width='100%'>{PP}</td></tr></table></div> 
-          <div class='Coin' style='top: 101px;left: 317px;'><table class='StatTable'><tr><td align='left'><img src='{ROOT_URL}images/gp.gif'></td><td align='center' width='100%'>{GP}</td></tr></table></div> 
-          <div class='Coin' style='top: 129px;left: 317px;'><table class='StatTable'><tr><td align='left'><img src='{ROOT_URL}images/sp.gif'></td><td align='center' width='100%'>{SP}</td></tr></table></div> 
-          <div class='Coin' style='top: 157px;left: 317px;'><table class='StatTable'><tr><td align='left'><img src='{ROOT_URL}images/cp.gif'></td><td align='center' width='100%'>{CP}</td></tr></table></div> 
+          <div class='Coin' style='top: 73px;left: 352px;'><table class='StatTable'><tr><td align='left'><img src='{ROOT_URL}images/pp.gif'></td><td align='center' width='100%'>{PP}</td></tr></table></div> 
+          <div class='Coin' style='top: 101px;left: 352px;'><table class='StatTable'><tr><td align='left'><img src='{ROOT_URL}images/gp.gif'></td><td align='center' width='100%'>{GP}</td></tr></table></div> 
+          <div class='Coin' style='top: 129px;left: 352px;'><table class='StatTable'><tr><td align='left'><img src='{ROOT_URL}images/sp.gif'></td><td align='center' width='100%'>{SP}</td></tr></table></div> 
+          <div class='Coin' style='top: 157px;left: 352px;'><table class='StatTable'><tr><td align='left'><img src='{ROOT_URL}images/cp.gif'></td><td align='center' width='100%'>{CP}</td></tr></table></div> 
 
           <div class='Slot slotloc0 slotimage0'></div> 
           <div class='Slot slotloc1 slotimage1'></div> 

@@ -29,6 +29,8 @@
  *      Modified database to use a class.
  *   September 23, 2018 - Maudigan
  *      Added 2h piercing, remove traps and tripple attack.
+ *   September 7, 2019 - Kinglykrab
+ *      fixed typo tripple => triple
  *  
  ***************************************************************************/
  
@@ -273,7 +275,7 @@ $locator = array (
    "taunt" => array("character_skills", "value", 73),
    "frenzy" => array("character_skills", "value", 74),
    "remove_traps" => array("character_skills", "value", 75),
-   "tripple_attack" => array("character_skills", "value", 76),
+   "triple_attack" => array("character_skills", "value", 76),
    "2h_piercing" => array("character_skills", "value", 77),
    "common_tongue" => array("character_languages", "value", 0),
    "barbarian" => array("character_languages", "value", 1),

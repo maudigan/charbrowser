@@ -16,6 +16,7 @@
  *   February 25, 2014 - add Drakkin/Powersource (Maudigan c/o Kinglykrab)
  *   September 28, 2014 - added profile class error messages (Maudigan)
  *   May 17, 2017 - added OOW flags (Maudigan)
+ *   September 7, 2019 - added corruption (Kinglykrab)
  ***************************************************************************/ 
   
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             
@@ -494,6 +495,7 @@ $language['CHAR_MAGIC'] = "MAGIC";
 $language['CHAR_DISEASE'] = "DISEASE  "; 
 $language['CHAR_FIRE'] = "FIRE"; 
 $language['CHAR_COLD'] = "COLD"; 
+$language['CHAR_CORRUPT'] = "CORRUPT"; 
 $language['CHAR_WEIGHT'] = "WEIGHT"; 
 
 

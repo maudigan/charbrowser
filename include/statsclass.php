@@ -15,6 +15,7 @@
  *
  *   February 25, 2014 - added heroic and aug types (Maudigan c/o Kinglykrab)
  *   February 25, 2014 - whitespace cleanup--uncommented (Maudigan)
+ *   September 7, 2019 - added corruption, removed old comments (Kinglykrab)
  ***************************************************************************/
  
  
@@ -22,45 +23,46 @@
  
 if ( !defined('INCHARBROWSER') )
 {
-	die("Hacking attempt");
+   die("Hacking attempt");
 }
 
 
 class stats {
 
-	var $myhp;
-	var $mymana;
-	var $myendurance;
-	var $myAC;
-	var $mySTR;
-	var $mySTA;
-	var $myAGI;
-	var $myDEX;
-	var $myWIS;
-   var $myHSTR; //added 7 lines 2/25/2014
+   var $myhp;
+   var $mymana;
+   var $myendurance;
+   var $myAC;
+   var $mySTR;
+   var $mySTA;
+   var $myAGI;
+   var $myDEX;
+   var $myWIS;
+   var $myHSTR; 
    var $myHSTA; 
    var $myHAGI; 
    var $myHDEX; 
    var $myHWIS; 
    var $myHINT; 
    var $myHCHA; 
-	var $myINT;
-	var $myCHA;
-	var $myMR;
-	var $myPR;
-	var $myCR;
-	var $myFR;
-	var $myDR;
-   var $myHMR;  //added 5 lines 2/25/2014
+   var $myINT;
+   var $myCHA;
+   var $myMR;
+   var $myPR;
+   var $myCR;
+   var $myFR;
+   var $myDR;
+   var $myHMR;
    var $myHPR; 
    var $myHCR; 
    var $myHFR; 
    var $myHDR; 
-	var $myFT;
-	var $myDS;
-	var $myregen;
-	var $myattack;
-	var $myhaste;
+   var $myHCOR;
+   var $myFT;
+   var $myDS;
+   var $myregen;
+   var $myattack;
+   var $myhaste;
    var $myWT; 
 
 
@@ -76,7 +78,7 @@ class stats {
       $this->myWIS += $row['awis'];
       $this->myINT += $row['aint'];
       $this->myCHA += $row['acha'];
-      $this->myHSTR += $row['heroic_str'];  //added 7 lines 2/25/2014
+      $this->myHSTR += $row['heroic_str']; 
       $this->myHSTA += $row['heroic_sta']; 
       $this->myHAGI += $row['heroic_agi']; 
       $this->myHDEX += $row['heroic_dex']; 
@@ -88,11 +90,13 @@ class stats {
       $this->myCR += $row['cr'];
       $this->myFR += $row['fr'];
       $this->myDR += $row['dr'];
-      $this->myHMR += $row['heroic_mr'];  //added 5 lines 2/25/2014
+      $this->myCOR += $row['svcorruption'];
+      $this->myHMR += $row['heroic_mr']; 
       $this->myHPR += $row['heroic_pr']; 
       $this->myHCR += $row['heroic_cr']; 
       $this->myHFR += $row['heroic_fr']; 
       $this->myHDR += $row['heroic_dr']; 
+      $this->myHCOR += $row['heroic_svcorrup'];
       $this->myFT += $row['manaregen'];
       $this->myDS += $row['damageshield'];
       $this->myregen += $row['regen'];
@@ -148,7 +152,6 @@ class stats {
       return $this->myCHA;
    }
    
-   //added next 7 function 2/25/2014
    function HSTR() { 
       return $this->myHSTR; 
    } 
@@ -196,8 +199,10 @@ class stats {
    function DR() {
       return $this->myDR;
    }
-  
-  //added next 5 function 2/25/2014
+	
+   function COR() {
+      return $this->myCOR;
+   }
    function HMR() { 
       return $this->myHMR; 
    } 
@@ -217,6 +222,10 @@ class stats {
    function HDR() { 
       return $this->myHDR; 
    }  
+	
+   function HCOR() {
+      return $this->myHCOR;
+   }
 
    function FT() {
       return $this->myFT;

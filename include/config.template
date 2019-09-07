@@ -80,6 +80,15 @@ $titlefontsize =    "45";
 
 
 /*****************************************************
+**   Item stats view. Change this value to alter    **
+**   the way item stats are displayed               **
+**   0 - Legacy item stats                          **
+**   1 - List item stats                            **
+*****************************************************/
+$itemstatsdisplay = 0;  
+
+
+/*****************************************************
 **  Character mover settings                        **
 ** assuming the layout of zones is understandable   **
 ** ask for help if needed.                          **

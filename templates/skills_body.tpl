@@ -51,6 +51,7 @@
 	  <!-- END switch_language -->
 	  <tr>    <td colspan='2' class='ColumnHead' align='center'><br>{L_COMBAT}</td>  </tr>
 	  <tr onMouseOver="this.style.background = '#7b714a'" onMouseOut="this.style.background = 'none'" >    <td>1H Blunt</td>    <td> {1H_BLUNT}</td>  </tr> 
+	  <tr onMouseOver="this.style.background = '#7b714a'" onMouseOut="this.style.background = 'none'" >    <td>1H Piercing</td>    <td> {PIERCING}</td>  </tr> 
 	  <tr onMouseOver="this.style.background = '#7b714a'" onMouseOut="this.style.background = 'none'" >    <td>1H Slashing</td>    <td> {1H_SLASHING}</td>  </tr> 
 	  <tr onMouseOver="this.style.background = '#7b714a'" onMouseOut="this.style.background = 'none'" >    <td>2H Blunt</td>    <td> {2H_BLUNT}</td>  </tr> 
 	  <tr onMouseOver="this.style.background = '#7b714a'" onMouseOut="this.style.background = 'none'" >    <td>2H Piercing</td>    <td> {2H_PIERCING}</td>  </tr>
@@ -67,10 +68,9 @@
 	  <tr onMouseOver="this.style.background = '#7b714a'" onMouseOut="this.style.background = 'none'" >    <td>Kick</td>    <td> {KICK}</td>  </tr> 
 	  <tr onMouseOver="this.style.background = '#7b714a'" onMouseOut="this.style.background = 'none'" >    <td>Offense</td>    <td> {OFFENSE}</td>  </tr> 
 	  <tr onMouseOver="this.style.background = '#7b714a'" onMouseOut="this.style.background = 'none'" >    <td>Parry</td>    <td> {PARRY}</td>  </tr> 
-	  <tr onMouseOver="this.style.background = '#7b714a'" onMouseOut="this.style.background = 'none'" >    <td>Piercing</td>    <td> {PIERCING}</td>  </tr> 
 	  <tr onMouseOver="this.style.background = '#7b714a'" onMouseOut="this.style.background = 'none'" >    <td>Riposte</td>    <td> {RIPOSTE}</td>  </tr> 
 	  <tr onMouseOver="this.style.background = '#7b714a'" onMouseOut="this.style.background = 'none'" >    <td>Throwing</td>    <td> {THROWING}</td>  </tr> 
-	  <tr onMouseOver="this.style.background = '#7b714a'" onMouseOut="this.style.background = 'none'" >    <td>Tripple Attack</td>    <td> {TRIPPLE_ATTACK}</td>  </tr> 
+	  <tr onMouseOver="this.style.background = '#7b714a'" onMouseOut="this.style.background = 'none'" >    <td>Triple Attack</td>    <td> {TRIPLE_ATTACK}</td>  </tr> 
 	  <tr onMouseOver="this.style.background = '#7b714a'" onMouseOut="this.style.background = 'none'" >    <td>Intimidation</td>    <td> {INTIMIDATION}</td>  </tr> 
 	  <tr onMouseOver="this.style.background = '#7b714a'" onMouseOut="this.style.background = 'none'" >    <td>Taunt</td>    <td> {TAUNT}</td>  </tr>
 	

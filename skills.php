@@ -26,6 +26,8 @@
  *      Implemented new database wrapper.
  *   September 23, 2018 - Maudigan
  *      Added 2h piercing, remove traps and tripple attack.
+ *   September 7, 2019 - Kinglykrab
+ *      fixed typo tripple => triple
  *
  ***************************************************************************/
  
@@ -94,7 +96,7 @@ $cb_template->assign_both_vars(array(
    'PIERCING' => $char->GetValue('piercing'), 
    'RIPOSTE' => $char->GetValue('riposte'), 
    'THROWING' => $char->GetValue('throwing'), 
-   'TRIPPLE_ATTACK' => $char->GetValue('tripple_attack'), 
+   'TRIPLE_ATTACK' => $char->GetValue('triple_attack'), 
    'INTIMIDATION' => $char->GetValue('intimidation'), 
    'TAUNT' => $char->GetValue('taunt'),
 

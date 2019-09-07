@@ -1,3 +1,16 @@
+v2.7
+----------------------------------------------------------------------
+Added corruption, alt item stats display and maintenance
+
+Sep 7, 2019 - Added corruption resist
+              Added extra space for large character stats
+              Added an alternative item stat display option, set 
+                 $itemstatsdisplay to 1 to get a more readable list 
+                 view on item stats
+              Fixed some typos
+              Added commas to numbers on char stats (Kinglykrab)
+              
+
 v2.6.6
 ----------------------------------------------------------------------
 added uleats inventory changes

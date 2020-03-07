@@ -38,7 +38,7 @@
 
   }
 </script>
-<script type="text/javascript" src="jscolor/jscolor.js"></script>
+<script type="text/javascript" src="{ROOT_URL}jscolor/jscolor.js"></script>
 
 <center>
   <div class='FlagOuter'>

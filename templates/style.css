@@ -25,6 +25,8 @@
  *   November 10,2018 - Reordered general slots from top to bottom
  *                      into left to right (Maudigan)
  *                      Fixed type on bagbuttonrow where 'px' was missing
+ *   March 7,2020 - made tweaks to add in item popups
+ *                  set cursor:pointer for buttons
  *                      
  ***************************************************************************/ 
 
@@ -189,6 +191,7 @@
 
 /* dynamically placed buttons */
 #charbrowser .FreeButton {
+  cursor: pointer;
   height: 23px;
   width: 48px;
   border: 0px ;
@@ -280,6 +283,23 @@
   position: absolute;
 }
 
+/* for item icons in inventory */
+#charbrowser .HoverSlot {
+  cursor: pointer;
+}
+
+/* button to open bags in inventory */
+#charbrowser .BagOpenSlot {
+  height: 10px;
+  width: 10px;
+  border: 0px ;
+  cursor: pointer;
+  background-image: url(../images/cb_bag_icon.png);
+  margin: 0;
+  padding: 0;
+  position: absolute;
+}
+
 
 /* coin boxes in bank and innventory */
 #charbrowser .Coin {
@@ -321,10 +341,10 @@
 
 
 /* ----------------------------------------------
-          Item $ Error window stylesheets
+          Item window stylesheets
 ------------------------------------------------- */
 #charbrowser .ItemOuter {
-  position: relative;	
+  position: absolute;
   background-image: url(../images/light.gif);
   width: 364px;
   max-width: 350px;
@@ -377,6 +397,113 @@
   padding: 0px;
 }
 #charbrowser .ItemTitleRight {
+  background-image: url(../images/rightt.gif);
+  position: absolute;
+  top: 0px;
+  left: 338px;
+  width: 14px;
+  height: 21px;
+  border: 0px;
+  padding: 0px;
+}
+
+#charbrowser .ItemClose {
+   position: absolute; 
+   right: 10px; 
+   top: 4px;
+   cursor: pointer;
+   background-image: url(../images/cb_icon_popup_close.png);
+   width: 12px;
+   height: 12px;
+   max-width: 12px;
+   max-height: 12px;
+   padding: 0px;
+}
+
+#charbrowser .ItemCloseAll {
+   position: absolute; 
+   right: 27px; 
+   top: 4px;
+   cursor: pointer;
+   background-image: url(../images/cb_icon_popup_closeall.png);
+   width: 12px;
+   height: 12px;
+   max-width: 12px;
+   max-height: 12px;
+   padding: 0px;
+}
+
+#charbrowser .ItemTile {
+   position: absolute; 
+   right: 44px; 
+   top: 4px;
+   cursor: pointer;
+   background-image: url(../images/cb_icon_popup_tile.png);
+   width: 12px;
+   height: 12px;
+   max-width: 12px;
+   max-height: 12px;
+   padding: 0px;
+}
+
+
+/* ----------------------------------------------
+          small window stylesheets
+------------------------------------------------- */
+#charbrowser .SmallOuter {
+  position: relative;	
+  background-image: url(../images/light.gif);
+  width: 364px;
+  max-width: 350px;
+  padding: 11px 5px 9px 5px;
+  border: 2px #7b714a solid;
+  font-family:		arial;
+  font-size: 9pt ;
+  color: #FFFFFF ;
+}
+#charbrowser .SmallInner {
+  background-image: url(../images/dark.gif);
+  border: 1px #444444 solid;
+  padding: 6px;
+  font-family:		arial;
+  font-size: 9pt ;
+  color: #FFFFFF ;
+}
+#charbrowser .SmallTitle {
+  position: absolute;
+  top: -11px;
+  left: 4px;
+  border: 0px;
+  padding: 0px;
+  width: 352px;
+  height: 21px;
+  font-family:		arial;
+  font-size: 9pt ;
+  color: #FFFFFF ;
+}
+#charbrowser .SmallTitleLeft {
+  background-image: url(../images/leftt.gif);
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  width: 14px;
+  height: 21px;
+  border: 0px;
+  padding: 0px;
+}
+#charbrowser .SmallTitleMid {
+  background-image: url(../images/midt.gif);
+  position: absolute;
+  text-align: center;
+  line-height:21px;
+  top: 0px;
+  left: 14px;
+  width: 324px;
+  height: 21px;
+  border: 0px;
+  padding: 0px;
+}
+#charbrowser .SmallTitleRight {
   background-image: url(../images/rightt.gif);
   position: absolute;
   top: 0px;

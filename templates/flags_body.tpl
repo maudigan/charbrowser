@@ -23,13 +23,13 @@ function display(type, id, prefix) {
 </div>
 </div>
 <center>
-     <div class='ItemOuter'>
-	<div class='ItemTitle'>
-	  <div class='ItemTitleLeft'></div>
-	  <div class='ItemTitleMid'>{L_FLAGS} - {NAME}</div>
-	  <div class='ItemTitleRight'></div>
+     <div class='SmallOuter'>
+	<div class='SmallTitle'>
+	  <div class='SmallTitleLeft'></div>
+	  <div class='SmallTitleMid'>{L_FLAGS} - {NAME}</div>
+	  <div class='SmallTitleRight'></div>
 	</div>
-	<div class='ItemInner'>
+	<div class='SmallInner'>
           <table class='StatTable' cellpadding='2px' style='width: 90%;'>
              <!-- BEGIN mainhead -->
 	    <tr>
@@ -39,7 +39,7 @@ function display(type, id, prefix) {
              <!-- BEGIN main -->
 	    <tr>
 	      <td><div class='check{mainhead.main.FLAG}'></div></td>
-	      <td valign='middle' width='100%' nowrap><a onclick="display(0, {mainhead.main.ID}, 'flag');">&nbsp;{mainhead.main.TEXT}...</a></td>
+	      <td valign='middle' width='100%' nowrap><a href='#' onclick="display(0, {mainhead.main.ID}, 'flag');">&nbsp;{mainhead.main.TEXT}...</a></td>
 	    </tr>
 	    <!-- END main -->
 	    <tr>

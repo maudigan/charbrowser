@@ -1,3 +1,26 @@
+v2.8
+----------------------------------------------------------------------
+Added soft delete, mouse cursor style, item popups, aa fix, stat calc
+error and some other minor tweaks.
+
+Mar 7, 2020 - implemented character soft delets. If a character
+                 has their deleted_at set in the character_data table
+                 they wont show up in magelo now. You can override
+                 that and force them to display by setting 
+                 $showsoftdelete = 1;. If you do so they will be 
+                 marked "DELETED" when viewed/searched
+              Made cursors show up as a pointer when over buttons
+                 or interactive links
+              If you click item icons or links, it will display a 
+                 dragable popup with the items stats now.
+              Bags are opened by clicking an arrow in the top left
+                 corner of the bag icon now.
+              Class AAs were showing the wrong classes abilities
+                 that's been fixed
+              replaced the deprecated ereg_replace
+              fixed char stats to not include augments on inventory
+                 and bank items
+              
 v2.7
 ----------------------------------------------------------------------
 Added corruption, alt item stats display and maintenance
@@ -25,17 +48,11 @@ v2.6.5
 added uleats inventory changes
 
 November 10,2018 - Added uleats inventory changes (Maudigan): 
-
                       Ammo moved 21 to 22
-
                       Power source moved 9999 to 21 
-
                       Cursor moves 30 to 33
- 
                       Bags moved 22-29 to 23-32 (+1 and two new slots)
-
                       Cursor bag contents moved 331-340 to 351-360
-
                       New bags contents are in 331-340 and 341-350
 
 v2.6.4

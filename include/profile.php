@@ -31,6 +31,8 @@
  *      Added 2h piercing, remove traps and tripple attack.
  *   September 7, 2019 - Kinglykrab
  *      fixed typo tripple => triple
+ *   September 7, 2019 - Maudigan
+ *      modified to accommodate soft deletes
  *  
  ***************************************************************************/
  
@@ -182,6 +184,7 @@ $locator = array (
    "e_aa_effects" => array("character_data", "e_aa_effects", false),
    "e_percent_to_aa" => array("character_data", "e_percent_to_aa", false),
    "e_expended_aa_spent" => array("character_data", "e_expended_aa_spent", false),
+   "deleted_at" => array("character_data", "deleted_at", false),
    "id" => array("character_currency", "id", false),
    "platinum" => array("character_currency", "platinum", false),
    "gold" => array("character_currency", "gold", false),
@@ -721,6 +724,7 @@ class profile {
    {
       global $language;
       global $cbsql;
+      global $showsoftdelete;
       
       //we can't call the local query method as it assumes the character id
       //which we need to get in the first place
@@ -750,7 +754,10 @@ TPL;
          $this->account_id = $row['account_id'];
          $this->char_id = $row['id'];
       }   
-      else cb_message_die($language['MESSAGE_ERROR'],$language['MESSAGE_NO_FIND']); 
+      else cb_message_die($language['MESSAGE_ERROR'],$language['MESSAGE_NO_FIND']);
+
+      //dont display deleted characters
+      if (!$showsoftdelete && $row['deleted_at']) cb_message_die($language['MESSAGE_ERROR'],$language['MESSAGE_NO_FIND']);       
    
    }
    

@@ -5,6 +5,8 @@
 <link rel='stylesheet' href='{ROOT_URL}templates/style.css' type='text/css'/>
 <meta http-equiv='Content-Type' content='text/html; charset=iso-8859-1'>
 <meta http-equiv='Content-Style-Type' content='text/css'>
+<script language='JavaScript' type='text/javascript' src='https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js'></script>
+<script language='JavaScript' type='text/javascript' src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>  
 <body style='padding: 0px;margin: 0px;'>
 <div id='charbrowser'>
 <div class='searchbar'><div class='logo'>

@@ -38,7 +38,7 @@ function color(id) {
       <table class='StatTable' style='width:625px;'>
         <tr>
           <!-- BEGIN tabs -->
-          <td align='center' nowrap><a style='color:#{tabs.COLOR};' id='link{tabs.ID}' onclick="display(0,{tabs.ID},'tab');color({tabs.ID});">{tabs.TEXT}</a></td>
+          <td align='center' nowrap><a href='#' style='color:#{tabs.COLOR};' id='link{tabs.ID}' onclick="display(0,{tabs.ID},'tab');color({tabs.ID});">{tabs.TEXT}</a></td>
           <!-- END tabs -->
         </tr>
       </table>

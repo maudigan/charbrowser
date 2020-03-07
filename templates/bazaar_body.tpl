@@ -1,14 +1,3 @@
-<script type="text/javascript">
-function display(type, id, prefix) {
-  if (target = document.getElementById(prefix + id))
-    if (type) target.style.display = (target.style.display == 'none') ? 'block' : 'none';
-  else {
-    for(var i=0; i < 2190; i++) if (hideme = document.getElementById(prefix + i)) hideme.style.display = 'none';    
-    target.style.display = 'block';
-  }
-}
-</script>
-
 <center>
   <div class='FlagOuter'>
     <div class='FlagTitle'>
@@ -83,14 +72,14 @@ function display(type, id, prefix) {
                 </tr>	
                 <!-- BEGIN items -->
                 <tr onMouseOver="this.style.background = '#7b714a '" onMouseOut ="this.style.background = 'none'" >
-	          <td nowrap><a href=# onclick="display(0, {items.SLOT}, 'item');"  style='color:#8aa3ff ;'>{items.NAME}</a></td>
-	          <td nowrap>{items.PRICE}</td>
+                  <td nowrap><a itemid='#item{items.SLOT}' class='HoverSlot' href=# style='color:#8aa3ff ;'>{items.NAME}</a></td>
+                  <td nowrap>{items.PRICE}</td>
                   <td nowrap><a href='{INDEX_URL}?page=character&char={items.SELLER}' style='color:#8aa3ff ;'>{items.SELLER}</a></td>
-	        </tr>
+                </tr>
                 <!-- END items -->
                 <tr>
                   <td height='100%' colspan='3' valign='bottom' align='center'>{PAGINATION}</td>
-	        </tr>
+                </tr>
               </table>
               </center>
             </div>
@@ -103,15 +92,24 @@ function display(type, id, prefix) {
   <br>
   <br>
       <!-- BEGIN items -->
-      <div class='ItemOuter' id='item{items.SLOT}' style='display:none;'>
-	<div class='ItemTitle'>
-	  <div class='ItemTitleLeft'></div>
-	  <div class='ItemTitleMid'><a href='{items.LINK}'>{items.NAME}</a></div>
-	  <div class='ItemTitleRight'></div>
-	</div>
-	<div class='ItemInner' style='text-align:left;'>
-          {items.HTML}
-        </div>
+      <div class='ItemOuter' id='item{items.SLOT}' style='display:none;' onmousedown='cbPopup_ZOrder("#slot{items.SLOT}");'>
+         <div class='ItemTitle'>
+            <div class='ItemTitleLeft'></div>
+            <div class='ItemTitleMid'>
+               <a href='{items.LINK}'>{items.NAME}</a>
+               <div class='ItemTile' onclick='cbPopup_tileItems();' title='click to tile all open item popups'></div>
+               <div class='ItemCloseAll' onclick='cbPopup_closeAllItems();' title='click to close all open item popups'></div>
+               <div class='ItemClose' onclick='cbPopup_closeItem("#item{items.SLOT}");' title='click to close this popup'></div>
+            </div>
+            <div class='ItemTitleRight'></div>
+         </div>
+         <div class='ItemInner' style='text-align:left;'>
+            {items.HTML}
+         </div>
       </div>
       <!-- END items -->
 </center>
+
+
+<!-- activate the item popups -->
+<script type="text/javascript" src="{ROOT_URL}templates/popup.js"></script>

@@ -32,6 +32,10 @@
  *      Modified database to use a class.
  *   September 7, 2019 - Kinglykrab
  *      Added Corruption and added commas to large number formatting
+ *   March 7, 2020 - Maudigan
+ *      stopped augments on inventory items from effecting stats
+ *      add template vars for buttons to open bags
+ *      add template vars for soft deleted characters
  *      
  ***************************************************************************/
   
@@ -94,6 +98,7 @@ $bpp        = $char->GetValue('platinum_bank');
 $bgp        = $char->GetValue('gold_bank');
 $bsp        = $char->GetValue('silver_bank');
 $bcp        = $char->GetValue('copper_bank'); 
+$isdeleted  = $char->GetValue('deleted_at'); 
 
 //load guild name
 $tpl = <<<TPL
@@ -148,7 +153,10 @@ while ($row = $cbsql->nextrow($result)) {
          $augresult = $cbsql->query($query);
          $augrow = $cbsql->nextrow($augresult);
          $tempitem->addaug($augrow);
-         $itemstats->additem($augrow);
+         //add stats only if it's equiped
+         if ($tempitem->type() == EQUIPMENT) {
+            $itemstats->additem($augrow);
+         }
       }
    }
 
@@ -182,6 +190,7 @@ $cb_template->assign_both_vars(array(
    'FT' => number_format($itemstats->FT()),
    'DS' => number_format($itemstats->DS()),
    'HASTE' => $itemstats->haste(),
+   'DELETED' => (($isdeleted) ? " ".$language['CHAR_DELETED']:""),
    'FIRST_NAME' => $name,
    'LAST_NAME' => $last_name,
    'TITLE' => $title,
@@ -282,7 +291,8 @@ $cb_template->assign_vars(array(
    'L_BOOKMARK' => $language['BUTTON_BOOKMARK'],
    'L_CHARMOVE' => $language['BUTTON_CHARMOVE'],
    'L_CONTAINER' => $language['CHAR_CONTAINER'],
-   'L_DONE' => $language['BUTTON_DONE'])
+   'L_DONE' => $language['BUTTON_DONE'],
+   'L_OPEN_BAG' => $language['CHAR_OPEN_BAG'])
 );
 
 
@@ -290,12 +300,15 @@ $cb_template->assign_vars(array(
 //dump inventory items ICONS
 foreach ($allitems as $value) {
    if ($value->type() == INVENTORY && $mypermission['bags']) continue; 
-   if ($value->type() == EQUIPMENT || $value->type() == INVENTORY)
+   if ($value->type() == EQUIPMENT || $value->type() == INVENTORY) {
       $cb_template->assign_block_vars("invitem", array( 
          'SLOT' => $value->slot(),      
-         'ICON' => $value->icon(),
-         'ISBAG' => (($value->slotcount() > 0) ? "true":"false"))
+         'ICON' => $value->icon())
       );
+      if ($value->slotcount() > 0) {
+         $cb_template->assign_block_vars("invitem.switch_is_bag", array());
+      }
+   }
 }
 
 
@@ -330,12 +343,15 @@ foreach ($allitems as $value) {
 //dump bank items ICONS
 if (!$mypermission['bank']) {
    foreach ($allitems as $value) {
-      if ($value->type() == BANK) 
+      if ($value->type() == BANK) {
          $cb_template->assign_block_vars("bankitem", array( 
             'SLOT' => $value->slot(),  
-            'ICON' => $value->icon(),
-            'ISBAG' => (($value->slotcount() > 0) ? "true":"false"))
+            'ICON' => $value->icon())
          );
+         if ($value->slotcount() > 0) {
+            $cb_template->assign_block_vars("bankitem.switch_is_bag", array());
+         }  
+      }
    }
 }
 

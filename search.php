@@ -25,6 +25,8 @@
  *      Implemented new database wrapper.
  *   January 7, 2018 - Maudigan
  *      Modified database to use a class.
+ *   September 7, 2019 - Maudigan
+ *      modified to accommodate soft deletes
  ***************************************************************************/
  
  
@@ -64,6 +66,10 @@ if (!is_numeric($start)) cb_message_die($language['MESSAGE_ERROR'],$language['ME
 //build where clause
 $where = "";
 $divider = "WHERE ";
+if (!$showsoftdelete) {
+   $where .= $divider."character_data.deleted_at IS NULL"; 
+   $divider = "AND ";
+}
 if ($name) {
    $where .= $divider."character_data.name LIKE '%".str_replace("_", "%", str_replace(" ","%",$name))."%'"; 
    $divider = "AND ";
@@ -80,7 +86,8 @@ $order = "ORDER BY $orderby $direction LIMIT $start, $numToDisplay;";
 //and the orderby clauses
 $tpl = <<<TPL
 SELECT character_data.class, character_data.level, 
-       character_data.name, guilds.name AS guildname 
+       character_data.name, guilds.name AS guildname, 
+       character_data.deleted_at
 FROM character_data 
 LEFT JOIN guild_members
        ON character_data.id = guild_members.char_id 
@@ -133,7 +140,8 @@ $cb_template->assign_vars(array(
 foreach ($characters as $character) {
    $cb_template->assign_both_block_vars("characters", array( 
       'CLASS' => $dbclassnames[$character["class"]],      
-      'LEVEL' => $character["level"],
+      'LEVEL' => $character["level"],     
+      'DELETED' => (($character["deleted_at"]) ? " ".$language['CHAR_DELETED']:""),
       'NAME' => $character["name"],
       'GUILD_NAME' => (($character["guildname"]) ? "&lt;".$character["guildname"]."&gt;":"") )
    );

@@ -1,6 +1,5 @@
 
 <script type="text/javascript"> 
-
 function display(type, id, prefix) { 
   if (target = document.getElementById(prefix + id)) 
     if (type) target.style.display = (target.style.display == 'none') ? 'block' : 'none'; 
@@ -39,7 +38,7 @@ function display(type, id, prefix) {
         <div class='Slot bagslotloc{bags.bagslots.BS_SLOT} slotimage'></div> 
         <!-- END bagslots --> 
         <!-- BEGIN bagitems --> 
-        <div onclick="display(0, {bags.bagitems.BI_SLOT}, 'slot');" class='Slot bagslotloc{bags.bagitems.BI_RELATIVE_SLOT}' style='background-image: url({ROOT_URL}images/items/item_{bags.bagitems.BI_ICON}.png);'></div> 
+        <div itemid='#slot{bags.bagitems.BI_SLOT}' class='HoverSlot Slot bagslotloc{bags.bagitems.BI_RELATIVE_SLOT}' style='background-image: url({ROOT_URL}images/items/item_{bags.bagitems.BI_ICON}.png);'></div> 
         <!-- END bagitems --> 
 
         <div class='Button bagbuttonrow{bags.ROWS}' onclick="document.getElementById('bag{bags.SLOT}').style.display = 'none';">{L_DONE}</div> 
@@ -70,7 +69,7 @@ function display(type, id, prefix) {
 
           <div class='InventoryStats'> 
             <table class='StatTable'> 
-              <tr><td colspan='2'>{FIRST_NAME} {LAST_NAME}</td></tr> 
+              <tr><td colspan='2'>{FIRST_NAME} {LAST_NAME}{DELETED}</td></tr> 
               <tr><td colspan='2' style='height: 3px'></td></tr> 
               <tr><td colspan='2'>{RACE}</td></tr> 
               <tr><td colspan='2' style='height: 3px'></td></tr> 
@@ -149,7 +148,10 @@ function display(type, id, prefix) {
 
 
           <!-- BEGIN invitem --> 
-          <div onclick="display(0, {invitem.SLOT}, 'slot');if ({invitem.ISBAG}) display(0, {invitem.SLOT}, 'bag');" class='Slot slotloc{invitem.SLOT}' style='background-image: url({ROOT_URL}images/items/item_{invitem.ICON}.png);'></div> 
+          <div itemid='#slot{invitem.SLOT}' class='HoverSlot Slot slotloc{invitem.SLOT}' style='background-image: url({ROOT_URL}images/items/item_{invitem.ICON}.png);'></div> 
+          <!-- BEGIN switch_is_bag --> 
+          <div class='BagOpenSlot slotloc{invitem.SLOT}' onclick="display(0, {invitem.SLOT}, 'bag');" title="{L_OPEN_BAG}"></div>
+          <!-- END switch_is_bag --> 
           <!-- END invitem --> 
         </div> 
       </div> 
@@ -187,7 +189,10 @@ function display(type, id, prefix) {
         <div class='Slot slotloc2023 slotimage'></div> 
 
         <!-- BEGIN bankitem --> 
-        <div onclick="display(0, {bankitem.SLOT}, 'slot'); if ({bankitem.ISBAG}) display(0, {bankitem.SLOT}, 'bag');" class='Slot slotloc{bankitem.SLOT}' style='background-image: url({ROOT_URL}images/items/item_{bankitem.ICON}.png);'></div> 
+        <div itemid='#slot{bankitem.SLOT}' class='HoverSlot Slot slotloc{bankitem.SLOT}' style='background-image: url({ROOT_URL}images/items/item_{bankitem.ICON}.png);'></div> 
+        <!-- BEGIN switch_is_bag --> 
+        <div class='BagOpenSlot slotloc{bankitem.SLOT}' onclick="display(0, {bankitem.SLOT}, 'bag');" title="{L_OPEN_BAG}"></div>
+        <!-- END switch_is_bag --> 
         <!-- END bankitem --> 
         
 
@@ -205,10 +210,15 @@ function display(type, id, prefix) {
       <br> 
       <br> 
       <!-- BEGIN item --> 
-      <div class='ItemOuter' id='slot{item.SLOT}' style='display:none;'> 
+      <div class='ItemOuter' id='slot{item.SLOT}' style='display:none;' onmousedown='cbPopup_ZOrder("#slot{item.SLOT}");'> 
         <div class='ItemTitle'> 
           <div class='ItemTitleLeft'></div> 
-          <div class='ItemTitleMid'><a href='{item.LINK}'>{item.NAME}</a></div> 
+          <div class='ItemTitleMid'>
+            <a href='{item.LINK}'>{item.NAME}</a>
+            <div class='ItemTile' onclick='cbPopup_tileItems();' title='click to tile all open item popups'></div>
+            <div class='ItemCloseAll' onclick='cbPopup_closeAllItems();' title='click to close all open item popups'></div>
+            <div class='ItemClose' onclick='cbPopup_closeItem("#slot{item.SLOT}");' title='click to close this popup'></div>
+          </div> 
           <div class='ItemTitleRight'></div> 
         </div> 
         <div class='ItemInner' style='text-align:left;'>        
@@ -237,3 +247,6 @@ function display(type, id, prefix) {
   </tr> 
 </table> 
 </center> 
+
+<!-- activate the item popups -->
+<script type="text/javascript" src="{ROOT_URL}templates/popup.js"></script>

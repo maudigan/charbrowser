@@ -34,6 +34,8 @@
  *      a compare to 2.41 to see the differences, it's basically a rewrite.
  *   January 7, 2018 - Maudigan
  *      Modified database to use a class.
+ *   March 7, 2020 - Maudigan
+ *      Fixed an error causing the wrong class's AA to display
  ***************************************************************************/
   
  
@@ -126,8 +128,7 @@ $aatabs[3] = $language['AAS_TAB_3'];
 $aatabs[4] = $language['AAS_TAB_4']; 
 
 //GET THIS CHARS SPENT AA
-$classbits = array(0,2,4,8,16,32,64,128,256,512,1024,2048,4096,8192,16384,32768,1);
-$classbit = $classbits[$char->GetValue('class')];
+$classbit = pow(2, $char->GetValue('class') - 1);
 $character_aas = $char->GetTable("character_alternate_abilities");  
 
 //GET RANK COSTS

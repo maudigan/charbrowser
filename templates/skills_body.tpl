@@ -12,13 +12,13 @@
 </div>
 </div>
 <center>
-  <div class='ItemOuter'>
-    <div class='ItemTitle'>
-      <div class='ItemTitleLeft'></div>
-      <div class='ItemTitleMid'>{L_SKILLS} - {NAME}</div>
-      <div class='ItemTitleRight'></div>
+  <div class='SmallOuter'>
+    <div class='SmallTitle'>
+      <div class='SmallTitleLeft'></div>
+      <div class='SmallTitleMid'>{L_SKILLS} - {NAME}</div>
+      <div class='SmallTitleRight'></div>
     </div>
-    <div class='ItemInner'>
+    <div class='SmallInner'>
       <center>
         <table class='StatTable' style='width:90%;'>
 	  <!-- BEGIN switch_language -->

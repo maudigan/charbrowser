@@ -26,6 +26,8 @@
  *      Implemented new database wrapper.
  *   January 7, 2018 - Maudigan
  *      Modified database to use a class.
+ *   March 7, 2020 - Maudigan
+ *      replaced the deprecated ereg_replace function
  ***************************************************************************/
  
  
@@ -49,7 +51,7 @@ include_once(__DIR__ . "/include/db.php");
 *********************************************/
 //convert passed hex color to RGB
 function HexToRGB($hex) { 
-   $hex = ereg_replace("#", "", $hex); 
+   $hex = str_replace("#", "", $hex); 
    $color = array(); 
    if(strlen($hex) == 3) { 
       $color['r'] = hexdec(substr($hex, 0, 1) . $r); 

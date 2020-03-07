@@ -17,6 +17,8 @@
  *   September 28, 2014 - added profile class error messages (Maudigan)
  *   May 17, 2017 - added OOW flags (Maudigan)
  *   September 7, 2019 - added corruption (Kinglykrab)
+ *   March 7, 2020 - added language for deleted chars and opening 
+ *                   bags(Maudigan)
  ***************************************************************************/ 
   
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             
@@ -96,13 +98,16 @@ $language['SIGNATURE_OPTION_SCREEN'] = "No Filter";
 $language['SIGNATURE_NEED_NAME'] = "You must at least enter a valid character name."; 
 
 //index language 
-$language['INDEX_INTRO'] ="Welcome to the newest build of Character Browser. Many new features have been added to streamline the software to make customazation even easier than before. Languages have been modularized to better serve our growing Chinese community. Modifying the language.php file can now rapidly customize the tool in a way that used to take days. 
-                           <br> 
-                   <br> 
-                   In addition to languages, all of the HTML has been modularized using a system you may recognize from phpbb. System admins can now edit easy to understand templates to quickly get a custom feel for their install. 
-                   <br> 
-                   <br> 
-                   Various other navigational upgrades have been made, and security upgrades making it safer for the whole community. For more details check out the readme."; 
+$language['INDEX_INTRO'] ="The character profile and the bazaar have been modified to now have item popups. Instead of the static single item displayed at the bottom you can now have multiple items up and do side by side compares. 
+<br>
+<br>
+To get the item popup simply hover over an items icon and the items stats will display in a small popup window near your cursor. The process is the same for the bazaar but you hover over the item name. In both cases you can click the icon/link to lock the item display on the screen. A second click will clear the item from being locked.
+<br>
+<br>
+You can click and drag each item popup to arrange them. Each item popup will have 3 buttons in the title bar. The first button will tile the items into rows and columns. The third button will close all open popups. The last button will close just the current popup.
+<br>
+<br>
+This new item viewing process interfered with the previous way you used to open a bag to see the contents. To replace that each bag will have an small arrow in the top left corner. Clicking that arrow will open the bag for inspection."; 
 $language['INDEX_VERSION'] = "Version"; 
 $language['INDEX_BY'] = "By"; 
 
@@ -497,6 +502,8 @@ $language['CHAR_FIRE'] = "FIRE";
 $language['CHAR_COLD'] = "COLD"; 
 $language['CHAR_CORRUPT'] = "CORRUPT"; 
 $language['CHAR_WEIGHT'] = "WEIGHT"; 
+$language['CHAR_DELETED'] = "DELETED"; 
+$language['CHAR_OPEN_BAG'] = "Inspect this bag's contents"; 
 
 
 //buttons 

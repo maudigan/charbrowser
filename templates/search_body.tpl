@@ -15,7 +15,7 @@
           </tr>
         <!-- BEGIN characters -->
           <tr>
-            <td><a href="{INDEX_URL}?page=character&char={characters.NAME}">{characters.NAME}</a></td>
+            <td><a href="{INDEX_URL}?page=character&char={characters.NAME}">{characters.NAME}</a>{characters.DELETED}</td>
             <td>{characters.GUILD_NAME}</td>      
             <td>{characters.LEVEL}</td>
             <td>{characters.CLASS}</td>

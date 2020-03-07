@@ -12,13 +12,13 @@
 </div>
 </div>
 <center>
-  <div class='ItemOuter'>
-    <div class='ItemTitle'>
-      <div class='ItemTitleLeft'></div>
-      <div class='ItemTitleMid'>{L_FACTIONS} - {NAME}</div>
-      <div class='ItemTitleRight'></div>
+  <div class='SmallOuter'>
+    <div class='SmallTitle'>
+      <div class='SmallTitleLeft'></div>
+      <div class='SmallTitleMid'>{L_FACTIONS} - {NAME}</div>
+      <div class='SmallTitleRight'></div>
     </div>
-    <div class='ItemInner'>
+    <div class='SmallInner'>
         <table class='StatTable' cellpadding='3px' style='width:90%'>
         <tr>
           <td class='ColumnHead'>{L_NAME}</td>

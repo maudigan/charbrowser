@@ -85,7 +85,16 @@ $titlefontsize =    "45";
 **   0 - Legacy item stats                          **
 **   1 - List item stats                            **
 *****************************************************/
-$itemstatsdisplay = 0;  
+$itemstatsdisplay = 0; 
+
+
+/*****************************************************
+**   When a character is soft deleted its record    **
+**   remains; do you want it shown or not?          **
+**   0 - hides soft deleted characters              **
+**   1 - shows soft deleted characters              **
+*****************************************************/
+$showsoftdelete = 0;   
 
 
 /*****************************************************

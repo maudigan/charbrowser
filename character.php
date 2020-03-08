@@ -36,6 +36,8 @@
  *      stopped augments on inventory items from effecting stats
  *      add template vars for buttons to open bags
  *      add template vars for soft deleted characters
+ *   March 8, 2020 - Maudigan
+ *      implement shared bank
  *      
  ***************************************************************************/
   
@@ -124,6 +126,7 @@ $itemstats = new stats();
 //holds all of the items and info about them
 $allitems = array();
 
+//FETCH INVENTORY
 // pull characters inventory slotid is loaded as
 // "myslot" since items table also has a slotid field.
 $tpl = <<<TPL
@@ -168,8 +171,57 @@ while ($row = $cbsql->nextrow($result)) {
   
    $allitems[$tempitem->slot()] = $tempitem;
 }
+
+//FETCH SHARED BANK
+// pull characters shared bank, slotid is loaded as
+// "myslot" since items table also has a slotid field.
+$tpl = <<<TPL
+SELECT items.*, sharedbank.augslot1, sharedbank.augslot2, 
+       sharedbank.augslot3, sharedbank.augslot4, 
+       sharedbank.augslot5, sharedbank.slotid AS myslot 
+FROM items
+JOIN sharedbank 
+  ON items.id = sharedbank.itemid
+WHERE sharedbank.acctid = '%s'  
+TPL;
+$query = sprintf($tpl, $char->GetValue('account_id'));
+$result = $cbsql->query($query);
+// loop through inventory results saving Name, Icon, and preload HTML for each
+// item to be pasted into its respective div later
+$tpl = <<<TPL
+SELECT * 
+FROM items 
+WHERE id = '%s' 
+LIMIT 1
+TPL;
+while ($row = $cbsql->nextrow($result)) {
+   $tempitem = new item($row);
+   for ($i = 1; $i <= 5; $i++) {
+      if ($row["augslot".$i]) {
+         $query = sprintf($tpl, $row["augslot".$i]);
+         $augresult = $cbsql->query($query);
+         $augrow = $cbsql->nextrow($augresult);
+         $tempitem->addaug($augrow);
+      }
+   }
+  
+   $allitems[$tempitem->slot()] = $tempitem;
+}
  
- 
+//FETCH SHARED PLAT 
+ $tpl = <<<TPL
+SELECT sharedplat
+FROM account
+WHERE account.id = '%s'  
+TPL;
+$query = sprintf($tpl, $char->GetValue('account_id'));
+$result = $cbsql->query($query);
+
+if ($row = $cbsql->nextrow($result)) {
+   $sbpp = $row['sharedplat'];
+}
+
+
 /*********************************************
                DROP HEADER
 *********************************************/
@@ -239,7 +291,8 @@ $cb_template->assign_both_vars(array(
    'BPP' => (($mypermission['coinbank']) ? $language['MESSAGE_DISABLED'] : number_format($bpp)),
    'BGP' => (($mypermission['coinbank']) ? $language['MESSAGE_DISABLED'] : number_format($bgp)),
    'BSP' => (($mypermission['coinbank']) ? $language['MESSAGE_DISABLED'] : number_format($bsp)),
-   'BCP' => (($mypermission['coinbank']) ? $language['MESSAGE_DISABLED'] : number_format($bcp)))
+   'BCP' => (($mypermission['coinbank']) ? $language['MESSAGE_DISABLED'] : number_format($bcp)),
+   'SBPP' => (($mypermission['coinsharedbank']) ? $language['MESSAGE_DISABLED'] : number_format($sbpp)))
 );
 
 $cb_template->assign_vars(array(  
@@ -317,6 +370,7 @@ foreach ($allitems as $value) {
 foreach ($allitems as $value) {
    if ($value->type() == INVENTORY && $mypermission['bags']) continue; 
    if ($value->type() == BANK && $mypermission['bank']) continue;
+   if ($value->type() == SHAREDBANK && $mypermission['sharedbank']) continue;
    if ($value->slotcount() > 0)  {
   
       $cb_template->assign_block_vars("bags", array( 
@@ -355,18 +409,36 @@ if (!$mypermission['bank']) {
    }
 }
 
+
+//dump shared bank items ICONS
+if (!$mypermission['sharedbank']) {
+   foreach ($allitems as $value) {
+      if ($value->type() == SHAREDBANK) {
+         $cb_template->assign_block_vars("bankitem", array( 
+            'SLOT' => $value->slot(),  
+            'ICON' => $value->icon())
+         );
+         if ($value->slotcount() > 0) {
+            $cb_template->assign_block_vars("bankitem.switch_is_bag", array());
+         }  
+      }
+   }
+}
+
 //dump items WINDWOS
 foreach ($allitems as $value) {
    if ($value->type() == INVENTORY && $mypermission['bags']) continue; 
    if ($value->type() == BANK && $mypermission['bank']) continue;
-      $cb_template->assign_both_block_vars("item", array(
-         'SLOT' => $value->slot(),     
-         'ICON' => $value->icon(),   
-         'NAME' => $value->name(),
-         'ID' => $value->id(),
-         'LINK' => QuickTemplate($link_item, array('ITEM_ID' => $value->id())),
-         'HTML' => $value->html())
-      );
+   if ($value->type() == SHAREDBANK && $mypermission['sharedbank']) continue;
+   
+   $cb_template->assign_both_block_vars("item", array(
+      'SLOT' => $value->slot(),     
+      'ICON' => $value->icon(),   
+      'NAME' => $value->name(),
+      'ID' => $value->id(),
+      'LINK' => QuickTemplate($link_item, array('ITEM_ID' => $value->id())),
+      'HTML' => $value->html())
+   );
    for ( $i = 0 ; $i < $value->augcount() ; $i++ ) {
       $cb_template->assign_both_block_vars("item.augment", array(       
          'AUG_NAME' => $value->augname($i),

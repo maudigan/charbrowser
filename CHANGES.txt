@@ -1,8 +1,22 @@
+v2.8.2
+----------------------------------------------------------------------
+shared bank and shared bank coin
+
+Mar 8, 2020 - added the display elements for the shared bank slots
+                and the shared bank plat. There are new config file
+                elements to support this. You can compare your
+                existing config.php to the config.template to see
+                but basically you need to add permissions for
+                'sharedbank' and 'coinsharedbank'. If you don't
+                add them they will default to ON since the
+                permissions are exclusive. 
+              (maudigan)
+              
 v2.8.1
 ----------------------------------------------------------------------
 Inherit admin permissions when wrapped in site header/footer
 
-Mar 7, 2020 - Added the ability to inherit site admin permissions 
+Mar 8, 2020 - Added the ability to inherit site admin permissions 
               when you wrap charbrowser in your header/footer
               (maudigan)
               

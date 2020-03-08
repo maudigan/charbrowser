@@ -27,6 +27,7 @@
  *      Added a way to override the default permissions when you wrap
  *      charbrowser in your own sites header/foot. That way you can
  *      have admin portals.
+ *      Implemented shared bank.
  *
  ***************************************************************************/
  
@@ -82,8 +83,10 @@ function GetPermissions($gm, $anonlevel, $char_id) {
          'inventory'         => 0,
          'coininventory'     => 0,
          'coinbank'          => 0,
+         'coinsharedbank'    => 0,
          'bags'              => 0,
          'bank'              => 0,
+         'sharedbank'        => 0,
          'corpses'           => 0,
          'flags'             => 0,
          'AAs'               => 0,

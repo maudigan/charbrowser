@@ -23,6 +23,7 @@
  *                       Put arrays in order
  *                       Added Drakkin
  *                       Fixed aug type description (Kinglykrab)
+ *   March 8, 2020 - implement shared bank (Maudigan)
  *
  ***************************************************************************/
 
@@ -39,6 +40,7 @@ if ( !defined('INCHARBROWSER') )
 define("EQUIPMENT", 1);
 define("INVENTORY", 2);
 define("BANK", 3);
+define("SHAREDBANK", 4);
 
 //wether or not the server has GD and freetype installed
 define("SERVER_HAS_GD", function_exists("imagecreatetruecolor"));

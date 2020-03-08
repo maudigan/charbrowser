@@ -23,6 +23,8 @@
  *                         Bags moved 22-29 to 23-32 (+1 and two new slots)
  *                         Cursor bag contents moved 331-340 to 351-360
  *                         New bags contents are in 331-340 and 341-350
+ *   March 8, 2020 - implement shared bank (Maudigan)
+ *
  ***************************************************************************/ 
   
   
@@ -41,6 +43,7 @@ class item {
         //1: Equipment 
         //2: the 8 inventory slots 
         //3: the 16 bank slots 
+        //4: the 2 shared bank slots 
         //other: bag contents, i.e. 22 would be an item in bag 22 
   
         var $myicon; 
@@ -236,6 +239,18 @@ class item {
                 case ($this->myslot >= 2261 && $this->myslot <= 2270): 
                      $this->mytype = 2023; 
                      $this->myvslot = $this->myslot - 2260; 
+                     break; 
+                case ($this->myslot >= 2500 && $this->myslot <= 2501): 
+                     $this->mytype = 4; 
+                     $this->myvslot = $this->myslot; 
+                     break; 
+                case ($this->myslot >= 2531 && $this->myslot <= 2540): 
+                     $this->mytype = 2500; 
+                     $this->myvslot = $this->myslot - 2530; 
+                     break; 
+                case ($this->myslot >= 2541 && $this->myslot <= 2550): 
+                     $this->mytype = 2501; 
+                     $this->myvslot = $this->myslot - 2540; 
                      break; 
                 default: 
                      $this->mytype = 0; 

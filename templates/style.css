@@ -645,10 +645,10 @@
 #charbrowser .BankOuter {
   position: relative;	
   background-image: url(../images/light.gif);
-  width: 191px;
-  height: 377px;
-  max-width: 177px;
-  max-height: 353px;
+  width: 282px;
+  height: 327px;
+  max-width: 268px;
+  max-height: 303px;
   padding: 11px 5px 9px 5px;
   border: 2px #7b714a solid;
   font-family:		arial;
@@ -661,7 +661,7 @@
   left: 4px;
   border: 0px;
   padding: 0px;
-  width: 179px;
+  width: 270px;
   height: 21px;
   font-family:		arial;
   font-size: 9pt ;
@@ -684,7 +684,7 @@
   line-height:21px;
   top: 0px;
   left: 14px;
-  width: 151px;
+  width: 242px;
   height: 21px;
   border: 0px;
   padding: 0px;
@@ -693,7 +693,7 @@
   background-image: url(../images/rightt.gif);
   position: absolute;
   top: 0px;
-  left: 165px;
+  left: 256px;
   width: 14px;
   height: 21px;
   border: 0px;
@@ -1161,36 +1161,44 @@
   left: 141px;
 }
 #charbrowser .slotloc2016 {
-  top: 200px;
-  left: 97px;
+  top: 20px;
+  left: 188px;
 }
 #charbrowser .slotloc2017 {
-  top: 243px;
-  left: 97px;
+  top: 63px;
+  left: 188px;
 }
 #charbrowser .slotloc2018 {
-  top: 286px;
-  left: 97px;
+  top: 106px;
+  left: 188px;
 }
 #charbrowser .slotloc2019 {
-  top: 329px;
-  left: 97px;
+  top: 148px;
+  left: 188px;
 }
 #charbrowser .slotloc2020 {
-  top: 200px;
-  left: 141px;
+  top: 20px;
+  left: 232px;
 }
 #charbrowser .slotloc2021 {
-  top: 243px;
-  left: 141px;
+  top: 63px;
+  left: 232px;
 }
 #charbrowser .slotloc2022 {
-  top: 286px;
-  left: 141px;
+  top: 106px;
+  left: 232px;
 }
 #charbrowser .slotloc2023 {
-  top: 328px;
-  left: 141px;
+  top: 148px;
+  left: 232px;
+}
+#charbrowser .slotloc2500 {
+  top: 240px;
+  left: 6px;
+}
+#charbrowser .slotloc2501 {
+  top: 240px;
+  left: 50px;
 }
 
 /* ----------------------------------------------

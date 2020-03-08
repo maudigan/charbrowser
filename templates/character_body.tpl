@@ -1,12 +1,11 @@
 
 <script type="text/javascript"> 
-function display(type, id, prefix) { 
-  if (target = document.getElementById(prefix + id)) 
-    if (type) target.style.display = (target.style.display == 'none') ? 'block' : 'none'; 
-  else {      
-    for(var i=0; i <= 2270; i++)    if (hideme = document.getElementById(prefix + i)) hideme.style.display = 'none';       
-    target.style.display = 'block'; 
-  } 
+function cbOpenBag(id) { 
+   //hide any open ones
+   $('DIV.BagOuter').hide();
+   
+   //open the new one
+   $(id).fadeIn(300);
 } 
 </script> 
 <div class='NavOuter'> 
@@ -150,7 +149,7 @@ function display(type, id, prefix) {
           <!-- BEGIN invitem --> 
           <div itemid='#slot{invitem.SLOT}' class='HoverSlot Slot slotloc{invitem.SLOT}' style='background-image: url({ROOT_URL}images/items/item_{invitem.ICON}.png);'></div> 
           <!-- BEGIN switch_is_bag --> 
-          <div class='BagOpenSlot slotloc{invitem.SLOT}' onclick="display(0, {invitem.SLOT}, 'bag');" title="{L_OPEN_BAG}"></div>
+          <div class='BagOpenSlot slotloc{invitem.SLOT}' onclick="cbOpenBag('#bag{invitem.SLOT}');" title="{L_OPEN_BAG}"></div>
           <!-- END switch_is_bag --> 
           <!-- END invitem --> 
         </div> 
@@ -187,20 +186,23 @@ function display(type, id, prefix) {
         <div class='Slot slotloc2021 slotimage'></div> 
         <div class='Slot slotloc2022 slotimage'></div> 
         <div class='Slot slotloc2023 slotimage'></div> 
+        <div class='Slot slotloc2500 slotimage'></div> 
+        <div class='Slot slotloc2501 slotimage'></div> 
 
         <!-- BEGIN bankitem --> 
         <div itemid='#slot{bankitem.SLOT}' class='HoverSlot Slot slotloc{bankitem.SLOT}' style='background-image: url({ROOT_URL}images/items/item_{bankitem.ICON}.png);'></div> 
         <!-- BEGIN switch_is_bag --> 
-        <div class='BagOpenSlot slotloc{bankitem.SLOT}' onclick="display(0, {bankitem.SLOT}, 'bag');" title="{L_OPEN_BAG}"></div>
+        <div class='BagOpenSlot slotloc{bankitem.SLOT}' onclick="cbOpenBag('#bag{bankitem.SLOT}');" title="{L_OPEN_BAG}"></div>
         <!-- END switch_is_bag --> 
         <!-- END bankitem --> 
         
 
-        <div class='Coin' style='top: 200px;left: 6px;'><table class='StatTable'><tr><td align='left'><img src='{ROOT_URL}images/pp.gif'></td><td align='center' width='100%'>{BPP}</td></tr></table></div> 
-        <div class='Coin' style='top: 228px;left: 6px;'><table class='StatTable'><tr><td align='left'><img src='{ROOT_URL}images/gp.gif'></td><td align='center' width='100%'>{BGP}</td></tr></table></div> 
-        <div class='Coin' style='top: 256px;left: 6px;'><table class='StatTable'><tr><td align='left'><img src='{ROOT_URL}images/sp.gif'></td><td align='center' width='100%'>{BSP}</td></tr></table></div> 
-        <div class='Coin' style='top: 284px;left: 6px;'><table class='StatTable'><tr><td align='left'><img src='{ROOT_URL}images/cp.gif'></td><td align='center' width='100%'>{BCP}</td></tr></table></div> 
-
+        <div class='Coin' style='top: 200px;left: 97px;'><table class='StatTable'><tr><td align='left'><img src='{ROOT_URL}images/pp.gif'></td><td align='center' width='100%'>{BPP}</td></tr></table></div> 
+        <div class='Coin' style='top: 228px;left: 97px;'><table class='StatTable'><tr><td align='left'><img src='{ROOT_URL}images/gp.gif'></td><td align='center' width='100%'>{BGP}</td></tr></table></div> 
+        <div class='Coin' style='top: 256px;left: 97px;'><table class='StatTable'><tr><td align='left'><img src='{ROOT_URL}images/sp.gif'></td><td align='center' width='100%'>{BSP}</td></tr></table></div> 
+        <div class='Coin' style='top: 284px;left: 97px;'><table class='StatTable'><tr><td align='left'><img src='{ROOT_URL}images/cp.gif'></td><td align='center' width='100%'>{BCP}</td></tr></table></div> 
+        <div style='position:relative;top: 213px;left: 2px;'>Shared Bank</div>
+        <div class='Coin' style='top: 284px;left: 6px;'><table class='StatTable'><tr><td align='left'><img src='{ROOT_URL}images/pp.gif'></td><td align='center' width='100%'>{SBPP}</td></tr></table></div> 
       </div> 
     </td> 
   </tr> 

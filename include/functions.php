@@ -23,6 +23,10 @@
  *      Added the QuickTemplate function which plugs values into a template
  *   January 7, 2018 - Maudigan
  *      Modified database to use a class.
+ *   March 8, 2020 - Maudigan
+ *      Added a way to override the default permissions when you wrap
+ *      charbrowser in your own sites header/foot. That way you can
+ *      have admin portals.
  *
  ***************************************************************************/
  
@@ -63,6 +67,33 @@ function timer_stop($index)
 function GetPermissions($gm, $anonlevel, $char_id) {
    global $permissions;
    global $cbsql;
+   global $charbrowser_is_admin_page;
+  
+   //if your wrap charbrowser in your own sites header
+   //and footer. You can have your site override the
+   //default permissions to always be enabled by setting 
+   //$charbrowser_is_admin_page = true;
+   //the intent of this is for charbrowser to inherit
+   //your sites admin privileges
+   //if it's set, return a permission array with 
+   //everything enabled
+   if ($charbrowser_is_admin_page) {
+      return array(
+         'inventory'         => 0,
+         'coininventory'     => 0,
+         'coinbank'          => 0,
+         'bags'              => 0,
+         'bank'              => 0,
+         'corpses'           => 0,
+         'flags'             => 0,
+         'AAs'               => 0,
+         'factions'          => 0,
+         'advfactions'       => 0,
+         'skills'            => 0,
+         'languageskills'    => 0,
+         'keys'              => 0,
+         'signatures'        => 0);
+   }
  
    $tpl = <<<TPL
 SELECT `value`

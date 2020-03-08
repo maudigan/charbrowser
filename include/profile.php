@@ -31,8 +31,11 @@
  *      Added 2h piercing, remove traps and tripple attack.
  *   September 7, 2019 - Kinglykrab
  *      fixed typo tripple => triple
- *   September 7, 2019 - Maudigan
+ *   March 7, 2020 - Maudigan
  *      modified to accommodate soft deletes
+ *   March 8, 2020 - Maudigan
+ *      make soft deletes display if this is a wrapped install
+ *      and the admin flag is turned on
  *  
  ***************************************************************************/
  
@@ -725,6 +728,7 @@ class profile {
       global $language;
       global $cbsql;
       global $showsoftdelete;
+      global $charbrowser_is_admin_page;
       
       //we can't call the local query method as it assumes the character id
       //which we need to get in the first place
@@ -757,7 +761,7 @@ TPL;
       else cb_message_die($language['MESSAGE_ERROR'],$language['MESSAGE_NO_FIND']);
 
       //dont display deleted characters
-      if (!$showsoftdelete && $row['deleted_at']) cb_message_die($language['MESSAGE_ERROR'],$language['MESSAGE_NO_FIND']);       
+      if (!$showsoftdelete && !$charbrowser_is_admin_page && $row['deleted_at']) cb_message_die($language['MESSAGE_ERROR'],$language['MESSAGE_NO_FIND']);       
    
    }
    

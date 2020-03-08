@@ -25,8 +25,11 @@
  *      Implemented new database wrapper.
  *   January 7, 2018 - Maudigan
  *      Modified database to use a class.
- *   September 7, 2019 - Maudigan
+ *   March 7, 2020 - Maudigan
  *      modified to accommodate soft deletes
+ *   March 8, 2020 - Maudigan
+ *      make soft deletes display if this is a wrapped install
+ *      and the admin flag is turned on
  ***************************************************************************/
  
  
@@ -66,7 +69,7 @@ if (!is_numeric($start)) cb_message_die($language['MESSAGE_ERROR'],$language['ME
 //build where clause
 $where = "";
 $divider = "WHERE ";
-if (!$showsoftdelete) {
+if (!$showsoftdelete && !$charbrowser_is_admin_page) {
    $where .= $divider."character_data.deleted_at IS NULL"; 
    $divider = "AND ";
 }

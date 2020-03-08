@@ -1,3 +1,11 @@
+v2.8.1
+----------------------------------------------------------------------
+Inherit admin permissions when wrapped in site header/footer
+
+Mar 7, 2020 - Added the ability to inherit site admin permissions 
+              when you wrap charbrowser in your header/footer
+              (maudigan)
+              
 v2.8
 ----------------------------------------------------------------------
 Added soft delete, mouse cursor style, item popups, aa fix, stat calc
@@ -20,6 +28,7 @@ Mar 7, 2020 - implemented character soft delets. If a character
               replaced the deprecated ereg_replace
               fixed char stats to not include augments on inventory
                  and bank items
+              (maudigan)
               
 v2.7
 ----------------------------------------------------------------------

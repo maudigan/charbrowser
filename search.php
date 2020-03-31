@@ -30,6 +30,12 @@
  *   March 8, 2020 - Maudigan
  *      make soft deletes display if this is a wrapped install
  *      and the admin flag is turned on
+ *   March 14, 2020 - Maudigan
+ *      fixed the missing space between AND in the query
+ *   March 15, 2020 - Maudigan
+ *      implemented guild page
+ *   March 22, 2020 - Maudigan
+ *     impemented common.php
  ***************************************************************************/
  
  
@@ -37,10 +43,7 @@
                  INCLUDES
 *********************************************/ 
 define('INCHARBROWSER', true);
-include_once(__DIR__ . "/include/config.php");
-include_once(__DIR__ . "/include/global.php");
-include_once(__DIR__ . "/include/language.php");
-include_once(__DIR__ . "/include/functions.php");
+include_once(__DIR__ . "/include/common.php");
 include_once(__DIR__ . "/include/db.php");
 
  
@@ -71,15 +74,15 @@ $where = "";
 $divider = "WHERE ";
 if (!$showsoftdelete && !$charbrowser_is_admin_page) {
    $where .= $divider."character_data.deleted_at IS NULL"; 
-   $divider = "AND ";
+   $divider = " AND ";
 }
 if ($name) {
    $where .= $divider."character_data.name LIKE '%".str_replace("_", "%", str_replace(" ","%",$name))."%'"; 
-   $divider = "AND ";
+   $divider = " AND ";
 }
 if ($guild) {
    $where .= $divider."guilds.name LIKE '%".str_replace("_", "%", str_replace(" ","%",$guild))."%'";
-   $divider = "AND ";
+   $divider = " AND ";
 }
 
 //build the orderby & limit clauses
@@ -104,7 +107,7 @@ TPL;
 $query = sprintf($tpl, $where, '');
 $result = $cbsql->query($query);
 $totalchars = $cbsql->rows($result);
-if (!$totalchars) cb_message_die($language['MESSAGE_ERROR'],$language['MESSAGE_NO_RESULTS']);
+if (!$totalchars) cb_message_die($language['MESSAGE_ERROR'],$query);
 
 //now add on the limit & ordering and query again for just this page
 $query = sprintf($tpl, $where, $order);
@@ -146,7 +149,7 @@ foreach ($characters as $character) {
       'LEVEL' => $character["level"],     
       'DELETED' => (($character["deleted_at"]) ? " ".$language['CHAR_DELETED']:""),
       'NAME' => $character["name"],
-      'GUILD_NAME' => (($character["guildname"]) ? "&lt;".$character["guildname"]."&gt;":"") )
+      'GUILD_NAME' => getGuildLink($character["guildname"]) )
    );
 }
  

@@ -1,80 +1,47 @@
+<div class='WindowComplex PositionAAs CB_Can_Drag'>
+   <div class='WindowTitleBar'>{L_ALTERNATE_ABILITIES} - {NAME}</div>
+   <nav class='CB_Tab_Box'>
+      <ul>
+         <!-- BEGIN tabs -->
+         <li id='tab{tabs.ID}' onclick="CB_displayTab('#charbrowser NAV.CB_Tab_Box UL LI', '#tab{tabs.ID}', '#charbrowser DIV.PositionAALeft TABLE', '#tabbox{tabs.ID}');">{tabs.TEXT}</li> 
+         <!-- END tabs -->
+      </ul>
+   </nav>
+   <div class='WindowNestedBlue PositionAALeft'>
+      <!-- BEGIN boxes -->
+      <table id='tabbox{boxes.ID}' class='CB_Table CB_Highlight_Rows'>
+         <thead>
+            <tr>
+               <th>{L_TITLE}</th>
+               <th>{L_CUR_MAX}</th>
+               <th>{L_COST}</th>
+            </tr>
+         </thead>
+         <!-- BEGIN aas -->
+         <tbody>
+            <tr>
+               <td>{boxes.aas.NAME}</td>
+               <td>{boxes.aas.CUR} / {boxes.aas.MAX}</td>
+               <td>{boxes.aas.COST}</td>
+            </tr> 
+         </tbody>
+         <!-- END aas -->        
+      </table>
+      <!-- END boxes -->
+   </div>
+   <div class='PositionAARight'>
+      <table class='CB_Table'>
+         <tbody>
+            <tr><td>{L_AA_POINTS}:</td><td>{AA_POINTS}</td></tr>
+            <tr><td>{L_POINTS_SPENT}:</td><td>{POINTS_SPENT}</td></tr>
+         </tbody>
+      </table>
+   </div>
+   <a class='CB_Button' href="{INDEX_URL}?page=character&char={NAME}">{L_DONE}</a>
+</div>
 <script type="text/javascript">
-function display(type, id, prefix) {
-  if (target = document.getElementById(prefix + id))
-    if (type) target.style.display = (target.style.display == 'none') ? 'block' : 'none';
-    else {
-      for(var i=0; i < 100; i++) if (hideme = document.getElementById(prefix + i)) hideme.style.display = 'none';	    
-      target.style.display = 'block';
-    }
-}
-function color(id) {
-  if (target = document.getElementById("link" + id)) {
-    for(var i=0; i < 100; i++) if (white = document.getElementById("link" + i)) white.style.color = '#FFFFFF';	    
-    target.style.color = '#7b714a';
-  }
-}
+   //display the first tab after load
+   $( document ).ready(function() {
+      CB_displayTab('#charbrowser NAV.CB_Tab_Box UL LI', '#tab1', '#charbrowser DIV.PositionAALeft TABLE', '#tabbox1');
+   });
 </script>
-<div class='NavOuter'>
-<div class='NavInner'>
-  <div class='FreeButton' onclick="window.location='{INDEX_URL}?page=character&char={NAME}';" style="margin:3px">{L_INVENTORY}</div>
-  <div class='FreeButton' style="color:606060;margin:3px">{L_AAS}</div>
-  <div class='FreeButton' onclick="window.location='{INDEX_URL}?page=keys&char={NAME}';" style="margin:3px">{L_KEYS}</div>
-  <div class='FreeButton' onclick="window.location='{INDEX_URL}?page=flags&char={NAME}';" style="margin:3px">{L_FLAGS}</div>
-  <div class='FreeButton' onclick="window.location='{INDEX_URL}?page=skills&char={NAME}';" style="margin:3px">{L_SKILLS}</div>
-  <div class='FreeButton' onclick="window.location='{INDEX_URL}?page=corpse&char={NAME}';" style="margin:3px">{L_CORPSE}</div>
-  <div class='FreeButton' onclick="window.location='{INDEX_URL}?page=factions&char={NAME}';" style="margin:3px">{L_FACTION}</div>
-  <div class='FreeButton' onclick="window.location='{INDEX_URL}?page=charmove&char={NAME}';" style="margin:3px">{L_CHARMOVE}</div>
-  <div class='FreeButton' onclick="window.external.AddFavorite(location.href, document.title);" style="margin:3px">{L_BOOKMARK}</div>
-</div>
-</div>
-<center>
-  <div class='FlagOuter'>
-    <div class='FlagTitle'>
-      <div class='FlagTitleLeft'></div>
-      <div class='FlagTitleMid'>{L_ALTERNATE_ABILITIES} - {NAME}</div>
-      <div class='FlagTitleRight'></div>
-    </div>
-    <div class='FlagInner'>
-      <table class='StatTable' style='width:625px;'>
-        <tr>
-          <!-- BEGIN tabs -->
-          <td align='center' nowrap><a href='#' style='color:#{tabs.COLOR};' id='link{tabs.ID}' onclick="display(0,{tabs.ID},'tab');color({tabs.ID});">{tabs.TEXT}</a></td>
-          <!-- END tabs -->
-        </tr>
-      </table>
-      <br>
-      <table class='StatTable' style='width:625px;'>
-        <tr>
-          <td>
-            <!-- BEGIN boxes -->
-            <div id='tab{boxes.ID}' class='FlagTabBox' style='display: {boxes.DISPLAY};'>
-              <table class='StatTable' height='100%'>
-                <tr>
-                  <td class='ColumnHead' style='padding: 0px 3px 4px 30px;'>{L_TITLE}</td>
-                  <td class='ColumnHead' style='padding: 0px 15px 4px 30px;' align='center'>{L_CUR_MAX}</td>
-                  <td class='ColumnHead' style='padding: 0px 30px 4px 15px;' align='center'>{L_COST}</td>
-                </tr>
-                <!-- BEGIN aas -->
-                <tr onMouseOver="this.style.background = '#7b714a'" onMouseOut ="this.style.background = 'none'" >
-                  <td style='padding: 1px 3px 0px 30px;'>{boxes.aas.NAME}</td>
-                  <td style='padding: 1px 15px 0px 30px;' align='center'>{boxes.aas.CUR} / {boxes.aas.MAX}</td>
-                  <td style='padding: 1px 30px 0px 15px;' align='center'>{boxes.aas.COST}</td>
-                </tr> 
-                <!-- END aas -->        
-              </table>
-            </div>
-            <!-- END boxes -->
-          </td>
-          <td align='center' width='150px' valign='top'>
-            <br><br><br>
-            <table class='StatTable' style='width:90%;'>
-              <tr><td align='left' nowrap>{L_AA_POINTS}:</td><td align='right' nowrap>{AA_POINTS}</td></tr>
-              <tr><td align='left' nowrap>{L_POINTS_SPENT}:</td><td align='right' nowrap>{POINTS_SPENT}</td></tr>
-            </table>
-          </td>
-        </tr>
-      </table>
-      <br><center><div class='FreeButton' onclick="window.location='{INDEX_URL}?page=character&char={NAME}';">{L_DONE}</div></center>
-    </div>
-  </div>
-</center>

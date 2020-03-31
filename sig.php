@@ -28,6 +28,15 @@
  *      Modified database to use a class.
  *   March 7, 2020 - Maudigan
  *      replaced the deprecated ereg_replace function
+ *   March 14, 2020 - Maudigan
+ *      moved error function to functions.php
+ *      prepopulate charname in form if its provided
+ *   March 16, 2020 - Maudigan
+ *      prepared for implementation of dynamic guild ranks
+ *   March 22, 2020 - Maudigan
+ *     impemented common.php
+ *   March 31, 2020 - Maudigan
+ *     updated to work with all the profile.php changes
  ***************************************************************************/
  
  
@@ -35,16 +44,13 @@
                  INCLUDES
 *********************************************/ 
 define('INCHARBROWSER', true);
-include_once(__DIR__ . "/include/config.php");
-include_once(__DIR__ . "/include/global.php");
-include_once(__DIR__ . "/include/language.php");
-include_once(__DIR__ . "/include/functions.php");
+$charbrowser_image_script = true;
+include_once(__DIR__ . "/include/common.php");
 include_once(__DIR__ . "/include/profile.php");
 include_once(__DIR__ . "/include/itemclass.php");
-include_once(__DIR__ . "/include/statsclass.php");
-include_once(__DIR__ . "/include/calculatestats.php");
 include_once(__DIR__ . "/include/db.php");
- 
+
+
  
 /*********************************************
              SUPPORT FUNCTIONS
@@ -66,19 +72,6 @@ function HexToRGB($hex) {
    return $color; 
 }
 
-
-//used for outputting errors since any text output will cause broken image links
-//should be similar to cb_message_die in functions.php
-function png_cb_message_die($error, $message) {
-   global $signaturewidth, $signatureheight, $defaultcolor;
-   $error_image = imagecreatetruecolor($signaturewidth, $signatureheight);
-   $error_color = imagecolorallocate($error_image, $defaultcolor['r'], $defaultcolor['g'], $defaultcolor['b']);
-   imagestring($error_image, 5, 10, 30, $error, $error_color);
-   imagestring($error_image, 2, 10, 50, $message, $error_color); 
-   header("Content-Type: image/png"); 
-   imagepng($error_image); 
-   ImageDestroy($error_image);
-}
 
 
 /*********************************************
@@ -164,17 +157,17 @@ $signatureheight = 100;
 /*********************************************
          SETUP PROFILE/PERMISSIONS
 *********************************************/
-if(!$_GET['char']) png_cb_message_die($language['MESSAGE_ERROR'],$language['MESSAGE_NO_CHAR']);
+if(!$_GET['char']) cb_message_die($language['MESSAGE_ERROR'],$language['MESSAGE_NO_CHAR']);
 else $charName = $_GET['char'];
 
 //character initializations
-$char = new profile($charName); //the profile class will sanitize the character name
+$char = new profile($charName, $cbsql, $language, $showsoftdelete, $charbrowser_is_admin_page); //the profile class will sanitize the character name
 $charID = $char->char_id(); 
 $name = $char->GetValue('name');
 $mypermission = GetPermissions($char->GetValue('gm'), $char->GetValue('anon'), $char->char_id());
 
 //block view if user level doesnt have permission
-if ($mypermission['signatures']) png_cb_message_die($language['MESSAGE_ERROR'],$language['MESSAGE_ITEM_NO_VIEW']);
+if ($mypermission['signatures']) cb_message_die($language['MESSAGE_ERROR'],$language['MESSAGE_ITEM_NO_VIEW']);
 
 
 /*********************************************
@@ -185,33 +178,39 @@ $last_name  = $char->GetValue('last_name');
 $title      = $char->GetValue('title');
 $level      = $char->GetValue('level');
 $deity      = $char->GetValue('deity');
-$baseSTR    = $char->GetValue('str'); 
-$baseSTA    = $char->GetValue('sta');
-$baseAGI    = $char->GetValue('agi');
-$baseDEX    = $char->GetValue('dex');
-$baseWIS    = $char->GetValue('wis');
-$baseINT    = $char->GetValue('int');
-$baseCHA    = $char->GetValue('cha');
-$defense    = $char->GetValue('defense'); //TODO multi row table
-$offense    = $char->GetValue('offense'); //TODO multi row table
 $race       = $char->GetValue('race');
 $class      = $char->GetValue('class');
-$pp         = $char->GetValue('platinum');
-$gp         = $char->GetValue('gold');
-$sp         = $char->GetValue('silver');
-$cp         = $char->GetValue('copper');
-$bpp        = $char->GetValue('platinum_bank');
-$bgp        = $char->GetValue('gold_bank');
-$bsp        = $char->GetValue('silver_bank');
-$bcp        = $char->GetValue('copper_bank'); 
 
-//load guild name
+
+/* this will get implemented in the server code soon, uncomment and remove the code below
+//load guild name dynamically
+$tpl = <<<TPL
+SELECT guilds.name, guild_ranks.title 
+FROM guilds
+JOIN guild_members
+  ON guilds.id = guild_members.guild_id
+JOIN guild_ranks
+  ON guild_members.rank = guild_ranks.rank 
+ AND guild_members.guild_id = guild_ranks.guild_id
+WHERE guild_members.char_id = '%s' 
+LIMIT 1
+TPL;
+$query = sprintf($tpl, $charID);
+$result = $cbsql->query($query);
+if($cbsql->rows($result))
+{ 
+   $row = $cbsql->nextrow($result);
+   $guild_name = $row['name'];
+   $guild_rank = $row['title'];
+} */
+
+//load guild name statically
 $tpl = <<<TPL
 SELECT guilds.name, guild_members.rank 
 FROM guilds
 JOIN guild_members
   ON guilds.id = guild_members.guild_id
-WHERE guild_members.char_id = %s 
+WHERE guild_members.char_id = '%s' 
 LIMIT 1
 TPL;
 $query = sprintf($tpl, $charID);
@@ -221,66 +220,6 @@ if($cbsql->rows($result))
    $row = $cbsql->nextrow($result);
    $guild_name = $row['name'];
    $guild_rank = $guildranks[$row['rank']];
-}
-
-//place where all the items stats are added up
-$itemstats = new stats();
-
-
-// pull characters inventory slotid is loaded as
-// "myslot" since items table also has a slotid field.
-$tpl = <<<TPL
-SELECT items.*, inventory.augslot1, inventory.augslot2, 
-       inventory.augslot3, inventory.augslot4, 
-       inventory.augslot5, inventory.slotid AS myslot 
-FROM items
-JOIN inventory 
-  ON items.id = inventory.itemid
-WHERE inventory.charid = '%s' 
-TPL;
-$query = sprintf($tpl, $charID);
-$result = $cbsql->query($query);
-// loop through inventory results saving Name, Icon, and preload HTML for each
-// item to be pasted into its respective div later
-$tpl = <<<TPL
-SELECT * 
-FROM items 
-WHERE id = '%s' 
-LIMIT 1
-TPL;
-while ($row = $cbsql->nextrow($result)) {
-   $tempitem = new item($row);
-   for ($i = 1; $i <= 5; $i++) {
-      if ($row["augslot".$i]) {
-         $query = sprintf($tpl, $row["augslot".$i]);
-         $augresult = $cbsql->query($query);
-         $augrow = $cbsql->nextrow($augresult);
-         $tempitem->addaug($augrow);
-         $itemstats->additem($augrow);
-      }
-   }
-
-   if ($tempitem->type() == EQUIPMENT)
-      $itemstats->additem($row);
-}
-
-
-if ($epicbg) {
-   $tpl = <<<TPL
-SELECT items.icon, items.id 
-FROM items 
-JOIN titles 
-  ON items.id = titles.item_id
-JOIN inventory 
-  ON items.id = inventory.itemid 
-WHERE inventory.charid = %s  
-  AND titles.class = %s 
-ORDER BY items.id DESC
-LIMIT 0, 1;
-TPL;
-   $query = sprintf($tpl, $charID, $class);
-   $result = $cbsql->query($query);
-   if ($row = $cbsql->nextrow($result)) $epicicon = sprintf($path['EPIC'], $row['icon']);
 }
 
 
@@ -298,28 +237,28 @@ $chardata = array(
 );
 
 $stats = array(
-   'REGEN' => $itemstats->regen(),
-   'FT' => $itemstats->FT(),
-   'DS' => $itemstats->DS(),
-   'HASTE' => $itemstats->haste()."%",
-   'HP' => GetMaxHP($level,$class,($baseSTA+$itemstats->STA()),$itemstats->hp()),
-   'MANA' => GetMaxMana($level,$class,($baseINT+$itemstats->INT()),($baseWIS+$itemstats->WIS()),+$itemstats->mana()),
-   'ENDR' => GetMaxEndurance(($baseSTR+$itemstats->STR()),($baseSTA+$itemstats->STA()),($baseDEX+$itemstats->DEX()),($baseAGI+$itemstats->AGI()),$level,$itemstats->endurance()),
-   'AC' => GetMaxAC(($baseAGI+$itemstats->AGI()), $level, $defense, $class, $itemstats->AC(), $race),
-   'ATK' => GetMaxAtk($itemstats->attack(), ($baseSTR+$itemstats->STR()), $offense),
-   'STR' => ($baseSTR+$itemstats->STR()),
-   'STA' => ($baseSTA+$itemstats->STA()),
-   'DEX' => ($baseDEX+$itemstats->DEX()),
-   'AGI' => ($baseAGI+$itemstats->AGI()),
-   'INT' => ($baseINT+$itemstats->INT()),
-   'WIS' => ($baseWIS+$itemstats->WIS()),
-   'CHA' => ($baseCHA+$itemstats->CHA()),
-   'PR' => (PRbyRace($race)+$PRbyClass[$class]+$itemstats->PR()),
-   'FR' => (FRbyRace($race)+$FRbyClass[$class]+$itemstats->FR()),
-   'MR' => (MRbyRace($race)+$MRbyClass[$class]+$itemstats->MR()),
-   'DR' => (DRbyRace($race)+$DRbyClass[$class]+$itemstats->DR()),
-   'CR' => (CRbyRace($race)+$CRbyClass[$class]+$itemstats->CR()),
-   'WT' => round($itemstats->WT()/10)
+   'REGEN' => $char->getRegen(),
+   'FT' => $char->getFT(),
+   'DS' => $char->getDS(),
+   'HASTE' => $char->getHaste()."%",
+   'HP' => $char->CalcMaxHP(),
+   'MANA' => $char->CalcMaxMana(),
+   'ENDR' => $char->CalcMaxEndurance(),
+   'AC' => $char->GetDisplayAC(),
+   'ATK' => $char->GetTotalATK(),
+   'STR' => $char->getSTR(),
+   'STA' => $char->getSTA(),
+   'DEX' => $char->getDEX(),
+   'AGI' => $char->getAGI(),
+   'INT' => $char->getINT(),
+   'WIS' => $char->getWIS(),
+   'CHA' => $char->getCHA(),
+   'PR' => $char->getPR(),
+   'FR' => $char->getFR(),
+   'MR' => $char->getMR(),
+   'DR' => $char->getDR(),
+   'CR' => $char->getCR(),
+   'WT' => round($char->getWT()/10)
 );
 
 

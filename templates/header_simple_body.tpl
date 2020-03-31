@@ -1,45 +1,33 @@
+<script language='JavaScript' type='text/javascript' src='https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js'></script>
+<script language='JavaScript' type='text/javascript' src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>  
 <div id='charbrowser'>
-<link rel='stylesheet' href='{ROOT_URL}templates/style.css' type='text/css'/>
+   <link rel='stylesheet' href='{ROOT_URL}templates/style-1.0.css' type='text/css'/>
 
-<center>
-  <div class='FlagOuter'>
-    <div class='FlagTitle'>
-      <div class='FlagTitleLeft'></div>
-      <div class='FlagTitleMid'>{L_NAVIGATE}</div>
-      <div class='FlagTitleRight'></div>
-    </div>
-    <div class='FlagInner'>
-    
-      <br>
-      <center>
-         <form method='GET' action='{INDEX_URL}'>
-            <input type='hidden' name='page' value='search'>
-            {L_NAME}: <input class='SigBuilder' type='text' name='name' >&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-            {L_GUILD}: <input class='SigBuilder' type='text' name='guild' >&nbsp;&nbsp;&nbsp;&nbsp;
-            <input style='vertical-align:middle' type='image' src='{ROOT_URL}images/go.gif'>
-         </form>
-      </center>
-      <br>
+   <div class='WindowComplex PositionHeaderSimple CB_Can_Drag'>
+      <div class='WindowTitleBar'>{L_NAVIGATE}</div>
+      <span class='CB_imghelper'></span>
+      <a href='{INDEX_URL}'><img src="{ROOT_URL}title.php"></a>
+      <form method='GET' action='{INDEX_URL}'>
+         <input type='hidden' name='page' value='search'>
+         <label for='name'>{L_NAME}:</label><input id='name' type='text' name='name' autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">
+         <label for='guild'>{L_GUILD}:</label><input id='guild' type='text' name='guild' autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">
+         <input type='submit' value='Go'>
+      </form>
+      <nav>
+         <ul>
+            <li><a href='{INDEX_URL}?page=signaturebuilder'>{L_SIGBUILD}</a></li>
+            <li><a href='{INDEX_URL}?page=charmove'>{L_CHARMOVE}</a></li>
+            <li><a href='{INDEX_URL}?page=bazaar'>{L_BAZAAR}</a></li>
+            <li><a href='{INDEX_URL}?page=server'>{L_SERVER}</a></li>
+            <li><a href='{INDEX_URL}?page=settings'>{L_SETTINGS}</a></li>
+            <li><a href='http://mqemulator.net/forum2/viewforum.php?f=20'>{L_REPORT_ERRORS}</a></li>
+            <li><a href='{INDEX_URL}?page=help'>{L_HELP}</a></li>
+         </ul>
+      </nav>
+   </div>
 
-      <font style='font-family:arial;font-size:7pt;text-decoration:none;font-weight;none;color:#FFFFFF;'>
-      <a style='font-family:arial;font-size:7pt;text-decoration:none;font-weight;none;color:#FFFFFF;' href='{INDEX_URL}?page=signaturebuilder'>{L_SIGBUILD}</a> &nbsp;|&nbsp; 
-      <a style='font-family:arial;font-size:7pt;text-decoration:none;font-weight;none;color:#FFFFFF;' href='{INDEX_URL}?page=charmove'>{L_CHARMOVE}</a> &nbsp;|&nbsp; 
-      <a style='font-family:arial;font-size:7pt;text-decoration:none;font-weight;none;color:#FFFFFF;' href='{INDEX_URL}?page=bazaar'>{L_BAZAAR}</a> &nbsp;|&nbsp; 
-      <a style='font-family:arial;font-size:7pt;text-decoration:none;font-weight;none;color:#FFFFFF;' href='{INDEX_URL}'>{L_HOME}</a> &nbsp;|&nbsp; 
-      <a style='font-family:arial;font-size:7pt;text-decoration:none;font-weight;none;color:#FFFFFF;' href='{INDEX_URL}?page=settings'>{L_SETTINGS}</a> &nbsp;|&nbsp; 
-      <a style='font-family:arial;font-size:7pt;text-decoration:none;font-weight;none;color:#FFFFFF;' href='http://mqemulator.net/forum2/viewforum.php?f=20'>{L_REPORT_ERRORS}</a> &nbsp;|&nbsp; 
-      <a style='font-family:arial;font-size:7pt;text-decoration:none;font-weight;none;color:#FFFFFF;' href='{INDEX_URL}?page=help'>{L_HELP}</a>
-    </div>
-  </div>
-</center>
+   <div class='body_simple'>
 
-
-
-
-
-
-<div class='body_simple'>
-<br><br>
 
 
   

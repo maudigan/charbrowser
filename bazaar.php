@@ -28,6 +28,9 @@
  *      fixed a typo when loading the $lots array
  *   January 7, 2018 - Maudigan
  *      Modified database to use a class.
+ *   March 22, 2020 - Maudigan
+ *     impemented common.php
+ * 
  ***************************************************************************/
  
  
@@ -35,10 +38,7 @@
                  INCLUDES
 *********************************************/ 
 define('INCHARBROWSER', true);
-include_once(__DIR__ . "/include/config.php");
-include_once(__DIR__ . "/include/global.php");
-include_once(__DIR__ . "/include/language.php");
-include_once(__DIR__ . "/include/functions.php");
+include_once(__DIR__ . "/include/common.php");
 include_once(__DIR__ . "/include/itemclass.php");
 include_once(__DIR__ . "/include/db.php");
 

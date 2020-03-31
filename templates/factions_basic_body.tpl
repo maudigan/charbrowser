@@ -1,38 +1,20 @@
-<div class='NavOuter'>
-<div class='NavInner'>
-  <div class='FreeButton' onclick="window.location='{INDEX_URL}?page=character&char={NAME}';" style="margin:3px">{L_INVENTORY}</div>
-  <div class='FreeButton' onclick="window.location='{INDEX_URL}?page=aas&char={NAME}';" style="margin:3px">{L_AAS}</div>
-  <div class='FreeButton' onclick="window.location='{INDEX_URL}?page=keys&char={NAME}';" style="margin:3px">{L_KEYS}</div>
-  <div class='FreeButton' onclick="window.location='{INDEX_URL}?page=flags&char={NAME}';" style="margin:3px">{L_FLAGS}</div>
-  <div class='FreeButton' onclick="window.location='{INDEX_URL}?page=skills&char={NAME}';" style="margin:3px">{L_SKILLS}</div>
-  <div class='FreeButton' onclick="window.location='{INDEX_URL}?page=corpse&char={NAME}';" style="margin:3px">{L_CORPSE}</div>
-  <div class='FreeButton' style="color:606060;margin:3px">{L_FACTION}</div>
-  <div class='FreeButton' onclick="window.location='{INDEX_URL}?page=charmove&char={NAME}';" style="margin:3px">{L_CHARMOVE}</div>
-  <div class='FreeButton' onclick="window.external.AddFavorite(location.href, document.title);" style="margin:3px">{L_BOOKMARK}</div>
+<div class='WindowComplex PositionFactionBasic CB_Can_Drag'>
+   <div class='WindowTitleBar'>{L_FACTIONS} - {NAME}</div>
+   <table class='CB_Table CB_Highlight_Rows'>
+      <thead>
+         <tr>
+            <th>{L_NAME}</th>
+            <th>{L_FACTION}</th>
+         </tr>
+      </thead>
+      <tbody>
+         <!-- BEGIN factions -->
+         <tr>
+            <td><a href='{factions.LINK}'>{factions.NAME}</a></td>
+            <td>{factions.FACTION}</td>
+         </tr>
+         <!-- END factions -->
+      </tbody>
+   </table>
+   <a class='CB_Button' href="{INDEX_URL}?page=character&char={NAME}">{L_DONE}</a>
 </div>
-</div>
-<center>
-  <div class='SmallOuter'>
-    <div class='SmallTitle'>
-      <div class='SmallTitleLeft'></div>
-      <div class='SmallTitleMid'>{L_FACTIONS} - {NAME}</div>
-      <div class='SmallTitleRight'></div>
-    </div>
-    <div class='SmallInner'>
-        <table class='StatTable' cellpadding='3px' style='width:90%'>
-        <tr>
-          <td class='ColumnHead'>{L_NAME}</td>
-          <td class='ColumnHead'>{L_FACTION}</td>  
-        </tr>	
-        <!-- BEGIN factions -->
-        <tr onMouseOver="this.style.background = '#7b714a '" onMouseOut ="this.style.background = 'none'" >
-          <td nowrap><a href='{factions.LINK}' style='color:#8aa3ff ;'>{factions.NAME}</a></td>
-	  <td nowrap>{factions.FACTION}</td>
-	</tr>
-        <!-- END factions -->
-      </table>
-      <br><br>
-      <div class='FreeButton' onclick="window.location='{INDEX_URL}?page=character&char={NAME}';">{L_DONE}</div>
-    </div>
-  </div>
-</center>

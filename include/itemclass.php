@@ -24,6 +24,7 @@
  *                         Cursor bag contents moved 331-340 to 351-360
  *                         New bags contents are in 331-340 and 341-350
  *   March 8, 2020 - implement shared bank (Maudigan)
+ *   March 21, 2020 - track item skill (Maudigan)
  *
  ***************************************************************************/ 
   
@@ -61,6 +62,9 @@ class item {
         var $myname; 
         //name to use for display later 
   
+        var $myskill; 
+        //the weapon skill for this item
+  
         var $myslotcount; 
         //0 for items, 1-10 for bags 
   
@@ -90,6 +94,7 @@ class item {
            $this->myicon=$row['icon']; 
            $this->myname=$row['Name']; 
            $this->myid=$row['id']; 
+           $this->myskill=$row["itemtype"];
            //switch ($this->myslot){                                                         //removed line 2/9/2014 
            switch (true){                                                                    //added line 2/9/2014
                 case ($this->myslot >= 0 && $this->myslot <= 22):
@@ -298,6 +303,10 @@ class item {
   
         function name() { 
          return $this->myname; 
+        } 
+  
+        function skill() { 
+         return $this->myskill; 
         } 
   
         function slotcount() { 

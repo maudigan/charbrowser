@@ -28,6 +28,18 @@
  *      charbrowser in your own sites header/foot. That way you can
  *      have admin portals.
  *      Implemented shared bank.
+ *   March 9, 2020 - Maudigan
+ *      added function to output the profile menu
+ *   March 14, 2020 - Maudigan
+ *      made image version of message die
+ *   March 15, 2020 - Maudigan
+ *      added function to fetch a guild link
+ *   March 17, 2020 - Maudigan
+ *      we now display info from github so we need to sanitize against xss
+ *      added a function for that
+ *   March 28, 2020 - Maudigan
+ *      added a quest global permission fetching function for guilds
+ *      which is set by the guild leader
  *
  ***************************************************************************/
  
@@ -62,6 +74,111 @@ function timer_stop($index)
    $new_mt = ((float)$new_usec + (float)$new_sec);
    $timeout = sprintf("%01.6f",($new_mt - $old_mt));
    return $timeout;
+}
+
+//get a guild link for a character  
+function getGuildLink ($guildname, $guildrank = "") {
+   global $charbrowser_wrapped;
+   global $blockguilddata;
+
+   if ($guildname) { 
+      if ($guildrank) {
+         $guildnamerank = $guildrank." of ".$guildname;
+      }
+      else {
+         $guildnamerank = $guildname;
+      }
+      if ($blockguilddata) {
+         return "&lt;".$guildnamerank."&gt;";
+      }
+      else {
+         return "<a href='".(($charbrowser_wrapped) ? $_SERVER['SCRIPT_NAME'] : "index.php")."?page=guild&guild=".$guildname."'>&lt;".$guildnamerank."&gt;</a>";
+      }
+   }
+   else {
+      return "";
+   }
+}  
+
+
+//sanitize a string to prevent XSS
+function xss_safe($string) {
+   return htmlspecialchars($string, ENT_QUOTES, 'UTF-8');
+}
+
+
+//outputs the profile menu on the side
+function output_profile_menu($charname, $curpage) {
+   global $language;
+   global $cb_template;
+   
+   $menubuttons = array(
+      array( 'PAGE' => 'character', 'BUTTON_NAME' => $language['BUTTON_INVENTORY']),
+      array( 'PAGE' => 'aas', 'BUTTON_NAME' => $language['BUTTON_AAS']),
+      array( 'PAGE' => 'keys', 'BUTTON_NAME' => $language['BUTTON_KEYS']),
+      array( 'PAGE' => 'flags', 'BUTTON_NAME' => $language['BUTTON_FLAGS']),
+      array( 'PAGE' => 'skills', 'BUTTON_NAME' => $language['BUTTON_SKILLS']),
+      array( 'PAGE' => 'corpse', 'BUTTON_NAME' => $language['BUTTON_CORPSE']),
+      array( 'PAGE' => 'factions', 'BUTTON_NAME' => $language['BUTTON_FACTION']),
+      array( 'PAGE' => 'signaturebuilder', 'BUTTON_NAME' => $language['BUTTON_SIG']),
+      array( 'PAGE' => 'charmove', 'BUTTON_NAME' => $language['BUTTON_CHARMOVE'])
+   );
+   
+   $cb_template->set_filenames(array(
+     'menu' => 'profile_menu.tpl')
+   );
+   
+   foreach ($menubuttons as $menubutton) {
+      $cb_template->assign_block_vars( "menuitems", array(     
+         'SWITCH_DIABLED' => ($menubutton['PAGE'] == $curpage) ? "Disabled" : "",   
+         'PAGE' => $menubutton['PAGE'],
+         'L_BUTTON_FACE' => $menubutton['BUTTON_NAME'])
+      );
+   }
+
+   $cb_template->assign_vars(array(     
+      'CURPROFILE' => $charname,
+      'L_BOOKMARK' => $language['BUTTON_BOOKMARK'])
+   );
+   
+   $cb_template->pparse('menu');
+}
+
+
+function GetGuildPermissions($char_id) {
+   global $guild_permissions;
+   global $cbsql;
+   global $charbrowser_is_admin_page;
+  
+   //if your wrap charbrowser in your own sites header
+   //and footer. You can have your site override the
+   //default permissions to always be enabled by setting 
+   //$charbrowser_is_admin_page = true;
+   //the intent of this is for charbrowser to inherit
+   //your sites admin privileges
+   //if it's set, return a permission array with 
+   //everything enabled
+   if ($charbrowser_is_admin_page) {
+      return array(
+         'mainpage'         => 0);
+   }
+ 
+   $tpl = <<<TPL
+SELECT `value`
+FROM `quest_globals` 
+WHERE `charid` = %d 
+AND `name` = 'charbrowser_guild';
+TPL;
+   $query = sprintf($tpl, $char_id);
+   $result = $cbsql->query($query);
+   if($cbsql->rows($result))
+   { 
+      $row = $cbsql->nextrow($result);
+      if ($row['value'] == 1) return $guild_permissions['PUBLIC'];
+      if ($row['value'] == 2) return $guild_permissions['PRIVATE'];
+   }
+   
+   return $guild_permissions['ALL'];
 }
 
 
@@ -126,6 +243,22 @@ function cb_message_die($dietitle, $text) {
    global $charbrowser_root_url;
    global $charbrowser_wrapped;
    global $charbrowser_simple_header;
+   global $charbrowser_image_script;
+   
+   //output error as an image
+   if ($charbrowser_image_script) {
+      $defaultcolor = array( 'r'=>255, 'g'=>255, 'b'=>255 );
+      $imgwidth = 500;
+      $imgheight = 100;
+      $error_image = imagecreatetruecolor($imgwidth, $imgheight);
+      $error_color = imagecolorallocate($error_image, $defaultcolor['r'], $defaultcolor['g'], $defaultcolor['b']);
+      imagestring($error_image, 5, 10, 30, $dietitle, $error_color);
+      imagestring($error_image, 2, 10, 50, $text, $error_color); 
+      header("Content-Type: image/png"); 
+      imagepng($error_image); 
+      ImageDestroy($error_image);
+      exit();
+   }
    
    //drop page
    $d_title = " - ".$dietitle;

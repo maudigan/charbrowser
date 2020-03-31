@@ -20,6 +20,8 @@
  *      organized some code. A lot has changed, but not much functionally
  *      do a compare to 2.41 to see the differences. 
  *      Implemented new database wrapper.
+ *   March 22, 2020 - Maudigan
+ *     impemented common.php
  ***************************************************************************/
  
  
@@ -27,10 +29,7 @@
                  INCLUDES
 *********************************************/ 
 define('INCHARBROWSER', true);
-include_once(__DIR__ . "/include/config.php");
-include_once(__DIR__ . "/include/language.php");
-include_once(__DIR__ . "/include/functions.php");
-include_once(__DIR__ . "/include/global.php");
+include_once(__DIR__ . "/include/common.php");
 
 //no point in having the api on this page
 if (isset($_GET['api']))  cb_message_die($language['MESSAGE_ERROR'],$language['MESSAGE_NOAPI']);

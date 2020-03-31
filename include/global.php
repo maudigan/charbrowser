@@ -24,6 +24,10 @@
  *                       Added Drakkin
  *                       Fixed aug type description (Kinglykrab)
  *   March 8, 2020 - implement shared bank (Maudigan)
+ *   March 9, 2020 - added item slot globals (Maudigan)
+ *   March 22, 2020 - relocated code to common.php (Maudigan)
+ *                    added EQEmu style race/class constants (Maudigan)
+ *   March 25, 2020 - added spell effect constants (Maudigan)
  *
  ***************************************************************************/
 
@@ -41,6 +45,62 @@ define("EQUIPMENT", 1);
 define("INVENTORY", 2);
 define("BANK", 3);
 define("SHAREDBANK", 4);
+
+//spell effect types
+define("SE_ARMORCLASS", 1);
+define("SE_ATK", 2);
+define("SE_TOTALHP", 69);
+define("SE_MANAPOOL", 97);
+define("SE_ENDURANCEPOOL", 190);
+define("SE_MAXHPCHANGE", 214);
+define("SE_COMBATSTABILITY", 259);
+define("SE_ACV2", 416);
+
+//slot numbers
+define("SLOT_EQUIPMENT_START", 0);
+define("SLOT_EQUIPMENT_END", 22);
+define("SLOT_INVENTORY_START", 23);
+define("SLOT_INVENTORY_END", 32);
+define("SLOT_BANK_START", 2000);
+define("SLOT_BANK_END", 2023);
+define("SLOT_SHAREDBANK_START", 2500);
+define("SLOT_SHAREDBANK_END", 2501);
+
+//EQEMU style class constants
+define("CB_CLASS_WARRIOR", 1);
+define("CB_CLASS_CLERIC", 2);
+define("CB_CLASS_PALADIN", 3);
+define("CB_CLASS_RANGER", 4);
+define("CB_CLASS_SHADOWKNIGHT", 5);
+define("CB_CLASS_DRUID", 6);
+define("CB_CLASS_MONK", 7);
+define("CB_CLASS_BARD", 8);
+define("CB_CLASS_ROGUE", 9);
+define("CB_CLASS_SHAMAN", 10);
+define("CB_CLASS_NECROMANCER", 11);
+define("CB_CLASS_WIZARD", 12);
+define("CB_CLASS_MAGICIAN", 13);
+define("CB_CLASS_ENCHANTER", 14);
+define("CB_CLASS_BEASTLORD", 15);
+define("CB_CLASS_BERSERKER", 16);
+
+//EQEMU style race constants
+define("CB_RACE_HUMAN", 1);
+define("CB_RACE_BARBARIAN", 2);
+define("CB_RACE_ERUDITE", 3);
+define("CB_RACE_WOOD_ELF", 4);
+define("CB_RACE_HIGH_ELF", 5);
+define("CB_RACE_DARK_ELF", 6);
+define("CB_RACE_HALF_ELF", 7);
+define("CB_RACE_DWARF", 8);
+define("CB_RACE_TROLL", 9);
+define("CB_RACE_OGRE", 10);
+define("CB_RACE_HALFLING", 11);
+define("CB_RACE_GNOME", 12);
+define("CB_RACE_IKSAR", 128);
+define("CB_RACE_VAHSHIR", 130);
+define("CB_RACE_FROGLOK", 330);
+define("CB_RACE_DRAKKIN", 522); 
 
 //wether or not the server has GD and freetype installed
 define("SERVER_HAS_GD", function_exists("imagecreatetruecolor"));

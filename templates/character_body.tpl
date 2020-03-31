@@ -1,254 +1,379 @@
+<div class='PositionCharacter'>
 
-<script type="text/javascript"> 
-function cbOpenBag(id) { 
-   //hide any open ones
-   $('DIV.BagOuter').hide();
-   
-   //open the new one
-   $(id).fadeIn(300);
-} 
-</script> 
-<div class='NavOuter'> 
-<div class='NavInner'> 
-  <div class='FreeButton' style="color:606060;margin:3px">{L_INVENTORY}</div> 
-  <div class='FreeButton' onclick="window.location='{INDEX_URL}?page=aas&char={FIRST_NAME}';" style="margin:3px">{L_AAS}</div> 
-  <div class='FreeButton' onclick="window.location='{INDEX_URL}?page=keys&char={FIRST_NAME}';" style="margin:3px">{L_KEYS}</div>
-  <div class='FreeButton' onclick="window.location='{INDEX_URL}?page=flags&char={FIRST_NAME}';" style="margin:3px">{L_FLAGS}</div> 
-  <div class='FreeButton' onclick="window.location='{INDEX_URL}?page=skills&char={FIRST_NAME}';" style="margin:3px">{L_SKILLS}</div> 
-  <div class='FreeButton' onclick="window.location='{INDEX_URL}?page=corpse&char={FIRST_NAME}';" style="margin:3px">{L_CORPSE}</div> 
-  <div class='FreeButton' onclick="window.location='{INDEX_URL}?page=factions&char={FIRST_NAME}';" style="margin:3px">{L_FACTION}</div> 
-  <div class='FreeButton' onclick="window.location='{INDEX_URL}?page=charmove&char={FIRST_NAME}';" style="margin:3px">{L_CHARMOVE}</div> 
-  <div class='FreeButton' onclick="window.external.AddFavorite(location.href, document.title);" style="margin:3px">{L_BOOKMARK}</div> 
-</div> 
-</div> 
-<center> 
-<table> 
-  <tr> 
-    <td width='200px' align='right'> 
-      <!-- BEGIN bags --> 
-      <div class='BagOuter bagrow{bags.ROWS}' id='bag{bags.SLOT}'> 
-        <div class='BagTitle'> 
-          <div class='BagTitleLeft'></div> 
-          <div class='BagTitleMid'>{L_CONTAINER}</div> 
-          <div class='BagTitleRight'></div> 
-        </div> 
+   <!-- INVENTORY WINDOW -->
+   <div class='WindowComplexFancy {HIGHLIGHT_GM} PositionInventory CB_Can_Drag'> 
+      <div class='WindowTitleBar'>{L_HEADER_INVENTORY}{DELETED}</div> 
+      <nav class='CB_Tab_Box'>
+         <ul>
+            <li id='tab1' onclick="CB_displayTab('#charbrowser NAV.CB_Tab_Box UL LI', '#tab1', '#charbrowser DIV.PositionInventory DIV.InventoryContents', '#tabbox1');">Equipment</li> 
+            <li id='tab2' onclick="CB_displayTab('#charbrowser NAV.CB_Tab_Box UL LI', '#tab2', '#charbrowser DIV.PositionInventory DIV.InventoryContents', '#tabbox2');">HP</li> 
+            <li id='tab3' onclick="CB_displayTab('#charbrowser NAV.CB_Tab_Box UL LI', '#tab3', '#charbrowser DIV.PositionInventory DIV.InventoryContents', '#tabbox3');">End.</li> 
+            <li id='tab4' onclick="CB_displayTab('#charbrowser NAV.CB_Tab_Box UL LI', '#tab4', '#charbrowser DIV.PositionInventory DIV.InventoryContents', '#tabbox4');">Mana</li> 
+            <li id='tab5' onclick="CB_displayTab('#charbrowser NAV.CB_Tab_Box UL LI', '#tab5', '#charbrowser DIV.PositionInventory DIV.InventoryContents', '#tabbox5');">ATK</li> 
+            <li id='tab6' onclick="CB_displayTab('#charbrowser NAV.CB_Tab_Box UL LI', '#tab6', '#charbrowser DIV.PositionInventory DIV.InventoryContents', '#tabbox6');">Display AC</li> 
+            <li id='tab7' onclick="CB_displayTab('#charbrowser NAV.CB_Tab_Box UL LI', '#tab7', '#charbrowser DIV.PositionInventory DIV.InventoryContents', '#tabbox7');">Mitigation AC</li> 
+         </ul>
+      </nav>      
+      <div id='tabbox1' class='InventoryContents'>
+      
+         <!-- TOP RIGHT STATS -->
+         <table class='CB_Table CB_Char_Stats2'> 
+            <tbody>
+            <tr> 
+               <td> 
+               {L_REGEN}<br>{L_FT}<br>{L_DS}<br>{L_HASTE} 
+               </td> 
+               <td> 
+               {REGEN}<br>{FT}<br>{DS}<br>{HASTE}% 
+               </td> 
+            </tr> 
+            </tbody>
+         </table> 
+
+         <!-- STATS ON LEFT -->
+         <table class='CB_Table CB_Char_Stats'> 
+            <tr><td colspan='2'>{FIRST_NAME} {LAST_NAME}</td></tr> 
+            <tr><td colspan='2'>{GUILD}</td></tr> 
+            <tr><td class='CB_Char_Stats_Spacer' colspan='2'></td></tr> 
+            <tr><td colspan='2'>{RACE}</td></tr> 
+            <tr><td class='CB_Char_Stats_Spacer' colspan='2'></td></tr> 
+            <tr><td colspan='2'>{LEVEL} {CLASS}<br>{DEITY}</td></tr> 
+            <tr><td class='CB_Char_Stats_Spacer' colspan='2'></td></tr> 
+            <tr> 
+               <td>{L_HP}<br>{L_MANA}<br>{L_ENDR}<br>{L_AC}<br>{L_MIT_AC}<br>{L_ATK}</td> 
+               <td width='100%'>{HP}<br>{MANA}<br>{ENDR}<br>{AC}<br>{MIT_AC}<br>{ATK}</td> 
+            </tr> 
+            <tr><td class='CB_Char_Stats_Divider' colspan='2'></td></tr> 
+            <tr> 
+               <td>{L_STR}<br>{L_STA}<br>{L_AGI}<br>{L_DEX}</td> 
+               <td width='100%'><font color='#00FF00'>{STR} <font color='Gold'>+{HSTR}</font><br>{STA} <font color='Gold'>+{HSTA}</font><br>{AGI} <font color='Gold'>+{HAGI}</font><br>{DEX} <font color='Gold'>+{HDEX}</font></font></td>
+            </tr> 
+            <tr><td class='CB_Char_Stats_Divider' colspan='2'></td></tr> 
+            <tr> 
+               <td>{L_WIS}<br>{L_INT}<br>{L_CHA}</td> 
+               <td width='100%'><font color='#00FF00'>{WIS} <font color='Gold'>+{HWIS}</font><br>{INT} <font color='Gold'>+{HINT}</font><br>{CHA} <font color='Gold'>+{HCHA}</font></font></td> 
+            </tr> 
+            <tr><td class='CB_Char_Stats_Divider' colspan='2'></td></tr> 
+            <tr> 
+               <td>{L_POISON}<br>{L_MAGIC}<br>{L_DISEASE}<br>{L_FIRE}<br>{L_COLD}<br>{L_CORRUPT}</td> 
+               <td><font color='#00FF00'>{POISON} <font color='Gold'>+{HPOISON}</font><br>{MAGIC} <font color='Gold'>+{HMAGIC}</font><br>{DISEASE} <font color='Gold'>+{HDISEASE}</font><br>{FIRE} <font color='Gold'>+{HFIRE}</font><br>{COLD} <font color='Gold'>+{HCOLD}</font><br>{CORRUPT} <font color='Gold'>+{HCORRUPT}</font></font></td> 
+            </tr> 
+            <tr><td class='CB_Char_Stats_Divider' colspan='2'></td></tr> 
+            <tr> 
+               <td>{L_WEIGHT}</td> 
+               <td nowrap>{WEIGHT} / {STR}</td> 
+            </tr> 
+         </table> 
+
+         <!-- CLASS MONOGRAM -->
+         <div class='CB_Char_Monogram'><img src='{ROOT_URL}images/monograms/{CLASS_NUM}.gif'></div> 
+
+         <!-- COINS -->
+         <div class='Coin CoinPP coinlocinvpp'>{PP}</div> 
+         <div class='Coin CoinGP coinlocinvgp'>{GP}</div> 
+         <div class='Coin CoinSP coinlocinvsp'>{SP}</div> 
+         <div class='Coin CoinCP coinlocinvcp'>{CP}</div> 
+
+         <!-- SLOT IMAGES FOR WORN ITEMS -->
+         <!-- BEGIN equipslots -->
+         <div class='Slot slotloc{equipslots.SLOT} slotimage{equipslots.SLOT}'></div> 
+         <!-- END equipslots -->
+
+         <!-- SLOT IMAGES FOR INVENTORY -->
+         <!-- BEGIN invslots -->
+         <div class='Slot slotloc{invslots.SLOT} slotimage'></div> 
+         <!-- END invslots -->
+
+         <!-- SLOT ICONS FOR WORN ITEMS -->
+         <!-- BEGIN equipitem --> 
+         <div hoverChild='#slot{equipitem.SLOT}' class='Slot slotloc{equipitem.SLOT} CB_HoverParent' style='background-image: url({ROOT_URL}images/items/item_{equipitem.ICON}.png);'></div>  
+         <!-- END equipitem --> 
          
-        <!-- BEGIN bagslots --> 
-        <div class='Slot bagslotloc{bags.bagslots.BS_SLOT} slotimage'></div> 
-        <!-- END bagslots --> 
-        <!-- BEGIN bagitems --> 
-        <div itemid='#slot{bags.bagitems.BI_SLOT}' class='HoverSlot Slot bagslotloc{bags.bagitems.BI_RELATIVE_SLOT}' style='background-image: url({ROOT_URL}images/items/item_{bags.bagitems.BI_ICON}.png);'></div> 
-        <!-- END bagitems --> 
+         <!-- SLOT ICONS FOR INVENTORY -->
+         <!-- BEGIN invitem --> 
+         <div hoverChild='#slot{invitem.SLOT}' class='Slot slotloc{invitem.SLOT} CB_HoverParent' style='background-image: url({ROOT_URL}images/items/item_{invitem.ICON}.png);'></div> 
+         <!-- BEGIN switch_is_bag --> 
+         <div hoverChild='#bag{invitem.SLOT}' class='BagOpenSlot slotloc{invitem.SLOT} CB_HoverParent'></div>
+         <!-- END switch_is_bag --> 
+         <!-- END invitem --> 
+      </div>
 
-        <div class='Button bagbuttonrow{bags.ROWS}' onclick="document.getElementById('bag{bags.SLOT}').style.display = 'none';">{L_DONE}</div> 
+      <div id='tabbox2' class='InventoryContents CB_CalcBox'>       
+         <!-- BEGIN hp --> 
+         <table class='CB_Table CB_Highlight_Rows'> 
+            <thead>  
+               <tr>
+                  <th>{hp.TYPE_HEAD}</th>
+                  <th>{hp.VALUE_HEAD}</th>
+                  <th></th>
+               </tr> 
+            </thead>  
+            <tbody>  
+               <!-- BEGIN row -->
+               <tr>
+                  <td>{hp.row.DESCRIPTION}</td>
+                  <td>{hp.row.VALUE}</td>
+                  <td></td>
+               </tr> 
+               <!-- END row -->
+            </tbody>   
+            <!-- BEGIN footer -->
+            <tfoot>  
+               <tr>
+                  <td>{hp.footer.DESCRIPTION}</td>
+                  <td>{hp.footer.SUBTOTAL}</td>
+                  <td>{hp.footer.ROLLTOTAL}</td>
+               </tr> 
+            </tfoot>      
+            <!-- END footer -->
+         </table>
+         <!-- END hp -->     
+      </div>   
+
+      <div id='tabbox3' class='InventoryContents CB_CalcBox'>       
+         <!-- BEGIN endurance --> 
+         <table class='CB_Table CB_Highlight_Rows'> 
+            <thead>  
+               <tr>
+                  <th>{endurance.TYPE_HEAD}</th>
+                  <th>{endurance.VALUE_HEAD}</th>
+                  <th></th>
+               </tr> 
+            </thead>  
+            <tbody>  
+               <!-- BEGIN row -->
+               <tr>
+                  <td>{endurance.row.DESCRIPTION}</td>
+                  <td>{endurance.row.VALUE}</td>
+                  <td></td>
+               </tr> 
+               <!-- END row -->
+            </tbody>   
+            <!-- BEGIN footer -->
+            <tfoot>  
+               <tr>
+                  <td>{endurance.footer.DESCRIPTION}</td>
+                  <td>{endurance.footer.SUBTOTAL}</td>
+                  <td>{endurance.footer.ROLLTOTAL}</td>
+               </tr> 
+            </tfoot>      
+            <!-- END footer -->
+         </table>
+         <!-- END endurance -->     
       </div> 
-      <!-- END bags --> 
-    </td> 
-    <td width='495px' align='center'> 
-      <div class='IventoryOuter{HIGHLIGHT_GM}'> 
-        <div class='IventoryTitle'> 
-          <div class='IventoryTitleLeft'></div> 
-          <div class='IventoryTitleMid'>{L_HEADER_INVENTORY}</div> 
-          <div class='IventoryTitleRight'></div> 
-        </div> 
-        <div class='InventoryInner'> 
-        
-          <div class='InventoryStats2'> 
-            <table class='StatTable'> 
-              <tr> 
-                <td nowrap> 
-                  {L_REGEN}<br>{L_FT}<br>{L_DS}<br>{L_HASTE} 
-                </td> 
-                <td> 
-                  {REGEN}<br>{FT}<br>{DS}<br>{HASTE}% 
-                </td> 
-              </tr> 
-            </table> 
-          </div> 
 
-          <div class='InventoryStats'> 
-            <table class='StatTable'> 
-              <tr><td colspan='2'>{FIRST_NAME} {LAST_NAME}{DELETED}</td></tr> 
-              <tr><td colspan='2' style='height: 3px'></td></tr> 
-              <tr><td colspan='2'>{RACE}</td></tr> 
-              <tr><td colspan='2' style='height: 3px'></td></tr> 
-              <tr><td colspan='2'>{LEVEL} {CLASS}<br>{DEITY}</td></tr> 
-              <tr><td colspan='2' style='height: 3px'></td></tr> 
-              <tr> 
-                <td>{L_HP}<br>{L_MANA}<br>{L_ENDR}<br>{L_AC}<br>{L_ATK}</td> 
-                <td width='100%'>{HP}<br>{MANA}<br>{ENDR}<br>{AC}<br>{ATK}</td> 
-              </tr> 
-              <tr><td class='Divider' colspan='2'></td></tr> 
-              <tr> 
-                <td>{L_STR}<br>{L_STA}<br>{L_AGI}<br>{L_DEX}</td> 
-                <!-- <td width='100%'>{STR}<br>{STA}<br>{AGI}<br>{DEX}</td> -->
-                <td width='100%'><font color='#00FF00'>{STR} <font color='Gold'>+{HSTR}</font><br>{STA} <font color='Gold'>+{HSTA}</font><br>{AGI} <font color='Gold'>+{HAGI}</font><br>{DEX} <font color='Gold'>+{HDEX}</font></font></td>
-              </tr> 
-              <tr><td class='Divider' colspan='2'></td></tr> 
-              <tr> 
-                <td>{L_WIS}<br>{L_INT}<br>{L_CHA}</td> 
-                <!-- <td width='100%'>{WIS}<br>{INT}<br>{CHA}</td> -->
-                <td width='100%'><font color='#00FF00'>{WIS} <font color='Gold'>+{HWIS}</font><br>{INT} <font color='Gold'>+{HINT}</font><br>{CHA} <font color='Gold'>+{HCHA}</font></font></td> 
-              </tr> 
-              <tr><td class='Divider' colspan='2'></td></tr> 
-              <tr> 
-                <td>{L_POISON}<br>{L_MAGIC}<br>{L_DISEASE}<br>{L_FIRE}<br>{L_COLD}<br>{L_CORRUPT}</td> 
-                <!-- <td>{POISON}<br>{MAGIC}<br>{DISEASE}<br>{FIRE}<br>{COLD}<br>{CORRUPT}</td> -->
-                <td><font color='#00FF00'>{POISON} <font color='Gold'>+{HPOISON}</font><br>{MAGIC} <font color='Gold'>+{HMAGIC}</font><br>{DISEASE} <font color='Gold'>+{HDISEASE}</font><br>{FIRE} <font color='Gold'>+{HFIRE}</font><br>{COLD} <font color='Gold'>+{HCOLD}</font><br>{CORRUPT} <font color='Gold'>+{HCORRUPT}</font></font></td> 
-              </tr> 
-              <tr><td class='Divider' colspan='2'></td></tr> 
-              <tr> 
-                <td>{L_WEIGHT}</td> 
-                <td nowrap>{WEIGHT} / {STR}</td> 
-              </tr> 
-            </table> 
-          </div> 
+      <div id='tabbox4' class='InventoryContents CB_CalcBox'>       
+         <!-- BEGIN mana --> 
+         <table class='CB_Table CB_Highlight_Rows'> 
+            <thead>  
+               <tr>
+                  <th>{mana.TYPE_HEAD}</th>
+                  <th>{mana.VALUE_HEAD}</th>
+                  <th></th>
+               </tr> 
+            </thead>  
+            <tbody>  
+               <!-- BEGIN row -->
+               <tr>
+                  <td>{mana.row.DESCRIPTION}</td>
+                  <td>{mana.row.VALUE}</td>
+                  <td></td>
+               </tr> 
+               <!-- END row -->
+            </tbody>   
+            <!-- BEGIN footer -->
+            <tfoot>  
+               <tr>
+                  <td>{mana.footer.DESCRIPTION}</td>
+                  <td>{mana.footer.SUBTOTAL}</td>
+                  <td>{mana.footer.ROLLTOTAL}</td>
+               </tr> 
+            </tfoot>      
+            <!-- END footer -->
+         </table>
+         <!-- END mana -->     
+      </div>   
 
-          <div class='InventoryMonogram'><img src='{ROOT_URL}images/monograms/{CLASS_NUM}.gif'></div> 
-
-          <div class='Coin' style='top: 73px;left: 352px;'><table class='StatTable'><tr><td align='left'><img src='{ROOT_URL}images/pp.gif'></td><td align='center' width='100%'>{PP}</td></tr></table></div> 
-          <div class='Coin' style='top: 101px;left: 352px;'><table class='StatTable'><tr><td align='left'><img src='{ROOT_URL}images/gp.gif'></td><td align='center' width='100%'>{GP}</td></tr></table></div> 
-          <div class='Coin' style='top: 129px;left: 352px;'><table class='StatTable'><tr><td align='left'><img src='{ROOT_URL}images/sp.gif'></td><td align='center' width='100%'>{SP}</td></tr></table></div> 
-          <div class='Coin' style='top: 157px;left: 352px;'><table class='StatTable'><tr><td align='left'><img src='{ROOT_URL}images/cp.gif'></td><td align='center' width='100%'>{CP}</td></tr></table></div> 
-
-          <div class='Slot slotloc0 slotimage0'></div> 
-          <div class='Slot slotloc1 slotimage1'></div> 
-          <div class='Slot slotloc2 slotimage2'></div> 
-          <div class='Slot slotloc3 slotimage3'></div> 
-          <div class='Slot slotloc4 slotimage4'></div> 
-          <div class='Slot slotloc5 slotimage5'></div> 
-          <div class='Slot slotloc6 slotimage6'></div> 
-          <div class='Slot slotloc7 slotimage7'></div> 
-          <div class='Slot slotloc8 slotimage8'></div> 
-          <div class='Slot slotloc9 slotimage9'></div> 
-          <div class='Slot slotloc10 slotimage10'></div> 
-          <div class='Slot slotloc11 slotimage11'></div> 
-          <div class='Slot slotloc12 slotimage12'></div> 
-          <div class='Slot slotloc13 slotimage13'></div> 
-          <div class='Slot slotloc14 slotimage14'></div> 
-          <div class='Slot slotloc15 slotimage15'></div> 
-          <div class='Slot slotloc16 slotimage16'></div> 
-          <div class='Slot slotloc17 slotimage17'></div> 
-          <div class='Slot slotloc18 slotimage18'></div> 
-          <div class='Slot slotloc19 slotimage19'></div> 
-          <div class='Slot slotloc20 slotimage20'></div> 
-          <div class='Slot slotloc21 slotimage21'></div> 
-          <div class='Slot slotloc22 slotimage22'></div> 
-          <div class='Slot slotloc23 slotimage'></div> 
-          <div class='Slot slotloc24 slotimage'></div> 
-          <div class='Slot slotloc25 slotimage'></div> 
-          <div class='Slot slotloc26 slotimage'></div> 
-          <div class='Slot slotloc27 slotimage'></div> 
-          <div class='Slot slotloc28 slotimage'></div> 
-          <div class='Slot slotloc29 slotimage'></div> 
-          <div class='Slot slotloc30 slotimage'></div> 
-          <div class='Slot slotloc31 slotimage'></div> 
-          <div class='Slot slotloc32 slotimage'></div> 
-
-
-          <!-- BEGIN invitem --> 
-          <div itemid='#slot{invitem.SLOT}' class='HoverSlot Slot slotloc{invitem.SLOT}' style='background-image: url({ROOT_URL}images/items/item_{invitem.ICON}.png);'></div> 
-          <!-- BEGIN switch_is_bag --> 
-          <div class='BagOpenSlot slotloc{invitem.SLOT}' onclick="cbOpenBag('#bag{invitem.SLOT}');" title="{L_OPEN_BAG}"></div>
-          <!-- END switch_is_bag --> 
-          <!-- END invitem --> 
-        </div> 
+      <div id='tabbox5' class='InventoryContents CB_CalcBox'>       
+         <!-- BEGIN attack --> 
+         <table class='CB_Table CB_Highlight_Rows'> 
+            <thead>  
+               <tr>
+                  <th>{attack.TYPE_HEAD}</th>
+                  <th>{attack.VALUE_HEAD}</th>
+                  <th></th>
+               </tr> 
+            </thead>  
+            <tbody>  
+               <!-- BEGIN row -->
+               <tr>
+                  <td>{attack.row.DESCRIPTION}</td>
+                  <td>{attack.row.VALUE}</td>
+                  <td></td>
+               </tr> 
+               <!-- END row -->
+            </tbody>   
+            <!-- BEGIN footer -->
+            <tfoot>  
+               <tr>
+                  <td>{attack.footer.DESCRIPTION}</td>
+                  <td>{attack.footer.SUBTOTAL}</td>
+                  <td>{attack.footer.ROLLTOTAL}</td>
+               </tr> 
+            </tfoot>      
+            <!-- END footer -->
+         </table>
+         <!-- END attack -->     
       </div> 
-    </td> 
-    <td width='300px' align='left'> 
-      <div class='BankOuter'> 
-        <div class='BankTitle'> 
-          <div class='BankTitleLeft'></div> 
-          <div class='BankTitleMid'>{L_HEADER_BANK}</div> 
-          <div class='BankTitleRight'></div> 
-        </div> 
-        <div class='Slot slotloc2000 slotimage'></div> 
-        <div class='Slot slotloc2001 slotimage'></div> 
-        <div class='Slot slotloc2002 slotimage'></div> 
-        <div class='Slot slotloc2003 slotimage'></div> 
-        <div class='Slot slotloc2004 slotimage'></div> 
-        <div class='Slot slotloc2005 slotimage'></div> 
-        <div class='Slot slotloc2006 slotimage'></div> 
-        <div class='Slot slotloc2007 slotimage'></div> 
-        <div class='Slot slotloc2008 slotimage'></div> 
-        <div class='Slot slotloc2009 slotimage'></div> 
-        <div class='Slot slotloc2010 slotimage'></div> 
-        <div class='Slot slotloc2011 slotimage'></div> 
-        <div class='Slot slotloc2012 slotimage'></div> 
-        <div class='Slot slotloc2013 slotimage'></div> 
-        <div class='Slot slotloc2014 slotimage'></div> 
-        <div class='Slot slotloc2015 slotimage'></div> 
-        <div class='Slot slotloc2016 slotimage'></div> 
-        <div class='Slot slotloc2017 slotimage'></div> 
-        <div class='Slot slotloc2018 slotimage'></div> 
-        <div class='Slot slotloc2019 slotimage'></div> 
-        <div class='Slot slotloc2020 slotimage'></div> 
-        <div class='Slot slotloc2021 slotimage'></div> 
-        <div class='Slot slotloc2022 slotimage'></div> 
-        <div class='Slot slotloc2023 slotimage'></div> 
-        <div class='Slot slotloc2500 slotimage'></div> 
-        <div class='Slot slotloc2501 slotimage'></div> 
 
-        <!-- BEGIN bankitem --> 
-        <div itemid='#slot{bankitem.SLOT}' class='HoverSlot Slot slotloc{bankitem.SLOT}' style='background-image: url({ROOT_URL}images/items/item_{bankitem.ICON}.png);'></div> 
-        <!-- BEGIN switch_is_bag --> 
-        <div class='BagOpenSlot slotloc{bankitem.SLOT}' onclick="cbOpenBag('#bag{bankitem.SLOT}');" title="{L_OPEN_BAG}"></div>
-        <!-- END switch_is_bag --> 
-        <!-- END bankitem --> 
-        
+      <div id='tabbox6' class='InventoryContents CB_CalcBox'>       
+         <!-- BEGIN ac --> 
+         <table class='CB_Table CB_Highlight_Rows'> 
+            <thead>  
+               <tr>
+                  <th>{ac.TYPE_HEAD}</th>
+                  <th>{ac.VALUE_HEAD}</th>
+                  <th></th>
+               </tr> 
+            </thead>  
+            <tbody>  
+               <!-- BEGIN row -->
+               <tr>
+                  <td>{ac.row.DESCRIPTION}</td>
+                  <td>{ac.row.VALUE}</td>
+                  <td></td>
+               </tr> 
+               <!-- END row -->
+            </tbody>   
+            <!-- BEGIN footer -->
+            <tfoot>  
+               <tr>
+                  <td>{ac.footer.DESCRIPTION}</td>
+                  <td>{ac.footer.SUBTOTAL}</td>
+                  <td>{ac.footer.ROLLTOTAL}</td>
+               </tr> 
+            </tfoot>      
+            <!-- END footer -->
+         </table>
+         <!-- END ac -->     
+      </div>  
 
-        <div class='Coin' style='top: 200px;left: 97px;'><table class='StatTable'><tr><td align='left'><img src='{ROOT_URL}images/pp.gif'></td><td align='center' width='100%'>{BPP}</td></tr></table></div> 
-        <div class='Coin' style='top: 228px;left: 97px;'><table class='StatTable'><tr><td align='left'><img src='{ROOT_URL}images/gp.gif'></td><td align='center' width='100%'>{BGP}</td></tr></table></div> 
-        <div class='Coin' style='top: 256px;left: 97px;'><table class='StatTable'><tr><td align='left'><img src='{ROOT_URL}images/sp.gif'></td><td align='center' width='100%'>{BSP}</td></tr></table></div> 
-        <div class='Coin' style='top: 284px;left: 97px;'><table class='StatTable'><tr><td align='left'><img src='{ROOT_URL}images/cp.gif'></td><td align='center' width='100%'>{BCP}</td></tr></table></div> 
-        <div style='position:relative;top: 213px;left: 2px;'>Shared Bank</div>
-        <div class='Coin' style='top: 284px;left: 6px;'><table class='StatTable'><tr><td align='left'><img src='{ROOT_URL}images/pp.gif'></td><td align='center' width='100%'>{SBPP}</td></tr></table></div> 
+      <div id='tabbox7' class='InventoryContents CB_CalcBox'>       
+         <!-- BEGIN mit_ac --> 
+         <table class='CB_Table CB_Highlight_Rows'> 
+            <thead>  
+               <tr>
+                  <th>{mit_ac.TYPE_HEAD}</th>
+                  <th>{mit_ac.VALUE_HEAD}</th>
+                  <th></th>
+               </tr> 
+            </thead>  
+            <tbody>  
+               <!-- BEGIN row -->
+               <tr>
+                  <td>{mit_ac.row.DESCRIPTION}</td>
+                  <td>{mit_ac.row.VALUE}</td>
+                  <td></td>
+               </tr> 
+               <!-- END row -->
+            </tbody>   
+            <!-- BEGIN footer -->
+            <tfoot>  
+               <tr>
+                  <td>{mit_ac.footer.DESCRIPTION}</td>
+                  <td>{mit_ac.footer.SUBTOTAL}</td>
+                  <td>{mit_ac.footer.ROLLTOTAL}</td>
+               </tr> 
+            </tfoot>      
+            <!-- END footer -->
+         </table>
+         <!-- END mit_ac -->     
+      </div>  
+      
+   </div> 
+
+
+   <!-- BANK WINDOW -->
+   <div class='WindowSimpleFancy PositionBank CB_Can_Drag'> 
+      <div class='WindowTitleBar'>{L_HEADER_BANK}</div> 
+
+      <!-- SLOT IMAGES FOR THE BANK -->
+      <!-- BEGIN bankslots -->
+      <div class='Slot slotloc{bankslots.SLOT} slotimage'></div> 
+      <!-- END bankslots -->   
+
+      <!-- SLOT IMAGES FOR THE SHARED BANK -->
+      <!-- BEGIN sharedbankslots -->
+      <div class='Slot slotloc{sharedbankslots.SLOT} slotimage'></div> 
+      <!-- END sharedbankslots -->   
+
+      <!-- BEGIN bankitem --> 
+      <div hoverChild='#slot{bankitem.SLOT}' class='Slot slotloc{bankitem.SLOT} CB_HoverParent' style='background-image: url({ROOT_URL}images/items/item_{bankitem.ICON}.png);'></div> 
+      <!-- BEGIN switch_is_bag --> 
+      <div hoverChild='#bag{bankitem.SLOT}' class='BagOpenSlot slotloc{bankitem.SLOT} CB_HoverParent'></div>
+      <!-- END switch_is_bag --> 
+      <!-- END bankitem --> 
+
+      <div class='sharedbankheaderloc'>{L_SHARED_BANK}</div>
+      <!-- BEGIN sharedbankitem --> 
+      <div hoverChild='#slot{sharedbankitem.SLOT}' class='Slot slotloc{sharedbankitem.SLOT} CB_HoverParent' style='background-image: url({ROOT_URL}images/items/item_{sharedbankitem.ICON}.png);'></div> 
+      <!-- BEGIN switch_is_bag --> 
+      <div hoverChild='#bag{sharedbankitem.SLOT}' class='BagOpenSlot slotloc{sharedbankitem.SLOT} CB_HoverParent'></div>
+      <!-- END switch_is_bag --> 
+      <!-- END sharedbankitem --> 
+
+      <div class='Coin CoinPP coinlocsharedbankpp'>{SBPP}</div> 
+
+      <div class='Coin CoinPP coinlocbankpp'>{BPP}</div> 
+      <div class='Coin CoinGP coinlocbankgp'>{BGP}</div> 
+      <div class='Coin CoinSP coinlocbanksp'>{BSP}</div> 
+      <div class='Coin CoinCP coinlocbankcp'>{BCP}</div> 
+   </div> 
+
+</div>      
+
+<!-- BAG WINDOWS -->
+<!-- BEGIN bags --> 
+<div class='WindowSimple bagrow{bags.ROWS} PositionBag CB_Can_Drag CB_HoverChild' id='bag{bags.SLOT}'> 
+   <div class='WindowTitleBar'>{L_CONTAINER}</div>
+
+   <!-- BEGIN bagslots --> 
+   <div class='Slot bagslotloc{bags.bagslots.BS_SLOT} slotimage'></div> 
+   <!-- END bagslots --> 
+   <!-- BEGIN bagitems --> 
+   <div hoverChild='#slot{bags.bagitems.BI_SLOT}' class='Slot bagslotloc{bags.bagitems.BI_RELATIVE_SLOT} CB_HoverParent' style='background-image: url({ROOT_URL}images/items/item_{bags.bagitems.BI_ICON}.png);'></div> 
+   <!-- END bagitems --> 
+
+   <div class='CB_Button bagbuttonrow{bags.ROWS}' onclick='cbPopup_closeItem("#bag{bags.SLOT}");'>{L_DONE}</div> 
+</div> 
+<!-- END bags -->       
+      
+<!-- ITEM WINDOWS -->
+<!-- BEGIN item --> 
+<div class='WindowComplex PositionItem CB_Can_Drag CB_HoverChild' id='slot{item.SLOT}' onmousedown='cbPopup_ZOrder("#slot{item.SLOT}");'> 
+   <div class='WindowTitleBar'>
+      <a href='{item.LINK}'>{item.NAME}</a>
+      <div class='WindowTile' onclick='cbPopup_tileItems();' title='click to tile all open popups'></div>
+      <div class='WindowCloseAll' onclick='cbPopup_closeAllItems();' title='click to close all open popups'></div>
+      <div class='WindowClose' onclick='cbPopup_closeItem("#slot{item.SLOT}");' title='click to close popup'></div>
+   </div> 
+   <div style='text-align:left;'>        
+      {item.HTML} 
+      <!-- BEGIN augment --> 
+      <div class='WindowNestedTan'>
+         <div class='WindowNestedTanTitleBar'>
+            <a href='{item.augment.AUG_LINK}'>{item.augment.AUG_NAME}</a>
+         </div>
+         {item.augment.AUG_HTML} 
       </div> 
-    </td> 
-  </tr> 
-  <tr> 
-    <td colspan='3' align='center'> 
-      <br> 
-      <br> 
-      <br> 
-      <!-- BEGIN item --> 
-      <div class='ItemOuter' id='slot{item.SLOT}' style='display:none;' onmousedown='cbPopup_ZOrder("#slot{item.SLOT}");'> 
-        <div class='ItemTitle'> 
-          <div class='ItemTitleLeft'></div> 
-          <div class='ItemTitleMid'>
-            <a href='{item.LINK}'>{item.NAME}</a>
-            <div class='ItemTile' onclick='cbPopup_tileItems();' title='click to tile all open item popups'></div>
-            <div class='ItemCloseAll' onclick='cbPopup_closeAllItems();' title='click to close all open item popups'></div>
-            <div class='ItemClose' onclick='cbPopup_closeItem("#slot{item.SLOT}");' title='click to close this popup'></div>
-          </div> 
-          <div class='ItemTitleRight'></div> 
-        </div> 
-        <div class='ItemInner' style='text-align:left;'>        
-          {item.HTML} 
-          <!-- BEGIN augment --> 
-          <center> 
-            <br> 
-            <table class='AugTable'> 
-              <tr> 
-                <td align='center'> 
-                  <a href='{item.augment.AUG_LINK}'>{item.augment.AUG_NAME}</a> 
-                </td> 
-              </tr> 
-              <tr> 
-                <td align='left'> 
-                  {item.augment.AUG_HTML} 
-                </td> 
-              </tr> 
-            </table> 
-          </center> 
-          <!-- END augment --> 
-        </div> 
-      </div> 
-      <!-- END item --> 
-    </td> 
-  </tr> 
-</table> 
-</center> 
+      <!-- END augment -->   
+   </div> 
+</div> 
+<!-- END item --> 
 
-<!-- activate the item popups -->
-<script type="text/javascript" src="{ROOT_URL}templates/popup.js"></script>
+<script type="text/javascript">
+   //display the first tab after load
+   $( document ).ready(function() {
+      CB_displayTab('#charbrowser NAV.CB_Tab_Box UL LI', '#tab1', '#charbrowser DIV.PositionInventory DIV.InventoryContents', '#tabbox1');
+   });
+</script>

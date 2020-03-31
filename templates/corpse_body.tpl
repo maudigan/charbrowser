@@ -1,42 +1,24 @@
-<div class='NavOuter'>
-<div class='NavInner'>
-  <div class='FreeButton' onclick="window.location='{INDEX_URL}?page=character&char={NAME}';" style="margin:3px">{L_INVENTORY}</div>
-  <div class='FreeButton' onclick="window.location='{INDEX_URL}?page=aas&char={NAME}';" style="margin:3px">{L_AAS}</div>
-  <div class='FreeButton' onclick="window.location='{INDEX_URL}?page=keys&char={NAME}';" style="margin:3px">{L_KEYS}</div>
-  <div class='FreeButton' onclick="window.location='{INDEX_URL}?page=flags&char={NAME}';" style="margin:3px">{L_FLAGS}</div>
-  <div class='FreeButton' onclick="window.location='{INDEX_URL}?page=skills&char={NAME}';" style="margin:3px">{L_SKILLS}</div>
-  <div class='FreeButton' style="color:606060;margin:3px">{L_CORPSE}</div>
-  <div class='FreeButton' onclick="window.location='{INDEX_URL}?page=factions&char={NAME}';" style="margin:3px">{L_FACTION}</div>
-  <div class='FreeButton' onclick="window.location='{INDEX_URL}?page=charmove&char={NAME}';" style="margin:3px">{L_CHARMOVE}</div>
-  <div class='FreeButton' onclick="window.external.AddFavorite(location.href, document.title);" style="margin:3px">{L_BOOKMARK}</div>
-</div>
-</div>
-<center>
-  <div class='FlagOuter'>
-    <div class='FlagTitle'>
-      <div class='FlagTitleLeft'></div>
-      <div class='FlagTitleMid'>{L_CORPSES} - {NAME}</div>
-      <div class='FlagTitleRight'></div>
-    </div>
-    <div class='FlagInner'>
-      <table class='StatTable' style='width:90%;'>
-          <tr>
-            <td width='25%' class='ColumnHead' align='center'>{L_REZZED}</td>	      
-            <td width='25%' class='ColumnHead'>{L_TOD}</td>	
-            <td width='25%' class='ColumnHead'>{L_LOC}</td>	
-            <td width='25%' class='ColumnHead' align='center'>{L_MAP}</td>	
-          </tr>
-        <!-- BEGIN corpses -->
-          <tr>
-            <td align='center'><div class='check{corpses.REZZED}'></div></</td>
+<div class='WindowComplex PositionCorpse CB_Can_Drag'>
+   <div class='WindowTitleBar'>{L_CORPSES} - {NAME}</div>
+   <table class='CB_Table'>
+      <thead>
+         <tr>
+            <th>{L_REZZED}</th>     
+            <th>{L_TOD}</th>
+            <th>{L_LOC}</th>
+            <th>{L_MAP}</th>
+         </tr>
+      </thead>
+      <tbody>
+      <!-- BEGIN corpses -->
+         <tr>
+            <td><div class='CB_CheckBox_{corpses.REZZED}'></div></td>
             <td>{corpses.TOD}</td>	      
             <td><a href='{corpses.LINK_ZONE}'>{corpses.ZONE}</a> {corpses.LOC}</td>
-            <td align='center'><a href='{corpses.LINK_MAP}'>[map]</a></td>
-          </tr>
-        <!-- END corpses -->
-      </table>
-      <br><br>
-      <div class='FreeButton' onclick="window.location='{INDEX_URL}?page=character&char={NAME}';">{L_DONE}</div>
-    </div>
-  </div>
-</center>
+            <td><a href='{corpses.LINK_MAP}'>[map]</a></td>
+         </tr>
+      <!-- END corpses -->
+      </tbody>
+   </table>
+   <a class='CB_Button' href="{INDEX_URL}?page=character&char={NAME}">{L_DONE}</a>
+</div>

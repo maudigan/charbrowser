@@ -1,115 +1,83 @@
-<center>
-  <div class='FlagOuter'>
-    <div class='FlagTitle'>
-      <div class='FlagTitleLeft'></div>
-      <div class='FlagTitleMid'>{L_BAZAAR}</div>
-      <div class='FlagTitleRight'></div>
-    </div>
-    <div class='FlagInner'>
-      <table class='StatTable' style='width:625px;'>
-        <tr>
-          <td align='center' width='150px' valign='top'>          
-            <table class='StatTable' style='width:90%;'>
-              <tr><td align='left' nowrap>
-                <form method='GET' name='bazaar' action='{INDEX_URL}'>
-                  <input type='hidden' name='page' value='bazaar'>
-                  {L_SEARCH_NAME}<br>
-                  <input class='Bazaar' name='item' value='{ITEM}'><br>
-                  <br>
-                  {L_SEARCH_CLASS}<br>
-                  <select class='Bazaar' name='class'>
-                    <!-- BEGIN select_class -->
-                    <option value='{select_class.VALUE}' {select_class.SELECTED}>{select_class.OPTION}</option>
-                    <!-- END select_class -->
-                  </select>
-                  <br>
-                  <br>
-                  {L_SEARCH_RACE}<br>
-                  <select class='Bazaar' name='race'>
-                    <!-- BEGIN select_race -->
-                    <option value='{select_race.VALUE}' {select_race.SELECTED}>{select_race.OPTION}</option>
-                    <!-- END select_race -->
-                  </select>
-                  <br>
-                  <br>
-                  {L_SEARCH_SLOT}<br>
-                  <select class='Bazaar' name='slot'>
-                    <!-- BEGIN select_slot -->
-                    <option value='{select_slot.VALUE}' {select_slot.SELECTED}>{select_slot.OPTION}</option>
-                    <!-- END select_slot -->
-                  </select>
-                  <br>
-                  <br>
-                  {L_SEARCH_TYPE}<br>
-                  <select class='Bazaar' name='type'>
-                    <!-- BEGIN select_type -->
-                    <option value='{select_type.VALUE}' {select_type.SELECTED}>{select_type.OPTION}</option>
-                    <!-- END select_type -->
-                  </select>
-                  <br>
-                  <br>
-                  {L_SEARCH_PRICE_MIN}<br>
-                  <input class='Bazaar' name='pricemin' value='{PRICE_MIN}'><br>
-                  <br>
-                  {L_SEARCH_PRICE_MAX}<br>
-                  <input class='Bazaar' name='pricemax' value='{PRICE_MAX}'><br>
-                  <br>
-                  <center>  
-                    <div class='FreeButton' onclick="document.bazaar.submit();">{L_SEARCH}</div>
-                  </center>
-                </form>
-              </td></tr>
-            </table>
-          </td>
-          <td>
-            <div class='FlagTabBox' > 
-              <center>   
-              <table class='StatTable' cellpadding='3px' style='width:90%;height:400px;'>
-                <tr>                  
-                  <td class='ColumnHead'><a href="{ORDER_LINK}&orderby=name" style='color:#8aa3ff ;'>{L_ITEM}</a></td>
-                  <td class='ColumnHead'><a href="{ORDER_LINK}&orderby=tradercost" style='color:#8aa3ff ;'>{L_PRICE}</a></td>
-                  <td class='ColumnHead'><a href="{ORDER_LINK}&orderby=charactername" style='color:#8aa3ff ;'>{L_NAME}</a></td>
-                </tr>	
-                <!-- BEGIN items -->
-                <tr onMouseOver="this.style.background = '#7b714a '" onMouseOut ="this.style.background = 'none'" >
-                  <td nowrap><a itemid='#item{items.SLOT}' class='HoverSlot' href=# style='color:#8aa3ff ;'>{items.NAME}</a></td>
-                  <td nowrap>{items.PRICE}</td>
-                  <td nowrap><a href='{INDEX_URL}?page=character&char={items.SELLER}' style='color:#8aa3ff ;'>{items.SELLER}</a></td>
-                </tr>
-                <!-- END items -->
-                <tr>
-                  <td height='100%' colspan='3' valign='bottom' align='center'>{PAGINATION}</td>
-                </tr>
-              </table>
-              </center>
-            </div>
-          </td>      
-        </tr>
+<div class='WindowComplex PositionBazaar CB_Can_Drag'>
+   <div class='WindowTitleBar'>{L_BAZAAR}</div>
+   <div class='PositionBazaarLeft'>
+      <form method='GET' name='bazaar' action='{INDEX_URL}'>
+         <input type='hidden' name='page' value='bazaar'>
+         
+         <label for='item'>{L_SEARCH_NAME}</label>
+         <input name='item' id='item' type='text' value='{ITEM}' autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">
+
+         <label for='class'>{L_SEARCH_CLASS}</label>
+         <select name='class' id='class'>
+            <!-- BEGIN select_class -->
+            <option value='{select_class.VALUE}' {select_class.SELECTED}>{select_class.OPTION}</option>
+            <!-- END select_class -->
+         </select>
+
+         <label for='race'>{L_SEARCH_RACE}</label>
+         <select name='race' id='race'>
+            <!-- BEGIN select_race -->
+            <option value='{select_race.VALUE}' {select_race.SELECTED}>{select_race.OPTION}</option>
+            <!-- END select_race -->
+         </select>
+
+         <label for='slot'>{L_SEARCH_SLOT}</label>
+         <select name='slot' id='slot'>
+            <!-- BEGIN select_slot -->
+            <option value='{select_slot.VALUE}' {select_slot.SELECTED}>{select_slot.OPTION}</option>
+            <!-- END select_slot -->
+         </select>
+
+         <label for='type'>{L_SEARCH_TYPE}</label>
+         <select name='type' id='type'>
+            <!-- BEGIN select_type -->
+            <option value='{select_type.VALUE}' {select_type.SELECTED}>{select_type.OPTION}</option>
+            <!-- END select_type -->
+         </select>
+
+         <label for='item'>{L_SEARCH_PRICE_MIN}</label>
+         <input name='pricemin' id='pricemin' type='text' value='{PRICE_MIN}'>
+
+         <label for='item'>{L_SEARCH_PRICE_MAX}</label>
+         <input name='pricemax' id='pricemax' type='text' value='{PRICE_MAX}'>
+         <input class='CB_Button' type='submit' value='{L_SEARCH}'>
+      </form>
+   </div>
+   <div class='WindowNestedBlue PositionBazaarRight'>
+      <table class='CB_Table CB_Highlight_Rows'>
+         <thead> 
+            <tr>                  
+               <th><a href="{ORDER_LINK}&orderby=name">{L_ITEM}</a></th>
+               <th><a href="{ORDER_LINK}&orderby=tradercost">{L_PRICE}</a></th>
+               <th><a href="{ORDER_LINK}&orderby=charactername">{L_NAME}</a></th>
+            </tr>
+         </thead>
+         </tbody>
+            <!-- BEGIN items -->
+            <tr>
+               <td><a hoverChild='#item{items.SLOT}' class='CB_HoverParent' href='#'>{items.NAME}</a></td>
+               <td>{items.PRICE}</td>
+               <td><a href='{INDEX_URL}?page=character&char={items.SELLER}'>{items.SELLER}</a></td>
+            </tr>
+            <!-- END items -->
+         </tbody>
       </table>
-    </div>
-  </div>
-  <br>
-  <br>
-  <br>
-      <!-- BEGIN items -->
-      <div class='ItemOuter' id='item{items.SLOT}' style='display:none;' onmousedown='cbPopup_ZOrder("#slot{items.SLOT}");'>
-         <div class='ItemTitle'>
-            <div class='ItemTitleLeft'></div>
-            <div class='ItemTitleMid'>
-               <a href='{items.LINK}'>{items.NAME}</a>
-               <div class='ItemTile' onclick='cbPopup_tileItems();' title='click to tile all open item popups'></div>
-               <div class='ItemCloseAll' onclick='cbPopup_closeAllItems();' title='click to close all open item popups'></div>
-               <div class='ItemClose' onclick='cbPopup_closeItem("#item{items.SLOT}");' title='click to close this popup'></div>
-            </div>
-            <div class='ItemTitleRight'></div>
-         </div>
-         <div class='ItemInner' style='text-align:left;'>
-            {items.HTML}
-         </div>
-      </div>
-      <!-- END items -->
-</center>
+   </div>
+   <div class='CB_Pagination'>{PAGINATION}</div>
+</div>
 
+<!-- ITEM WINDOWS -->
+<!-- BEGIN items --> 
+<div class='WindowComplex PositionItem CB_Can_Drag CB_HoverChild' id='item{items.SLOT}' onmousedown='cbPopup_ZOrder("#slot{items.SLOT}");'> 
+   <div class='WindowTitleBar'>
+      <a href='{items.LINK}'>{items.NAME}</a>
+      <div class='WindowTile' onclick='cbPopup_tileItems();' title='click to tile all open popups'></div>
+      <div class='WindowCloseAll' onclick='cbPopup_closeAllItems();' title='click to close all open popups'></div>
+      <div class='WindowClose' onclick='cbPopup_closeItem("#item{items.SLOT}");' title='click to close this popup'></div>
+   </div> 
+   <div style='text-align:left;'>        
+      {items.HTML} 
+   </div> 
+</div> 
+<!-- END items --> 
 
-<!-- activate the item popups -->
-<script type="text/javascript" src="{ROOT_URL}templates/popup.js"></script>

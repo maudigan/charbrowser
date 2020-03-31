@@ -16,9 +16,16 @@
  ***************************************************************************/
  
  
- 
- 
+/******************************************************************************
+**                                                                           **
+**                   NEED HELP SETTING THIS FILE UP?                         **
+**                                                                           **
+** https://github.com/maudigan/charbrowser/wiki/Configuration#configuration  **
+**                                                                           **
+******************************************************************************/
 
+//DONT TOUCH THIS SETTING; PREVENTS THIS  
+//SCRIPT FROM EXECUTING FROM DIRECT ACCESS
 if ( !defined('INCHARBROWSER') )
 {
    die("Hacking attempt");
@@ -47,7 +54,7 @@ $blockbazaar  = 0  ;//disable bazaar 0=on 1=off
 /*****************************************************
 **                  Title  settings                 **
 *****************************************************/
-$mytitle      =    "Character Browser"; 
+$mytitle      =    "CharBrowser"; 
 $subtitle     =    " • Be Nosey";
 
 
@@ -62,39 +69,83 @@ $api_enabled = false;
 
 
 /*****************************************************
-**   The following 5 settings are for the dynamic   **
+**              DYNAMIC TITLE IMAGE                 **
+**   The following 2 settings are for the dynamic   **
 **   title image(title.php). If you have freetype   **
 **   installed you use a fontname from the /fonts   **
-**   directory. If not use a fontname from the      **
-**   /fontsold directory. Don't include the file    **
-**   extension. Contact your system admin or use    **
-**   php_info() to find out if you have freetype.   **
-**   If you don't have freetype fontsize wont be    **
-**   changable.                                     **
+**   directory. Don't include the file extension.   **
+**   Contact your system admin or use php_info()    **
+**   to find out if you have freetype.              **
 *****************************************************/
-$titlefont     =    "colchester";  
-$titlefontR    =    "35";
-$titlefontG    =    "35";
-$titlefontB    =    "1"; 
-$titlefontsize =    "45";
+$titlefont    =    "everquest";  
+$titlefontsize=    "90";
+
+
+
+/*****************************************************
+**               STATIC TITLE IMAGE                 **
+**  You can use a static title image if you want    **
+**  or if you don't have freetype installed. Place  **
+**  your image in the ./images directory and then   **
+**  uncomment the below variable and replace it     **
+**  with the image files name.                      **
+*****************************************************/
+//$titleimage = "exampleheader.png";
 
 
 /*****************************************************
 **   Item stats view. Change this value to alter    **
 **   the way item stats are displayed               **
-**   0 - Legacy item stats                          **
+**   0 - Standard item stats   (recommended)        **
 **   1 - List item stats                            **
 *****************************************************/
-$itemstatsdisplay = 0; 
+$itemstatsdisplay = 0;  
 
 
 /*****************************************************
 **   When a character is soft deleted its record    **
 **   remains; do you want it shown or not?          **
-**   0 - hides soft deleted characters              **
-**   1 - shows soft deleted characters              **
+**   0 - hide soft deleted characters (recommended) **
+**   1 - show soft deleted characters               **
 *****************************************************/
 $showsoftdelete = 0;   
+
+
+/*****************************************************
+**   You can look at composition of guilds on the   **
+**   guild.php page. This setting will block it     **
+**   0 - show guild data                            **
+**   1 - block guild data                           **
+*****************************************************/
+$blockguilddata = 0;  
+
+
+/*****************************************************
+**   You can look at composition of server on the   **
+**   server.php page. This setting will block it    **
+**                                                  **
+**   NOTE: this runs aggregate functions on the     **
+**   entire character_data table. I would suggest   **
+**   checking the performance of server.php and     **
+**   its load on your database before leaving it    **
+**   enabled.                                       **
+**   0 - show server data                           **
+**   1 - block server data                          **
+*****************************************************/
+$blockserverdata = 0;  
+
+
+/*****************************************************
+**   By default charbrowser will automatically      **
+**   phone the GitHub repo to check for updates.    **
+**   If your installation is out of date you will   **
+**   see a red popup message on the settings page.  **
+**   This setting will stop that from checking and  **
+**   displaying the results.                        **
+**   0 - show update notice  (recommended)          **
+**   1 - block update notice                        **
+*****************************************************/
+$cb_blockversioncheck = 0;  
 
 
 /*****************************************************
@@ -104,8 +155,8 @@ $showsoftdelete = 0;
 *****************************************************/
 $blockcharmove = 0; //disable charmove 0=on 1=off
 $charmovezones = array(
-  'nexus'   => array( 'x' => 0, 'y' => 0, 'z' => 0 ),
-  'oot'     => array( 'x' => 1, 'y' => 1, 'z' => 1 ),
+  'nexus'  => array( 'x' => 0, 'y' => 0, 'z' => 0 ),
+  'oot'    => array( 'x' => 1, 'y' => 1, 'z' => 1 ),
 );  
 
 
@@ -227,6 +278,106 @@ $permissions = array(
 
 
 
+/*****************************************************
+**  If you allow the display of the guild page, the **
+**  guild leader can set a quesglobal               **
+**  'charbrowser_guild' to 1 for a PUBLIC profile   **
+**  or to 2 for a PRIVATE profile. If it is unset   **
+**  it will be ALL. This works much like the        **
+**  character permissions.                          ** 
+**      0 = display       1 = block                 **
+*****************************************************/
+$guild_permissions = array(
+'ALL' => array( 
+    'mainpage'         => 0),
+'PUBLIC' => array(
+    'mainpage'         => 0),
+'PRIVATE' => array(
+    'mainpage'         => 1)
+);
+/*****************************************************/
+
+
+
+
+/*****************************************************
+**               SELF REGISTRATION                  ** 
+**  You can disable this by setting                 ** 
+**  $cb_allow_self_register to 0. If enabled (1)    ** 
+**  the script will phone-home to register by       ** 
+**  providing your URL, admin email, version, if    ** 
+**  you're a custom server, and your server name.   ** 
+**  Your admin email will NOT be shared, it will be ** 
+**  used in case of an emergency patch or releases  ** 
+**  (depending on your settings). My hope is to     **
+**  setup a page listing all public facing          **
+**  CharBrowser installs for EQEmulator to make it  ** 
+**  easy for players to discover other popular      **
+**  servers and browse their characters. (depending ** 
+**  on if people register their installs). This is  ** 
+**  all disabled by default. If enabled it will     ** 
+**  update the registration several times a day.    ** 
+**  It times the interval by touching the timestamp ** 
+**  on a .registration file.                        ** 
+**  Even if you have a private or local install     **
+**  you can feel free to register, it wont junk     **
+**  the data up.                                    **
+**  All the values in this section are for this     **
+**  feature.                                        **
+**      0 = block       1 = allow                   **
+*****************************************************/
+
+//set to 0 to block self registration, if set to 1
+//this installation will register itself
+$cb_allow_self_register = 0;
+
+//The email address to contact the admin in case of
+//emergency patches or releases (wont be shared)
+$cb_admin_email = "admin@your-site.com";
+
+//if there's an emergency patch or major security issue
+//discovered we'll email you. If there are regular
+//patches or releases we may email as well
+//depending on if many people register
+// 1 = email for patches
+// 2 = email for releases
+// 3 = emergency patches only
+// 0 = never email
+$cb_admin_contact = 3;
+
+//the front-facing URL that users should access to hit
+//your charbrowser home page. If you've wrapped the site
+//it should be the URL to that php page. Don't include any
+//variables or it wont register. Do it exactly like the
+//example.
+$cb_installation_url = "charbrowser.mqemulator.net/index.php";
+
+//is this a custom server or mostly a standard EQ-like
+//server. 1 = custom, 0 = standard
+$cb_is_custom = 0;
+
+//Your server name, may be displayed in a central index
+//of servers one day if enough people register
+$cb_server_title = "Your Server Name";
+
+//if enough people register we may setup a central server
+//list, either in charbrowser or a central location
+//set this to 0 to be unlisted in any future index
+// 1 = list my server, 0 = don't list me ever
+$cb_list_server = 1;
+
+
+//Unique Key: IMPORTANT
+//set this to a long, unique string of letters
+//and numbers. This will prevent a bad actor
+//from spoofing your registration and sending users
+//to the wrong page. Your site may not be registered
+//or listed if this value isn't set.    When a self 
+//registration is sent, this value will be included. The
+//registration server will do a handshake with this
+//value to ensure the values really came from your
+//server. 
+$cb_unique_string = "SET THIS TO A LONG UNIQUE STRING OF LETTERS AND NUMBERS";
 
 
 
@@ -294,4 +445,20 @@ $link_faction = "http://mqemulator.net/faction.php?id={FACTION_ID}";
 ****              STOP EDITING HERE                ****
 *******************************************************
 ******************************************************/
+
+/****************************************************
+**                 CONFIG VERSION                  **
+**  When IMPORTANT changes are made to the config  **
+**  template that require a server to recreate     **
+**  their config file, this version will be        **
+**  changed. A detection module in index.php will  **
+**  check this value and prevent the instance from **
+**  working until you update your config file with **
+**  the new config.template. Don't change this     **
+**  version to fix the issue. Backup your old      **
+**  config file and replace it with                **
+**  config.template and then fill in your settings **
+**  again.                                         **
+*****************************************************/
+$cb_config_version = 'v2.0.0';
 ?>

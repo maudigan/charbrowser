@@ -20,6 +20,12 @@
  *      organized some code. A lot has changed, but not much functionally
  *      do a compare to 2.41 to see the differences. 
  *      Implemented new database wrapper.
+ *   March 14, 2020 - Maudigan
+ *      broke the table header into it's own template var
+ *   March 17, 2020 - Maudigan
+ *      implemented self version checking
+ *   March 22, 2020 - Maudigan
+ *     impemented common.php
  ***************************************************************************/
  
  
@@ -27,11 +33,7 @@
                  INCLUDES
 *********************************************/ 
 define('INCHARBROWSER', true);
-include_once(__DIR__ . "/include/config.php");
-include_once(__DIR__ . "/include/language.php");
-include_once(__DIR__ . "/include/functions.php");
-include_once(__DIR__ . "/include/global.php");
-
+include_once(__DIR__ . "/include/common.php");
 
 /*********************************************
         GATHER RELEVANT PAGE DATA
@@ -65,6 +67,40 @@ $l_users = array (
 );
  
  
+//CHECK GITHUB FOR CHARBROWSER UPDATES
+//request the data from the github api
+//github requires a user-agent so it'll respond
+//dont remove it
+$CB_opts = array(
+   'http' => array(
+      'method' => 'GET',
+      'header' => array(
+         'User-Agent: PHP'
+      )
+   )
+);
+
+$CB_context = stream_context_create($CB_opts);
+//if you're using a custom repo/fork this would be the location to redirect to that URL instead
+$CB_content = file_get_contents('https://api.github.com/repos/maudigan/charbrowser/releases/latest', false, $CB_context);
+$CB_json = json_decode($CB_content);
+
+//current version number
+$CB_cur_version =  $CB_json->tag_name; 
+
+//is this install current
+$CB_is_old = ($CB_cur_version != $version) ? true : false;
+
+//if it's old grab the new version info, when it was published
+//download url, and its description
+if ($CB_is_old) {
+   $CB_cur_version_url = $CB_json->html_url;
+   $CB_cur_version_published = date("F j, Y, g:i a", strtotime($CB_json->published_at));
+   $CB_cur_version_description = $CB_json->body;
+}
+
+
+ 
 /*********************************************
                DROP HEADER
 *********************************************/
@@ -79,12 +115,12 @@ $cb_template->set_filenames(array(
    'settings' => 'settings_body.tpl')
 );
 //column heads
-$cb_template->assign_both_block_vars( "rows" , array());
-$cb_template->assign_both_block_vars( "rows.cols" , array(
+$cb_template->assign_both_block_vars( "headers" , array());
+$cb_template->assign_both_block_vars( "headers.cols" , array(
    'VALUE' => "" )
 );  
 foreach ($l_users as $key => $value) {
-   $cb_template->assign_both_block_vars( "rows.cols" , array(
+   $cb_template->assign_both_block_vars( "headers.cols" , array(
       'VALUE' => $value )
    );    
 }
@@ -102,6 +138,19 @@ foreach ($l_permission as $key => $value) {
    }
 }
 
+//is this installation of charbrowser current
+if ($CB_is_old && !$cb_blockversioncheck) {
+   //all this data comes from github, so we want to santize it to prevent
+   //cross site scripting attacks, do not remove xss_safe() calls
+   //or you create a vulnerability
+   $cb_template->assign_both_block_vars( "switch_new_version" , array(
+      'VERSION' => xss_safe($CB_cur_version),
+      'URL' => xss_safe($CB_cur_version_url),
+      'PUBLISHED' => xss_safe($CB_cur_version_published),
+      'DESCRIPTION' => xss_safe($CB_cur_version_description))
+   ); 
+}
+
 $cb_template->assign_both_vars(array(  
    'S_RESULTS' => $numToDisplay,
    'S_HIGHLIGHT_GM' => (($highlightgm)?$language['SETTINGS_ENABLED']:$language['SETTINGS_DISABLED']),
@@ -112,6 +161,8 @@ $cb_template->assign_vars(array(
    'L_RESULTS' => $language['SETTINGS_RESULTS'],
    'L_CHARMOVE' => $language['SETTINGS_CHARMOVE'],
    'L_HIGHLIGHT_GM' => $language['SETTINGS_HIGHLIGHT_GM'],
+   'L_UPDATES_EXIST' => $language['SETTINGS_UPDATES_EXIST'],
+   'L_DOWNLOAD' => $language['SETTINGS_DOWNLOAD'],
    'L_BAZAAR' => $language['SETTINGS_BAZAAR'],
    'L_SETTINGS' => $language['SETTINGS_SETTINGS'],
    'L_BACK' => $language['BUTTON_BACK'])

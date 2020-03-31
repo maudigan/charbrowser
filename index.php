@@ -25,6 +25,8 @@
  *      "page" variable.
  *   July 15, 2018 - Maudigan
  *      Made the 'page' variable validation more strict to prevent abuse
+ *   March 22, 2020 - Maudigan
+ *     impemented common.php
  ***************************************************************************/
   
  
@@ -32,11 +34,7 @@
                  INCLUDES
 *********************************************/ 
 define('INCHARBROWSER', true);
-include_once(__DIR__ . "/include/config.php");
-include_once(__DIR__ . "/include/version.php");
-include_once(__DIR__ . "/include/language.php");
-include_once(__DIR__ . "/include/functions.php");
-include_once(__DIR__ . "/include/global.php");
+include_once(__DIR__ . "/include/common.php");
  
  
  

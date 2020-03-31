@@ -54,6 +54,7 @@ $cb_template->assign_vars(array(
   'L_SETTINGS' => $language['HEADER_SETTINGS'],
   'L_BAZAAR' => $language['HEADER_BAZAAR'],
   'L_HOME' => $language['HEADER_HOME'],
+  'L_SERVER' => $language['HEADER_SERVER'],
   'L_CHARMOVE' => $language['HEADER_CHARMOVE'],
   'L_SIGBUILD' => $language['HEADER_SIGBUILD'],
   'L_REPORT_ERRORS' => $language['HEADER_REPORT_ERRORS'],

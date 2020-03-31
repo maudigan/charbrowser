@@ -29,6 +29,13 @@
  *      Modified database to use a class.
  *   September 6, 2018 - Maudigan
  *      Removed the extra comma from the UPDATE statement
+ *   March 13, 2020 - Maudigan
+ *      broke up result output into seperate variables
+ *   March 14, 2020
+ *      show char menu if we come in with a charname
+ *      display optional charname in form
+ *   March 22, 2020 - Maudigan
+ *     impemented common.php
  *  
  ***************************************************************************/
   
@@ -37,10 +44,7 @@
                  INCLUDES
 *********************************************/ 
 define('INCHARBROWSER', true);
-include_once(__DIR__ . "/include/config.php");
-include_once(__DIR__ . "/include/language.php");
-include_once(__DIR__ . "/include/functions.php");
-include_once(__DIR__ . "/include/global.php");
+include_once(__DIR__ . "/include/common.php");
 include_once(__DIR__ . "/include/db.php");
  
  
@@ -58,11 +62,11 @@ function trymove($name, $login, $zone) {
    global $language, $charmovezones;
    global $cbsql;
 
-   if (!$login || !$zone || !$name) return $login." / ".$name." / ".$zone." - one or more fields was left blank";
-   if (!preg_match("/^[a-zA-Z]*\z/", $name)) return $login." / ".$name." / ".$zone." - character name contains illegal characters";
-   //if (!preg_match("/^[a-zA-Z]*\z/", $login)) return $login." / ".$name." / ".$zone." - login contains illegal characters";
-   if (!preg_match("/^[a-zA-Z]*\z/", $zone)) return $login." / ".$name." / ".$zone." - zone contains illegal characters";
-   if (!$charmovezones[$zone]) return $login." / ".$name." / ".$zone." - zone is not a legal selection";  
+   if (!$login || !$zone || !$name) return "One or more fields were left blank";
+   if (!preg_match("/^[a-zA-Z]*\z/", $name)) return "The character name contains illegal characters";
+   //if (!preg_match("/^[a-zA-Z]*\z/", $login)) return "login contains illegal characters";
+   if (!preg_match("/^[a-zA-Z]*\z/", $zone)) return "That zone contains illegal characters";
+   if (!$charmovezones[$zone]) return "That zone is not a legal selection";  
   
    //get zone id, and verify shortname from db
    $tpl = <<<TPL
@@ -73,7 +77,7 @@ LIMIT 1
 TPL;
    $query = sprintf($tpl, $cbsql->escape_string($zone));
    $result = $cbsql->query($query);  
-   if (!$cbsql->rows($result))  return $login." / ".$name." / ".$zone." - zone database error";  
+   if (!$cbsql->rows($result))  return "Unknown database error";  
   
    $row = $cbsql->nextrow($result);
    $zonesn = $row['short_name'];
@@ -96,7 +100,7 @@ TPL;
 
    if (!$cbsql->rows($result))  { 
       sleep(2);
-      return $login." / ".$name." / ".$zone." - Login or character name was not correct";  
+      return "Login or character name was not correct";  
    }
 
    $row = $cbsql->nextrow($result);
@@ -119,7 +123,7 @@ TPL;
    $result = $cbsql->query($query);
 
 
-   return $login." / ".$name." - moved to ".$zoneln;
+   return $name." - moved to ".$zoneln;
 }
 
 
@@ -129,10 +133,13 @@ TPL;
 //dont display if blocked in config.php 
 if ($blockcharmove) cb_message_die($language['MESSAGE_ERROR'],$language['MESSAGE_ITEM_NO_VIEW']);
 
+//prepopulate name if its provided
+$name = $_GET['char'];
+if (!IsAlphaSpace($name)) $name = "";
+
 $names = $_GET['name'];
 $zones = $_GET['zone'];
 $logins = $_GET['login'];
-$char = $_GET['char'];
  
  
 /*********************************************
@@ -140,6 +147,15 @@ $char = $_GET['char'];
 *********************************************/
 $d_title = " - ".$language['PAGE_TITLES_CHARMOVE'];
 include(__DIR__ . "/include/header.php");
+ 
+ 
+/*********************************************
+            DROP PROFILE MENU
+*********************************************/
+//only drop this header if we came in with a character name
+if ($name) {
+   output_profile_menu($name, 'charmove');
+}
  
  
 /*********************************************
@@ -154,14 +170,17 @@ if ($names && $logins && $zones) {
    );
    
    $cb_template->assign_vars(array( 
-      'L_CHARACTER_MOVER' => $language['CHARMOVE_CHARACTER_MOVER'],
       'L_BOOKMARK' => $language['CHARMOVE_BOOKMARK'],
-      'L_BACK' => $language['BUTTON_BACK'])
+      'L_BACK' => $language['BUTTON_BACK'],
+      'L_RESULT' => $language['CHARMOVE_RESULT'])
    );
    
    foreach ($names as $key => $value) {
       $cb_template->assign_block_vars( "results", array( 
-         'OUTPUT' => trymove($value, $logins[$key], $zones[$key]))
+         'CHARACTER' => $value,
+         'LOGIN' =>  $logins[$key],
+         'ZONE' => $zones[$key],
+         'RESULT' => trymove($value, $logins[$key], $zones[$key]))
       );
    }
 }
@@ -171,11 +190,7 @@ else {
    );
    
    $cb_template->assign_vars(array( 
-      'CHARNAME' => $char, 
-      'L_CHARACTER_MOVER' => $language['CHARMOVE_CHARACTER_MOVER'],
-      'L_LOGIN' => $language['CHARMOVE_LOGIN'],
-      'L_CHARNAME' => $language['CHARMOVE_CHARNAME'],
-      'L_ZONE' => $language['CHARMOVE_ZONE'],
+      'CHARNAME' => $name, 
       'L_ADD_CHARACTER' => $language['CHARMOVE_ADD_CHARACTER'],
       'L_MOVE' => $language['BUTTON_CHARMOVE'])
    );
@@ -186,6 +201,14 @@ else {
       );
    }
 }
+   
+   
+$cb_template->assign_vars(array( 
+   'L_CHARACTER_MOVER' => $language['CHARMOVE_CHARACTER_MOVER'],
+   'L_LOGIN' => $language['CHARMOVE_LOGIN'],
+   'L_CHARNAME' => $language['CHARMOVE_CHARNAME'],
+   'L_ZONE' => $language['CHARMOVE_ZONE'])
+);
  
  
 /*********************************************

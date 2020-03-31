@@ -18,6 +18,17 @@
  *      organized some code. A lot has changed, but not much functionally
  *      do a compare to 2.41 to see the differences. 
  *      Implemented new database wrapper.
+ *   March 14, 2020
+ *      added alpha background
+ *   March 15, 2020
+ *      clean special chars out of the title before generating image
+ *      removed the old deprecated font method for people without ttftext
+ *      rewrote the image generation to have a border and static colors
+ *      made the image cache itself to reduce server load and improve speed
+ *   March 22, 2020 - Maudigan
+ *      Implemented common.php
+ *   March 22, 2020 - Maudigan
+ *      Added client caching
  ***************************************************************************/
  
  
@@ -25,8 +36,8 @@
                  INCLUDES
 *********************************************/ 
 define('INCHARBROWSER', true);
-include_once(__DIR__ . "/include/config.php");
-include_once(__DIR__ . "/include/global.php");
+$charbrowser_image_script = true;
+include_once(__DIR__ . "/include/common.php");
 
 
 
@@ -39,53 +50,97 @@ if (!SERVER_HAS_GD) {
    exit();
 }
 
-if(!$titlefontR)     $titlefontR = 1;
-if(!$titlefontG)     $titlefontG = 1;
-if(!$titlefontB)     $titlefontB = 1;
+//force a recache of the title image
+$recache = (isset($_REQUEST['recache'])) ? true : false;
+
+
+//CACHE CONTROL
+$config_time = filemtime('./include/config.php');
+
+//if the one they have is newer than the config, then theirs is right
+//if this is a modified check, and their timestamp is more recent than the config file, regenerate the image
+if (isset($_SERVER['HTTP_IF_MODIFIED_SINCE']) && strtotime($_SERVER['HTTP_IF_MODIFIED_SINCE']) >= $config_time)
+{
+    header('HTTP/1.0 304 Not Modified');
+    exit;
+}
+
+
 if(!$titlefontsize)  $titlefontsize = 25;
 if(!$mytitle)        $mytitle = "No Title";
 $angle = 0;
 
+//clean the site title for the image
+$cleantitle = preg_replace("/[^a-zA-Z0-9\ ]+/", "", $mytitle);
+
+//path to cache the title image
+//or to load the static title image
+if (isset($titleimage)) {
+   $cachedfile = __DIR__ . "/images/".$titleimage;
+}
+else {
+   $cachedfile = __DIR__ . "/images/cached_titles/".$cleantitle."_".$titlefontsize."_".$titlefont.".png";
+}
+
+
+/*********************************************
+                FUNCTIONS
+*********************************************/
+function fontBorder($image, $size, $angle, $x, $y, $color, $font, $text, $radius) {
+   for ($hor = 0 - $radius; $hor <= $radius; $hor++) {
+      for ($ver = 0 - $radius; $ver <= $radius; $ver++) {
+         imagettftext($image, $size, $angle, $x + $hor, $y + $ver, $color, $font, $text);
+      }
+   }
+}
+
+
 
 /*********************************************
               BUILD THE IMAGE
+             OR LOAD FROM CACHE
 *********************************************/
-//has freetype
-if (SERVER_HAS_FREETYPE) {
-   $titlefont = "fonts/$titlefont.ttf";
-   $bbox = imagettfbbox($titlefontsize, $angle, $titlefont, $mytitle);
+if (!file_exists($cachedfile) || $recache) {
+   $fontfile = "fonts/$titlefont.ttf";
+   
+   //calculate dimensions
+   $bbox = imagettfbbox($titlefontsize, $angle, $fontfile, $cleantitle);
+   $width = abs($bbox[4]) + abs($bbox[0]) + 13;
+   $height = abs($bbox[1]) + abs($bbox[5]) + 13;
+   $x = abs($bbox[0]) + 5;
+   $y = abs($bbox[5]) + 5;
 
-   $width = abs($bbox[4]) + abs($bbox[0]);
-   $height = abs($bbox[1]) + abs($bbox[5]);
-   $x = abs($bbox[0]);
-   $y = abs($bbox[5]);
-
+   //create image and colors
    $image = imagecreatetruecolor($width, $height);
-   $color = imagecolorallocate($image, $titlefontR, $titlefontG, $titlefontB);
-   $white = imagecolorallocate($image, 255, 255, 255);
-   imagefilledrectangle($image, 0, 0, $width - 1, $height - 1, $white);
-   imagettftext($image, $titlefontsize, $angle, $x, $y, $color, $titlefont, $mytitle);
+   imagealphablending($image, true);
+   $yellow = imagecolorallocatealpha($image, 229, 202, 0, 0);
+   $black = imagecolorallocatealpha($image, 0, 0, 0, 0);
+   $white = imagecolorallocatealpha($image, 255, 255, 255, 0);
+   $transparent = imagecolorallocatealpha($image, 0, 0, 0, 127);
+   
+   //draw image
+   imagefill($image, 0, 0, $transparent);
+   imagesavealpha($image, true);
+   fontBorder($image, $titlefontsize, $angle, $x, $y, $white, $fontfile, $cleantitle, 3);
+   fontBorder($image, $titlefontsize, $angle, $x, $y, $black, $fontfile, $cleantitle, 2);
+   imagettftext($image, $titlefontsize, $angle, $x, $y, $yellow, $fontfile, $cleantitle);
+   
+   //save it for future use
+   imagepng($image, $cachedfile);
+}
+else {
+   //load previously generated image
+   $image = imagecreatefrompng($cachedfile);
+   imagesavealpha($image, true);
 }
 
-// does not have freetype
-else {
-   $titlefont = "fontsold/$titlefont.gdf";
-   $titlefont = ImageLoadFont($titlefont);
 
-   $width = ImageFontWidth($titlefont) * strlen($mytitle);
-   $height = ImageFontHeight($titlefont);
-
-   $image = imagecreatetruecolor($width, $height);
-   $color = imagecolorallocate($image, $titlefontR, $titlefontG, $titlefontB);
-   $white = imagecolorallocate($image, 255, 255, 255);
-   imagefilledrectangle($image, 0, 0, $width - 1, $height - 1, $white);
-   ImageString($image, $titlefont, 0, 0, $mytitle, $color); 
-} 
 
 
 /*********************************************
                OUTPUT IMAGE
 *********************************************/
+header('Last-Modified: '.gmdate('D, d M Y H:i:s', $config_time).' GMT', true, 200);
 header("Content-Type: image/png"); 
 imagepng($image); 
 ImageDestroy($image);

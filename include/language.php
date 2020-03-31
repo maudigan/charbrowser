@@ -19,6 +19,16 @@
  *   September 7, 2019 - added corruption (Kinglykrab)
  *   March 7, 2020 - added language for deleted chars and opening 
  *                   bags(Maudigan)
+ *   March 9, 2020 - added language for shared bank(Maudigan)
+ *   March 13, 2020 - added language for charmove result table(Maudigan)
+ *   March 14, 2020 - added signature tabs(Maudigan)
+ *                    added sig button to side menu
+ *   March 16, 2020 - added guild page language(Maudigan)
+ *   March 17, 2020 - added self version check language(Maudigan)
+ *   March 22, 2020 - added config error message(Maudigan)
+ *   March 23, 2020 - added base data error message(Maudigan)
+ *   March 26, 2020 - added skill tab mod(Maudigan)
+ *   March 26, 2020 - added server info language(Maudigan)
  ***************************************************************************/ 
   
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             
@@ -34,6 +44,7 @@ $language['HEADER_GUILD'] = "Guild";
 $language['HEADER_NAME'] = "Name"; 
 $language['HEADER_SETTINGS'] = "Settings"; 
 $language['HEADER_HOME'] = "Home"; 
+$language['HEADER_SERVER'] = "Server"; 
 $language['HEADER_BAZAAR'] = "The Bazaar"; 
 $language['HEADER_CHARMOVE'] = "Character Mover"; 
 $language['HEADER_SIGBUILD'] = "Signature Builder"; 
@@ -45,6 +56,8 @@ $language['HEADER_NAVIGATE'] = "Navigate";
 $language['PAGE_TITLES_AAS'] ="'s Alternate Abilities"; 
 $language['PAGE_TITLES_BAZAAR'] ="The Bazaar"; 
 $language['PAGE_TITLES_CHARACTER'] ="'s Profile"; 
+$language['PAGE_TITLES_GUILD'] =" Guild Info"; 
+$language['PAGE_TITLES_SERVER'] =" Server Info"; 
 $language['PAGE_TITLES_CHARMOVE'] ="Character Mover"; 
 $language['PAGE_TITLES_CORPSE'] ="'s Corpses"; 
 $language['PAGE_TITLES_FACTIONS'] ="'s Factions"; 
@@ -63,6 +76,7 @@ $language['CHARMOVE_CHARACTER_MOVER'] = "Character Mover";
 $language['CHARMOVE_LOGIN'] = "Login"; 
 $language['CHARMOVE_CHARNAME'] = "Name"; 
 $language['CHARMOVE_ZONE'] = "Zone"; 
+$language['CHARMOVE_RESULT'] = "Result"; 
 $language['CHARMOVE_ADD_CHARACTER'] = "add row"; 
 $language['CHARMOVE_BOOKMARK'] = "Click here to add a bookmark for this move!"; 
 
@@ -96,18 +110,18 @@ $language['SIGNATURE_OPTION_STAT_IND'] = "NONE";
 $language['SIGNATURE_OPTION_BACKGROUND'] = "No Background"; 
 $language['SIGNATURE_OPTION_SCREEN'] = "No Filter"; 
 $language['SIGNATURE_NEED_NAME'] = "You must at least enter a valid character name."; 
+$language['SIGNATURE_TABS'] = array(
+   1 => 'Character',
+   2 => 'General',
+   3 => 'Stats',
+   4 => 'Output'
+);
 
 //index language 
-$language['INDEX_INTRO'] ="The character profile and the bazaar have been modified to now have item popups. Instead of the static single item displayed at the bottom you can now have multiple items up and do side by side compares. 
-<br>
-<br>
-To get the item popup simply hover over an items icon and the items stats will display in a small popup window near your cursor. The process is the same for the bazaar but you hover over the item name. In both cases you can click the icon/link to lock the item display on the screen. A second click will clear the item from being locked.
-<br>
-<br>
-You can click and drag each item popup to arrange them. Each item popup will have 3 buttons in the title bar. The first button will tile the items into rows and columns. The third button will close all open popups. The last button will close just the current popup.
-<br>
-<br>
-This new item viewing process interfered with the previous way you used to open a bag to see the contents. To replace that each bag will have an small arrow in the top left corner. Clicking that arrow will open the bag for inspection."; 
+$language['INDEX_INTRO'] ="<p>The character profile and the bazaar have been modified to now have item popups. Instead of the static single item displayed at the bottom you can now have multiple items up and do side by side compares.</p> 
+<p>To get the item popup simply hover over an items icon and the items stats will display in a small popup window near your cursor. The process is the same for the bazaar but you hover over the item name. In both cases you can click the icon/link to lock the item display on the screen. A second click will clear the item from being locked.</p>
+<p>You can click and drag each item popup to arrange them. Each item popup will have 3 buttons in the title bar. The first button will tile the items into rows and columns. The third button will close all open popups. The last button will close just the current popup.</p>
+<p>This new item viewing process interfered with the previous way you used to open a bag to see the contents. To replace that each bag will have an small arrow in the top left corner. Clicking that arrow will open the bag for inspection.</p>"; 
 $language['INDEX_VERSION'] = "Version"; 
 $language['INDEX_BY'] = "By"; 
 
@@ -260,29 +274,22 @@ $language['AAS_TAB_4'] = "Special";
 $language['HELP_HELP'] = "Help"; 
 $language['HELP_VERSION'] = "Version"; 
 $language['HELP_BY'] = "By"; 
-$language['HELP_TEXT'] = "<b>Note:</b><br> 
-                          Great efforts have been made for this software to function as close to <i>in-game</i> as possible. Some noteable things will be covered here, for further assitance, ask the guy sitting next to you first, if he doesnt know please visit the 'Magelo Clone' forum on MQEmulator.net. 
-                          <br><br> 
-                          <b>Blocking your profile:</b><br> 
-                          When installed this software can be setup to hide the accounts of role players and/or anonymous players. To view if either of these options are enabled click the settings link in the top right. 
-                          <br><br> 
-                          <b>Information Hiding:</b><br> 
-                          Just like blocked profiles the server op can choose to block a number of other sections for ALL players such as factions, aas, skills, etc. Again, to view the settings for your server, and to see the full list of options click the settings link in the top right. 
-                          <br><br> 
-                          <b>Searching:</b><br> 
-                          Searching no longer requires the use of wildcards as any spaces are now translated into wildcards. A blank search will return all characters. A search for 'lon ar' will return 'lonestar'. Search results can be sorted by clicking the column headers(only ascending order). 
-                          <br><br> 
-                          <b>Inventory, AA, Skills:</b><br> 
-                          These should all be strikingly similar to the use in game.<br> 
-                          <br><br> 
-                          <b>Corpses:</b><br> 
-                          In the rezzed column, a filled radio button indicates the corpse has been rezzed. If the radio buttons are displayed incorrectly with a white background then you are using IE and a fix for IE's problem can be found <a href='http://www.mozilla.com/en-US/'>here</a>.  The zone-name link now takes you to a page with information about the zone instead of a map. Now the [map] link will display a map and attempt to pinpoint your corpse on it for easier location. 
-                          <br><br> 
-                          <b>Flags:</b><br> 
-                          The top flags box will display the flag for each zone you have access to. A filled radio button indicates you have access to that zone. If the radio buttons are displayed incorrectly with a white background then you are using IE and a fix for IE's problem can be found <a href='http://www.mozilla.com/en-US/'>here</a>.  Clicking the name on one of these flags will open a subwindow of all the flags required to get access to that zone. This truth table was created from the planar projection quest file and because of this some flags are repeated even when verified in a prerequisite. For instance Askr's flags are checked to get into bot, and then checked again to get into Elementals. 
-                          <br><br> 
-                          <b>Faction:</b><br> 
-                          Faction display can vary based on the server admins settings. A basic view shows the faction name, and your faction level in text. In advanced mode your entire faction table is broken down. Base will show the starting value of the faction, char shows your modifier(from killing/questing/etc), race shows your particular races modifer(frogs hate trolls), class shows your classes modifer for that faction, and deity shows your deity's modifier.  
+$language['HELP_TEXT'] = "<h2>Note</h2> 
+                          <p>Great efforts have been made for this software to function as close to <i>in-game</i> as possible. Some noteable things will be covered here, for further assitance, ask the guy sitting next to you first, if he doesnt know please visit the 'Magelo Clone' forum on MQEmulator.net.</p> 
+                          <h2>Blocking your profile</h2>
+                          <p>When installed this software can be setup to hide the accounts of role players and/or anonymous players. To view if either of these options are enabled click the settings link in the top right. </p>
+                          <h2>Information Hiding</h2>
+                          <p>Just like blocked profiles the server op can choose to block a number of other sections for ALL players such as factions, aas, skills, etc. Again, to view the settings for your server, and to see the full list of options click the settings link in the top right. </p>
+                          <h2>Searching</h2>
+                          <p>Searching no longer requires the use of wildcards as any spaces are now translated into wildcards. A blank search will return all characters. A search for 'lon ar' will return 'lonestar'. Search results can be sorted by clicking the column headers(only ascending order). </p>
+                          <h2>Inventory, AA, Skills</h2> 
+                          <p>These should all be strikingly similar to the use in game.</p>
+                          <h2>Corpses</h2>
+                          <p>In the rezzed column, a filled radio button indicates the corpse has been rezzed. If the radio buttons are displayed incorrectly with a white background then you are using IE and a fix for IE's problem can be found <a href='http://www.mozilla.com/en-US/'>here</a>.  The zone-name link now takes you to a page with information about the zone instead of a map. Now the [map] link will display a map and attempt to pinpoint your corpse on it for easier location. </p>
+                          <h2>Flags</h2>
+                          <p>The top flags box will display the flag for each zone you have access to. A filled radio button indicates you have access to that zone. If the radio buttons are displayed incorrectly with a white background then you are using IE and a fix for IE's problem can be found <a href='http://www.mozilla.com/en-US/'>here</a>.  Clicking the name on one of these flags will open a subwindow of all the flags required to get access to that zone. This truth table was created from the planar projection quest file and because of this some flags are repeated even when verified in a prerequisite. For instance Askr's flags are checked to get into bot, and then checked again to get into Elementals. </p>
+                          <h2>Faction</h2>
+                          <p>Faction display can vary based on the server admins settings. A basic view shows the faction name, and your faction level in text. In advanced mode your entire faction table is broken down. Base will show the starting value of the faction, char shows your modifier(from killing/questing/etc), race shows your particular races modifer(frogs hate trolls), class shows your classes modifer for that faction, and deity shows your deity's modifier.  </p>
                           "; 
                         
 
@@ -313,6 +320,35 @@ $language['CORPSE_LOC'] = "Corpse Loc";
 $language['CORPSE_MAP'] = "Map Link"; 
 $language['CORPSE_CORPSES'] = "Corpses"; 
 
+//guild language
+$language['GUILD_GUILD'] = "Guild"; 
+$language['GUILD_MEMBERS'] = "Members"; 
+$language['GUILD_CLASS'] = "Class"; 
+$language['GUILD_CLASSES'] = "Classes"; 
+$language['GUILD_LEVELS'] = "Level Distribution"; 
+$language['GUILD_RACE'] = "Race"; 
+$language['GUILD_RANK'] = "Rank"; 
+$language['GUILD_AVG_LEVEL'] = "Avg Level"; 
+$language['GUILD_LEADER'] = "Leader"; 
+$language['GUILD_PERCENT'] = "Percent"; 
+$language['GUILD_COUNT'] = "Count"; 
+$language['GUILD_LEVEL'] = "Level"; 
+$language['GUILD_NAME'] = "Name"; 
+
+
+
+//server language
+$language['SERVER_MIN_LEVEL'] = "Minimum Level";
+$language['SERVER_MAX_LEVEL'] = "Maximum Level";
+$language['SERVER_AVG_LEVEL'] = "Average Level";
+$language['SERVER_CHAR_COUNT'] = "Character Count";
+$language['SERVER_SERVER'] = "Server";
+$language['SERVER_CLASSES'] = "Classes";
+$language['SERVER_CLASS'] = "Class"; 
+$language['SERVER_PERCENT'] = "Percent";
+$language['SERVER_COUNT'] = "Count";   
+$language['SERVER_LEVELS'] = "Level Distribution"; 
+   
 //key language
 $language['KEYS_KEY'] = "Keys"; 
 
@@ -438,12 +474,12 @@ $language['FLAG_OOW_COA_TAROMANI'] = "You have turned the seven signets into Tar
 
 //skills language 
 $language['SKILLS_SKILLS'] = "Skills"; 
-$language['SKILLS_TRADE'] = "Trade Skills"; 
-$language['SKILLS_OTHER'] = "Other Skills"; 
-$language['SKILLS_CLASS'] = "Class Skills"; 
-$language['SKILLS_CASTING'] = "Casting Skills"; 
-$language['SKILLS_COMBAT'] = "Combat Skills"; 
-$language['SKILLS_LANGUAGE'] = "Language Skills"; 
+$language['SKILLS_TRADE'] = "Trade"; 
+$language['SKILLS_OTHER'] = "Other"; 
+$language['SKILLS_CLASS'] = "Class"; 
+$language['SKILLS_CASTING'] = "Cast."; 
+$language['SKILLS_COMBAT'] = "Combat"; 
+$language['SKILLS_LANGUAGE'] = "Lang."; 
 
 //settings language 
 $language['SETTINGS_SETTINGS'] = "Settings"; 
@@ -473,11 +509,14 @@ $language['SETTINGS_LSKILLS'] = "Lang. Skills";
 $language['SETTINGS_SIGNATURES'] = "Signatures"; 
 $language['SETTINGS_ENABLED'] = "Enabled"; 
 $language['SETTINGS_DISABLED'] = "Disabled"; 
+$language['SETTINGS_UPDATES_EXIST'] = "UPDATES EXIST"; 
+$language['SETTINGS_DOWNLOAD'] = "Download"; 
 
 
 //character 
 $language['CHAR_INVENTORY'] = "Inventory"; 
 $language['CHAR_BANK'] = "Bank"; 
+$language['CHAR_SHARED_BANK'] = "Shared Bank"; 
 $language['CHAR_CONTAINER'] = "Container"; 
 $language['CHAR_REGEN'] = "Regen "; 
 $language['CHAR_FT'] = "FT"; 
@@ -487,6 +526,7 @@ $language['CHAR_HP'] = "HP ";
 $language['CHAR_MANA'] = "MANA"; 
 $language['CHAR_ENDR'] = "ENDR"; 
 $language['CHAR_AC'] = "AC"; 
+$language['CHAR_MIT_AC'] = "MIT AC"; 
 $language['CHAR_ATK'] = "ATK"; 
 $language['CHAR_STR'] = "STR"; 
 $language['CHAR_STA'] = "STA"; 
@@ -517,12 +557,15 @@ $language['BUTTON_CORPSE'] = "Corpse";
 $language['BUTTON_FACTION'] = "Faction"; 
 $language['BUTTON_CHARMOVE'] = "Move"; 
 $language['BUTTON_BOOKMARK'] = "Link"; 
+$language['BUTTON_SIG'] = "Sig"; 
 $language['BUTTON_KEYS'] = "Keys"; 
 
 //messages 
 $language['MESSAGE_ERROR'] = "Error"; 
 $language['MESSAGE_DISABLED'] = "Disabled"; 
 $language['MESSAGE_NO_CHAR'] = "You must specify a character."; 
+$language['MESSAGE_NO_GUILD'] = "You must specify a guild."; 
+$language['MESSAGE_NO_RESULTS_GUILD'] = "No guilds matched your search."; 
 $language['MESSAGE_NAME_ALPHA'] = "A characters name can only contain alphabetic characters."; 
 $language['MESSAGE_ITEM_ALPHA'] = "An item search can only contain alphabetic characters for security."; 
 $language['MESSAGE_NO_RESULTS'] = "No characters matched your search."; 
@@ -542,11 +585,12 @@ $language['MESSAGE_NO_KEYS'] = "This character has no keys on the keyring";
 $language['MESSAGE_NO_GD'] = "This server does not appear to have GD installed, and it is required for image generation. Please contact your system admin."; 
 $language['MESSAGE_PROF_NOKEY'] = "Profile value '%s' requested but does not exist in the locator."; //added 4 "PROF" rows for new profile class rewrite 9/26/2014
 $language['MESSAGE_PROF_NOROWS'] = "The '%s' table was requested but no rows were found."; 
+$language['MESSAGE_NO_BASE_DATA'] = "Failed to locate the base data for this characters class/level combination."; 
 $language['MESSAGE_PROF_NOCACHE'] = "Profile value '%s' requested from the '%s' table. A matching row is cached but the '%s' column is not present.";
 $language['MESSAGE_PROF_NOTABKEY'] = "Table '%s' requested but does not exist in the locator.";
 $language['MESSAGE_DB_CONNECT'] = "The database host/user/password supplied were invalid.";
 $language['MESSAGE_DB_NODB'] = "Could not find designated database.";
 $language['MESSAGE_NOAPI'] = "The API is unavailable on this page.";
-$language['MESSAGE_NOPAGE'] = "You've requested an invalid page.";
+$language['MESSAGE_BAD_CONFIG'] = "<h2>Configuration Error</h2>The config version stamp in your config file does not match the stamp in your software. This likely means that you've installed a new version of the software but kept your old config file. This stamp only changes when important changes have beeen made to the config file that require generating a new config. Backup your old config.php and replace it with config.template. Then edit the new file and reset all your settings in it.";
 
 ?>

@@ -38,6 +38,14 @@
  *      add template vars for soft deleted characters
  *   March 8, 2020 - Maudigan
  *      implement shared bank
+ *   March 9, 2020 - Maudigan
+ *      modularized the profile menu output
+ *      added template vars for inventory slots
+ *      comment & code cleanup for the template section
+ *   March 16, 2020 - Maudigan
+ *      prepared for implementation of dynamic guild ranks
+ *   March 22, 2020 - Maudigan
+ *     impemented common.php
  *      
  ***************************************************************************/
   
@@ -46,14 +54,9 @@
                  INCLUDES
 *********************************************/ 
 define('INCHARBROWSER', true);
-include_once(__DIR__ . "/include/config.php");
-include_once(__DIR__ . "/include/global.php");
-include_once(__DIR__ . "/include/language.php");
-include_once(__DIR__ . "/include/functions.php");
+include_once(__DIR__ . "/include/common.php");
 include_once(__DIR__ . "/include/profile.php");
 include_once(__DIR__ . "/include/itemclass.php");
-include_once(__DIR__ . "/include/statsclass.php");
-include_once(__DIR__ . "/include/calculatestats.php");
 include_once(__DIR__ . "/include/db.php");
   
  
@@ -64,7 +67,7 @@ if(!$_GET['char']) cb_message_die($language['MESSAGE_ERROR'],$language['MESSAGE_
 else $charName = $_GET['char'];
      
 //character initializations 
-$char = new profile($charName); //the profile class will sanitize the character name
+$char = new profile($charName, $cbsql, $language, $showsoftdelete, $charbrowser_is_admin_page); //the profile class will sanitize the character name
 $charID = $char->char_id(); 
 $name = $char->GetValue('name');
 $mypermission = GetPermissions($char->GetValue('gm'), $char->GetValue('anon'), $char->char_id());
@@ -77,32 +80,31 @@ if ($mypermission['inventory']) cb_message_die($language['MESSAGE_ERROR'],$langu
         GATHER RELEVANT PAGE DATA
 *********************************************/
 //get character info
-$last_name  = $char->GetValue('last_name');
-$title      = $char->GetValue('title');
-$level      = $char->GetValue('level');
-$deity      = $char->GetValue('deity');
-$baseSTR    = $char->GetValue('str'); 
-$baseSTA    = $char->GetValue('sta');
-$baseAGI    = $char->GetValue('agi');
-$baseDEX    = $char->GetValue('dex');
-$baseWIS    = $char->GetValue('wis');
-$baseINT    = $char->GetValue('int');
-$baseCHA    = $char->GetValue('cha');
-$defense    = $char->GetValue('defense'); //TODO multi row table
-$offense    = $char->GetValue('offense'); //TODO multi row table
-$race       = $char->GetValue('race');
 $class      = $char->GetValue('class');
-$pp         = $char->GetValue('platinum');
-$gp         = $char->GetValue('gold');
-$sp         = $char->GetValue('silver');
-$cp         = $char->GetValue('copper');
-$bpp        = $char->GetValue('platinum_bank');
-$bgp        = $char->GetValue('gold_bank');
-$bsp        = $char->GetValue('silver_bank');
-$bcp        = $char->GetValue('copper_bank'); 
-$isdeleted  = $char->GetValue('deleted_at'); 
 
+/* this will get implemented in the server code soon, uncomment and remove the code below
 //load guild name
+$tpl = <<<TPL
+SELECT guilds.name, guild_ranks.title 
+FROM guilds
+JOIN guild_members
+  ON guilds.id = guild_members.guild_id
+JOIN guild_ranks
+  ON guild_members.rank = guild_ranks.rank 
+ AND guild_members.guild_id = guild_ranks.guild_id
+WHERE guild_members.char_id = '%s' 
+LIMIT 1
+TPL;
+$query = sprintf($tpl, $charID);
+$result = $cbsql->query($query);
+if($cbsql->rows($result))
+{ 
+   $row = $cbsql->nextrow($result);
+   $guild_name = $row['name'];
+   $guild_rank = $row['title'];
+}*/
+
+//load guild name statically
 $tpl = <<<TPL
 SELECT guilds.name, guild_members.rank 
 FROM guilds
@@ -120,94 +122,7 @@ if($cbsql->rows($result))
    $guild_rank = $guildranks[$row['rank']];
 }
 
-//place where all the items stats are added up
-$itemstats = new stats();
 
-//holds all of the items and info about them
-$allitems = array();
-
-//FETCH INVENTORY
-// pull characters inventory slotid is loaded as
-// "myslot" since items table also has a slotid field.
-$tpl = <<<TPL
-SELECT items.*, inventory.augslot1, inventory.augslot2, 
-       inventory.augslot3, inventory.augslot4, 
-       inventory.augslot5, inventory.slotid AS myslot 
-FROM items
-JOIN inventory 
-  ON items.id = inventory.itemid
-WHERE inventory.charid = '%s'  
-TPL;
-$query = sprintf($tpl, $charID);
-$result = $cbsql->query($query);
-// loop through inventory results saving Name, Icon, and preload HTML for each
-// item to be pasted into its respective div later
-$tpl = <<<TPL
-SELECT * 
-FROM items 
-WHERE id = '%s' 
-LIMIT 1
-TPL;
-while ($row = $cbsql->nextrow($result)) {
-   $tempitem = new item($row);
-   for ($i = 1; $i <= 5; $i++) {
-      if ($row["augslot".$i]) {
-         $query = sprintf($tpl, $row["augslot".$i]);
-         $augresult = $cbsql->query($query);
-         $augrow = $cbsql->nextrow($augresult);
-         $tempitem->addaug($augrow);
-         //add stats only if it's equiped
-         if ($tempitem->type() == EQUIPMENT) {
-            $itemstats->additem($augrow);
-         }
-      }
-   }
-
-   if ($tempitem->type() == EQUIPMENT)
-      $itemstats->additem($row);
-  
-   if ($tempitem->type() == EQUIPMENT || $tempitem->type() == INVENTORY)
-      $itemstats->addWT($row['weight']);
-  
-   $allitems[$tempitem->slot()] = $tempitem;
-}
-
-//FETCH SHARED BANK
-// pull characters shared bank, slotid is loaded as
-// "myslot" since items table also has a slotid field.
-$tpl = <<<TPL
-SELECT items.*, sharedbank.augslot1, sharedbank.augslot2, 
-       sharedbank.augslot3, sharedbank.augslot4, 
-       sharedbank.augslot5, sharedbank.slotid AS myslot 
-FROM items
-JOIN sharedbank 
-  ON items.id = sharedbank.itemid
-WHERE sharedbank.acctid = '%s'  
-TPL;
-$query = sprintf($tpl, $char->GetValue('account_id'));
-$result = $cbsql->query($query);
-// loop through inventory results saving Name, Icon, and preload HTML for each
-// item to be pasted into its respective div later
-$tpl = <<<TPL
-SELECT * 
-FROM items 
-WHERE id = '%s' 
-LIMIT 1
-TPL;
-while ($row = $cbsql->nextrow($result)) {
-   $tempitem = new item($row);
-   for ($i = 1; $i <= 5; $i++) {
-      if ($row["augslot".$i]) {
-         $query = sprintf($tpl, $row["augslot".$i]);
-         $augresult = $cbsql->query($query);
-         $augrow = $cbsql->nextrow($augresult);
-         $tempitem->addaug($augrow);
-      }
-   }
-  
-   $allitems[$tempitem->slot()] = $tempitem;
-}
- 
 //FETCH SHARED PLAT 
  $tpl = <<<TPL
 SELECT sharedplat
@@ -230,74 +145,138 @@ include(__DIR__ . "/include/header.php");
  
  
 /*********************************************
+            DROP PROFILE MENU
+*********************************************/
+output_profile_menu($name, 'character');
+
+ 
+/*********************************************
               POPULATE BODY
 *********************************************/
 $cb_template->set_filenames(array(
   'character' => 'character_body.tpl')
 );
 
+
+//---------------------------------
+//HP CALCULATION
+//---------------------------------
+$totalHP = $char->CalcMaxHP($calc_rows_hp);
+foreach ($calc_rows_hp as $row) {
+   $cb_template->assign_both_block_vars($row['TYPE'], $row);
+}
+
+
+//---------------------------------
+//ENDURANCE CALCULATION
+//---------------------------------
+$totalEndurance = $char->CalcMaxEndurance($calc_rows_end);
+foreach ($calc_rows_end as $row) {
+   $cb_template->assign_both_block_vars($row['TYPE'], $row);
+}
+
+
+//---------------------------------
+//MANA CALCULATION
+//---------------------------------
+$totalMana = $char->CalcMaxMana($calc_rows_mana);
+foreach ($calc_rows_mana as $row) {
+   $cb_template->assign_both_block_vars($row['TYPE'], $row);
+}
+
+
+//---------------------------------
+// MITIGATION AC CALCULATION
+//---------------------------------
+$totalMitigationAC = $char->ACSum(false, $calc_rows_mitigation_ac);
+foreach ($calc_rows_mitigation_ac as $row) {
+   $cb_template->assign_both_block_vars($row['TYPE'], $row);
+}
+
+
+//---------------------------------
+//AC CALCULATION
+//---------------------------------
+$totalAC = $char->GetDisplayAC($calc_rows_ac);
+foreach ($calc_rows_ac as $row) {
+   $cb_template->assign_both_block_vars($row['TYPE'], $row);
+}
+
+
+//---------------------------------
+//ATTCK CALCULATION
+//---------------------------------
+$totalAttack = $char->GetTotalATK($calc_rows_atk);
+foreach ($calc_rows_atk as $row) {
+   $cb_template->assign_both_block_vars($row['TYPE'], $row);
+}
+
+
 $cb_template->assign_both_vars(array(  
    'HIGHLIGHT_GM' => (($highlightgm && $gm)? "GM":""),
-   'REGEN' => number_format($itemstats->regen()),
-   'FT' => number_format($itemstats->FT()),
-   'DS' => number_format($itemstats->DS()),
-   'HASTE' => $itemstats->haste(),
-   'DELETED' => (($isdeleted) ? " ".$language['CHAR_DELETED']:""),
+   'GUILD' => getGuildLink($guild_name, $guild_rank),
+   'REGEN' => number_format($char->getRegen()),
+   'FT' => number_format($char->getFT()),
+   'DS' => number_format($char->getDS()),
+   'HASTE' => $char->getHaste(),
+   'DELETED' => (($char->GetValue('deleted_at')) ? " ".$language['CHAR_DELETED']:""),
    'FIRST_NAME' => $name,
-   'LAST_NAME' => $last_name,
-   'TITLE' => $title,
+   'LAST_NAME' => $char->GetValue('last_name'),
+   'TITLE' => $char->GetValue('title'),
    'GUILD_NAME' => $guild_name,
-   'LEVEL' => $level,
+   'LEVEL' => $char->GetValue('level'),
    'CLASS' => $dbclassnames[$class],
-   'RACE' => $dbracenames[$race],
+   'RACE' => $dbracenames[$char->GetValue('race')],
    'CLASS_NUM' => $class,
-   'DEITY' => $dbdeities[$deity],
-   'HP' => number_format(GetMaxHP($level,$class,($baseSTA+$itemstats->STA()),$itemstats->hp())),
-   'MANA' => number_format(GetMaxMana($level,$class,($baseINT+$itemstats->INT()),($baseWIS+$itemstats->WIS()),+$itemstats->mana())),
-   'ENDR' => number_format(GetMaxEndurance(($baseSTR+$itemstats->STR()),($baseSTA+$itemstats->STA()),($baseDEX+$itemstats->DEX()),($baseAGI+$itemstats->AGI()),$level,$itemstats->endurance())),
-   'AC' => number_format(GetMaxAC(($baseAGI+$itemstats->AGI()), $level, $defense, $class, $itemstats->AC(), $race)),
-   'ATK' => number_format(GetMaxAtk($itemstats->attack(), ($baseSTR+$itemstats->STR()), $offense)),
-   'STR' => number_format($baseSTR+$itemstats->STR()),
-   'STA' => number_format($baseSTA+$itemstats->STA()),
-   'DEX' => number_format($baseDEX+$itemstats->DEX()),
-   'AGI' => number_format($baseAGI+$itemstats->AGI()),
-   'INT' => number_format($baseINT+$itemstats->INT()),
-   'WIS' => number_format($baseWIS+$itemstats->WIS()),
-   'CHA' => number_format($baseCHA+$itemstats->CHA()),
-   'HSTR' => number_format($itemstats->HSTR()),  
-   'HSTA' => number_format($itemstats->HSTA()),  
-   'HDEX' => number_format($itemstats->HDEX()),  
-   'HAGI' => number_format($itemstats->HAGI()),  
-   'HINT' => number_format($itemstats->HINT()),  
-   'HWIS' => number_format($itemstats->HWIS()),  
-   'HCHA' => number_format($itemstats->HCHA()), 
-   'POISON' => (PRbyRace($race)+$PRbyClass[$class]+$itemstats->PR()),
-   'FIRE' => (FRbyRace($race)+$FRbyClass[$class]+$itemstats->FR()),
-   'MAGIC' => (MRbyRace($race)+$MRbyClass[$class]+$itemstats->MR()),
-   'DISEASE' => (DRbyRace($race)+$DRbyClass[$class]+$itemstats->DR()),
-   'COLD' => (CRbyRace($race)+$CRbyClass[$class]+$itemstats->CR()),
-   'CORRUPT' => $itemstats->COR(),
-   'HPOISON' => $itemstats->HPR(), 
-   'HFIRE' => $itemstats->HFR(), 
-   'HMAGIC' => $itemstats->HMR(), 
-   'HDISEASE' => $itemstats->HDR(), 
-   'HCOLD' => $itemstats->HCR(), 
-   'HCORRUPT' => $itemstats->HCOR(),
-   'WEIGHT' => round($itemstats->WT()/10),
-   'PP' => (($mypermission['coininventory']) ? $language['MESSAGE_DISABLED'] : number_format($pp)),
-   'GP' => (($mypermission['coininventory']) ? $language['MESSAGE_DISABLED'] : number_format($gp)),
-   'SP' => (($mypermission['coininventory']) ? $language['MESSAGE_DISABLED'] : number_format($sp)),
-   'CP' => (($mypermission['coininventory']) ? $language['MESSAGE_DISABLED'] : number_format($cp)),
-   'BPP' => (($mypermission['coinbank']) ? $language['MESSAGE_DISABLED'] : number_format($bpp)),
-   'BGP' => (($mypermission['coinbank']) ? $language['MESSAGE_DISABLED'] : number_format($bgp)),
-   'BSP' => (($mypermission['coinbank']) ? $language['MESSAGE_DISABLED'] : number_format($bsp)),
-   'BCP' => (($mypermission['coinbank']) ? $language['MESSAGE_DISABLED'] : number_format($bcp)),
+   'DEITY' => $dbdeities[$char->GetValue('deity')],
+   'HP' => number_format($totalHP),
+   'MANA' => number_format($totalMana),
+   'ENDR' => number_format($totalEndurance),
+   'AC' => number_format($totalAC),
+   'MIT_AC' => number_format($totalMitigationAC),
+   'ATK' => number_format($totalAttack),
+   'STR' => number_format($char->getSTR()),
+   'STA' => number_format($char->getSTA()),
+   'DEX' => number_format($char->getDEX()),
+   'AGI' => number_format($char->getAGI()),
+   'INT' => number_format($char->getINT()),
+   'WIS' => number_format($char->getWIS()),
+   'CHA' => number_format($char->getCHA()),
+   'HSTR' => number_format($char->getHSTR()),  
+   'HSTA' => number_format($char->getHSTA()),  
+   'HDEX' => number_format($char->getHDEX()),  
+   'HAGI' => number_format($char->getHAGI()),  
+   'HINT' => number_format($char->getHINT()),  
+   'HWIS' => number_format($char->getHWIS()),  
+   'HCHA' => number_format($char->getHCHA()), 
+   'POISON' => $char->getPR(),
+   'FIRE' => $char->getFR(),
+   'MAGIC' => $char->getMR(),
+   'DISEASE' => $char->getDR(),
+   'COLD' => $char->getCR(),
+   'CORRUPT' => $char->getCOR(),
+   'HPOISON' => $char->getHPR(), 
+   'HFIRE' => $char->getHFR(), 
+   'HMAGIC' => $char->getHMR(), 
+   'HDISEASE' => $char->getHDR(), 
+   'HCOLD' => $char->getHCR(), 
+   'HCORRUPT' => $char->getHCOR(),
+   'WEIGHT' => round($char->getWT()/10),
+   'PP' => (($mypermission['coininventory']) ? $language['MESSAGE_DISABLED'] : number_format($char->GetValue('platinum'))),
+   'GP' => (($mypermission['coininventory']) ? $language['MESSAGE_DISABLED'] : number_format($char->GetValue('gold'))),
+   'SP' => (($mypermission['coininventory']) ? $language['MESSAGE_DISABLED'] : number_format($char->GetValue('silver'))),
+   'CP' => (($mypermission['coininventory']) ? $language['MESSAGE_DISABLED'] : number_format($char->GetValue('copper'))),
+   'BPP' => (($mypermission['coinbank']) ? $language['MESSAGE_DISABLED'] : number_format($char->GetValue('platinum_bank'))),
+   'BGP' => (($mypermission['coinbank']) ? $language['MESSAGE_DISABLED'] : number_format($char->GetValue('gold_bank'))),
+   'BSP' => (($mypermission['coinbank']) ? $language['MESSAGE_DISABLED'] : number_format($char->GetValue('silver_bank'))),
+   'BCP' => (($mypermission['coinbank']) ? $language['MESSAGE_DISABLED'] : number_format($char->GetValue('copper_bank'))),
    'SBPP' => (($mypermission['coinsharedbank']) ? $language['MESSAGE_DISABLED'] : number_format($sbpp)))
 );
 
 $cb_template->assign_vars(array(  
    'L_HEADER_INVENTORY' => $language['CHAR_INVENTORY'],
    'L_HEADER_BANK' => $language['CHAR_BANK'],
+   'L_SHARED_BANK' => $language['CHAR_SHARED_BANK'],
    'L_REGEN' => $language['CHAR_REGEN'],
    'L_FT' => $language['CHAR_FT'],
    'L_DS' => $language['CHAR_DS'],
@@ -306,6 +285,7 @@ $cb_template->assign_vars(array(
    'L_MANA' => $language['CHAR_MANA'],
    'L_ENDR' => $language['CHAR_ENDR'],
    'L_AC' => $language['CHAR_AC'],
+   'L_MIT_AC' => $language['CHAR_MIT_AC'],
    'L_ATK' => $language['CHAR_ATK'],
    'L_STR' => $language['CHAR_STR'],
    'L_STA' => $language['CHAR_STA'],
@@ -334,26 +314,48 @@ $cb_template->assign_vars(array(
    'L_HCOLD' => $language['CHAR_HCOLD'], 
    'L_HCORRUPT' => $language['CHAR_HCORRUPT'],
    'L_WEIGHT' => $language['CHAR_WEIGHT'],
-   'L_AAS' => $language['BUTTON_AAS'],
-   'L_KEYS' => $language['BUTTON_KEYS'],
-   'L_FLAGS' => $language['BUTTON_FLAGS'],
-   'L_SKILLS' => $language['BUTTON_SKILLS'],
-   'L_CORPSE' => $language['BUTTON_CORPSE'],
-   'L_INVENTORY' => $language['BUTTON_INVENTORY'],
-   'L_FACTION' => $language['BUTTON_FACTION'],
-   'L_BOOKMARK' => $language['BUTTON_BOOKMARK'],
-   'L_CHARMOVE' => $language['BUTTON_CHARMOVE'],
-   'L_CONTAINER' => $language['CHAR_CONTAINER'],
+   'L_CONTAINER' => $language['CHAR_CONTAINER'], 
    'L_DONE' => $language['BUTTON_DONE'],
    'L_OPEN_BAG' => $language['CHAR_OPEN_BAG'])
 );
 
+//---------------------------------
+//     SLOTS TEMPLATE VARS
+//---------------------------------
+//INVENTORY
+for ( $i = SLOT_INVENTORY_START; $i <= SLOT_INVENTORY_END; $i++ ) {
+   $cb_template->assign_block_vars("invslots", array( 
+      'SLOT' => $i)
+   );
+}
+//EQUIPMENT
+for ( $i = SLOT_EQUIPMENT_START; $i <= SLOT_EQUIPMENT_END; $i++ ) {
+   $cb_template->assign_block_vars("equipslots", array( 
+      'SLOT' => $i)
+   );
+}
+//BANK
+for ( $i = SLOT_BANK_START; $i <= SLOT_BANK_END; $i++ ) {
+   $cb_template->assign_block_vars("bankslots", array( 
+      'SLOT' => $i)
+   );
+}
+//SHARED BANK
+for ( $i = SLOT_SHAREDBANK_START; $i <= SLOT_SHAREDBANK_END; $i++ ) {
+   $cb_template->assign_block_vars("sharedbankslots", array( 
+      'SLOT' => $i)
+   );
+}
 
+//---------------------------------
+// ITEM ICONS TEMPLATE VARS
+//---------------------------------
+$allitems = $char->getAllItems();
 
-//dump inventory items ICONS
-foreach ($allitems as $value) {
-   if ($value->type() == INVENTORY && $mypermission['bags']) continue; 
-   if ($value->type() == EQUIPMENT || $value->type() == INVENTORY) {
+//INVENTORY
+if (!$mypermission['bags']) {
+   foreach ($allitems as $value) {
+      if ($value->type() != INVENTORY) continue; 
       $cb_template->assign_block_vars("invitem", array( 
          'SLOT' => $value->slot(),      
          'ICON' => $value->icon())
@@ -363,10 +365,47 @@ foreach ($allitems as $value) {
       }
    }
 }
+//EQUIPMENT
+foreach ($allitems as $value) {
+   if ($value->type() != EQUIPMENT) continue; 
+   $cb_template->assign_block_vars("equipitem", array( 
+      'SLOT' => $value->slot(),      
+      'ICON' => $value->icon())
+   );
+}
+//BANK
+if (!$mypermission['bank']) {
+   foreach ($allitems as $value) {  
+      if ($value->type() != BANK) continue;    
+      $cb_template->assign_block_vars("bankitem", array( 
+         'SLOT' => $value->slot(),  
+         'ICON' => $value->icon())
+      );
+      if ($value->slotcount() > 0) {
+         $cb_template->assign_block_vars("bankitem.switch_is_bag", array());
+      }  
+   }
+}
+//SHARED BANK
+if (!$mypermission['sharedbank']) {
+   foreach ($allitems as $value) {  
+      if ($value->type() != SHAREDBANK) continue;    
+      $cb_template->assign_block_vars("sharedbankitem", array( 
+         'SLOT' => $value->slot(),  
+         'ICON' => $value->icon())
+      );
+      if ($value->slotcount() > 0) {
+         $cb_template->assign_block_vars("sharedbankitem.switch_is_bag", array());
+      }  
+   }
+}
 
-
-
-//dump bags windows
+//---------------------------------
+//     BAG WINDOW TEMPLATE VARS
+//---------------------------------
+//these are the vars to drop items/slots/etc
+//for bag contents, this does equipment,
+//inventory, bank and shared bank
 foreach ($allitems as $value) {
    if ($value->type() == INVENTORY && $mypermission['bags']) continue; 
    if ($value->type() == BANK && $mypermission['bank']) continue;
@@ -378,54 +417,31 @@ foreach ($allitems as $value) {
          'ROWS' => floor($value->slotcount()/2))
       );
        
-      for ($i = 1;$i <= $value->slotcount(); $i++) 
+      for ($i = 1;$i <= $value->slotcount(); $i++) {
          $cb_template->assign_block_vars("bags.bagslots", array( 
             'BS_SLOT' => $i)
          );
+      }
          
-      foreach ($allitems as $subvalue) 
-         if ($subvalue->type() == $value->slot()) 
+      foreach ($allitems as $subvalue) {
+         if ($subvalue->type() == $value->slot()) {
             $cb_template->assign_block_vars("bags.bagitems", array( 
                'BI_SLOT' => $subvalue->slot(),
                'BI_RELATIVE_SLOT' => $subvalue->vslot(),
                'BI_ICON' => $subvalue->icon())
             );
+         }
+      }
    } 
 }
 
 
-//dump bank items ICONS
-if (!$mypermission['bank']) {
-   foreach ($allitems as $value) {
-      if ($value->type() == BANK) {
-         $cb_template->assign_block_vars("bankitem", array( 
-            'SLOT' => $value->slot(),  
-            'ICON' => $value->icon())
-         );
-         if ($value->slotcount() > 0) {
-            $cb_template->assign_block_vars("bankitem.switch_is_bag", array());
-         }  
-      }
-   }
-}
-
-
-//dump shared bank items ICONS
-if (!$mypermission['sharedbank']) {
-   foreach ($allitems as $value) {
-      if ($value->type() == SHAREDBANK) {
-         $cb_template->assign_block_vars("bankitem", array( 
-            'SLOT' => $value->slot(),  
-            'ICON' => $value->icon())
-         );
-         if ($value->slotcount() > 0) {
-            $cb_template->assign_block_vars("bankitem.switch_is_bag", array());
-         }  
-      }
-   }
-}
-
-//dump items WINDWOS
+//---------------------------------
+//   ITEM WINDOW TEMPLATE VARS
+//---------------------------------
+//the item inspect windows that hold
+//the item stats. this does equipment,
+//inventory, bank and shared bank
 foreach ($allitems as $value) {
    if ($value->type() == INVENTORY && $mypermission['bags']) continue; 
    if ($value->type() == BANK && $mypermission['bank']) continue;

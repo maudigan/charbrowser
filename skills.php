@@ -28,6 +28,10 @@
  *      Added 2h piercing, remove traps and tripple attack.
  *   September 7, 2019 - Kinglykrab
  *      fixed typo tripple => triple
+ *   March 9, 2020 - Maudigan
+ *      modularized the profile menu output
+ *   March 22, 2020 - Maudigan
+ *     impemented common.php
  *
  ***************************************************************************/
  
@@ -36,11 +40,9 @@
                  INCLUDES
 *********************************************/ 
 define('INCHARBROWSER', true);
-include_once(__DIR__ . "/include/config.php");
+include_once(__DIR__ . "/include/common.php");
 include_once(__DIR__ . "/include/profile.php");
-include_once(__DIR__ . "/include/global.php");
-include_once(__DIR__ . "/include/language.php");
-include_once(__DIR__ . "/include/functions.php");
+include_once(__DIR__ . "/include/db.php");
   
  
 /*********************************************
@@ -50,7 +52,7 @@ if(!$_GET['char']) cb_message_die($language['MESSAGE_ERROR'],$language['MESSAGE_
 else $charName = $_GET['char'];
 
 //character initializations 
-$char = new profile($charName); //the profile class will sanitize the character name
+$char = new profile($charName, $cbsql, $language, $showsoftdelete, $charbrowser_is_admin_page); //the profile class will sanitize the character name
 $charID = $char->char_id(); 
 $name = $char->GetValue('name');
 $mypermission = GetPermissions($char->GetValue('gm'), $char->GetValue('anon'), $char->char_id());
@@ -64,156 +66,171 @@ if ($mypermission['skills']) cb_message_die($language['MESSAGE_ERROR'],$language
 *********************************************/
 $d_title = " - ".$name.$language['PAGE_TITLES_SKILLS'];
 include(__DIR__ . "/include/header.php");
+ 
+ 
+/*********************************************
+            DROP PROFILE MENU
+*********************************************/
+output_profile_menu($name, 'skills');
 
  
  
 /*********************************************
               POPULATE BODY
 *********************************************/
+
+    
+$skillsections = array();
+
+if (!$mypermission['languageskills']) {
+   $skillsections[$language['SKILLS_LANGUAGE']] = array(
+      array('NAME' => 'Common Tongue', 'VALUE' => $char->GetValue('common_tongue')), 
+      array('NAME' => 'Barbarian', 'VALUE' => $char->GetValue(barbarian)), 
+      array('NAME' => 'Erudian', 'VALUE' => $char->GetValue('erudian')), 
+      array('NAME' => 'Elvish', 'VALUE' => $char->GetValue('elvish')), 
+      array('NAME' => 'Dark Elvish', 'VALUE' => $char->GetValue('dark_elvish')), 
+      array('NAME' => 'Dwarvish', 'VALUE' => $char->GetValue('dwarvish')), 
+      array('NAME' => 'Troll', 'VALUE' => $char->GetValue('troll')), 
+      array('NAME' => 'Ogre', 'VALUE' => $char->GetValue('ogre')), 
+      array('NAME' => 'Gnomish', 'VALUE' => $char->GetValue('gnomish')), 
+      array('NAME' => 'Halfling', 'VALUE' => $char->GetValue('halfling')), 
+      array('NAME' => 'Thieves Cant', 'VALUE' => $char->GetValue('thieves_cant')), 
+      array('NAME' => 'Old Erudian', 'VALUE' => $char->GetValue('old_erudian')), 
+      array('NAME' => 'Elder Elvish', 'VALUE' => $char->GetValue('elder_elvish')), 
+      array('NAME' => 'Froglok', 'VALUE' => $char->GetValue('froglok')), 
+      array('NAME' => 'Goblin', 'VALUE' => $char->GetValue('goblin')), 
+      array('NAME' => 'Gnoll', 'VALUE' => $char->GetValue('gnoll')), 
+      array('NAME' => 'Combine Tongue', 'VALUE' => $char->GetValue('combine_tongue')), 
+      array('NAME' => 'Elder Tier`dal', 'VALUE' => $char->GetValue('elder_teirdal')), 
+      array('NAME' => 'LizardMan', 'VALUE' => $char->GetValue('lizardman')), 
+      array('NAME' => 'Orcish', 'VALUE' => $char->GetValue('orcish')), 
+      array('NAME' => 'Faerie', 'VALUE' => $char->GetValue('faerie')), 
+      array('NAME' => 'Dragon', 'VALUE' => $char->GetValue('dragon')), 
+      array('NAME' => 'Elder Dragon', 'VALUE' => $char->GetValue('elder_dragon')), 
+      array('NAME' => 'Dark Speech', 'VALUE' => $char->GetValue('dark_speech')), 
+      array('NAME' => 'Vah Shir', 'VALUE' => $char->GetValue('vah_shir'))
+   );
+}
+$skillsections[$language['SKILLS_COMBAT']] = array(
+   array('NAME' => '1H Blunt', 'VALUE' => $char->GetValue('1h_blunt')), 
+   array('NAME' => '1H Piercing', 'VALUE' => $char->GetValue('piercing')), 
+   array('NAME' => '1H Slashing', 'VALUE' => $char->GetValue('1h_slashing')), 
+   array('NAME' => '2H Blunt', 'VALUE' => $char->GetValue('2h_blunt')), 
+   array('NAME' => '2H Piercing', 'VALUE' => $char->GetValue('2h_piercing')),
+   array('NAME' => '2H Slashing', 'VALUE' => $char->GetValue('2h_slashing')),
+   array('NAME' => 'Archery', 'VALUE' => $char->GetValue('archery')), 
+   array('NAME' => 'Bash', 'VALUE' => $char->GetValue('bash')), 
+   array('NAME' => 'Block', 'VALUE' => $char->GetValue('block')),
+   array('NAME' => 'Defense', 'VALUE' => $char->GetValue('defense')), 
+   array('NAME' => 'Disarm', 'VALUE' => $char->GetValue('disarm')),
+   array('NAME' => 'Dodge', 'VALUE' => $char->GetValue('dodge')), 
+   array('NAME' => 'Double Attack', 'VALUE' => $char->GetValue('double_attack')),  
+   array('NAME' => 'Dual Wield', 'VALUE' => $char->GetValue('dual_wield')),
+   array('NAME' => 'Hand to Hand', 'VALUE' => $char->GetValue('hand_to_hand')), 
+   array('NAME' => 'Kick', 'VALUE' => $char->GetValue('kick')), 
+   array('NAME' => 'Offense', 'VALUE' => $char->GetValue('offense')), 
+   array('NAME' => 'Parry', 'VALUE' => $char->GetValue('parry')), 
+   array('NAME' => 'Riposte', 'VALUE' => $char->GetValue('riposte')), 
+   array('NAME' => 'Throwing', 'VALUE' => $char->GetValue('throwing')), 
+   array('NAME' => 'Triple Attack', 'VALUE' => $char->GetValue('triple_attack')), 
+   array('NAME' => 'Intimidation', 'VALUE' => $char->GetValue('intimidation')), 
+   array('NAME' => 'Taunt', 'VALUE' => $char->GetValue('taunt'))
+);
+$skillsections[$language['SKILLS_CASTING']] = array(
+   array('NAME' => 'Abjuration', 'VALUE' => $char->GetValue('abjuration')),
+   array('NAME' => 'Alteration', 'VALUE' => $char->GetValue('alteration')),
+   array('NAME' => 'Channeling', 'VALUE' => $char->GetValue('channeling')),
+   array('NAME' => 'Conjuration', 'VALUE' => $char->GetValue('conjuration')),
+   array('NAME' => 'Divination', 'VALUE' => $char->GetValue('divination')),
+   array('NAME' => 'Evocation', 'VALUE' => $char->GetValue('evocation')),
+   array('NAME' => 'Specialize Abjure', 'VALUE' => $char->GetValue('specialize_abjure')),
+   array('NAME' => 'Specialize Alteration', 'VALUE' => $char->GetValue('specialize_alteration')),
+   array('NAME' => 'Specialize Conjuration', 'VALUE' => $char->GetValue('specialize_conjuration')),
+   array('NAME' => 'Specialize Divination', 'VALUE' => $char->GetValue('specialize_divinatation')),
+   array('NAME' => 'Specialize Evocation', 'VALUE' => $char->GetValue('specialize_evocation'))
+);
+$skillsections[$language['SKILLS_CLASS']] = array(
+   array('NAME' => 'Dragon Punch', 'VALUE' => $char->GetValue('dragon_punch')),
+   array('NAME' => 'Eagle Strike', 'VALUE' => $char->GetValue('eagle_strike')),
+   array('NAME' => 'Round Kick', 'VALUE' => $char->GetValue('round_kick')),
+   array('NAME' => 'Tiger Claw', 'VALUE' => $char->GetValue('tiger_claw')),
+   array('NAME' => 'Flying Kick', 'VALUE' => $char->GetValue('flying_kick')),
+   array('NAME' => 'Mend', 'VALUE' => $char->GetValue('mend')),
+   array('NAME' => 'Feign Death', 'VALUE' => $char->GetValue('feign_death')),
+   array('NAME' => 'Pick Lock', 'VALUE' => $char->GetValue('pick_lock')),
+   array('NAME' => 'Apply Poison', 'VALUE' => $char->GetValue('apply_poison')),
+   array('NAME' => 'Backstab', 'VALUE' => $char->GetValue('backstab')),
+   array('NAME' => 'Disarm Traps', 'VALUE' => $char->GetValue('disarm_traps')),
+   array('NAME' => 'Pick Pockets', 'VALUE' => $char->GetValue('pick_pockets')),
+   array('NAME' => 'Remove Traps', 'VALUE' => $char->GetValue('remove_traps')),
+   array('NAME' => 'Sense Traps', 'VALUE' => $char->GetValue('sense_traps')),
+   array('NAME' => 'Berserking', 'VALUE' => $char->GetValue('berserking')),
+   array('NAME' => 'Frenzy', 'VALUE' => $char->GetValue('frenzy')),
+   array('NAME' => 'Brass Instruments', 'VALUE' => $char->GetValue('brass_instruments')),
+   array('NAME' => 'Singing', 'VALUE' => $char->GetValue('sing')),
+   array('NAME' => 'Stringed Instruments', 'VALUE' => $char->GetValue('stringed_instruments')),
+   array('NAME' => 'Wind Instruments', 'VALUE' => $char->GetValue('wind_instruments')),
+   array('NAME' => 'Percussion Instruments', 'VALUE' => $char->GetValue('percussion_instruments'))
+);
+$skillsections[$language['SKILLS_OTHER']] = array(
+   array('NAME' => 'Bind Wound', 'VALUE' => $char->GetValue('bind_wound')),
+   array('NAME' => 'Forage', 'VALUE' => $char->GetValue('forage')),
+   array('NAME' => 'Hide', 'VALUE' => $char->GetValue('hide')),
+   array('NAME' => 'Meditate', 'VALUE' => $char->GetValue('meditate')), 
+   array('NAME' => 'Safe Fall', 'VALUE' => $char->GetValue('safe_fall')),
+   array('NAME' => 'Sense Heading', 'VALUE' => $char->GetValue('sense_heading')),
+   array('NAME' => 'Sneak', 'VALUE' => $char->GetValue('sneak')),
+   array('NAME' => 'Swimming', 'VALUE' => $char->GetValue('swimming')),
+   array('NAME' => 'Tracking', 'VALUE' => $char->GetValue('tracking')),
+   array('NAME' => 'Fishing', 'VALUE' => $char->GetValue('fishing')),
+   array('NAME' => 'Alcohol Tolerance', 'VALUE' => $char->GetValue('alcohol_tolerance')),
+   array('NAME' => 'Begging', 'VALUE' => $char->GetValue('begging'))
+);
+$skillsections[$language['SKILLS_TRADE']] = array(
+   array('NAME' => 'Make Poison', 'VALUE' => $char->GetValue('make_poison')),
+   array('NAME' => 'Tinkering', 'VALUE' => $char->GetValue('tinkering')),
+   array('NAME' => 'Research', 'VALUE' => $char->GetValue('research')),
+   array('NAME' => 'Alchemy', 'VALUE' => $char->GetValue('alchemy')),
+   array('NAME' => 'Baking', 'VALUE' => $char->GetValue('baking')),
+   array('NAME' => 'Tailoring', 'VALUE' => $char->GetValue('tailoring')),
+   array('NAME' => 'Blacksmithing', 'VALUE' => $char->GetValue('blacksmithing')),
+   array('NAME' => 'Fletching', 'VALUE' => $char->GetValue('fletching')),
+   array('NAME' => 'Brewing', 'VALUE' => $char->GetValue('brewing')),
+   array('NAME' => 'Jewelry Making', 'VALUE' => $char->GetValue('jewelry_making')),
+   array('NAME' => 'Pottery', 'VALUE' => $char->GetValue('pottery'))
+);
+
+
 $cb_template->set_filenames(array(
    'skills' => 'skills_body.tpl')
 );
 
+
+
+$i = 0;
+foreach ($skillsections as $header => $skills)
+{
+   $cb_template->assign_block_vars("section", array(
+      'TEXT' => $header." ".$language['SKILLS_SKILLS'],
+      'TAB' => $header,
+      'INDEX' => $i++
+   ));
+   foreach ($skills as $skillrow)
+   {
+      $cb_template->assign_both_block_vars("section.skillrow", $skillrow);  
+   }
+}
+
+
 $cb_template->assign_both_vars(array(  
-   'NAME' => $name,
-   '1H_BLUNT' => $char->GetValue('1h_blunt'), //TODO all these are in multi row tables now, needs updates
-   '1H_SLASHING' => $char->GetValue('1h_slashing'), 
-   '2H_BLUNT' => $char->GetValue('2h_blunt'), 
-   '2H_PIERCING' => $char->GetValue('2h_piercing'), 
-   '2H_SLASHING' => $char->GetValue('2h_slashing'),
-   'ARCHERY' => $char->GetValue('archery'), 
-   'BASH' => $char->GetValue('bash'), 
-   'BLOCK' => $char->GetValue('block'),
-   'DEFENSE' => $char->GetValue('defense'), 
-   'DISARM' => $char->GetValue('disarm'),
-   'DODGE' => $char->GetValue('dodge'), 
-   'DOUBLE_ATTACK' => $char->GetValue('double_attack'),  
-   'DUAL_WIELD' => $char->GetValue('dual_wield'),
-   'HAND_TO_HAND' => $char->GetValue('hand_to_hand'), 
-   'KICK' => $char->GetValue('kick'), 
-   'OFFENSE' => $char->GetValue('offense'), 
-   'PARRY' => $char->GetValue('parry'), 
-   'PIERCING' => $char->GetValue('piercing'), 
-   'RIPOSTE' => $char->GetValue('riposte'), 
-   'THROWING' => $char->GetValue('throwing'), 
-   'TRIPLE_ATTACK' => $char->GetValue('triple_attack'), 
-   'INTIMIDATION' => $char->GetValue('intimidation'), 
-   'TAUNT' => $char->GetValue('taunt'),
-
-
-   'ABJURATION' => $char->GetValue('abjuration'),
-   'ALTERATION' => $char->GetValue('alteration'),
-   'CHANNELING' => $char->GetValue('channeling'),
-   'CONJURATION' => $char->GetValue('conjuration'),
-   'DIVINATION' => $char->GetValue('divination'),
-   'EVOCATION' => $char->GetValue('evocation'),
-   'SPECIALIZE_ABJURE' => $char->GetValue('specialize_abjure'),
-   'SPECIALIZE_ALTERATION' => $char->GetValue('specialize_alteration'),
-   'SPECIALIZE_CONJURATION' => $char->GetValue('specialize_conjuration'),
-   'SPECIALIZE_DIVINATION' => $char->GetValue('specialize_divinatation'),
-   'SPECIALIZE_EVOCATION' => $char->GetValue('specialize_evocation'),
-
-
-   'DRAGON_PUNCH' => $char->GetValue('dragon_punch'),
-   'EAGLE_STRIKE' => $char->GetValue('eagle_strike'),
-   'ROUND_KICK' => $char->GetValue('round_kick'),
-   'TIGER_CLAW' => $char->GetValue('tiger_claw'),
-   'FLYING_KICK' => $char->GetValue('flying_kick'),
-   'MEND' => $char->GetValue('mend'),
-   'FEIGN_DEATH' => $char->GetValue('feign_death'),
-   'PICK_LOCK' => $char->GetValue('pick_lock'),
-   'APPLY_POISON' => $char->GetValue('apply_poison'),
-   'BACKSTAB' => $char->GetValue('backstab'),
-   'DISARM_TRAPS' => $char->GetValue('disarm_traps'),
-   'PICK_POCKETS' => $char->GetValue('pick_pockets'),
-   'REMOVE_TRAPS' => $char->GetValue('remove_traps'),
-   'SENSE_TRAPS' => $char->GetValue('sense_traps'),
-   'BERSERKING' => $char->GetValue('berserking'),
-   'FRENZY' => $char->GetValue('frenzy'),
-   'BRASS_INSTRUMENTS' => $char->GetValue('brass_instruments'),
-   'SINGING' => $char->GetValue('sing'),
-   'STRINGED_INSTRUMENTS' => $char->GetValue('stringed_instruments'),
-   'WIND_INSTRUMENTS' => $char->GetValue('wind_instruments'),
-   'PERCUSSION_INSTRUMENTS' => $char->GetValue('percussion_instruments'),
-
-
-   'BIND_WOUND' => $char->GetValue('bind_wound'),
-   'FORAGE' => $char->GetValue('forage'),
-   'HIDE' => $char->GetValue('hide'),
-   'MEDITATE' => $char->GetValue('meditate'), 
-   'SAFE_FALL' => $char->GetValue('safe_fall'),
-   'SENSE_HEADING' => $char->GetValue('sense_heading'),
-   'SNEAK' => $char->GetValue('sneak'),
-   'SWIMMING' => $char->GetValue('swimming'),
-   'TRACKING' => $char->GetValue('tracking'),
-   'FISHING' => $char->GetValue('fishing'),
-   'ALCOHOL_TOLERANCE' => $char->GetValue('alcohol_tolerance'),
-   'BEGGING' => $char->GetValue('begging'),
-
-
-   'MAKE_POISON' => $char->GetValue('make_poison'),
-   'TINKERING' => $char->GetValue('tinkering'),
-   'RESEARCH' => $char->GetValue('research'),
-   'ALCHEMY' => $char->GetValue('alchemy'),
-   'BAKING' => $char->GetValue('baking'),
-   'TAILORING' => $char->GetValue('tailoring'),
-   'BLACKSMITHING' => $char->GetValue('blacksmithing'),
-   'FLETCHING' => $char->GetValue('fletching'),
-   'BREWING' => $char->GetValue('brewing'),
-   'JEWELRY_MAKING' => $char->GetValue('jewelry_making'),
-   'POTTERY' => $char->GetValue('pottery'))
+   'NAME' => $name)
 );   
 
 $cb_template->assign_vars(array( 
-   'L_TRADE' => $language['SKILLS_TRADE'],
-   'L_OTHER' => $language['SKILLS_OTHER'], 
-   'L_CLASS' => $language['SKILLS_CLASS'],
-   'L_CASTING' => $language['SKILLS_CASTING'],
-   'L_COMBAT' => $language['SKILLS_COMBAT'],
-   'L_LANGUAGE' => $language['SKILLS_LANGUAGE'] ,
    'L_SKILLS' => $language['SKILLS_SKILLS'],
-   'L_DONE' => $language['BUTTON_DONE'],
-   'L_AAS' => $language['BUTTON_AAS'],
-   'L_KEYS' => $language['BUTTON_KEYS'],
-   'L_FLAGS' => $language['BUTTON_FLAGS'],
-   'L_SKILLS' => $language['BUTTON_SKILLS'],
-   'L_BOOKMARK' => $language['BUTTON_BOOKMARK'],
-   'L_CORPSE' => $language['BUTTON_CORPSE'],
-   'L_FACTION' => $language['BUTTON_FACTION'],
-   'L_INVENTORY' => $language['BUTTON_INVENTORY'],
-   'L_CHARMOVE' => $language['BUTTON_CHARMOVE'])
+   'L_DONE' => $language['BUTTON_DONE'])
 );
 
-
-if (!$mypermission['languageskills']) {
-   $cb_template->assign_both_block_vars("switch_language", array( 
-      'COMMON_TONGUE' => $char->GetValue('common_tongue'), 
-      'BARBARIAN' => $char->GetValue('barbarian'), 
-      'ERUDIAN' => $char->GetValue('erudian'), 
-      'ELVISH' => $char->GetValue('elvish'), 
-      'DARK_ELVISH' => $char->GetValue('dark_elvish'), 
-      'DWARVISH' => $char->GetValue('dwarvish'), 
-      'TROLL' => $char->GetValue('troll'), 
-      'OGRE' => $char->GetValue('ogre'), 
-      'GNOMISH' => $char->GetValue('gnomish'), 
-      'HALFLING' => $char->GetValue('halfling'), 
-      'THIEVES_CANT' => $char->GetValue('thieves_cant'), 
-      'OLD_ERUDIAN' => $char->GetValue('old_erudian'), 
-      'ELDER_ELVISH' => $char->GetValue('elder_elvish'), 
-      'FROGLOK' => $char->GetValue('froglok'), 
-      'GOBLIN' => $char->GetValue('goblin'), 
-      'GNOLL' => $char->GetValue('gnoll'), 
-      'COMBINE_TONGUE' => $char->GetValue('combine_tongue'), 
-      'ELDER_TEIRDAL' => $char->GetValue('elder_teirdal'), 
-      'LIZARDMAN' => $char->GetValue('lizardman'), 
-      'ORCISH' => $char->GetValue('orcish'), 
-      'FAERIE' => $char->GetValue('faerie'), 
-      'DRAGON' => $char->GetValue('dragon'), 
-      'ELDER_DRAGON' => $char->GetValue('elder_dragon'), 
-      'DARK_SPEECH' => $char->GetValue('dark_speech'), 
-      'VAH_SHIR' => $char->GetValue('vah_shir'))
-   );
-}
  
  
 /*********************************************

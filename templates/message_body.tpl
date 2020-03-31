@@ -1,16 +1,5 @@
-<center>
-  <div class='SmallOuter'>
-    <div class='SmallTitle'>
-      <div class='SmallTitleLeft'></div>
-      <div class='SmallTitleMid'>{DIETITLE}</div>
-      <div class='SmallTitleRight'></div>
-    </div>
-    <div class='SmallInner'>
-      <center>
-        {TEXT}
-        <br><br>
-        <div class='FreeButton' onclick="history.go( -1 );return true;">{L_BACK}</div>
-      </center>
-    </div>
-  </div>
-</center>
+<div class='WindowComplex PositionMessage CB_Can_Drag'>
+   <div class='WindowTitleBar'>{DIETITLE}</div>
+   <span class='CB_Center_Text'>{TEXT}</span>
+   <div class='CB_Button' onclick="cb_GoBackOnePage();">{L_BACK}</div>
+</div>

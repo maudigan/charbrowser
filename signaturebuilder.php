@@ -22,6 +22,11 @@
  *      organized some code. A lot has changed, but not much functionally
  *      do a compare to 2.41 to see the differences. 
  *      Implemented new database wrapper.
+ *   March 14, 2020
+ *      show char menu if we come in with a charname
+ *      display optional charname in form
+ *   March 22, 2020 - Maudigan
+ *     impemented common.php
  ***************************************************************************/
  
  
@@ -29,10 +34,7 @@
                  INCLUDES
 *********************************************/ 
 define('INCHARBROWSER', true);
-include_once(__DIR__ . "/include/config.php");
-include_once(__DIR__ . "/include/language.php");
-include_once(__DIR__ . "/include/functions.php");
-include_once(__DIR__ . "/include/global.php");
+include_once(__DIR__ . "/include/common.php");
  
  
 /*********************************************
@@ -71,6 +73,10 @@ if (!SERVER_HAS_GD) {
    cb_message_die($language['MESSAGE_ERROR'], $language['MESSAGE_NO_GD']);
 }
 
+//prepopulate name if its provided
+$name = $_GET['char'];
+if (!IsAlphaSpace($name)) $name = "";
+
 //build all the option lists for the dropdown boxes
 //most are based off the files present in a directory
 //some are static.
@@ -99,17 +105,27 @@ include(__DIR__ . "/include/header.php");
  
  
 /*********************************************
+            DROP PROFILE MENU
+*********************************************/
+//only drop this header if we came in with a character name
+if ($name) {
+   output_profile_menu($name, 'signaturebuilder');
+}
+ 
+ 
+/*********************************************
               POPULATE BODY
 *********************************************/
 $cb_template->set_filenames(array(
    'settings' => 'settings_body.tpl')
-);
+); 
 
 $cb_template->set_filenames(array(
    'sigbuild' => 'signature_builder_body.tpl')
 );
 
 $cb_template->assign_vars(array( 
+   'CHARNAME' => $name,
    'SIGNATURE_ROOT_URL' => ($charbrowser_root_url) ? $charbrowser_root_url : "http://".$_SERVER['HTTP_HOST'].GetFileDir($_SERVER['PHP_SELF']),
    'SIGNATURE_INDEX_URL' => "http://".$_SERVER['HTTP_HOST'].GetFileDir($_SERVER['PHP_SELF']) . (($charbrowser_wrapped) ? $_SERVER['SCRIPT_NAME'] : "index.php"),
    'CAN_CHANGE_FONT_SIZE' => (SERVER_HAS_FREETYPE) ? "" : "Disabled",
@@ -139,6 +155,12 @@ $cb_template->assign_vars(array(
    'L_NEED_NAME' => $language['SIGNATURE_NEED_NAME'])
 );
 
+//display tabs
+foreach($language['SIGNATURE_TABS'] as $key => $value)      
+   $cb_template->assign_block_vars("tabs", array( 
+      'ID' => $key,
+      'TEXT' => $value)
+   );
 
 //fonts
 foreach($fonts as $value)      

@@ -31,6 +31,11 @@
  *      Made the corpse links customizable
  *   January 7, 2018 - Maudigan
  *      Modified database to use a class.
+ *   March 9, 2020 - Maudigan
+ *      modularized the profile menu output
+ *   March 22, 2020 - Maudigan
+ *     impemented common.php
+ *
  ***************************************************************************/
   
  
@@ -38,11 +43,8 @@
                  INCLUDES
 *********************************************/ 
 define('INCHARBROWSER', true);
-include_once(__DIR__ . "/include/config.php");
+include_once(__DIR__ . "/include/common.php");
 include_once(__DIR__ . "/include/profile.php");
-include_once(__DIR__ . "/include/global.php");
-include_once(__DIR__ . "/include/language.php");
-include_once(__DIR__ . "/include/functions.php");
 include_once(__DIR__ . "/include/db.php");
   
  
@@ -53,7 +55,7 @@ if(!$_GET['char']) cb_message_die($language['MESSAGE_ERROR'],$language['MESSAGE_
 else $charName = $_GET['char'];
 
 //character initializations
-$char = new profile($charName); //the profile class will sanitize the character name
+$char = new profile($charName, $cbsql, $language, $showsoftdelete, $charbrowser_is_admin_page); //the profile class will sanitize the character name
 $charID = $char->char_id(); 
 $name = $char->GetValue('name');
 $mypermission = GetPermissions($char->GetValue('gm'), $char->GetValue('anon'), $char->char_id());
@@ -93,6 +95,12 @@ include(__DIR__ . "/include/header.php");
  
  
 /*********************************************
+            DROP PROFILE MENU
+*********************************************/
+output_profile_menu($name, 'corpse');
+ 
+ 
+/*********************************************
               POPULATE BODY
 *********************************************/
 $cb_template->set_filenames(array(
@@ -108,15 +116,6 @@ $cb_template->assign_vars(array(
    'L_LOC' => $language['CORPSE_LOC'],
    'L_MAP' => $language['CORPSE_MAP'],
    'L_CORPSES' => $language['CORPSE_CORPSES'],
-   'L_AAS' => $language['BUTTON_AAS'],
-   'L_KEYS' => $language['BUTTON_KEYS'],
-   'L_FLAGS' => $language['BUTTON_FLAGS'],
-   'L_SKILLS' => $language['BUTTON_SKILLS'],
-   'L_CORPSE' => $language['BUTTON_CORPSE'],
-   'L_FACTION' => $language['BUTTON_FACTION'],
-   'L_BOOKMARK' => $language['BUTTON_BOOKMARK'],
-   'L_INVENTORY' => $language['BUTTON_INVENTORY'],
-   'L_CHARMOVE' => $language['BUTTON_CHARMOVE'],
    'L_DONE' => $language['BUTTON_DONE'])
 );
 

@@ -16,10 +16,50 @@
  *      
  ***************************************************************************/
 
+ //make all our windows drag
+ $('#charbrowser .CB_Can_Drag').draggable();
+
+ //display a new tab in a window
+function CB_displayTab(alltabs, tabid, alltabboxes, tabboxid) {
+   //close all display tables
+   $(alltabboxes).hide();
+   
+   //open requested one
+   $(tabboxid).show();
+   
+   //push down all tabs
+   $(alltabs).removeClass('CB_Tab_Open'); 
+   
+   //pop the clicked tab
+   $(tabid).addClass('CB_Tab_Open'); 
+}
+
+//bookmark the current page
+function cb_BookmarkThisPage() {
+   if (window.sidebar && window.sidebar.addPanel) { // Mozilla Firefox Bookmark
+      window.sidebar.addPanel(document.title, window.location.href, '');
+   } else if (window.external && ('AddFavorite' in window.external)) { // IE Favorite
+      window.external.AddFavorite(location.href, document.title);
+   } else if (window.opera && window.print) { // Opera Hotlist
+      this.title = document.title;
+      return true;
+   } else { // webkit - safari/chrome
+      alert('Press ' + (navigator.userAgent.toLowerCase().indexOf('mac') != -1 ? 'Command/Cmd' : 'CTRL') + ' + D to bookmark this page.');
+   }
+}
+
+//go back one page in history
+function cb_GoBackOnePage() {
+   history.go( -1 );
+   return true;
+}
+
+
+//popup global vars
 var cbPopup_moveLeft = 5;
 var cbPopup_moveDown = -1;
-var cbPopup_displayTrigger = '#charbrowser .HoverSlot';
-var cbPopup_displayContainers = '#charbrowser DIV.ItemOuterOpen';
+var cbPopup_displayTrigger = '#charbrowser .CB_HoverParent';
+var cbPopup_displayContainers = '#charbrowser DIV.CB_Item_Open';
 var cbPopup_curZIndex = 100000;
 var cbPopup_gapBetweenTiled = 13;
 
@@ -40,12 +80,12 @@ function cbPopup_KeepItemUp(curItemID, keepItemUp = "check") {
       if (keepItemUp) {
          //turn it on
          curDisplayDiv.attr('keepItemUp', 1);
-         curDisplayDiv.addClass('ItemOuterOpen');
+         curDisplayDiv.addClass('CB_Item_Open');
          return true;
       } else {
          //turn it off
          curDisplayDiv.attr('keepItemUp', 0);
-         curDisplayDiv.removeClass('ItemOuterOpen'); 
+         curDisplayDiv.removeClass('CB_Item_Open'); 
          return false;
       }
    }
@@ -185,12 +225,12 @@ function cbPopup_maintainItem(curItemID, X, Y) {
 //show its preview div, and populate its
 //html from the item_popup script
 $(cbPopup_displayTrigger).hover(function (e) {
-   var curItemID = $(this).attr('itemid');
+   var curItemID = $(this).attr('hoverChild');
 
    if (cbPopup_KeepItemUp(curItemID)) return;
    cbPopup_maintainItem(curItemID, e.pageX, e.pageY);
 }, function () {
-   var curItemID = $(this).attr('itemid');
+   var curItemID = $(this).attr('hoverChild');
 
    if (cbPopup_KeepItemUp(curItemID)) return;
    //hover is over, if its displayed turn it off
@@ -200,7 +240,7 @@ $(cbPopup_displayTrigger).hover(function (e) {
 //DO POPUP POSITION MAINTENANCE
 //move the popup around with the mouse
 $(cbPopup_displayTrigger).mousemove(function (e) {
-   var curItemID = $(this).attr('itemid');
+   var curItemID = $(this).attr('hoverChild');
    
    if (cbPopup_KeepItemUp(curItemID)) return;          
    cbPopup_maintainItem(curItemID, e.pageX, e.pageY);
@@ -211,7 +251,7 @@ $(cbPopup_displayTrigger).mousemove(function (e) {
 //make the div stay up until they click
 //again
 $(cbPopup_displayTrigger).click(function (e) {
-   var curItemID = $(this).attr('itemid');
+   var curItemID = $(this).attr('hoverChild');
    
    if (cbPopup_KeepItemUp(curItemID)) {
       cbPopup_KeepItemUp(curItemID, false);

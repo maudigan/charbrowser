@@ -46,6 +46,10 @@
  *      prepared for implementation of dynamic guild ranks
  *   March 22, 2020 - Maudigan
  *     impemented common.php
+ *   April 2, 2020 - Maudigan
+ *     dont show anon guild members names
+ *     show stack size code
+ *     added item icon and stacksize to the item stat/inspect windows
  *      
  ***************************************************************************/
   
@@ -82,44 +86,46 @@ if ($mypermission['inventory']) cb_message_die($language['MESSAGE_ERROR'],$langu
 //get character info
 $class      = $char->GetValue('class');
 
-/* this will get implemented in the server code soon, uncomment and remove the code below
-//load guild name
-$tpl = <<<TPL
-SELECT guilds.name, guild_ranks.title 
-FROM guilds
-JOIN guild_members
-  ON guilds.id = guild_members.guild_id
-JOIN guild_ranks
-  ON guild_members.rank = guild_ranks.rank 
- AND guild_members.guild_id = guild_ranks.guild_id
-WHERE guild_members.char_id = '%s' 
-LIMIT 1
-TPL;
-$query = sprintf($tpl, $charID);
-$result = $cbsql->query($query);
-if($cbsql->rows($result))
-{ 
-   $row = $cbsql->nextrow($result);
-   $guild_name = $row['name'];
-   $guild_rank = $row['title'];
-}*/
+if ($char->GetValue('anon') != 1 || $showguildwhenanon || $charbrowser_is_admin_page) {
+   /* this will get implemented in the server code soon, uncomment and remove the code below
+   //load guild name
+   $tpl = <<<TPL
+   SELECT guilds.name, guild_ranks.title 
+   FROM guilds
+   JOIN guild_members
+     ON guilds.id = guild_members.guild_id
+   JOIN guild_ranks
+     ON guild_members.rank = guild_ranks.rank 
+    AND guild_members.guild_id = guild_ranks.guild_id
+   WHERE guild_members.char_id = '%s' 
+   LIMIT 1
+   TPL;
+   $query = sprintf($tpl, $charID);
+   $result = $cbsql->query($query);
+   if($cbsql->rows($result))
+   { 
+      $row = $cbsql->nextrow($result);
+      $guild_name = $row['name'];
+      $guild_rank = $row['title'];
+   }*/
 
-//load guild name statically
-$tpl = <<<TPL
-SELECT guilds.name, guild_members.rank 
-FROM guilds
-JOIN guild_members
-  ON guilds.id = guild_members.guild_id
-WHERE guild_members.char_id = '%s' 
-LIMIT 1
+   //load guild name statically
+   $tpl = <<<TPL
+   SELECT guilds.name, guild_members.rank 
+   FROM guilds
+   JOIN guild_members
+     ON guilds.id = guild_members.guild_id
+   WHERE guild_members.char_id = '%s' 
+   LIMIT 1
 TPL;
-$query = sprintf($tpl, $charID);
-$result = $cbsql->query($query);
-if($cbsql->rows($result))
-{ 
-   $row = $cbsql->nextrow($result);
-   $guild_name = $row['name'];
-   $guild_rank = $guildranks[$row['rank']];
+   $query = sprintf($tpl, $charID);
+   $result = $cbsql->query($query);
+   if($cbsql->rows($result))
+   { 
+      $row = $cbsql->nextrow($result);
+      $guild_name = $row['name'];
+      $guild_rank = $guildranks[$row['rank']];
+   }
 }
 
 
@@ -358,7 +364,8 @@ if (!$mypermission['bags']) {
       if ($value->type() != INVENTORY) continue; 
       $cb_template->assign_block_vars("invitem", array( 
          'SLOT' => $value->slot(),      
-         'ICON' => $value->icon())
+         'ICON' => $value->icon(),      
+         'STACK' => $value->stack())
       );
       if ($value->slotcount() > 0) {
          $cb_template->assign_block_vars("invitem.switch_is_bag", array());
@@ -370,7 +377,8 @@ foreach ($allitems as $value) {
    if ($value->type() != EQUIPMENT) continue; 
    $cb_template->assign_block_vars("equipitem", array( 
       'SLOT' => $value->slot(),      
-      'ICON' => $value->icon())
+      'ICON' => $value->icon(),      
+      'STACK' => $value->stack())
    );
 }
 //BANK
@@ -379,7 +387,8 @@ if (!$mypermission['bank']) {
       if ($value->type() != BANK) continue;    
       $cb_template->assign_block_vars("bankitem", array( 
          'SLOT' => $value->slot(),  
-         'ICON' => $value->icon())
+         'ICON' => $value->icon(),      
+         'STACK' => $value->stack())
       );
       if ($value->slotcount() > 0) {
          $cb_template->assign_block_vars("bankitem.switch_is_bag", array());
@@ -392,7 +401,8 @@ if (!$mypermission['sharedbank']) {
       if ($value->type() != SHAREDBANK) continue;    
       $cb_template->assign_block_vars("sharedbankitem", array( 
          'SLOT' => $value->slot(),  
-         'ICON' => $value->icon())
+         'ICON' => $value->icon(),      
+         'STACK' => $value->stack())
       );
       if ($value->slotcount() > 0) {
          $cb_template->assign_block_vars("sharedbankitem.switch_is_bag", array());
@@ -428,7 +438,8 @@ foreach ($allitems as $value) {
             $cb_template->assign_block_vars("bags.bagitems", array( 
                'BI_SLOT' => $subvalue->slot(),
                'BI_RELATIVE_SLOT' => $subvalue->vslot(),
-               'BI_ICON' => $subvalue->icon())
+               'BI_ICON' => $subvalue->icon(),      
+               'STACK' => $subvalue->stack())
             );
          }
       }
@@ -450,7 +461,8 @@ foreach ($allitems as $value) {
    $cb_template->assign_both_block_vars("item", array(
       'SLOT' => $value->slot(),     
       'ICON' => $value->icon(),   
-      'NAME' => $value->name(),
+      'NAME' => $value->name(),  
+      'STACK' => $value->stack(),
       'ID' => $value->id(),
       'LINK' => QuickTemplate($link_item, array('ITEM_ID' => $value->id())),
       'HTML' => $value->html())

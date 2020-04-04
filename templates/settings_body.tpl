@@ -22,9 +22,10 @@
    </table>
    <br>
    {L_RESULTS}: <em>{S_RESULTS}</em><br>
-   {L_HIGHLIGHT_GM}: <em>{S_HIGHLIGHT_GM}</em><br>
    {L_BAZAAR}: <em>{S_BAZAAR}</em><br>
    {L_CHARMOVE}: <em>{S_CHARMOVE}</em><br>
+   {L_GUILDVIEW}: <em>{S_GUILDVIEW}</em><br>
+   {L_SERVERVIEW}: <em>{S_SERVERVIEW}</em><br>
    <!-- BEGIN switch_new_version -->
    <div class='CB_is_old'>
       <p>{switch_new_version.PUBLISHED}</p>

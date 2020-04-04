@@ -5,6 +5,27 @@
       <link rel='stylesheet' href='{ROOT_URL}templates/style-1.0.css' type='text/css'/>
       <meta http-equiv='Content-Type' content='text/html; charset=iso-8859-1'>
       <meta http-equiv='Content-Style-Type' content='text/css'>
+      <!-- For Chrome for Android: -->
+      <link rel="icon" sizes="192x192" href="{ROOT_URL}images/favicons/touch-icon-192x192.png">
+      <!-- For iPhone 6 Plus with @3× display: -->
+      <link rel="apple-touch-icon-precomposed" sizes="180x180" href="{ROOT_URL}images/favicons/apple-touch-icon-180x180-precomposed.png">
+      <!-- For iPad with @2× display running iOS ? 7: -->
+      <link rel="apple-touch-icon-precomposed" sizes="152x152" href="{ROOT_URL}images/favicons/apple-touch-icon-152x152-precomposed.png">
+      <!-- For iPad with @2× display running iOS ? 6: -->
+      <link rel="apple-touch-icon-precomposed" sizes="144x144" href="{ROOT_URL}images/favicons/apple-touch-icon-144x144-precomposed.png">
+      <!-- For iPhone with @2× display running iOS ? 7: -->
+      <link rel="apple-touch-icon-precomposed" sizes="120x120" href="{ROOT_URL}images/favicons/apple-touch-icon-120x120-precomposed.png">
+      <!-- For iPhone with @2× display running iOS ? 6: -->
+      <link rel="apple-touch-icon-precomposed" sizes="114x114" href="{ROOT_URL}images/favicons/apple-touch-icon-114x114-precomposed.png">
+      <!-- For the iPad mini and the first- and second-generation iPad (@1× display) on iOS ? 7: -->
+      <link rel="apple-touch-icon-precomposed" sizes="76x76" href="{ROOT_URL}images/favicons/apple-touch-icon-76x76-precomposed.png">
+      <!-- For the iPad mini and the first- and second-generation iPad (@1× display) on iOS ? 6: -->
+      <link rel="apple-touch-icon-precomposed" sizes="72x72" href="{ROOT_URL}images/favicons/apple-touch-icon-72x72-precomposed.png">
+      <!-- For non-Retina iPhone, iPod Touch, and Android 2.1+ devices: -->
+      <link rel="apple-touch-icon-precomposed" href="{ROOT_URL}images/favicons/apple-touch-icon-precomposed.png"><!-- 57×57px -->  
+      <link rel="icon" type="image/png" sizes="48x48" href="{ROOT_URL}images/favicons/favicon-48x48.png">
+      <link rel="icon" type="image/png" sizes="32x32" href="{ROOT_URL}images/favicons/favicon-32x32.png">
+      <link rel="icon" type="image/png" sizes="16x16" href="{ROOT_URL}images/favicons/favicon-16x16.png">      
       <script language='JavaScript' type='text/javascript' src='https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js'></script>
       <script language='JavaScript' type='text/javascript' src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>  
    </head>

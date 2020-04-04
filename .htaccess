@@ -1,5 +1,9 @@
 RewriteEngine On
 RewriteCond %{THE_REQUEST} ^GET\ ([^#?\ ]+)cbsig/
 RewriteRule ^cbsig/([A-Za-z0-9\-]+)/([A-Za-z0-9\-]+)/([A-Za-z0-9\-]+)/([A-Za-z0-9\-]+)/([A-Za-z0-9\-]+)/([A-Za-z0-9\-]+)/([A-Za-z0-9\-]+).png$ %1sig.php?one=$1&two=$2&epic=$3&stat=$4&border=$5&background=$6&char=$7 [L]
-																	
+
+<FilesMatch "\.(htaccess|htpasswd|ini|log|sh|inc|bak|tpl|register|template)$">
+Order Allow,Deny
+Deny from all
+</FilesMatch>
 

@@ -86,12 +86,12 @@
 
          <!-- SLOT ICONS FOR WORN ITEMS -->
          <!-- BEGIN equipitem --> 
-         <div hoverChild='#slot{equipitem.SLOT}' class='Slot slotloc{equipitem.SLOT} CB_HoverParent' style='background-image: url({ROOT_URL}images/items/item_{equipitem.ICON}.png);'></div>  
+         <div hoverChild='#slot{equipitem.SLOT}' class='Slot slotloc{equipitem.SLOT} CB_HoverParent' style='background-image: url({ROOT_URL}images/items/item_{equipitem.ICON}.png);'><span>{equipitem.STACK}</span></div>  
          <!-- END equipitem --> 
          
          <!-- SLOT ICONS FOR INVENTORY -->
          <!-- BEGIN invitem --> 
-         <div hoverChild='#slot{invitem.SLOT}' class='Slot slotloc{invitem.SLOT} CB_HoverParent' style='background-image: url({ROOT_URL}images/items/item_{invitem.ICON}.png);'></div> 
+         <div hoverChild='#slot{invitem.SLOT}' class='Slot slotloc{invitem.SLOT} CB_HoverParent' style='background-image: url({ROOT_URL}images/items/item_{invitem.ICON}.png);'><span>{invitem.STACK}</span></div> 
          <!-- BEGIN switch_is_bag --> 
          <div hoverChild='#bag{invitem.SLOT}' class='BagOpenSlot slotloc{invitem.SLOT} CB_HoverParent'></div>
          <!-- END switch_is_bag --> 
@@ -308,7 +308,7 @@
       <!-- END sharedbankslots -->   
 
       <!-- BEGIN bankitem --> 
-      <div hoverChild='#slot{bankitem.SLOT}' class='Slot slotloc{bankitem.SLOT} CB_HoverParent' style='background-image: url({ROOT_URL}images/items/item_{bankitem.ICON}.png);'></div> 
+      <div hoverChild='#slot{bankitem.SLOT}' class='Slot slotloc{bankitem.SLOT} CB_HoverParent' style='background-image: url({ROOT_URL}images/items/item_{bankitem.ICON}.png);'><span>{bankitem.STACK}</span></div> 
       <!-- BEGIN switch_is_bag --> 
       <div hoverChild='#bag{bankitem.SLOT}' class='BagOpenSlot slotloc{bankitem.SLOT} CB_HoverParent'></div>
       <!-- END switch_is_bag --> 
@@ -316,7 +316,7 @@
 
       <div class='sharedbankheaderloc'>{L_SHARED_BANK}</div>
       <!-- BEGIN sharedbankitem --> 
-      <div hoverChild='#slot{sharedbankitem.SLOT}' class='Slot slotloc{sharedbankitem.SLOT} CB_HoverParent' style='background-image: url({ROOT_URL}images/items/item_{sharedbankitem.ICON}.png);'></div> 
+      <div hoverChild='#slot{sharedbankitem.SLOT}' class='Slot slotloc{sharedbankitem.SLOT} CB_HoverParent' style='background-image: url({ROOT_URL}images/items/item_{sharedbankitem.ICON}.png);'><span>{sharedbankitem.STACK}</span></div> 
       <!-- BEGIN switch_is_bag --> 
       <div hoverChild='#bag{sharedbankitem.SLOT}' class='BagOpenSlot slotloc{sharedbankitem.SLOT} CB_HoverParent'></div>
       <!-- END switch_is_bag --> 
@@ -334,14 +334,14 @@
 
 <!-- BAG WINDOWS -->
 <!-- BEGIN bags --> 
-<div class='WindowSimple bagrow{bags.ROWS} PositionBag CB_Can_Drag CB_HoverChild' id='bag{bags.SLOT}'> 
+<div class='WindowSimple bagrow{bags.ROWS} PositionBag CB_Should_ZOrder CB_Can_Drag CB_HoverChild' id='bag{bags.SLOT}'> 
    <div class='WindowTitleBar'>{L_CONTAINER}</div>
 
    <!-- BEGIN bagslots --> 
    <div class='Slot bagslotloc{bags.bagslots.BS_SLOT} slotimage'></div> 
    <!-- END bagslots --> 
    <!-- BEGIN bagitems --> 
-   <div hoverChild='#slot{bags.bagitems.BI_SLOT}' class='Slot bagslotloc{bags.bagitems.BI_RELATIVE_SLOT} CB_HoverParent' style='background-image: url({ROOT_URL}images/items/item_{bags.bagitems.BI_ICON}.png);'></div> 
+   <div hoverChild='#slot{bags.bagitems.BI_SLOT}' class='Slot bagslotloc{bags.bagitems.BI_RELATIVE_SLOT} CB_HoverParent' style='background-image: url({ROOT_URL}images/items/item_{bags.bagitems.BI_ICON}.png);'><span>{bags.bagitems.STACK}</span></div> 
    <!-- END bagitems --> 
 
    <div class='CB_Button bagbuttonrow{bags.ROWS}' onclick='cbPopup_closeItem("#bag{bags.SLOT}");'>{L_DONE}</div> 
@@ -350,20 +350,24 @@
       
 <!-- ITEM WINDOWS -->
 <!-- BEGIN item --> 
-<div class='WindowComplex PositionItem CB_Can_Drag CB_HoverChild' id='slot{item.SLOT}' onmousedown='cbPopup_ZOrder("#slot{item.SLOT}");'> 
+<div class='WindowComplex PositionItem CB_Can_Drag CB_Should_ZOrder CB_HoverChild' id='slot{item.SLOT}'> 
    <div class='WindowTitleBar'>
       <a href='{item.LINK}'>{item.NAME}</a>
       <div class='WindowTile' onclick='cbPopup_tileItems();' title='click to tile all open popups'></div>
       <div class='WindowCloseAll' onclick='cbPopup_closeAllItems();' title='click to close all open popups'></div>
       <div class='WindowClose' onclick='cbPopup_closeItem("#slot{item.SLOT}");' title='click to close popup'></div>
    </div> 
+   <div class='Slot slotlocinspect slotimage'></div> 
+   <div class='Slot slotlocinspect' style='background-image: url({ROOT_URL}images/items/item_{item.ICON}.png);'><span>{item.STACK}</span></div> 
    <div style='text-align:left;'>        
       {item.HTML} 
       <!-- BEGIN augment --> 
       <div class='WindowNestedTan'>
          <div class='WindowNestedTanTitleBar'>
             <a href='{item.augment.AUG_LINK}'>{item.augment.AUG_NAME}</a>
-         </div>
+         </div>   
+         <div class='Slot slotlocinspectaug slotimage'></div> 
+         <div class='Slot slotlocinspectaug' style='background-image: url({ROOT_URL}images/items/item_{item.augment.AUG_ICON}.png);'></div> 
          {item.augment.AUG_HTML} 
       </div> 
       <!-- END augment -->   

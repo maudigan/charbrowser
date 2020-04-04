@@ -30,6 +30,11 @@
  *      Modified database to use a class.
  *   March 22, 2020 - Maudigan
  *     impemented common.php
+ *   April 2, 2020 - Maudigan
+ *     search by seller name (thanks croco/kinglykrab)
+ *   April 3, 2020 - Maudigan
+ *     add icons to inspect
+ *     added number_format to prices
  * 
  ***************************************************************************/
  
@@ -55,6 +60,7 @@ $type       = (($_GET['type']!="") ? $_GET['type'] : "-1");
 $pricemin   = $_GET['pricemin'];
 $pricemax   = $_GET['pricemax'];
 $item       = $_GET['item'];
+$seller       = $_GET['char'];
 $direction  = (($_GET['direction']=="DESC") ? "DESC" : "ASC");
 
 $perpage=25;
@@ -64,6 +70,7 @@ $baselink=(($charbrowser_wrapped) ? $_SERVER['SCRIPT_NAME'] : "index.php") . "?p
 
 //security against sql injection  
 if (!IsAlphaSpace($item)) cb_message_die($language['MESSAGE_ERROR'],$language['MESSAGE_ITEM_ALPHA']);
+if (!IsAlphaSpace($seller)) cb_message_die($language['MESSAGE_ERROR'],$language['MESSAGE_NAME_ALPHA']);
 if (!IsAlphaSpace($orderby)) cb_message_die($language['MESSAGE_ERROR'],$language['MESSAGE_ORDER_ALPHA']);
 if (!is_numeric($start)) cb_message_die($language['MESSAGE_ERROR'],$language['MESSAGE_START_NUMERIC']);
 if (!is_numeric($pricemin) && $pricemin != "") cb_message_die($language['MESSAGE_ERROR'],$language['MESSAGE_PRICE_NUMERIC']);
@@ -85,6 +92,10 @@ $where = "";
 $divider = "WHERE ";
 if ($item) {
    $where .= $divider."items.Name LIKE '%".str_replace("_", "%", str_replace(" ","%",$item))."%'";
+   $divider = " AND ";
+}
+if ($seller) {
+   $where .= $divider."character_data.name = '".$seller."'";
    $divider = " AND ";
 }
 if ($pricemin) {
@@ -154,6 +165,16 @@ include(__DIR__ . "/include/header.php");
  
  
 /*********************************************
+            DROP PROFILE MENU
+*********************************************/
+//if you're looking at a players store, treat it like 
+//a profile page
+if ($seller) {
+   output_profile_menu($seller, 'bazaar');
+}
+ 
+ 
+/*********************************************
               POPULATE BODY
 *********************************************/
 //build body template
@@ -171,6 +192,8 @@ $cb_template->assign_both_vars(array(
 
 $cb_template->assign_vars(array(  
    'ITEM' => $item,
+   'SELLER' => $seller,
+   'STORENAME' => ($seller) ? " - ".$seller : "",
    'ORDER_LINK' => $baselink."&start=$start&direction=".(($direction=="ASC") ? "DESC":"ASC"), 
    'PAGINATION' => cb_generate_pagination("$baselink&orderby=$orderby&direction=$direction", $totalitems, $perpage, $start, true),
    'PRICE_MIN' => $pricemin,
@@ -195,17 +218,18 @@ $slotcounter = 0;
 foreach($lots as $lot) {
    $tempitem = new item($lot);
    $price = $lot["tradercost"];
-   $plat = floor($price/1000);
+   $plat = number_format(floor($price/1000));
    $price = $price % 1000;
-   $gold = floor($price/100);
+   $gold = number_format(floor($price/100));
    $price = $price % 100;
-   $silver = floor($price/10);
-   $copper  = $price % 10;
+   $silver = number_format(floor($price/10));
+   $copper  = number_format($price % 10);
    $cb_template->assign_both_block_vars("items", array( 
       'SELLER' => $lot['charactername'],
       'PRICE' => (($plat)?$plat."p ":"").(($silver)?$silver."s ":"").(($gold)?$gold."g ":"").(($copper)?$copper."c ":""),      
       'NAME' => $tempitem->name(),
       'ID' => $tempitem->id(),
+      'ICON' => $tempitem->icon(),
       'LINK' => QuickTemplate($link_item, array('ITEM_ID' => $tempitem->id())),
       'HTML' => $tempitem->html(),
       'SLOT' => $slotcounter)

@@ -26,6 +26,10 @@
  *      implemented self version checking
  *   March 22, 2020 - Maudigan
  *     impemented common.php
+ *   APril 2, 2020 - Maudigan
+ *     swapped to version_compare for the version check so we don't show
+ *     the update message if they have applied a patch that's newer than
+ *     the latest release.
  ***************************************************************************/
  
  
@@ -88,8 +92,8 @@ $CB_json = json_decode($CB_content);
 //current version number
 $CB_cur_version =  $CB_json->tag_name; 
 
-//is this install current
-$CB_is_old = ($CB_cur_version != $version) ? true : false;
+//is this install older than the latest major release (new patches are ignored)
+$CB_is_old = (version_compare($CB_cur_version, $version) == 1) ? true : false;
 
 //if it's old grab the new version info, when it was published
 //download url, and its description
@@ -155,11 +159,15 @@ $cb_template->assign_both_vars(array(
    'S_RESULTS' => $numToDisplay,
    'S_HIGHLIGHT_GM' => (($highlightgm)?$language['SETTINGS_ENABLED']:$language['SETTINGS_DISABLED']),
    'S_BAZAAR' => (($blockbazaar)?$language['SETTINGS_DISABLED']:$language['SETTINGS_ENABLED']),
-   'S_CHARMOVE' => (($blockcharmove)?$language['SETTINGS_DISABLED']:$language['SETTINGS_ENABLED']))
+   'S_CHARMOVE' => (($blockcharmove)?$language['SETTINGS_DISABLED']:$language['SETTINGS_ENABLED']),
+   'S_GUILDVIEW' => (($blockguilddata)?$language['SETTINGS_DISABLED']:$language['SETTINGS_ENABLED']),
+   'S_SERVERVIEW' => (($blockserverdata)?$language['SETTINGS_DISABLED']:$language['SETTINGS_ENABLED']))
 );
 $cb_template->assign_vars(array(  
    'L_RESULTS' => $language['SETTINGS_RESULTS'],
    'L_CHARMOVE' => $language['SETTINGS_CHARMOVE'],
+   'L_GUILDVIEW' => $language['SETTINGS_GUILDVIEW'],
+   'L_SERVERVIEW' => $language['SETTINGS_SERVERVIEW'],
    'L_HIGHLIGHT_GM' => $language['SETTINGS_HIGHLIGHT_GM'],
    'L_UPDATES_EXIST' => $language['SETTINGS_UPDATES_EXIST'],
    'L_DOWNLOAD' => $language['SETTINGS_DOWNLOAD'],

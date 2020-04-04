@@ -17,6 +17,13 @@
  *      Initial revision
  *   March 22, 2020 - Maudigan
  *     impemented common.php
+ *   April 2, 2020 - Maudigan
+ *     dont show anon guild members names
+ *   April 2, 2020 - Maudigan
+ *     removed some commented out test code
+ *   April 3, 2020 - Maudigan
+ *     removed some commented out test code
+ *     added number_format to counts
  *
  ***************************************************************************/
   
@@ -116,7 +123,7 @@ if ($guildmembercount) {
 $tpl = <<<TPL
 SELECT character_data.name, character_data.race, 
        character_data.class, character_data.level,
-       guild_members.rank
+       guild_members.rank, character_data.anon
 FROM guild_members
 LEFT JOIN character_data
        ON character_data.id = guild_members.char_id 
@@ -133,13 +140,21 @@ $guildmembercount = $cbsql->rows($result);
 $guildavglevel = 0;
 $guildmaxlevel = 0;
 $guildminlevel = 500;
+
 if ($guildmembercount) {
    while ($row = $cbsql->nextrow($result)) {
+      //dont show anonymous guild members name
+      if ($row['anon'] != 1 || $showguildwhenanon || $charbrowser_is_admin_page) {
+         $charname = '<a href="'.$cb_index_url.'?page=character&char='.$row['name'].'">'.$row['name'].'</a>';
+      }
+      else {
+         $charname = "Anonymous";
+      }
       $guildavglevel += $row['level'];
       $guildmaxlevel = max($row['level'], $guildmaxlevel);
       $guildminlevel = min($row['level'], $guildminlevel);
       $guildmembers[] = array(
-         'NAME' => $row['name'],
+         'NAME' => $charname,
          'RACE' => $dbracenames[$row['race']],
          'RANK' => $guildranks[$row['rank']],
          'CLASS' => $dbclassnames[$row['class']],
@@ -172,7 +187,7 @@ if ($cbsql->rows($result)) {
       $maxclasspercent = max($maxclasspercent, $classpercent);
       $guildclasses[] = array(
          'CLASS' => $dbclassnames[$row['class']],
-         'COUNT' => $row['count'],
+         'COUNT' => number_format($row['count']),
          'ROUNDED_PERCENT' => round($classpercent * 100),
          'CLEAN_PERCENT' => round($classpercent * 100, 2),
          'RAW_PERCENT' => $classpercent,
@@ -225,72 +240,6 @@ if ($cbsql->rows($result)) {
    }
 }
 
-
-     /*$guildlevelcounts[1] = array('LEVEL' => 1, 'COUNT' => 0);
-      $guildlevelcounts[2] = array('LEVEL' => 2, 'COUNT' => 0);
-      $guildlevelcounts[3] = array('LEVEL' => 3, 'COUNT' => 0);
-      $guildlevelcounts[4] = array('LEVEL' => 4, 'COUNT' => 0);
-      $guildlevelcounts[5] = array('LEVEL' => 5, 'COUNT' => 0);
-      $guildlevelcounts[6] = array('LEVEL' => 6, 'COUNT' => 0);
-      $guildlevelcounts[7] = array('LEVEL' => 7, 'COUNT' => 0);
-      $guildlevelcounts[8] = array('LEVEL' => 8, 'COUNT' => 0);
-      $guildlevelcounts[9] = array('LEVEL' => 9, 'COUNT' => 0);
-      $guildlevelcounts[10] = array('LEVEL' => 10, 'COUNT' => 0);
-      $guildlevelcounts[11] = array('LEVEL' => 11, 'COUNT' => 0);
-      $guildlevelcounts[12] = array('LEVEL' => 12, 'COUNT' => 0);
-      $guildlevelcounts[13] = array('LEVEL' => 13, 'COUNT' => 0);
-      $guildlevelcounts[14] = array('LEVEL' => 14, 'COUNT' => 0);
-      $guildlevelcounts[15] = array('LEVEL' => 15, 'COUNT' => 0);
-      $guildlevelcounts[16] = array('LEVEL' => 16, 'COUNT' => 0);
-      $guildlevelcounts[17] = array('LEVEL' => 17, 'COUNT' => 0);
-      $guildlevelcounts[18] = array('LEVEL' => 18, 'COUNT' => 0);
-      $guildlevelcounts[19] = array('LEVEL' => 19, 'COUNT' => 0);
-      $guildlevelcounts[20] = array('LEVEL' => 20, 'COUNT' => 0);
-      $guildlevelcounts[21] = array('LEVEL' => 21, 'COUNT' => 0);
-      $guildlevelcounts[22] = array('LEVEL' => 22, 'COUNT' => 0);
-      $guildlevelcounts[23] = array('LEVEL' => 23, 'COUNT' => 0);
-      $guildlevelcounts[24] = array('LEVEL' => 24, 'COUNT' => 0);
-      $guildlevelcounts[25] = array('LEVEL' => 25, 'COUNT' => 0);
-      $guildlevelcounts[26] = array('LEVEL' => 26, 'COUNT' => 0);
-      $guildlevelcounts[27] = array('LEVEL' => 27, 'COUNT' => 0);
-      $guildlevelcounts[28] = array('LEVEL' => 28, 'COUNT' => 0);
-      $guildlevelcounts[29] = array('LEVEL' => 29, 'COUNT' => 0);
-      $guildlevelcounts[30] = array('LEVEL' => 30, 'COUNT' => 0);
-      $guildlevelcounts[31] = array('LEVEL' => 31, 'COUNT' => 0);
-      $guildlevelcounts[32] = array('LEVEL' => 32, 'COUNT' => 0);
-      $guildlevelcounts[33] = array('LEVEL' => 33, 'COUNT' => 0);
-      $guildlevelcounts[34] = array('LEVEL' => 34, 'COUNT' => 0);
-      $guildlevelcounts[35] = array('LEVEL' => 35, 'COUNT' => 0);
-      $guildlevelcounts[36] = array('LEVEL' => 36, 'COUNT' => 0);
-      $guildlevelcounts[37] = array('LEVEL' => 37, 'COUNT' => 0);
-      $guildlevelcounts[38] = array('LEVEL' => 38, 'COUNT' => 0);
-      $guildlevelcounts[39] = array('LEVEL' => 39, 'COUNT' => 0);
-      $guildlevelcounts[40] = array('LEVEL' => 40, 'COUNT' => 0);
-      $guildlevelcounts[41] = array('LEVEL' => 41, 'COUNT' => 0);
-      $guildlevelcounts[42] = array('LEVEL' => 42, 'COUNT' => 0);
-      $guildlevelcounts[43] = array('LEVEL' => 43, 'COUNT' => 0);
-      $guildlevelcounts[44] = array('LEVEL' => 44, 'COUNT' => 0);
-      $guildlevelcounts[45] = array('LEVEL' => 45, 'COUNT' => 0);
-      $guildlevelcounts[46] = array('LEVEL' => 46, 'COUNT' => 0);
-      $guildlevelcounts[47] = array('LEVEL' => 47, 'COUNT' => 0);
-      $guildlevelcounts[48] = array('LEVEL' => 48, 'COUNT' => 50);
-      $guildlevelcounts[49] = array('LEVEL' => 49, 'COUNT' => 0);
-      $guildlevelcounts[50] = array('LEVEL' => 50, 'COUNT' => 0);
-      $guildlevelcounts[51] = array('LEVEL' => 51, 'COUNT' => 0);
-      $guildlevelcounts[52] = array('LEVEL' => 52, 'COUNT' => 0);
-      $guildlevelcounts[53] = array('LEVEL' => 53, 'COUNT' => 0);
-      $guildlevelcounts[54] = array('LEVEL' => 54, 'COUNT' => 0);
-      $guildlevelcounts[55] = array('LEVEL' => 55, 'COUNT' => 0);
-      $guildlevelcounts[56] = array('LEVEL' => 56, 'COUNT' => 0);
-      $guildlevelcounts[57] = array('LEVEL' => 57, 'COUNT' => 16);
-      $guildlevelcounts[58] = array('LEVEL' => 58, 'COUNT' => 10);
-      $guildlevelcounts[59] = array('LEVEL' => 59, 'COUNT' => 10);
-      $guildlevelcounts[60] = array('LEVEL' => 60, 'COUNT' => 0);
-      $guildlevelcounts[61] = array('LEVEL' => 61, 'COUNT' => 6);
-      $guildlevelcounts[62] = array('LEVEL' => 62, 'COUNT' => 0);
-      $guildlevelcounts[63] = array('LEVEL' => 63, 'COUNT' => 8);
-      $guildlevelcounts[64] = array('LEVEL' => 64, 'COUNT' => 0);
-      $guildlevelcounts[65] = array('LEVEL' => 65, 'COUNT' => 8);*/
  
 /*********************************************
                DROP HEADER
@@ -309,7 +258,7 @@ $cb_template->set_filenames(array(
 $cb_template->assign_both_vars(array(  
    'GUILD_NAME' => $guildname,  
    'GUILD_LEADER' => $guildleader,
-   'GUILD_COUNT' => $guildmembercount, 
+   'GUILD_COUNT' => number_format($guildmembercount), 
    'GUILD_AVG_LEVEL' => $guildavglevel)
 );
 $cb_template->assign_vars(array( 

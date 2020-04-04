@@ -29,6 +29,9 @@
  *      Implemented common.php
  *   March 22, 2020 - Maudigan
  *      Added client caching
+ *   April 2, 2020 - Maudigan
+ *      flush the cache prior to outputting the image to make sure
+ *      we don't send a text header
  ***************************************************************************/
  
  
@@ -140,8 +143,9 @@ else {
 /*********************************************
                OUTPUT IMAGE
 *********************************************/
+ob_clean(); //make sure we haven't sent a text header
 header('Last-Modified: '.gmdate('D, d M Y H:i:s', $config_time).' GMT', true, 200);
 header("Content-Type: image/png"); 
-imagepng($image); 
+imagepng($image);
 ImageDestroy($image);
-?> 
+?>

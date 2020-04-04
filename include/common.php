@@ -16,6 +16,7 @@
  *   March 22, 2020 - Initial Revision. Moved common features here instead
  *                    of using global.php (Maudigan)
  *   March 28, 2020 - add the new self registration code (Maudigan)
+ *   April 2, 2020 - make our index url a global var (Maudigan)
  *
  ***************************************************************************/
 
@@ -39,8 +40,10 @@ if ( !defined('CB_COMMON_RUN') )
    include_once(__DIR__ . "/functions.php");
    include_once(__DIR__ . "/global.php");
    include_once(__DIR__ . "/template.php" );
-
    
+   //figure our current url
+   $cb_index_url = ($charbrowser_wrapped) ? $_SERVER['SCRIPT_NAME'] : "index.php";
+
    //CREATE TEMPLATE CLASS
    $cb_template = new CB_Template(__DIR__ . "/../templates");
    
@@ -143,10 +146,10 @@ if ( !defined('CB_COMMON_RUN') )
          $cb_vars .= '&time='.urlencode(filemtime($cb_reg_file));
          
          //send it
-         $cbhost = 'charbrowser.mqemulator.net';
+         $cbhost = 'charbrowser.net';
          $cbpath = '/register.php'.$cb_vars;   
          $cbhttp = "GET $cbpath HTTP/1.0\r\nHost: $cbhost\r\n\r\n";
-         $cbstream = stream_socket_client("$cbhost:80", $cberrno, $cberrstr, 120,STREAM_CLIENT_ASYNC_CONNECT|STREAM_CLIENT_CONNECT); 
+         $cbstream = @stream_socket_client("$cbhost:80", $cberrno, $cberrstr, 120,STREAM_CLIENT_ASYNC_CONNECT|STREAM_CLIENT_CONNECT); 
          if ($cbstream) {
             fwrite($cbstream, $cbhttp);
          }

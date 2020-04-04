@@ -25,6 +25,9 @@
  *                         New bags contents are in 331-340 and 341-350
  *   March 8, 2020 - implement shared bank (Maudigan)
  *   March 21, 2020 - track item skill (Maudigan)
+ *   April 2, 2020 - Maudigan
+ *     show stack size code
+ *     cleaned up commented out code
  *
  ***************************************************************************/ 
   
@@ -52,6 +55,9 @@ class item {
   
         var $myslot; 
         //actual slot in the inventory table 
+  
+        var $mystack; 
+        //how many items in the stack
         
         var $myid; 
         //id of the item for linking 
@@ -95,8 +101,16 @@ class item {
            $this->myname=$row['Name']; 
            $this->myid=$row['id']; 
            $this->myskill=$row["itemtype"];
-           //switch ($this->myslot){                                                         //removed line 2/9/2014 
-           switch (true){                                                                    //added line 2/9/2014
+           //stackable?
+           if ($row['stackable']) {
+               $this->mystack = $row['charges'];
+           }
+           else {
+               $this->mystack = "";
+           }
+           
+           
+           switch (true){ 
                 case ($this->myslot >= 0 && $this->myslot <= 22):
                      $this->mytype = 1; 
                      $this->myvslot = $this->myslot; 
@@ -295,6 +309,10 @@ class item {
   
         function slot() { 
          return $this->myslot; 
+        } 
+  
+        function stack() { 
+         return $this->mystack; 
         } 
          
         function html() { 

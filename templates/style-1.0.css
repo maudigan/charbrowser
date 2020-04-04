@@ -770,6 +770,7 @@ BODY.CB_Body {
    text-align: left;
    vertical-align: top;
    border: 1px #7b714a dotted;
+   position: relative;
 }
 
 #charbrowser .WindowNestedBlue {
@@ -1169,7 +1170,8 @@ BODY.CB_Body {
    margin: 0 auto;
    position: relative;
 }
-#charbrowser .PositionServer DIV.CB_GuildTabBoxes {  
+#charbrowser .PositionServer TABLE.CB_TopTable,
+#charbrowser .PositionServer DIV.CB_ServerTabBoxes {  
    display: none;   
 }
 #charbrowser .PositionServer #tabbox1 THEAD TR TH:nth-child(1), 
@@ -1184,6 +1186,22 @@ BODY.CB_Body {
 #charbrowser .PositionServer #tabbox2 TBODY TR TD:nth-child(4) {
    text-align: left;
 }
+
+
+#charbrowser .PositionHome {
+   width: 600px;
+   margin: 0 auto;
+   position: relative;
+}
+#charbrowser .PositionHome IMG {
+   transform: scale(0.75);
+   max-width: 600px;
+   vertical-align: middle;
+   margin: 0 auto;
+   position: relative;
+   display: block;
+}
+
 #charbrowser .PositionFactionBasic {
    width: 400px;
    margin: 0 auto;
@@ -1387,12 +1405,23 @@ BODY.CB_Body {
 
 /* for item icons in inventory */
 #charbrowser .Slot {
-  height: 40px;
-  width: 40px;
-  border: 0px ;
-  margin: 0;
-  padding: 0;
-  position: absolute;
+   height: 40px;
+   width: 40px;
+   border: 0px ;
+   margin: 0;
+   padding: 0;
+   position: absolute;
+}
+
+/* for item count in inventory */
+#charbrowser .Slot SPAN {
+   position: absolute;
+   right: 1px;
+   bottom: 1px;
+   font-size: 8px;
+   background-color: #404040;
+   padding: 0px;
+   margin: 0px;
 }
 
 
@@ -1598,6 +1627,17 @@ BODY.CB_Body {
          locations for inventory slots
 ------------------------------------------------- */
 
+#charbrowser .slotlocinspect {
+  top: 18px;
+  right: 12px;
+}
+#charbrowser .slotlocinspectaug {
+   top: 4px;
+   right: 4px;
+   background-size: 30px 30px;
+   width: 30px;
+   height: 30px;
+}
 #charbrowser .slotloc1 {
   top: 14px;
   left: 172px;

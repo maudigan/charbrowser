@@ -41,6 +41,8 @@
  *      relocated the locator inside of the class
  *      pulled the code from calculatestats.php and put it here
  *      that code was recopied from eqemu from the 20200316 build
+ *   April 2, 2020 - Maudigan
+ *     show stack size code
  *  
  ***************************************************************************/
  
@@ -2175,7 +2177,8 @@ TPL;
       $tpl = <<<TPL
       SELECT items.*, inventory.augslot1, inventory.augslot2, 
              inventory.augslot3, inventory.augslot4, 
-             inventory.augslot5, inventory.slotid AS myslot 
+             inventory.augslot5, inventory.slotid AS myslot,
+             inventory.charges
       FROM items
       JOIN inventory 
         ON items.id = inventory.itemid

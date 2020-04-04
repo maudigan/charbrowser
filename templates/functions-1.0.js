@@ -13,6 +13,8 @@
  *                           Maudigan(Airwalking) 
  *
  *   March 7, 2020 - initial revision (Maudigan) 
+ *   April 3, 2020 - Add ZOrder handling to anything with the 
+ *                   CB_Should_ZOrder class (Maudigan)
  *      
  ***************************************************************************/
 
@@ -92,11 +94,16 @@ function cbPopup_KeepItemUp(curItemID, keepItemUp = "check") {
    return false;
 }
 
+
+   
 //CLICK CONTENT
 //move it to the top of the stack when interacted with
-function cbPopup_ZOrder(curItemID) {
-  $(curItemID).css('z-index', cbPopup_curZIndex++); 
+function cbPopup_ZOrder(that) {
+  $(that).css('z-index', cbPopup_curZIndex++); 
 }
+$( "#charbrowser .CB_Should_ZOrder" ).mousedown(function() {
+  cbPopup_ZOrder( this );
+});
 
 
 //TILE CONTENT

@@ -29,6 +29,8 @@
  *   March 23, 2020 - added base data error message(Maudigan)
  *   March 26, 2020 - added skill tab mod(Maudigan)
  *   March 26, 2020 - added server info language(Maudigan)
+ *   April 2, 2020 - added store language(Maudigan)
+ *   April 3, 2020 - added custom home page language(Maudigan)
  ***************************************************************************/ 
   
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             
@@ -337,17 +339,28 @@ $language['GUILD_NAME'] = "Name";
 
 
 
+
+//home language
+$language['HOME_HOME'] = "Home"; 
+$language['HOME_COL1'] = "Col 1"; 
+$language['HOME_COL2'] = "Col 2"; 
+$language['HOME_COL3'] = "Col 3"; 
+
 //server language
 $language['SERVER_MIN_LEVEL'] = "Minimum Level";
 $language['SERVER_MAX_LEVEL'] = "Maximum Level";
 $language['SERVER_AVG_LEVEL'] = "Average Level";
 $language['SERVER_CHAR_COUNT'] = "Character Count";
+$language['SERVER_NONE'] = "None";
 $language['SERVER_SERVER'] = "Server";
 $language['SERVER_CLASSES'] = "Classes";
 $language['SERVER_CLASS'] = "Class"; 
 $language['SERVER_PERCENT'] = "Percent";
 $language['SERVER_COUNT'] = "Count";   
 $language['SERVER_LEVELS'] = "Level Distribution"; 
+$language['SERVER_LEVELS_CUTOFF'] = "Level Distribution (Last %s Days)"; 
+$language['SERVER_ALL_TIME'] = "All Time"; 
+$language['SERVER_CUTOFF'] = "Last %s Days"; 
    
 //key language
 $language['KEYS_KEY'] = "Keys"; 
@@ -486,6 +499,8 @@ $language['SETTINGS_SETTINGS'] = "Settings";
 $language['SETTINGS_RESULTS'] = "Search results per page"; 
 $language['SETTINGS_HIGHLIGHT_GM'] = "Highlight GM Inventory"; 
 $language['SETTINGS_CHARMOVE'] = "Character Mover"; 
+$language['SETTINGS_GUILDVIEW'] = "Guild View"; 
+$language['SETTINGS_SERVERVIEW'] = "Server View"; 
 $language['SETTINGS_BAZAAR'] = "The Bazaar"; 
 $language['SETTINGS_USERS_GM'] = "GMs"; 
 $language['SETTINGS_USERS_ANON'] = "Anonymous"; 
@@ -556,6 +571,7 @@ $language['BUTTON_SKILLS'] = "Skills";
 $language['BUTTON_CORPSE'] = "Corpse"; 
 $language['BUTTON_FACTION'] = "Faction"; 
 $language['BUTTON_CHARMOVE'] = "Move"; 
+$language['BUTTON_STORE'] = "Store"; 
 $language['BUTTON_BOOKMARK'] = "Link"; 
 $language['BUTTON_SIG'] = "Sig"; 
 $language['BUTTON_KEYS'] = "Keys"; 

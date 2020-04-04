@@ -40,6 +40,9 @@
  *   March 28, 2020 - Maudigan
  *      added a quest global permission fetching function for guilds
  *      which is set by the guild leader
+ *   April 2, 2020 - Maudigan
+ *      flush the cache prior to outputting the image to make sure
+ *      we don't send a text header
  *
  ***************************************************************************/
  
@@ -120,6 +123,7 @@ function output_profile_menu($charname, $curpage) {
       array( 'PAGE' => 'skills', 'BUTTON_NAME' => $language['BUTTON_SKILLS']),
       array( 'PAGE' => 'corpse', 'BUTTON_NAME' => $language['BUTTON_CORPSE']),
       array( 'PAGE' => 'factions', 'BUTTON_NAME' => $language['BUTTON_FACTION']),
+      array( 'PAGE' => 'bazaar', 'BUTTON_NAME' => $language['BUTTON_STORE']),
       array( 'PAGE' => 'signaturebuilder', 'BUTTON_NAME' => $language['BUTTON_SIG']),
       array( 'PAGE' => 'charmove', 'BUTTON_NAME' => $language['BUTTON_CHARMOVE'])
    );
@@ -254,6 +258,7 @@ function cb_message_die($dietitle, $text) {
       $error_color = imagecolorallocate($error_image, $defaultcolor['r'], $defaultcolor['g'], $defaultcolor['b']);
       imagestring($error_image, 5, 10, 30, $dietitle, $error_color);
       imagestring($error_image, 2, 10, 50, $text, $error_color); 
+      ob_clean(); //make sure we haven't sent a text header
       header("Content-Type: image/png"); 
       imagepng($error_image); 
       ImageDestroy($error_image);

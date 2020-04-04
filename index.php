@@ -27,6 +27,9 @@
  *      Made the 'page' variable validation more strict to prevent abuse
  *   March 22, 2020 - Maudigan
  *     impemented common.php
+ *   April 3, 2020 - Maudigan
+ *     if the custom home.php is present, use it instead of the
+ *     standard front page
  ***************************************************************************/
   
  
@@ -37,6 +40,13 @@ define('INCHARBROWSER', true);
 include_once(__DIR__ . "/include/common.php");
  
  
+ 
+//use the home page override if it's present
+//and no other page is set
+if (empty($_REQUEST['page']) && file_exists( __DIR__ . "/home.php")) {   
+   $_REQUEST['page'] = 'home';
+}
+
  
 /*********************************************
                INDEX REQUESTED

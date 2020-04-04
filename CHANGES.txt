@@ -1,3 +1,30 @@
+v3.0.0
+----------------------------------------------------------------------
+finalized the 2.9.0 changes after testing/feedback
+
+Aprile 4, 2020 - Dont show an AA if it has no first rank
+                 Modified htaccess to hide template and other files
+                 Added favicon and touch icons
+                 Added commas to a bunch of displayed numbers
+                 Can search bazaar by seller name (thanks croco)
+                 Added a "Store" link to the side profile menu to see 
+                   items the player sells
+                 Hide the association between guild/player when they 
+                   are anon
+                 Add item/augment icons to the item inspect windows
+                 Add stack sizes to item icons
+                 Added a way to easily replace what's displayed on 
+                   the main page (renamed home.template to home.php, 
+                   then edit)
+                 Removed error reporting for self registration
+                 Added a view to the server page that shows activity 
+                   in the last 30 days (can configure)
+                 Fixed issue that caused dynamic images to not 
+                   display on newer PHP versions
+                 Added ZOrdering to popup windows, made it 
+                   dynamically add the effect based on class
+
+
 v2.9.0
 ----------------------------------------------------------------------
 massive rewrite
@@ -20,6 +47,12 @@ Mar 31, 2020 - Made all windows drag
                added mitigation ac to the inventory window
                removed autocorrect from all the search fields
                made search fields submit on pressing enter
+               version stamps css and js files so users dont
+                 cache and old version
+               made cb_message_die output an error image for image
+                 scripts
+               normalized a lot of the html to make it more SEO
+                and screen reader friendly
                
               
 v2.8.2

@@ -1,0 +1,104 @@
+<?php
+/***************************************************************************
+ *
+ *   This program is free software; you can redistribute it and/or modify
+ *   it under the terms of the GNU General Public License as published by
+ *   the Free Software Foundation; either version 2 of the License, or
+ *   (at your option) any later version.
+ *
+ *   Portions of this program are derived from publicly licensed software
+ *   projects including, but not limited to phpBB, Magelo Clone, 
+ *   EQEmulator, EQEditor, and Allakhazam Clone.
+ *
+ *                                  Author:
+ *                           Maudigan(Airwalking) 
+ * 
+ *   April 3, 2020 - Maudigan 
+ *      Initial revision
+ *
+ ***************************************************************************/
+  
+ 
+/*********************************************
+                 INCLUDES
+*********************************************/ 
+define('INCHARBROWSER', true);
+include_once(__DIR__ . "/include/common.php");
+include_once(__DIR__ . "/include/db.php");
+ 
+
+  
+/*********************************************
+        GATHER RELEVANT PAGE DATA
+*********************************************/
+
+//get server data
+$tpl = <<<TPL
+SELECT 'some data' as firstcol, 
+       'more data' as secondcol, 
+       'even more data' as thirdcol
+FROM DUAL
+WHERE 'example' = '%s'
+TPL;
+ 
+$query = sprintf($tpl, 'example');
+$result = $cbsql->query($query);
+
+//no rows?
+$rows = $cbsql->rows($result);
+if (!$rows) {
+   cb_message_die($language['MESSAGE_ERROR'],$language['MESSAGE_NO_RESULTS_ITEMS']);
+}
+
+$output = array();
+while($row = $cbsql->nextrow($result)) {
+   $output[] = array(
+      'FIRSTCOL' => $row['firstcol'],
+      'SECONDCOL' => $row['secondcol'],
+      'THIRDCOL' => $row['thirdcol']
+   );
+}
+ 
+/*********************************************
+               DROP HEADER
+*********************************************/
+$d_title = $subtitle;
+include(__DIR__ . "/include/header.php");
+ 
+ 
+/*********************************************
+              POPULATE BODY
+*********************************************/
+$cb_template->set_filenames(array(
+   'body' => 'home_body.tpl')
+);
+
+//output page vars
+$cb_template->assign_both_vars(array(  
+   'ROWS' => number_format($rows)." row(s)")
+);
+
+//output page language
+$cb_template->assign_vars(array( 
+   'L_HOME' => $language['HOME_HOME'],
+   'L_COL1' => $language['HOME_COL1'],
+   'L_COL2' => $language['HOME_COL2'],
+   'L_COL3' => $language['HOME_COL3'])
+);
+
+
+//output data rows
+foreach ($output as $row) {
+   $cb_template->assign_both_block_vars('rows', $row);
+}
+
+ 
+/*********************************************
+           OUTPUT BODY AND FOOTER
+*********************************************/
+$cb_template->pparse('body');
+
+$cb_template->destroy;
+ 
+include(__DIR__ . "/include/footer.php");
+?>

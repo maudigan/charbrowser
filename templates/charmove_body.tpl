@@ -1,4 +1,4 @@
-<div class='WindowComplex PositionCharMove CB_Can_Drag'>
+<div class='WindowComplexFancy PositionCharMove CB_Can_Drag'>
    <div class='WindowTitleBar'>{L_CHARACTER_MOVER}</div>
    <form name='charmoveform' method='GET' action='{INDEX_URL}'>
       <input type='hidden' name='page' value='charmove'> 

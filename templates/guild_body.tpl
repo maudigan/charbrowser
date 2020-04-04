@@ -1,4 +1,4 @@
-<div class='WindowComplex PositionGuild CB_Can_Drag'>
+<div class='WindowComplexFancy PositionGuild CB_Can_Drag'>
    <div class='WindowTitleBar'>{L_GUILD} - {GUILD_NAME}</div>
    <table class='CB_Table'>
       <thead>
@@ -61,7 +61,7 @@
          <tbody>
          <!-- BEGIN guildmembers -->
             <tr>
-               <td><a href="{INDEX_URL}?page=character&char={guildmembers.NAME}">{guildmembers.NAME}</a></td>
+               <td>{guildmembers.NAME}</td>
                <td>{guildmembers.RANK}</td>    
                <td>{guildmembers.RACE}</td>    
                <td>{guildmembers.CLASS}</td>

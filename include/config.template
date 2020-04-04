@@ -121,6 +121,17 @@ $blockguilddata = 0;
 
 
 /*****************************************************
+**   Should the guild member page, signature page,  **
+**   search page and character inventory show the   **
+**   guild names/char name association when a       **
+**   character is anon.                             **
+**   0 - block association                          **
+**   1 - show association                           **
+*****************************************************/
+$showguildwhenanon = 0; 
+
+
+/*****************************************************
 **   You can look at composition of server on the   **
 **   server.php page. This setting will block it    **
 **                                                  **
@@ -133,6 +144,10 @@ $blockguilddata = 0;
 **   1 - block server data                          **
 *****************************************************/
 $blockserverdata = 0;  
+
+//how many days of history to show on
+//timed server queries
+$cb_history_days = 30; 
 
 
 /*****************************************************
@@ -302,29 +317,53 @@ $guild_permissions = array(
 
 /*****************************************************
 **               SELF REGISTRATION                  ** 
-**  You can disable this by setting                 ** 
-**  $cb_allow_self_register to 0. If enabled (1)    ** 
-**  the script will phone-home to register by       ** 
-**  providing your URL, admin email, version, if    ** 
-**  you're a custom server, and your server name.   ** 
-**  Your admin email will NOT be shared, it will be ** 
-**  used in case of an emergency patch or releases  ** 
-**  (depending on your settings). My hope is to     **
-**  setup a page listing all public facing          **
-**  CharBrowser installs for EQEmulator to make it  ** 
-**  easy for players to discover other popular      **
-**  servers and browse their characters. (depending ** 
-**  on if people register their installs). This is  ** 
-**  all disabled by default. If enabled it will     ** 
-**  update the registration several times a day.    ** 
-**  It times the interval by touching the timestamp ** 
-**  on a .registration file.                        ** 
-**  Even if you have a private or local install     **
-**  you can feel free to register, it wont junk     **
-**  the data up.                                    **
-**  All the values in this section are for this     **
-**  feature.                                        **
-**      0 = block       1 = allow                   **
+**  This section of settings will publish your site **
+**  with a central index of charbrowser sites.      **
+**  Visit http://charbrowser.net to see the listing **
+**  of servers. The sites will not immediately show **
+**  up, they are verified before listing. Whether   **
+**  or not they are listed is up to admin           **
+**  discretion. If a server is particularly small,  **
+**  or appears to have been intended to be private  **
+**  it wont be listed.                              **
+**                                                  **
+**  There is a secondary reason to register. Your   **
+**  admin email address can be provided (or         **
+**  omitted) as well. This will allow us to         **
+**  contact you directly in case of an emergency    **
+**  patch.                                          **
+**                                                  **
+**  Your email address will not be shared publicly. **
+**                                                  **
+**  If enabled the self registration automatically  **
+**  happens, at most, every hour depending on your  **
+**  traffic. If you would like to update any        **
+**  values, simply change them here and wait. After **
+**  the next self registration you will become      **
+**  unlisted until you are manually verified again. **
+**                                                  **
+**  You may not be listed if you do not set a       **
+**  custom cb_unique_string, which is used in an    **
+**  automated handshake to verify the authenticity  **
+**  of the registration.                            **
+**                                                  **
+**  You can disable this process by setting         **
+**  cb_allow_self_register to 0, (it defaults to    **
+**  off). If you disable it you can ignore all vars **
+**  in this section, they will be unused. You can   **
+**  also choose to register but mark your server as **
+**  unlisted and it wont be publicised. No servers  **
+**  will be published until and unless they are     **
+**  clearly meant to be public upon manual review.  **
+**                                                  **
+**  if you would like additional piece of mind you  **
+**  can review or edit the code for this process    **
+**  in /include/common.php                          **
+**                                                  **
+**  if this doesn't prove useful it may be removed  **
+**  in future builds.                               **
+**                                                  **
+**      0 = block (default)      1 = allow          **
 *****************************************************/
 
 //set to 0 to block self registration, if set to 1
@@ -356,13 +395,11 @@ $cb_installation_url = "charbrowser.mqemulator.net/index.php";
 //server. 1 = custom, 0 = standard
 $cb_is_custom = 0;
 
-//Your server name, may be displayed in a central index
-//of servers one day if enough people register
+//how your site will be titled on charbrowser.net 
+// (if self registration and listing is enabled)
 $cb_server_title = "Your Server Name";
 
-//if enough people register we may setup a central server
-//list, either in charbrowser or a central location
-//set this to 0 to be unlisted in any future index
+//publicise my charbrowser install on charbrowser.net
 // 1 = list my server, 0 = don't list me ever
 $cb_list_server = 1;
 
@@ -376,7 +413,7 @@ $cb_list_server = 1;
 //registration is sent, this value will be included. The
 //registration server will do a handshake with this
 //value to ensure the values really came from your
-//server. 
+//server. All registrations are manually verified
 $cb_unique_string = "SET THIS TO A LONG UNIQUE STRING OF LETTERS AND NUMBERS";
 
 

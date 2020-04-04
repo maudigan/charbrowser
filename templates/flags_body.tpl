@@ -16,7 +16,7 @@
 <br><br><br>
 
 <!-- BEGIN head -->
-<div class='WindowComplex PositionFlagsChild CB_Can_Drag CB_HoverChild' id='flag{head.ID}'>
+<div class='WindowComplex PositionFlagsChild CB_Can_Drag CB_Should_ZOrder CB_HoverChild' id='flag{head.ID}'>
    <div class='WindowTitleBar'>
       {head.NAME}
       <div class='WindowTile' onclick='cbPopup_tileItems();' title='click to tile all open popups'></div>

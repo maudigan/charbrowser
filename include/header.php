@@ -16,6 +16,8 @@
  *   May 17, 2017 - added version.php include and changed the config.php
  *                  include to include_once()
  *   September 16, 2017 - added an optional simple header.
+ *   April 2, 2020 - made the index url a var so subsequent scripts can
+ *                   use it too.
  *
  ***************************************************************************/
  
@@ -48,7 +50,7 @@ $cb_template->assign_vars(array(
   'VERSION' => $version,
   'ADVERTISEMENT' => $adscript,
   'ROOT_URL' => $charbrowser_root_url,
-  'INDEX_URL' => ($charbrowser_wrapped) ? $_SERVER['SCRIPT_NAME'] : "index.php",
+  'INDEX_URL' => $cb_index_url,
   'L_GUILD' => $language['HEADER_GUILD'],
   'L_NAME' => $language ['HEADER_NAME'],
   'L_SETTINGS' => $language['HEADER_SETTINGS'],

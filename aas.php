@@ -40,6 +40,9 @@
  *      modularized the profile menu output
  *   March 22, 2020 - Maudigan
  *     impemented common.php
+ *   April 3, 2020 - Maudigan
+ *     dont show AAs if they dont have a first rank, some custom server
+ *     hide AA by deleting their ranks
  *
  ***************************************************************************/
   
@@ -170,6 +173,8 @@ while ($row = $cbsql->nextrow($result))
 {
    //calculate all the values
    $first_rank_id = $row['first_rank_id'];
+   //skip this one if there is no first rank data
+   if (!array_key_exists($first_rank_id, $aa_ranks)) continue;
    $cur = intval($character_aas[$first_rank_id]['aa_value']);
    $cost = getRankCost($first_rank_id, $cur);
    $max = getTotalRanks($first_rank_id);

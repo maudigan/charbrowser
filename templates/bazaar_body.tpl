@@ -1,11 +1,14 @@
-<div class='WindowComplex PositionBazaar CB_Can_Drag'>
-   <div class='WindowTitleBar'>{L_BAZAAR}</div>
+<div class='WindowComplexFancy PositionBazaar CB_Can_Drag'>
+   <div class='WindowTitleBar'>{L_BAZAAR}{STORENAME}</div>
    <div class='PositionBazaarLeft'>
       <form method='GET' name='bazaar' action='{INDEX_URL}'>
          <input type='hidden' name='page' value='bazaar'>
          
          <label for='item'>{L_SEARCH_NAME}</label>
          <input name='item' id='item' type='text' value='{ITEM}' autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">
+         
+         <label for='seller'>{L_NAME}</label>
+         <input name='char' id='seller' type='text' value='{SELLER}' autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">
 
          <label for='class'>{L_SEARCH_CLASS}</label>
          <select name='class' id='class'>
@@ -68,13 +71,15 @@
 
 <!-- ITEM WINDOWS -->
 <!-- BEGIN items --> 
-<div class='WindowComplex PositionItem CB_Can_Drag CB_HoverChild' id='item{items.SLOT}' onmousedown='cbPopup_ZOrder("#slot{items.SLOT}");'> 
+<div class='WindowComplex PositionItem CB_Can_Drag CB_HoverChild CB_Should_ZOrder' id='item{items.SLOT}'> 
    <div class='WindowTitleBar'>
       <a href='{items.LINK}'>{items.NAME}</a>
       <div class='WindowTile' onclick='cbPopup_tileItems();' title='click to tile all open popups'></div>
       <div class='WindowCloseAll' onclick='cbPopup_closeAllItems();' title='click to close all open popups'></div>
       <div class='WindowClose' onclick='cbPopup_closeItem("#item{items.SLOT}");' title='click to close this popup'></div>
    </div> 
+   <div class='Slot slotlocinspect slotimage'></div> 
+   <div class='Slot slotlocinspect' style='background-image: url({ROOT_URL}images/items/item_{items.ICON}.png);'><span>{items.STACK}</span></div> 
    <div style='text-align:left;'>        
       {items.HTML} 
    </div> 

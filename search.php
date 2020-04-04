@@ -36,6 +36,8 @@
  *      implemented guild page
  *   March 22, 2020 - Maudigan
  *     impemented common.php
+ *   April 2, 2020 - Maudigan
+ *     dont show anon guild members names
  ***************************************************************************/
  
  
@@ -83,6 +85,11 @@ if ($name) {
 if ($guild) {
    $where .= $divider."guilds.name LIKE '%".str_replace("_", "%", str_replace(" ","%",$guild))."%'";
    $divider = " AND ";
+   //if the char is anon, dont show them in a guild search
+   if (!$showguildwhenanon && !$charbrowser_is_admin_page) {
+      $where .= $divider."character_data.anon != '1'";
+      $divider = " AND ";
+   }
 }
 
 //build the orderby & limit clauses
@@ -93,7 +100,7 @@ $order = "ORDER BY $orderby $direction LIMIT $start, $numToDisplay;";
 $tpl = <<<TPL
 SELECT character_data.class, character_data.level, 
        character_data.name, guilds.name AS guildname, 
-       character_data.deleted_at
+       character_data.deleted_at, character_data.anon
 FROM character_data 
 LEFT JOIN guild_members
        ON character_data.id = guild_members.char_id 
@@ -144,12 +151,19 @@ $cb_template->assign_vars(array(
 );
 
 foreach ($characters as $character) {
+   //dont show anon guild names unless config enables it
+   if ($character["anon"] != 1 || $showguildwhenanon || $charbrowser_is_admin_page) {
+      $charguildname = getGuildLink($character["guildname"]);
+   }
+   else {
+      $charguildname = "";
+   }
    $cb_template->assign_both_block_vars("characters", array( 
       'CLASS' => $dbclassnames[$character["class"]],      
       'LEVEL' => $character["level"],     
       'DELETED' => (($character["deleted_at"]) ? " ".$language['CHAR_DELETED']:""),
       'NAME' => $character["name"],
-      'GUILD_NAME' => getGuildLink($character["guildname"]) )
+      'GUILD_NAME' => $charguildname )
    );
 }
  

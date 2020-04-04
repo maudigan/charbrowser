@@ -1,4 +1,4 @@
-<div class='WindowComplex PositionSignatureBuilder CB_Can_Drag'>
+<div class='WindowComplexFancy PositionSignatureBuilder CB_Can_Drag'>
    <div class='WindowTitleBar'>{L_SIGNATURE_BUILDER}</div> 
    <nav class='CB_Tab_Box'>
       <ul>

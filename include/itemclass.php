@@ -28,6 +28,8 @@
  *   April 2, 2020 - Maudigan
  *     show stack size code
  *     cleaned up commented out code
+ *   April 4, 2020 - Maudigan
+ *     cap bag slots to 10
  *
  ***************************************************************************/ 
   
@@ -328,7 +330,7 @@ class item {
         } 
   
         function slotcount() { 
-         return $this->myslotcount; 
+         return min(10, $this->myslotcount); 
         } 
   
         function type() { 

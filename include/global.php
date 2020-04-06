@@ -28,6 +28,7 @@
  *   March 22, 2020 - relocated code to common.php (Maudigan)
  *                    added EQEmu style race/class constants (Maudigan)
  *   March 25, 2020 - added spell effect constants (Maudigan)
+ *   April 6, 2020 - added constant for the server max bag slots (Maudigan)
  *
  ***************************************************************************/
 
@@ -39,6 +40,9 @@ if ( !defined('INCHARBROWSER') )
 	die("Hacking attempt");
 }
 
+//max bag slots, this will cap larger bags
+//to only display so many slots
+define("MAX_BAG_SLOTS", 10);
 
 //few constants for allitems.type
 define("EQUIPMENT", 1);

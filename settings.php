@@ -30,6 +30,8 @@
  *     swapped to version_compare for the version check so we don't show
  *     the update message if they have applied a patch that's newer than
  *     the latest release.
+ *   April 6, 2020 - Maudigan
+ *     added alternate template vars for settings
  ***************************************************************************/
  
  
@@ -137,7 +139,8 @@ foreach ($l_permission as $key => $value) {
    );   
    foreach ($l_users as $key2 => $value2) {
       $cb_template->assign_both_block_vars( "rows.cols" , array(
-         'VALUE' => ($permissions[$key2][$key]) ? "" : "x" )
+         'VALUENUM' => ($permissions[$key2][$key]) ? "0" : "1" ,
+         'VALUEENG' => ($permissions[$key2][$key]) ? $language['SETTINGS_DISABLED'] : $language['SETTINGS_ENABLED'] )
       );    
    }
 }

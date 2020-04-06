@@ -1,3 +1,18 @@
+v3.1.0
+----------------------------------------------------------------------
+Resizeable windows, and checkmarks
+
+April 6, 2020 - Converted bagslots to inline block, so all the
+                  static numbers from those stylesheets are gone.
+                Made bag windows resizeable, the slots will 
+                  wrap automatically when you resize
+                Made the max bag slots a constant in global.php
+                  and applied it to the GetItem function
+                Made item stat windows resizeable, if you go too small
+                  it will turn on a scroll bar
+                On the settings page, replaced the X's with checkmarks  
+
+
 v3.0.1
 ----------------------------------------------------------------------
 cap bag slots to 10

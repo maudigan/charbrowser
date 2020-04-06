@@ -15,11 +15,75 @@
  *   March 7, 2020 - initial revision (Maudigan) 
  *   April 3, 2020 - Add ZOrder handling to anything with the 
  *                   CB_Should_ZOrder class (Maudigan)
+ *   April 6, 2020 - make bags and item windows resizable (Maudigan)
  *      
  ***************************************************************************/
 
  //make all our windows drag
  $('#charbrowser .CB_Can_Drag').draggable();
+ 
+
+   
+//loop through every item stat window
+//and make it resize with a minimum of its 
+//starting size
+/*
+$( "#charbrowser .PositionItem" ).each(function( index ) {
+  var tempMinWidth = $( this ).width();
+  var tempMinHeight = $( this ).height();
+   $( this ).resizable({
+      minHeight: tempMinHeight,
+      minWidth: tempMinWidth
+   });  
+});*/
+$( "#charbrowser .PositionItem" ).resizable({
+   minHeight: 100,
+   minWidth: 350,
+   resize: function(e,ui) {
+      //resize the contents div inside the window so the scroll bar appears
+      $(this).children('#charbrowser .Stats').height(ui.size.height)
+   }
+});  
+
+//loop through every resize element
+//and make it resize and have a minimum
+//slots take up 42x42 (including padding)
+var bagBottomPad = 40;
+var bagSlotDimension = 42;
+$( "#charbrowser .PositionBag" ).each(function( index ) {
+   $( this ).resizable({
+      //handles: 'e, s',
+      minHeight: bagSlotDimension + bagBottomPad,//tempMinHeight,
+      minWidth: bagSlotDimension * 2,//tempMinWidth
+      resize: function(e,ui) {
+         var slotCount = $(this).attr('slotcount');
+         if ($(this).data('ui-resizable').axis == 's') {
+            var rows = Math.floor((ui.size.height - bagBottomPad) / bagSlotDimension);
+            var cols = Math.ceil(slotCount / rows);
+            var maxHeight = slotCount * bagSlotDimension + bagBottomPad;
+            var minWidth = cols * bagSlotDimension;
+            $('#area').html(maxHeight);
+            $('#test').html(ui.size.height);
+            if (ui.size.height > maxHeight) {
+               ui.size.height = maxHeight;
+            }
+            ui.size.width = minWidth;
+         } else {   
+            var cols = Math.floor(ui.size.width / bagSlotDimension);
+            var rows = Math.ceil(slotCount / cols);
+            var minHeight = rows * bagSlotDimension + bagBottomPad;
+            var maxWidth = slotCount * bagSlotDimension;
+            if (ui.size.width > maxWidth) {
+               ui.size.width = maxWidth;
+            }
+            ui.size.height = minHeight;
+         }
+      }         
+   });  
+});
+
+
+ 
 
  //display a new tab in a window
 function CB_displayTab(alltabs, tabid, alltabboxes, tabboxid) {

@@ -2,7 +2,7 @@
 <html dir='ltr'>
    <head>
       <title>{TITLE} {SUBTITLE}</title>
-      <link rel='stylesheet' href='{ROOT_URL}templates/style-1.0.css' type='text/css'/>
+      <link rel='stylesheet' href='{ROOT_URL}templates/style-1.1.css' type='text/css'/>
       <meta http-equiv='Content-Type' content='text/html; charset=iso-8859-1'>
       <meta http-equiv='Content-Style-Type' content='text/css'>
       <!-- For Chrome for Android: -->
@@ -26,6 +26,7 @@
       <link rel="icon" type="image/png" sizes="48x48" href="{ROOT_URL}images/favicons/favicon-48x48.png">
       <link rel="icon" type="image/png" sizes="32x32" href="{ROOT_URL}images/favicons/favicon-32x32.png">
       <link rel="icon" type="image/png" sizes="16x16" href="{ROOT_URL}images/favicons/favicon-16x16.png">      
+      <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
       <script language='JavaScript' type='text/javascript' src='https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js'></script>
       <script language='JavaScript' type='text/javascript' src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>  
    </head>

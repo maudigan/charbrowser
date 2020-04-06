@@ -50,6 +50,8 @@
  *     dont show anon guild members names
  *     show stack size code
  *     added item icon and stacksize to the item stat/inspect windows
+ *   April 6, 2020 - Maudigan
+ *     Make the way bags display more dynamic so they can be resized easily
  *      
  ***************************************************************************/
   
@@ -421,25 +423,46 @@ foreach ($allitems as $value) {
    if ($value->type() == BANK && $mypermission['bank']) continue;
    if ($value->type() == SHAREDBANK && $mypermission['sharedbank']) continue;
    if ($value->slotcount() > 0)  {
-  
-      $cb_template->assign_block_vars("bags", array( 
-         'SLOT' => $value->slot(),      
-         'ROWS' => floor($value->slotcount()/2))
-      );
        
+      //stage the bag in a temporary array
+      $tempbag = array(); 
+      
+      //create each empty slot in the bag
       for ($i = 1;$i <= $value->slotcount(); $i++) {
-         $cb_template->assign_block_vars("bags.bagslots", array( 
-            'BS_SLOT' => $i)
-         );
+         $tempbag[$i] = 0;
       }
          
+      //find the item that goes in this slot   
       foreach ($allitems as $subvalue) {
          if ($subvalue->type() == $value->slot()) {
-            $cb_template->assign_block_vars("bags.bagitems", array( 
+            //if the item is in this bag, but the bag doesn't have enough
+            //slots to display it, skip it
+            if ($subvalue->vslot() > $value->slotcount() || $subvalue->vslot() > MAX_BAG_SLOTS) {
+               continue;
+            }
+            $tempbag[$subvalue->vslot()] = array(
                'BI_SLOT' => $subvalue->slot(),
                'BI_RELATIVE_SLOT' => $subvalue->vslot(),
                'BI_ICON' => $subvalue->icon(),      
-               'STACK' => $subvalue->stack())
+               'STACK' => $subvalue->stack()
+            );
+         }
+      }
+         
+      //populate the template now   
+      $cb_template->assign_block_vars("bags", array( 
+         'SLOT' => $value->slot(),  
+         'SLOTCOUNT' => $value->slotcount(),      
+         'ROWS' => floor($value->slotcount()/2))
+      );
+      
+      foreach($tempbag as $slotid => $slot) {
+         $cb_template->assign_block_vars("bags.bagslots", array( 
+            'BS_SLOT' => $slotid)
+         );
+         //if there's array data in it, it's got an item
+         if (is_array($slot)) {
+            $cb_template->assign_block_vars("bags.bagslots.bagitems", $slot
             );
          }
       }

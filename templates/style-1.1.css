@@ -28,6 +28,8 @@
  *   March 7,2020 - made tweaks to add in item popups
  *                  set cursor:pointer for buttons
  *   March 31,2020 - totally rewrote the HTML, lots of changes (Maudigan)
+ *   April 6, 2020 - Maudigan
+ *     Make the way bags display more dynamic so they can be resized easily
  *                      
  ***************************************************************************/ 
 
@@ -39,6 +41,10 @@
 #charbrowser {
 }
 
+#charbrowser .ui-icon {
+   background-image: url(../images/cb_drag_handle.png);
+   background-position: 0px 0px;
+}
  
 #charbrowser * {
    margin: 0px;
@@ -657,6 +663,7 @@ BODY.CB_Body {
  }
 #charbrowser .WindowTitleBar {
    position: absolute;
+   overflow: hidden;
    top: -11px;
    left: 7px;
    right: 7px;
@@ -918,8 +925,11 @@ BODY.CB_Body {
 }
 #charbrowser .PositionBag {
    position: relative; 
-   width: 70px;
+   width: 84px;
    margin: 0 auto;
+   padding-left: 6px;
+   padding-right: 6px;
+   font-size: 0px;
 }
 #charbrowser .PositionCharacter {
    width: 900px;
@@ -989,6 +999,11 @@ BODY.CB_Body {
    position: relative; 
    margin: 0 auto;
    width: 350px;
+}
+#charbrowser .PositionItem DIV.Stats {
+   text-align:left;
+   overflow-x: auto;
+   position: relative;
 }
 #charbrowser .PositionHeaderSimple {
    width: 850px;
@@ -1279,6 +1294,20 @@ BODY.CB_Body {
    margin: 0 auto;
    position: relative;
 }
+#charbrowser .PositionSettings  TD.cb_setting_val_0,
+#charbrowser .PositionSettings  TD.cb_setting_val_1 {
+   position: relative;
+   left: -7px;
+}
+#charbrowser .PositionSettings  TD.cb_setting_val_1 {
+   background-image: url(../images/cb_checkmark.png);
+   background-repeat: no-repeat;
+   background-position: center;
+}
+#charbrowser .PositionSettings  TD.cb_setting_val_0 {
+   background-color: transparent;
+}
+
 #charbrowser .PositionSignatureBuilder {
    width: 600px;
    margin: 0 auto;
@@ -1413,7 +1442,19 @@ BODY.CB_Body {
    position: absolute;
 }
 
+/* relative icons in bags */
+#charbrowser .BagSlot {
+   height: 40px;
+   width: 40px;
+   border: 0px ;
+   margin: 1px;
+   padding: 0;
+   position: relative;
+   display: inline-block;
+}
+
 /* for item count in inventory */
+#charbrowser .BagSlot SPAN,
 #charbrowser .Slot SPAN {
    position: absolute;
    right: 1px;
@@ -1526,110 +1567,13 @@ BODY.CB_Body {
 
 
 
-
-/* ----------------------------------------------
-          Bag window stylesheets
-          overrides the button position
-          for bags, must come after the 
-          regular button style
-------------------------------------------------- */
-#charbrowser .bagbuttonrow1 {
-  top: 64px;
-  left: 25px;
-  position: absolute;
-}
-#charbrowser .bagbuttonrow2 {
-  top: 107px;
-  left: 25px;
-  position: absolute;
-}
-#charbrowser .bagbuttonrow3 {
-  top: 150px;
-  left: 25px;
-  position: absolute;
-}
-#charbrowser .bagbuttonrow4 {
-  top: 192px;
-  left: 25px;
-  position: absolute;
-}
-#charbrowser .bagbuttonrow5 {
-  top: 235px;
-  left: 25px;
-  position: absolute;
-}
-#charbrowser .bagrow1 {
-  height: 66px;
-}
-#charbrowser .bagrow2 {
-  height: 109px;
-}
-#charbrowser .bagrow3 {
-  height: 152px;
-}
-#charbrowser .bagrow4 {
-  height: 195px;
-}
-#charbrowser .bagrow5 {
-  height: 238px;
-}
-
-
-
-
-/* ----------------------------------------------
-         locations for slots inside of bags
-------------------------------------------------- */
-
-#charbrowser .bagslotloc1 {
-  top: 20px;
-  left: 6px;
-}
-#charbrowser .bagslotloc2 {
-  top: 20px;
-  left: 49px;
-}
-#charbrowser .bagslotloc3 {
-  top: 63px;
-  left: 6px;
-}
-#charbrowser .bagslotloc4 {
-  top: 63px;
-  left: 49px;
-}
-#charbrowser .bagslotloc5 {
-  top: 106px;
-  left: 6px;
-}
-#charbrowser .bagslotloc6 {
-  top: 106px;
-  left: 49px;
-}
-#charbrowser .bagslotloc7 {
-  top: 148px;
-  left: 6px;
-}
-#charbrowser .bagslotloc8 {
-  top: 148px;
-  left: 49px;
-}
-#charbrowser .bagslotloc9 {
-  top: 191px;
-  left: 6px;
-}
-#charbrowser .bagslotloc10 {
-  top: 191px;
-  left: 49px;
-}
-
-
 /* ----------------------------------------------
          locations for inventory slots
 ------------------------------------------------- */
 
 #charbrowser .slotlocinspect {
-  top: 18px;
-  right: 12px;
+  top: 1px;
+  right: 3px;
 }
 #charbrowser .slotlocinspectaug {
    top: 4px;

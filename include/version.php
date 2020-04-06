@@ -28,7 +28,7 @@ if ( !defined('INCHARBROWSER') )
 }
 
 //version information
-$version      =    "v3.0.1"; 
+$version      =    "v3.1.0"; 
 
 //this file always gets replaced on a reinstall
 //this gets compared to the config file version stamp

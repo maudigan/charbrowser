@@ -14,7 +14,7 @@
       <!-- BEGIN rows -->
       <tr>
          <!-- BEGIN cols -->
-         <td>{rows.cols.VALUE}</td>
+         <td class='cb_setting_val_{rows.cols.VALUENUM}'>{rows.cols.VALUE}</td>
          <!-- END cols -->
       </tr>
       <!-- END rows -->

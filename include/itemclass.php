@@ -30,6 +30,8 @@
  *     cleaned up commented out code
  *   April 4, 2020 - Maudigan
  *     cap bag slots to 10
+ *   April 6, 2020 - Maudigan
+ *     made bag cap a constant
  *
  ***************************************************************************/ 
   
@@ -330,7 +332,8 @@ class item {
         } 
   
         function slotcount() { 
-         return min(10, $this->myslotcount); 
+         //cap the bag at whatever the max slot count is
+         return min(MAX_BAG_SLOTS, $this->myslotcount); 
         } 
   
         function type() { 

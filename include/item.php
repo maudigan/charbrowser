@@ -32,6 +32,8 @@
  *      Modified database to use a class.
  *   September 7, 2019 - Kinglykrab
  *      Added a cleaner itemstats list view
+ *   April 4, 2020 - Maudigan
+ *     cap bag slot count with a constant
  ***************************************************************************/
  
  
@@ -247,7 +249,7 @@ function GetItem($item)
       // Bag-specific information
       if($item["bagslots"] > 0) { 
          $Output .= "Item Type: Container<br>";
-         $Output .= "Bag Slots: " . $item["bagslots"] . "<br>";
+         $Output .= "Bag Slots: " . min(MAX_BAG_SLOTS, $item["bagslots"]) . "<br>";
          if($item["bagtype"] > 0)
             $Output .= "Tradeskill Container: " . $dbbagtypes[$item["bagtype"]] . "<br>";
          
@@ -675,7 +677,7 @@ function GetItem($item)
       // Bag-specific information
       if($item["bagslots"] > 0) { 
          $Output .= $tab."Item type: Container<br>\n";
-         $Output .= $tab."Number of slots: ".$item["bagslots"]."<br>\n";
+         $Output .= $tab."Number of slots: ".min(MAX_BAG_SLOTS, $item["bagslots"])."<br>\n";
          if($item["bagtype"] > 0) { $Output .= $tab."Trade skill container: ".$dbbagtypes[$item["bagtype"]]."<br>\n"; }
          if($item["bagwr"] > 0) { $Output .= $tab."Weight reduction: ".$item["bagwr"]."%<br>\n"; }
          $Output .= $tab."This can hold ".strtoupper(getsize($item["bagsize"]))." and smaller items.<br>\n";

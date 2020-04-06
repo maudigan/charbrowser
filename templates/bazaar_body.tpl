@@ -78,9 +78,9 @@
       <div class='WindowCloseAll' onclick='cbPopup_closeAllItems();' title='click to close all open popups'></div>
       <div class='WindowClose' onclick='cbPopup_closeItem("#item{items.SLOT}");' title='click to close this popup'></div>
    </div> 
-   <div class='Slot slotlocinspect slotimage'></div> 
-   <div class='Slot slotlocinspect' style='background-image: url({ROOT_URL}images/items/item_{items.ICON}.png);'><span>{items.STACK}</span></div> 
-   <div style='text-align:left;'>        
+   <div class='Stats'> 
+      <div class='Slot slotlocinspect slotimage'></div> 
+      <div class='Slot slotlocinspect' style='background-image: url({ROOT_URL}images/items/item_{items.ICON}.png);'><span>{items.STACK}</span></div>        
       {items.HTML} 
    </div> 
 </div> 

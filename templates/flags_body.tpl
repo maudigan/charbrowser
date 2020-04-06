@@ -13,8 +13,6 @@
    <a class='CB_Button' href="{INDEX_URL}?page=character&char={NAME}">{L_DONE}</a>
 </div>
       
-<br><br><br>
-
 <!-- BEGIN head -->
 <div class='WindowComplex PositionFlagsChild CB_Can_Drag CB_Should_ZOrder CB_HoverChild' id='flag{head.ID}'>
    <div class='WindowTitleBar'>
@@ -26,7 +24,7 @@
    <!-- BEGIN flags -->
    <div>
       <div class='CB_CheckBox_{head.flags.FLAG}'>
-         <span>{head.flags.TEXT}</span>u
+         <span>{head.flags.TEXT}</span>
       </div>
    </div>
    <!-- END flags -->

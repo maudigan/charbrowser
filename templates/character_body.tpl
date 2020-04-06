@@ -334,17 +334,20 @@
 
 <!-- BAG WINDOWS -->
 <!-- BEGIN bags --> 
-<div class='WindowSimple bagrow{bags.ROWS} PositionBag CB_Should_ZOrder CB_Can_Drag CB_HoverChild' id='bag{bags.SLOT}'> 
+<div class='WindowSimple PositionBag CB_Should_ZOrder CB_Can_Drag CB_HoverChild' slotcount='{bags.SLOTCOUNT}' id='bag{bags.SLOT}'> 
    <div class='WindowTitleBar'>{L_CONTAINER}</div>
 
    <!-- BEGIN bagslots --> 
-   <div class='Slot bagslotloc{bags.bagslots.BS_SLOT} slotimage'></div> 
+   <div class='BagSlot slotimage'>
+      <!-- BEGIN bagitems --> 
+      <div hoverChild='#slot{bags.bagslots.bagitems.BI_SLOT}' class='BagSlot CB_HoverParent' style='background-image: url({ROOT_URL}images/items/item_{bags.bagslots.bagitems.BI_ICON}.png);'>
+         <span>{bags.bagslots.bagitems.STACK}</span>
+      </div> 
+      <!-- END bagitems -->    
+   </div> 
    <!-- END bagslots --> 
-   <!-- BEGIN bagitems --> 
-   <div hoverChild='#slot{bags.bagitems.BI_SLOT}' class='Slot bagslotloc{bags.bagitems.BI_RELATIVE_SLOT} CB_HoverParent' style='background-image: url({ROOT_URL}images/items/item_{bags.bagitems.BI_ICON}.png);'><span>{bags.bagitems.STACK}</span></div> 
-   <!-- END bagitems --> 
 
-   <div class='CB_Button bagbuttonrow{bags.ROWS}' onclick='cbPopup_closeItem("#bag{bags.SLOT}");'>{L_DONE}</div> 
+   <div class='CB_Button' onclick='cbPopup_closeItem("#bag{bags.SLOT}");'>{L_DONE}</div> 
 </div> 
 <!-- END bags -->       
       
@@ -357,9 +360,9 @@
       <div class='WindowCloseAll' onclick='cbPopup_closeAllItems();' title='click to close all open popups'></div>
       <div class='WindowClose' onclick='cbPopup_closeItem("#slot{item.SLOT}");' title='click to close popup'></div>
    </div> 
-   <div class='Slot slotlocinspect slotimage'></div> 
-   <div class='Slot slotlocinspect' style='background-image: url({ROOT_URL}images/items/item_{item.ICON}.png);'><span>{item.STACK}</span></div> 
-   <div style='text-align:left;'>        
+   <div class='Stats'>        
+      <div class='Slot slotlocinspect slotimage'></div> 
+      <div class='Slot slotlocinspect' style='background-image: url({ROOT_URL}images/items/item_{item.ICON}.png);'><span>{item.STACK}</span></div> 
       {item.HTML} 
       <!-- BEGIN augment --> 
       <div class='WindowNestedTan'>
@@ -372,7 +375,7 @@
       </div> 
       <!-- END augment -->   
    </div> 
-</div> 
+</div>
 <!-- END item --> 
 
 <script type="text/javascript">

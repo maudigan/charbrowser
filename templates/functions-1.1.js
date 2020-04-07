@@ -50,37 +50,36 @@ $( "#charbrowser .PositionItem" ).resizable({
 //slots take up 42x42 (including padding)
 var bagBottomPad = 40;
 var bagSlotDimension = 42;
-$( "#charbrowser .PositionBag" ).each(function( index ) {
-   $( this ).resizable({
-      //handles: 'e, s',
-      minHeight: bagSlotDimension + bagBottomPad,//tempMinHeight,
-      minWidth: bagSlotDimension * 2,//tempMinWidth
-      resize: function(e,ui) {
-         var slotCount = $(this).attr('slotcount');
-         if ($(this).data('ui-resizable').axis == 's') {
-            var rows = Math.floor((ui.size.height - bagBottomPad) / bagSlotDimension);
-            var cols = Math.ceil(slotCount / rows);
-            var maxHeight = slotCount * bagSlotDimension + bagBottomPad;
-            var minWidth = cols * bagSlotDimension;
-            $('#area').html(maxHeight);
-            $('#test').html(ui.size.height);
-            if (ui.size.height > maxHeight) {
-               ui.size.height = maxHeight;
-            }
-            ui.size.width = minWidth;
-         } else {   
-            var cols = Math.floor(ui.size.width / bagSlotDimension);
-            var rows = Math.ceil(slotCount / cols);
-            var minHeight = rows * bagSlotDimension + bagBottomPad;
-            var maxWidth = slotCount * bagSlotDimension;
-            if (ui.size.width > maxWidth) {
-               ui.size.width = maxWidth;
-            }
-            ui.size.height = minHeight;
+$( "#charbrowser .PositionBag" ).resizable({
+   //handles: 'e, s',
+   minHeight: bagSlotDimension + bagBottomPad,//tempMinHeight,
+   minWidth: bagSlotDimension * 2,//tempMinWidth
+   resize: function(e,ui) {
+      var slotCount = $(this).attr('slotcount');
+      if ($(this).data('ui-resizable').axis == 's') {
+         var rows = Math.floor((ui.size.height - bagBottomPad) / bagSlotDimension);
+         var cols = Math.ceil(slotCount / rows);
+         var maxHeight = slotCount * bagSlotDimension + bagBottomPad;
+         var minWidth = cols * bagSlotDimension;
+         $('#area').html(maxHeight);
+         $('#test').html(ui.size.height);
+         if (ui.size.height > maxHeight) {
+            ui.size.height = maxHeight;
          }
-      }         
-   });  
-});
+         ui.size.width = minWidth;
+      } else {   
+         var cols = Math.floor(ui.size.width / bagSlotDimension);
+         var rows = Math.ceil(slotCount / cols);
+         var minHeight = rows * bagSlotDimension + bagBottomPad;
+         var maxWidth = slotCount * bagSlotDimension;
+         if (ui.size.width > maxWidth) {
+            ui.size.width = maxWidth;
+         }
+         ui.size.height = minHeight;
+      }
+   }         
+});  
+
 
 
  

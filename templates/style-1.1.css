@@ -569,56 +569,6 @@ BODY.CB_Body {
 
 
 
-/* ----------------------------------------------
-       button styles on most pages
-------------------------------------------------- */
-#charbrowser .CB_ButtonDisabled,
-#charbrowser .CB_ButtonDisabled:link,
-#charbrowser .CB_ButtonDisabled:visited,
-#charbrowser .CB_ButtonDisabled:active,
-#charbrowser .CB_ButtonDisabled:hover,
-#charbrowser .CB_Button,
-#charbrowser .CB_Button:link,
-#charbrowser .CB_Button:visited,
-#charbrowser .CB_Button:active,
-#charbrowser .CB_Button:hover {
-   height: 23px;
-   width: 48px;
-   border: 0px ;
-   line-height:21px;
-   text-align: center;
-   padding: 0px;
-   background-image: url(../images/button.gif);
-   margin: 10px auto;
-   display: block;
-   font-size: 9pt;
-   text-decoration: none; 
-   font-weight: none;
-}
-
-#charbrowser .CB_Button,
-#charbrowser .CB_Button:link,
-#charbrowser .CB_Button:visited,
-#charbrowser .CB_Button:active {
-  cursor: pointer;
-  color: #ffffff;
-  opacity: 0.9;
-}
-
-#charbrowser .CB_Button:hover {
-  cursor: pointer;
-  color: #ffffff;
-  opacity: 1.0;
-}
-#charbrowser .CB_ButtonDisabled,
-#charbrowser .CB_ButtonDisabled:link,
-#charbrowser .CB_ButtonDisabled:visited,
-#charbrowser .CB_ButtonDisabled:active,
-#charbrowser .CB_ButtonDisabled:hover {
-  cursor: default;
-  color: #909090;
-  opacity: 0.8;
-}
 
 
 /* ----------------------------------------------
@@ -651,6 +601,113 @@ BODY.CB_Body {
    color: #7b714a; 
 }
 
+/* ----------------------------------------------
+       button styles on most pages
+------------------------------------------------- */
+#charbrowser .CB_ButtonDisabled,
+#charbrowser .CB_ButtonDisabled:link,
+#charbrowser .CB_ButtonDisabled:visited,
+#charbrowser .CB_ButtonDisabled:active,
+#charbrowser .CB_ButtonDisabled:hover,
+#charbrowser .CB_Button,
+#charbrowser .CB_Button:link,
+#charbrowser .CB_Button:visited,
+#charbrowser .CB_Button:active,
+#charbrowser .CB_Button:hover {
+   height: 23px;
+   width: 48px;
+   border: 0px;
+   text-align: center;
+   padding: 0px;
+   margin: 10px auto;
+   display: block;
+   font-size: 9px;
+   line-height: 21px;
+   text-decoration: none; 
+   font-weight: none;
+   color: #ffffff;
+   opacity: 1.0;
+   cursor: pointer;
+   position: relative;
+}
+
+#charbrowser .CB_Button:hover {
+   background-image: url(../images/button_small_hover.png);
+}
+#charbrowser .CB_Button,
+#charbrowser .CB_Button:link,
+#charbrowser .CB_Button:visited {
+   background-image: url(../images/button_small_up.png);
+}
+#charbrowser .CB_Button:active,
+#charbrowser .CB_ButtonDisabled,
+#charbrowser .CB_ButtonDisabled:link,
+#charbrowser .CB_ButtonDisabled:visited,
+#charbrowser .CB_ButtonDisabled:active,
+#charbrowser .CB_ButtonDisabled:hover {
+   background-image: url(../images/button_small_down.png);
+}
+#charbrowser .CB_ButtonDisabled,
+#charbrowser .CB_ButtonDisabled:link,
+#charbrowser .CB_ButtonDisabled:visited,
+#charbrowser .CB_ButtonDisabled:active,
+#charbrowser .CB_ButtonDisabled:hover {
+   cursor: default;
+}
+
+
+
+#charbrowser .CB_ButtonWrapDisabled,
+#charbrowser .CB_ButtonWrapDisabled:link,
+#charbrowser .CB_ButtonWrapDisabled:visited,
+#charbrowser .CB_ButtonWrapDisabled:active,
+#charbrowser .CB_ButtonWrapDisabled:hover,
+#charbrowser .CB_ButtonWrap,
+#charbrowser .CB_ButtonWrap:link,
+#charbrowser .CB_ButtonWrap:visited,
+#charbrowser .CB_ButtonWrap:active,
+#charbrowser .CB_ButtonWrap:hover {
+   height: 40px;
+   width: 40px;
+   border: 0px ;
+   text-align: center;
+   padding: 0px;
+   margin: 1px;
+   display: inline-block;
+   font-size: 9px;
+   line-height: 40px;
+   text-decoration: none; 
+   font-weight: none;
+   color: #ffffff;
+   opacity: 1.0;
+   cursor: pointer;
+   position: relative;
+}
+
+#charbrowser .CB_ButtonWrap:hover {
+   background-image: url(../images/button_big_hover.png);
+}
+#charbrowser .CB_ButtonWrap,
+#charbrowser .CB_ButtonWrap:link,
+#charbrowser .CB_ButtonWrap:visited {
+   background-image: url(../images/button_big_up.png);
+}
+#charbrowser .CB_ButtonWrap:active,
+#charbrowser .CB_ButtonWrapDisabled,
+#charbrowser .CB_ButtonWrapDisabled:link,
+#charbrowser .CB_ButtonWrapDisabled:visited,
+#charbrowser .CB_ButtonWrapDisabled:active,
+#charbrowser .CB_ButtonWrapDisabled:hover {
+   background-image: url(../images/button_big_down.png);
+}
+#charbrowser .CB_ButtonWrapDisabled,
+#charbrowser .CB_ButtonWrapDisabled:link,
+#charbrowser .CB_ButtonWrapDisabled:visited,
+#charbrowser .CB_ButtonWrapDisabled:active,
+#charbrowser .CB_ButtonWrapDisabled:hover {
+   cursor: default;
+}
+
 
 /* ----------------------------------------------
           general window stylesheets
@@ -665,8 +722,8 @@ BODY.CB_Body {
    position: absolute;
    overflow: hidden;
    top: -11px;
-   left: 7px;
-   right: 7px;
+   left: 6px;
+   right: 6px;
    height: 21px;
    font-family: arial;
    font-size: 9pt;
@@ -704,53 +761,57 @@ BODY.CB_Body {
 }
 
 #charbrowser .WindowComplex:before,
-#charbrowser .WindowComplexGM:before {
-   content: " ";
-   position: absolute;
-   z-index: -1;
-   background-image: url(../images/dark.gif);
-   top: 11px;
-   left: 5px;
-   right: 5px;
-   bottom: 9px;
-   border: 2px #40434e solid;
-}
-
-#charbrowser .WindowComplexFancy:before {
-   content: " ";
-   position: absolute;
-   z-index: -1;
-   outline: 2px #40434e solid;
-   padding: 19px;
-   outline-offset: -20px;
-   background-image: url(../images/cb_window_corner_tl.png), url(../images/cb_window_corner_tr.png), url(../images/cb_window_corner_bl.png), url(../images/cb_window_corner_br.png), url(../images/dark.gif);
-   background-repeat: no-repeat, no-repeat, no-repeat, no-repeat, repeat;
-   background-position-x: left, right, left, right, left;
-   background-position-y: top, top, bottom, bottom, top;
-   left: -12px;
-   right: -12px;
-   top: -5px;
-   pointer-events: none;
-   background-clip: padding-box, padding-box, padding-box, padding-box, content-box;
-   bottom: -11;
-}
-
-#charbrowser .WindowSimpleFancy:before {
+#charbrowser .WindowComplexGM:before,
+#charbrowser .WindowComplexFancy:before,
+#charbrowser .WindowSimpleFancy:before,
+#charbrowser .WindowSimple:before {
     content: " ";
     position: absolute;
     z-index: -1;
     padding: 19px;
-    background-image: url(../images/cb_window_corner_tl.png), url(../images/cb_window_corner_tr.png), url(../images/cb_window_corner_bl.png), url(../images/cb_window_corner_br.png);
-    background-repeat: no-repeat, no-repeat, no-repeat, no-repeat;
-    background-position-x: left, right, left, right;
-    background-position-y: top, top, bottom, bottom;
     left: -12px;
     right: -12px;
     top: -5px;
+    bottom: -11px;
     pointer-events: none;
-    background-clip: padding-box, padding-box, padding-box, padding-box;
-    bottom: -11;
 }
+
+#charbrowser .WindowComplex:before,
+#charbrowser .WindowComplexGM:before,
+#charbrowser .WindowComplexFancy:before {
+   outline-offset: -20px;
+   outline: 2px #40434e solid;
+   background-repeat: no-repeat, no-repeat, no-repeat, no-repeat, repeat;
+   background-position-x: left, right, left, right, left;
+   background-position-y: top, top, bottom, bottom, top;
+   background-clip: padding-box, padding-box, padding-box, padding-box, content-box;
+}
+
+#charbrowser .WindowSimpleFancy:before,
+#charbrowser .WindowSimple:before {
+    background-repeat: no-repeat, no-repeat, no-repeat, no-repeat;
+    background-position-x: left, right, left, right;
+    background-position-y: top, top, bottom, bottom;
+    background-clip: padding-box, padding-box, padding-box, padding-box;
+}
+
+#charbrowser .WindowComplex:before,
+#charbrowser .WindowComplexGM:before {
+   background-image: url(../images/cb_simple_window_corner_tl.png), url(../images/cb_simple_window_corner_tr.png), url(../images/cb_simple_window_corner_bl.png), url(../images/cb_simple_window_corner_br.png), url(../images/dark.gif);
+}
+
+#charbrowser .WindowComplexFancy:before {
+   background-image: url(../images/cb_window_corner_tl.png), url(../images/cb_window_corner_tr.png), url(../images/cb_window_corner_bl.png), url(../images/cb_window_corner_br.png), url(../images/dark.gif);
+}
+
+#charbrowser .WindowSimple:before {
+    background-image: url(../images/cb_simple_window_corner_tl.png), url(../images/cb_simple_window_corner_tr.png), url(../images/cb_simple_window_corner_bl.png), url(../images/cb_simple_window_corner_br.png);
+}
+
+#charbrowser .WindowSimpleFancy:before {
+    background-image: url(../images/cb_window_corner_tl.png), url(../images/cb_window_corner_tr.png), url(../images/cb_window_corner_bl.png), url(../images/cb_window_corner_br.png);
+}
+
 
 #charbrowser .WindowNestedTanTitleBar {
    font-family: arial;
@@ -861,7 +922,7 @@ BODY.CB_Body {
 #charbrowser .PositionMenu {
    position: absolute;
    top: 180px;
-   left: -8px;
+   left: 5px;
 }
 #charbrowser .PositionInventory {
    position: absolute; 

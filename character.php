@@ -52,6 +52,8 @@
  *     added item icon and stacksize to the item stat/inspect windows
  *   April 6, 2020 - Maudigan
  *     Make the way bags display more dynamic so they can be resized easily
+ *   April 10, 2020 - Maudigan
+ *     added race/gender/face id template vars so we can show an avatar
  *      
  ***************************************************************************/
   
@@ -235,6 +237,10 @@ $cb_template->assign_both_vars(array(
    'LEVEL' => $char->GetValue('level'),
    'CLASS' => $dbclassnames[$class],
    'RACE' => $dbracenames[$char->GetValue('race')],
+   'RACE_ID' => $char->GetValue('race'),
+   'GENDER_ID' => $char->GetValue('gender'),
+   'FACE_ID' => $char->GetValue('face'),
+   'AVATAR_IMG' => getAvatarImage($char->GetValue('race'), $char->GetValue('gender'), $char->GetValue('face')),
    'CLASS_NUM' => $class,
    'DEITY' => $dbdeities[$char->GetValue('deity')],
    'HP' => number_format($totalHP),

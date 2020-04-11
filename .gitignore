@@ -31,6 +31,9 @@ $RECYCLE.BIN/
 ### custom files ###
 register.php
 serverlist_body.tpl
+imagework/
+generateavatar.php
+*.xcf
 
 ### cb generated files ###
 .register

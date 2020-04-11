@@ -1,17 +1,24 @@
 <div class='PositionCharacter'>
 
    <!-- INVENTORY WINDOW -->
-   <div class='WindowComplexFancy {HIGHLIGHT_GM} PositionInventory CB_Can_Drag'> 
-      <div class='WindowTitleBar'>{L_HEADER_INVENTORY}{DELETED}</div> 
+   <div class='WindowSuperFancy {HIGHLIGHT_GM} PositionInventory CB_Can_Drag'> 
+      <div class='CB_Avatar_Layer1'></div>
+      <div class='CB_Avatar_Layer2' style='background-image: url({ROOT_URL}images/faces/{AVATAR_IMG});'></div>
+      <div class='CB_Avatar_Layer3'></div>
+      <div class='CB_Inv_Header'><!--{L_HEADER_INVENTORY}{DELETED}-->
+         <p>{FIRST_NAME} {LAST_NAME}</p>
+         <p>{LEVEL} {RACE} {CLASS} - {DEITY}</p>
+         <p>{GUILD}</p>
+      </div>
       <nav class='CB_Tab_Box'>
          <ul>
-            <li id='tab1' onclick="CB_displayTab('#charbrowser NAV.CB_Tab_Box UL LI', '#tab1', '#charbrowser DIV.PositionInventory DIV.InventoryContents', '#tabbox1');">Equipment</li> 
+            <li id='tab1' onclick="CB_displayTab('#charbrowser NAV.CB_Tab_Box UL LI', '#tab1', '#charbrowser DIV.PositionInventory DIV.InventoryContents', '#tabbox1');">Gear</li> 
             <li id='tab2' onclick="CB_displayTab('#charbrowser NAV.CB_Tab_Box UL LI', '#tab2', '#charbrowser DIV.PositionInventory DIV.InventoryContents', '#tabbox2');">HP</li> 
             <li id='tab3' onclick="CB_displayTab('#charbrowser NAV.CB_Tab_Box UL LI', '#tab3', '#charbrowser DIV.PositionInventory DIV.InventoryContents', '#tabbox3');">End.</li> 
             <li id='tab4' onclick="CB_displayTab('#charbrowser NAV.CB_Tab_Box UL LI', '#tab4', '#charbrowser DIV.PositionInventory DIV.InventoryContents', '#tabbox4');">Mana</li> 
             <li id='tab5' onclick="CB_displayTab('#charbrowser NAV.CB_Tab_Box UL LI', '#tab5', '#charbrowser DIV.PositionInventory DIV.InventoryContents', '#tabbox5');">ATK</li> 
-            <li id='tab6' onclick="CB_displayTab('#charbrowser NAV.CB_Tab_Box UL LI', '#tab6', '#charbrowser DIV.PositionInventory DIV.InventoryContents', '#tabbox6');">Display AC</li> 
-            <li id='tab7' onclick="CB_displayTab('#charbrowser NAV.CB_Tab_Box UL LI', '#tab7', '#charbrowser DIV.PositionInventory DIV.InventoryContents', '#tabbox7');">Mitigation AC</li> 
+            <li id='tab6' onclick="CB_displayTab('#charbrowser NAV.CB_Tab_Box UL LI', '#tab6', '#charbrowser DIV.PositionInventory DIV.InventoryContents', '#tabbox6');">AC</li> 
+            <li id='tab7' onclick="CB_displayTab('#charbrowser NAV.CB_Tab_Box UL LI', '#tab7', '#charbrowser DIV.PositionInventory DIV.InventoryContents', '#tabbox7');">Mit AC</li> 
          </ul>
       </nav>      
       <div id='tabbox1' class='InventoryContents'>
@@ -32,13 +39,6 @@
 
          <!-- STATS ON LEFT -->
          <table class='CB_Table CB_Char_Stats'> 
-            <tr><td colspan='2'>{FIRST_NAME} {LAST_NAME}</td></tr> 
-            <tr><td colspan='2'>{GUILD}</td></tr> 
-            <tr><td class='CB_Char_Stats_Spacer' colspan='2'></td></tr> 
-            <tr><td colspan='2'>{RACE}</td></tr> 
-            <tr><td class='CB_Char_Stats_Spacer' colspan='2'></td></tr> 
-            <tr><td colspan='2'>{LEVEL} {CLASS}<br>{DEITY}</td></tr> 
-            <tr><td class='CB_Char_Stats_Spacer' colspan='2'></td></tr> 
             <tr> 
                <td>{L_HP}<br>{L_MANA}<br>{L_ENDR}<br>{L_AC}<br>{L_MIT_AC}<br>{L_ATK}</td> 
                <td width='100%'>{HP}<br>{MANA}<br>{ENDR}<br>{AC}<br>{MIT_AC}<br>{ATK}</td> 
@@ -294,42 +294,42 @@
 
 
    <!-- BANK WINDOW -->
-   <div class='WindowSimpleFancy PositionBank CB_Can_Drag'> 
+   <div class='WindowSuperFancy PositionBank CB_Can_Drag'> 
       <div class='WindowTitleBar'>{L_HEADER_BANK}</div> 
+      <div class='BankContents'>
+         <!-- SLOT IMAGES FOR THE BANK -->
+         <!-- BEGIN bankslots -->
+         <div class='Slot slotloc{bankslots.SLOT} slotimage'></div> 
+         <!-- END bankslots -->   
 
-      <!-- SLOT IMAGES FOR THE BANK -->
-      <!-- BEGIN bankslots -->
-      <div class='Slot slotloc{bankslots.SLOT} slotimage'></div> 
-      <!-- END bankslots -->   
+         <!-- SLOT IMAGES FOR THE SHARED BANK -->
+         <!-- BEGIN sharedbankslots -->
+         <div class='Slot slotloc{sharedbankslots.SLOT} slotimage'></div> 
+         <!-- END sharedbankslots -->   
 
-      <!-- SLOT IMAGES FOR THE SHARED BANK -->
-      <!-- BEGIN sharedbankslots -->
-      <div class='Slot slotloc{sharedbankslots.SLOT} slotimage'></div> 
-      <!-- END sharedbankslots -->   
+         <!-- BEGIN bankitem --> 
+         <div hoverChild='#slot{bankitem.SLOT}' class='Slot slotloc{bankitem.SLOT} CB_HoverParent' style='background-image: url({ROOT_URL}images/items/item_{bankitem.ICON}.png);'><span>{bankitem.STACK}</span></div> 
+         <!-- BEGIN switch_is_bag --> 
+         <div hoverChild='#bag{bankitem.SLOT}' class='BagOpenSlot slotloc{bankitem.SLOT} CB_HoverParent'></div>
+         <!-- END switch_is_bag --> 
+         <!-- END bankitem --> 
 
-      <!-- BEGIN bankitem --> 
-      <div hoverChild='#slot{bankitem.SLOT}' class='Slot slotloc{bankitem.SLOT} CB_HoverParent' style='background-image: url({ROOT_URL}images/items/item_{bankitem.ICON}.png);'><span>{bankitem.STACK}</span></div> 
-      <!-- BEGIN switch_is_bag --> 
-      <div hoverChild='#bag{bankitem.SLOT}' class='BagOpenSlot slotloc{bankitem.SLOT} CB_HoverParent'></div>
-      <!-- END switch_is_bag --> 
-      <!-- END bankitem --> 
+         <div class='sharedbankheaderloc'>{L_SHARED_BANK}</div>
+         <!-- BEGIN sharedbankitem --> 
+         <div hoverChild='#slot{sharedbankitem.SLOT}' class='Slot slotloc{sharedbankitem.SLOT} CB_HoverParent' style='background-image: url({ROOT_URL}images/items/item_{sharedbankitem.ICON}.png);'><span>{sharedbankitem.STACK}</span></div> 
+         <!-- BEGIN switch_is_bag --> 
+         <div hoverChild='#bag{sharedbankitem.SLOT}' class='BagOpenSlot slotloc{sharedbankitem.SLOT} CB_HoverParent'></div>
+         <!-- END switch_is_bag --> 
+         <!-- END sharedbankitem --> 
 
-      <div class='sharedbankheaderloc'>{L_SHARED_BANK}</div>
-      <!-- BEGIN sharedbankitem --> 
-      <div hoverChild='#slot{sharedbankitem.SLOT}' class='Slot slotloc{sharedbankitem.SLOT} CB_HoverParent' style='background-image: url({ROOT_URL}images/items/item_{sharedbankitem.ICON}.png);'><span>{sharedbankitem.STACK}</span></div> 
-      <!-- BEGIN switch_is_bag --> 
-      <div hoverChild='#bag{sharedbankitem.SLOT}' class='BagOpenSlot slotloc{sharedbankitem.SLOT} CB_HoverParent'></div>
-      <!-- END switch_is_bag --> 
-      <!-- END sharedbankitem --> 
+         <div class='Coin CoinPP coinlocsharedbankpp'>{SBPP}</div> 
 
-      <div class='Coin CoinPP coinlocsharedbankpp'>{SBPP}</div> 
-
-      <div class='Coin CoinPP coinlocbankpp'>{BPP}</div> 
-      <div class='Coin CoinGP coinlocbankgp'>{BGP}</div> 
-      <div class='Coin CoinSP coinlocbanksp'>{BSP}</div> 
-      <div class='Coin CoinCP coinlocbankcp'>{BCP}</div> 
-   </div> 
-
+         <div class='Coin CoinPP coinlocbankpp'>{BPP}</div> 
+         <div class='Coin CoinGP coinlocbankgp'>{BGP}</div> 
+         <div class='Coin CoinSP coinlocbanksp'>{BSP}</div> 
+         <div class='Coin CoinCP coinlocbankcp'>{BCP}</div> 
+      </div> 
+   </div>
 </div>      
 
 <!-- BAG WINDOWS -->

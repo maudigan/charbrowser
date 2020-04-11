@@ -30,6 +30,8 @@
  *   March 31,2020 - totally rewrote the HTML, lots of changes (Maudigan)
  *   April 6, 2020 - Maudigan
  *     Make the way bags display more dynamic so they can be resized easily
+ *   April 11, 2020 - Maudigan
+ *     added styles for the avatar icons
  *                      
  ***************************************************************************/ 
 
@@ -447,6 +449,54 @@ BODY.CB_Body {
 }
 
 
+/* ----------------------------------------------
+        tab box on various super fancy
+------------------------------------------------- */
+#charbrowser NAV.CB_Tab_Box UL {
+   display: flex;
+   margin-top: 15px;
+   margin-bottom: 20px;
+   margin-left: 0px;
+   margin-right: 0px;
+   padding: 0px;
+}
+
+#charbrowser NAV.CB_Tab_Box UL LI {
+   cursor: pointer;
+   list-style-type: none;
+   flex-grow: 1;
+   text-align: center;
+   border-top: 1px solid #858996;
+   border-bottom: 2px solid #575139;
+   border-left: 1px solid #40434e;
+   border-right: 1px solid #858996;
+   border-top-right-radius: 15px;
+   border-top-left-radius: 15px;    
+   color: #808080;
+   background-color: rgba(255,255,255,0.0);
+}
+
+#charbrowser NAV.CB_Tab_Box UL LI:hover {  
+   color: #ffffff;
+   background-color: rgba(255,255,255,0.2);
+}
+
+#charbrowser NAV.CB_Tab_Box UL LI.CB_Tab_Open {
+   cursor: default;
+   border-top: 2px solid #949187;
+   border-bottom: none;
+   border-left: 2px solid #8a7d4a;
+   border-right: 2px solid #949187;
+   background-color: rgba(255,255,255,0.0);
+   color: #ffffff;
+}
+
+#charbrowser NAV.CB_Tab_Box UL LI.CB_Tab_Open:hover {
+   cursor: default;
+   background-color: rgba(255,255,255,0.0);
+}
+
+
 
 /* ----------------------------------------------
             tab box on various pages
@@ -493,6 +543,97 @@ BODY.CB_Body {
 #charbrowser NAV.CB_Tab_Box UL LI.CB_Tab_Open:hover {
    cursor: default;
    background-color: rgba(255,255,255,0.0);
+}
+
+
+
+/* ----------------------------------------------
+     tab box on various super fancy windows
+------------------------------------------------- */
+#charbrowser .WindowSuperFancy NAV.CB_Tab_Box UL {
+   display: flex;
+   margin-top: 15px;
+   margin-bottom: 20px;
+   margin-left: -18px;
+   margin-right: -18px;
+   padding-bottom: 7px;
+   padding-top: 0px;
+   padding-right: 8px;
+   padding-left: 8px;
+   height: 28px; 
+   background-image: url(../images/cb_tab_l.png), 
+                     url(../images/cb_tab_r.png);
+   background-repeat: no-repeat,
+                      no-repeat;
+   background-position-x: left, 
+                          right;
+   background-position-y: bottom, 
+                          bottom; 
+   background-clip: padding-box, 
+                    padding-box;
+}
+
+#charbrowser .WindowSuperFancy NAV.CB_Tab_Box UL LI {
+   cursor: pointer;
+   list-style-type: none;
+   flex-grow: 1;
+   text-align: center;
+   border-width: 0px;   
+   color: #808080;
+   padding: 0px 20px;
+   height: 28px;
+   white-space: nowrap;
+   line-height: 36px;
+   background-image: url(../images/cb_tab_down_l.png), 
+                     url(../images/cb_tab_down_r.png),  
+                     url(../images/cb_tab_down_t.png),  
+                     url(../images/cb_tab_down_b.png);
+   background-repeat: no-repeat,
+                      no-repeat,
+                      repeat-x,
+                      repeat-x;
+   background-position-x: left, 
+                          right, 
+                          left, 
+                          left;
+   background-position-y: top, 
+                          top, 
+                          top, 
+                          bottom; 
+   background-clip: padding-box, 
+                    padding-box, 
+                    content-box, 
+                    content-box;
+   background-color: transparent;
+}
+
+#charbrowser .WindowSuperFancy NAV.CB_Tab_Box UL LI:hover,
+#charbrowser .WindowSuperFancy NAV.CB_Tab_Box UL LI.CB_Tab_Open {
+   cursor: default;
+   border-width: 0px;
+   color: #ffffff;
+   padding: 0px 16px;
+   line-height: 25px;
+   background-image: url(../images/cb_tab_up_l.png), 
+                     url(../images/cb_tab_up_r.png),  
+                     url(../images/cb_tab_up_t.png);
+   background-repeat: no-repeat,
+                      no-repeat,
+                      repeat-x;
+   background-position-x: left, 
+                          right, 
+                          left;
+   background-position-y: top, 
+                          top, 
+                          top; 
+   background-clip: padding-box, 
+                    padding-box, 
+                    content-box;
+   background-color: transparent;
+}
+
+#charbrowser .WindowSuperFancy NAV.CB_Tab_Box UL LI.CB_Tab_Open:hover {
+   cursor: default;
 }
 
 
@@ -738,6 +879,96 @@ BODY.CB_Body {
    display: block;
    margin: 0px 0px;    
 }
+#charbrowser .WindowSuperFancy { 
+   position: relative;
+   margin: 0 auto;
+   background-image: url(../images/cb_super_fancy_r.png), 
+                     url(../images/cb_super_fancy_l.png),  
+                     url(../images/cb_super_fancy_bg.png);
+   background-repeat: repeat-y,
+                      repeat-y,
+                      repeat;
+   background-position-x: right, 
+                          left, 
+                          left;
+   background-position-y: top, 
+                          top, 
+                          top;                         
+   padding-top: 10px;
+   padding-left: 20px;
+   padding-right: 20px;
+   padding-bottom: 10px;
+   z-index: 0;
+   font-family: arial;
+   font-size: 9pt;
+   color: #FFFFFF;
+}
+#charbrowser .WindowSuperFancy:before {
+   content: " ";
+   position: absolute;
+   z-index: -1;
+   left: -4px;
+   right: 0px;
+   top: -20px;
+   bottom: -19px;
+   background-image: url(../images/cb_super_fancy_tl.png), 
+                     url(../images/cb_super_fancy_tr.png), 
+                     url(../images/cb_super_fancy_bl.png), 
+                     url(../images/cb_super_fancy_br.png), 
+                     url(../images/cb_super_fancy_t.png),  
+                     url(../images/cb_super_fancy_b.png);
+   background-repeat: no-repeat,
+                      no-repeat,
+                      no-repeat,
+                      no-repeat,
+                      repeat-x,
+                      repeat-x;
+   background-position-x: left, 
+                          right, 
+                          left, 
+                          right, 
+                          left, 
+                          left;
+   background-position-y: top, 
+                          top, 
+                          bottom, 
+                          bottom, 
+                          top, 
+                          bottom; 
+   background-clip: padding-box, 
+                    padding-box, 
+                    padding-box, 
+                    padding-box, 
+                    content-box, 
+                    content-box;
+   padding-top: 0px;
+   padding-left: 20px;
+   padding-right: 20px;
+   padding-bottom: 0px;
+   pointer-events: none;
+}
+
+#charbrowser .WindowSuperFancy .WindowTitleBar {
+   position: absolute;
+   overflow: hidden;
+   top: -10px;
+   height: 30px;
+   font-family: arial;
+   font-size: 9px;
+   line-height: 16px;
+   text-align: center;
+   color: #FFFFFF;
+   padding: 0px 19px;
+   background-image: url(../images/cb_super_fancy_title.png);
+   background-repeat: no-repeat;
+   background-clip: padding-box;
+   background-position-x: left;
+   background-position-y: top;
+   display: block;
+   background-size: 100%;
+   margin: 0 auto;
+   width: 134px;  
+}
 
 #charbrowser .WindowSimple,
 #charbrowser .WindowSimpleFancy,
@@ -927,19 +1158,36 @@ BODY.CB_Body {
 #charbrowser .PositionInventory {
    position: absolute; 
    width: 432px;
-   height: 467px;
+   height: 535px;
    top: 0px;
    left: 120px;
 }
 #charbrowser .InventoryContents {
    display: none;
    position: absolute;
-   top: 55px;
-   left: 7px;
+   top: 140px;
+   left:11px;
    width: 442px;
    overflow-y: auto;
    overflow-x: hidden;
-   height: 440px;
+   height: 405px;
+}
+#charbrowser .PositionInventory  .CB_Avatar_Layer1,
+#charbrowser .PositionInventory  .CB_Avatar_Layer2,
+#charbrowser .PositionInventory  .CB_Avatar_Layer3 {
+   position: absolute;
+   top: 12px;
+   left: 36px;
+   width: 70px;
+   height: 70px;
+   border-radius: 70px;
+   background-size: 100%;
+}
+#charbrowser .PositionInventory  .CB_Avatar_Layer1 {
+   background-image: url(../images/avatar_underlay_blue.svg);
+}
+#charbrowser .PositionInventory  .CB_Avatar_Layer3 {
+   background-image: url(../images/avatar_overlay.svg);
 }
 #charbrowser .PositionInventory  DIV.CB_CalcBox  TABLE.CB_Table THEAD TR TH:nth-child(1),
 #charbrowser .PositionInventory  DIV.CB_CalcBox  TABLE.CB_Table TBODY TR TD:nth-child(1),
@@ -978,11 +1226,20 @@ BODY.CB_Body {
 
 
 #charbrowser .PositionBank {
-   position: absolute; 
-   width: 252px;
-   height: 287px;
+   position: absolute;
+   width: 265px;
+   height: 305px;
    top: 0px;
    left: 600px;
+}
+#charbrowser .BankContents {
+   position: absolute;
+   top: 5px;
+   left: 12px;
+   width: 280px;
+   overflow-y: auto;
+   overflow-x: hidden;
+   height: 320px;
 }
 #charbrowser .PositionBag {
    position: relative; 
@@ -1013,6 +1270,32 @@ BODY.CB_Body {
   font-family:		arial;
   font-size: 9pt ;
   color: #FFFFFF ;
+}
+
+#charbrowser .PositionCharacter DIV.CB_Inv_Header {
+   position: absolute;
+   left: 130px;
+   top: 15px;
+}   
+#charbrowser .PositionCharacter DIV.CB_Inv_Header P:nth-child(1) {
+   font-size: 16px;
+   line-height: 18px;
+   color: #EEBE16;
+   margin: 0px;
+   padding: 2px;
+} 
+#charbrowser .PositionCharacter DIV.CB_Inv_Header P:nth-child(2),
+#charbrowser .PositionCharacter DIV.CB_Inv_Header P:nth-child(3) {
+   font-size: 13px;
+   line-height: 15px;
+   color: #FFFFFF;
+   margin: 0px;
+   padding: 2px;
+}
+#charbrowser .PositionCharacter NAV.CB_Tab_Box {
+   position: absolute;
+   top: 80px;
+   width: 432px;
 }
 
 #charbrowser .PositionCharacter  TABLE.CB_Char_Stats {
@@ -1601,9 +1884,9 @@ BODY.CB_Body {
 
 
 #charbrowser .sharedbankheaderloc {
-   position: relative;
-   top: 203px;
-   left: -6px;
+   position: absolute;
+   top: 220px;
+   left: 6px;
 }
 #charbrowser .coinlocsharedbankpp {
    top: 284px;

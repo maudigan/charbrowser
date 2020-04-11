@@ -43,6 +43,9 @@
  *   April 2, 2020 - Maudigan
  *      flush the cache prior to outputting the image to make sure
  *      we don't send a text header
+ *   April 11, 2020 - Maudigan
+ *      tweaked guild name output a little
+ *      added a function to calculate avatar image
  *
  ***************************************************************************/
  
@@ -85,23 +88,75 @@ function getGuildLink ($guildname, $guildrank = "") {
    global $blockguilddata;
 
    if ($guildname) { 
-      if ($guildrank) {
-         $guildnamerank = $guildrank." of ".$guildname;
-      }
-      else {
-         $guildnamerank = $guildname;
-      }
       if ($blockguilddata) {
-         return "&lt;".$guildnamerank."&gt;";
+         $output = "&lt;".$guildname."&gt;";
       }
       else {
-         return "<a href='".(($charbrowser_wrapped) ? $_SERVER['SCRIPT_NAME'] : "index.php")."?page=guild&guild=".$guildname."'>&lt;".$guildnamerank."&gt;</a>";
+         $output = "&lt;<a href='".(($charbrowser_wrapped) ? $_SERVER['SCRIPT_NAME'] : "index.php")."?page=guild&guild=".$guildname."'>".$guildname."</a>&gt;";
       }
+      if ($guildrank) {
+         $output = $guildrank." of ".$output;
+      }
+      return $output;
    }
    else {
       return "";
    }
 }  
+
+
+function getAvatarImage($race, $gender, $face) {
+   $tmp = "race_%s_gender_%s_face_%s.png";
+   $race = intval($race);
+   $gender = intval($gender);
+   $face = intval($face);
+   
+   //clean up race and face
+   //no idea why the client does this, but this
+   //is how RoF2 picks the face to display based
+   //on the face field from the character_data table
+   switch ($race) {
+      case CB_RACE_HUMAN: 
+      case CB_RACE_BARBARIAN:
+      case CB_RACE_ERUDITE:
+      case CB_RACE_WOOD_ELF:
+      case CB_RACE_DWARF:
+      case CB_RACE_TROLL:
+      case CB_RACE_OGRE:
+      case CB_RACE_HALFLING:
+      case CB_RACE_GNOME:
+      case CB_RACE_IKSAR:   
+      case CB_RACE_DRAKKIN: 
+         //these races use face 1-8 directly, and for every other face they use face 8
+         if ($face < 1 || $face > 8) $face = 8;
+         if ($gender < 0 || $gender > 1) $gender = 0;
+         break;
+      case CB_RACE_HIGH_ELF:
+      case CB_RACE_DARK_ELF:
+      case CB_RACE_HALF_ELF:
+      case CB_RACE_VAHSHIR: 
+         //these races use face 1-8 directly, and for every other face they use face 8
+         //until they get to face id 41, then they rotate through the 8 faces
+         if (($face < 1 || $face > 8) && $face < 41) $face = 8;
+         elseif ($face >= 41) $face = $face % 8;
+         break;
+      case CB_RACE_FROGLOK:    
+         //this races use face 1-10 directly, and for every face after it rotates through that list
+         if ($face < 1) $face = 10;
+         else $face = $face % 10;
+         break;
+      default:
+         //show a generic human for other races
+         $race = 1;
+         $gender = 0;
+         $face = 8;
+   }
+   
+   //clean up gender
+   if ($gender < 0 || $gender > 1) $gender = 0;
+   
+   return sprintf($tmp, $race, $gender, $face);
+}
 
 
 //sanitize a string to prevent XSS

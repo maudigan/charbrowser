@@ -1,3 +1,9 @@
+v3.2.0
+----------------------------------------------------------------------
+inventory restyle and avatars
+
+April 11, 2020 - restyled the inventory window, added avatars
+                
 v3.1.1
 ----------------------------------------------------------------------
 window/button upgrade

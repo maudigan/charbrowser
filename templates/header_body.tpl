@@ -2,7 +2,7 @@
 <html dir='ltr'>
    <head>
       <title>{TITLE} {SUBTITLE}</title>
-      <link rel='stylesheet' href='{ROOT_URL}templates/style-1.2.css' type='text/css'/>
+      <link rel='stylesheet' href='{ROOT_URL}templates/style-1.3.css' type='text/css'/>
       <meta http-equiv='Content-Type' content='text/html; charset=iso-8859-1'>
       <meta http-equiv='Content-Style-Type' content='text/css'>
       <!-- For Chrome for Android: -->

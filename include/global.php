@@ -29,6 +29,9 @@
  *                    added EQEmu style race/class constants (Maudigan)
  *   March 25, 2020 - added spell effect constants (Maudigan)
  *   April 6, 2020 - added constant for the server max bag slots (Maudigan)
+ *   April 14, 2020 - the global template class is being created/included
+ *                    in common.php, it shouldn't be double created here
+ *                    the api enabled check was relocated to common.php too
  *
  ***************************************************************************/
 
@@ -110,18 +113,6 @@ define("CB_RACE_DRAKKIN", 522);
 define("SERVER_HAS_GD", function_exists("imagecreatetruecolor"));
 define("SERVER_HAS_FREETYPE", function_exists("imagettfbbox"));
 
-include_once ( __DIR__ . "/template.php" );
-//templates
-$cb_template = new CB_Template(__DIR__ . "/../templates");
-
-//the template class will allow data to be output as json
-//if this is an API request and API is not enabled kill the api
-//request and then show an error saying api is unavailable
-if (isset($_GET['api']) && !$api_enabled) 
-{
-   unset($_GET['api']);
-   cb_message_die($language['MESSAGE_ERROR'],$language['MESSAGE_NOAPI']); 
-}
 
 // Element Types
 $dbelements = array("Unknown", "Magic", "Fire", "Cold", "Poison", "Disease", "Corruption");

@@ -1,3 +1,25 @@
+v3.2.1
+----------------------------------------------------------------------
+css tweaks, custom templates, code relocation
+
+April 14, 2020 - Restructured the templates directory. The templates
+                  are all in a /default subdirectory now. There is 
+                  also a /custom directory. If you make custom changes
+                  put them into the custom directory. The template
+                  system will use that as the primary, and if not
+                  present it will revert to the /default template.
+                  This way your changes wont get overwritten when you
+                  install updates.
+                  You can also create a 3rd directory and change the
+                  one you are using in congif.php. Using this you can
+                  quickly (or programatically) swap between two custom
+                  front ends.
+                 Added a hover transparency and drop shadow to all of
+                  the windows.  
+                 Fixed an issue with code on global.php that should 
+                  have been in common.php--was creating 2 template
+                  classes                  
+
 v3.2.0
 ----------------------------------------------------------------------
 inventory restyle and avatars

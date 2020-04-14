@@ -21,6 +21,8 @@
  *      Athrogate sent some code for MySQLi conversion, I added to that
  *      to make it more object oriented. $cbsql is now an object that
  *      wraps around a MqSQLi object.
+ *   April 14, 2020 - Maudigan
+ *      Added a subdirectory to the template folder
  ***************************************************************************/
 
 
@@ -103,7 +105,7 @@ class Charbrowser_SQL
    function dbp_fetch_parsed()
    {  
       //create our own template class instance so we don't interfere with the global one
-      $dbp_template = new CB_Template(__DIR__ . "/../templates");
+      $dbp_template = new CB_Template(__DIR__ . "/../templates/" . $cb_override_template_dir, __DIR__ . "/../templates/default");
       
       //load the template
       $dbp_template->set_filenames(array('database_performance' => 'database_performance_body.tpl'));

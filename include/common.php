@@ -17,6 +17,9 @@
  *                    of using global.php (Maudigan)
  *   March 28, 2020 - add the new self registration code (Maudigan)
  *   April 2, 2020 - make our index url a global var (Maudigan)
+ *   April 14, 2020 - relocated the API security check to here instead of
+ *                    global.php 
+ *                    Added a subdirectory to the template folder (Maudigan)
  *
  ***************************************************************************/
 
@@ -45,7 +48,8 @@ if ( !defined('CB_COMMON_RUN') )
    $cb_index_url = ($charbrowser_wrapped) ? $_SERVER['SCRIPT_NAME'] : "index.php";
 
    //CREATE TEMPLATE CLASS
-   $cb_template = new CB_Template(__DIR__ . "/../templates");
+   if (!isset($cb_override_template_dir)) $cb_override_template_dir = "custom";
+   $cb_template = new CB_Template(__DIR__ . "/../templates/" . $cb_override_template_dir, __DIR__ . "/../templates/default");
    
    //self reg timestamp file
    $cb_reg_file = '.register';

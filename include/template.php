@@ -17,6 +17,8 @@
  *      added an an API
  *   October 25, 2014
  *      added a new parse type that returns the parsing as a string
+ *   April 14, 2020
+ *      added a way to have an override template directory
  *
  ***************************************************************************/
  
@@ -49,8 +51,9 @@ class CB_Template {
    // Hash of filenames for each template handle.
    var $files = array();
 
-   // Root template directory.
-   var $root = "";
+   // Root template directories.
+   var $primary_root = "";
+   var $secondary_root = "";
 
    // this will hash handle names to the compiled code for that handle.
    var $compiled_code = array();
@@ -62,9 +65,9 @@ class CB_Template {
     * Constructor. Simply sets the root dir.
     *
     */
-   function CB_Template($root = ".")
+   function CB_Template($primary_dir = ".", $secondary_dir = ".")
    {
-      $this->set_rootdir($root);
+      $this->set_rootdir($primary_dir, $secondary_dir);
    }
 
    /**
@@ -79,14 +82,15 @@ class CB_Template {
    /**
     * Sets the template root directory for this Template object.
     */
-   function set_rootdir($dir)
+   function set_rootdir($primary_dir, $secondary_dir)
    {
-      if (!is_dir($dir))
+      if (!is_dir($primary_dir) || !is_dir($secondary_dir))
       {
          return false;
       }
 
-      $this->root = $dir;
+      $this->primary_root = $primary_dir;
+      $this->secondary_root = $secondary_dir;
       return true;
    }
 
@@ -396,15 +400,37 @@ class CB_Template {
     */
    function make_filename($filename)
    {
-      // Check if it's an absolute or relative path.
-      if (substr($filename, 0, 1) != '/')
+      // Check if it's an absolute or relative path      
+      if (substr($filename, 0, 1) == '/') 
       {
-             $filename = ($rp_filename = $this->root . '/' . $filename) ? $rp_filename : $filename;
-      }
+            //check if the primary file exists
+            if (!file_exists($filename))
+            {
+               die("CB_Template->make_filename(): Error - file $filename does not exist");
+            }
 
-      if (!file_exists($filename))
+            return $filename;
+      }
+      else
       {
-         die("CB_Template->make_filename(): Error - file $filename does not exist");
+            //default to primary file
+            $temp_filename = ($rp_filename = $this->primary_root . '/' . $filename) ? $rp_filename : $filename;
+            
+            if (file_exists($temp_filename)) 
+            {
+                 return $temp_filename;
+            }
+            
+            //if it doesnt exist revert to secondary/default directory
+            $temp_filename = ($rp_filename = $this->secondary_root . '/' . $filename) ? $rp_filename : $filename;
+            
+            if (file_exists($temp_filename)) 
+            {
+                 return $temp_filename;
+            }
+            
+            //else we error
+            die("CB_Template->make_filename(): Error - file $filename does not exist in the primary or secondary directory");
       }
 
       return $filename;

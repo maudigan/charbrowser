@@ -1,7 +1,7 @@
 <div class='WindowComplex PositionHome CB_Can_Drag'>
    <div class='WindowTitleBar'>{L_HOME}</div>
    <img src="{ROOT_URL}title.php">
-   <p>You've enabled the custom home page by renaming home.template to home.php. To add custom data edit the queries and templates in home.php. To edit the layout, make changes to /templates/home_body.tpl.</p>
+   <p>You've enabled the custom home page by renaming home.template to home.php. To add custom data edit the queries and templates in home.php. To edit the layout, copy /templates/default/home_body.tpl into /templates/custom/home_body.tpl (or whatever directory you've created and set in config.php). You can then edit that template and it will overwrite the default template.</p>
    <h2> Demo Data: {ROWS}</h2>
    <div class="WindowNestedBlue">
       <table class='CB_Table CB_Highlight_Rows'>

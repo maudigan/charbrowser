@@ -160,7 +160,35 @@ $cb_history_days = 30;
 **   0 - show update notice  (recommended)          **
 **   1 - block update notice                        **
 *****************************************************/
-$cb_blockversioncheck = 0;  
+$cb_blockversioncheck = 0; 
+
+
+/*****************************************************
+**               TEMPLATE OVERRIDE                  **
+**   By default templates are read from             **
+**   ./templates/default                            ** 
+**                                                  **
+**   You can override that and cause them to be     **
+**   read form a separate directory. So you could   **
+**   create custom template file in another         **
+**   directory. The template system will read from  **
+**   your custom directory first, and if it doesn't **
+**   find one it will resolve back to using the     **
+**   default template. In this way you can override **
+**   a template with changes, and your changes wont **
+**   get overwritten when you do a new install.     **
+**                                                  **
+**   Simply set the name of the directory you want  **
+**   to use, it should be inside of the ./templates **
+**   folder. Recommend you use the                  **
+**   ./templates/custom folder which is already     **
+**   set. But you can create another folder in      **
+**   there as well and quickly swap between the two **
+**   if needed.                                     **
+**                                                  **
+**   Paths relative to the ./template/ directory    **
+*****************************************************/
+$cb_override_template_dir = "custom";  
 
 
 /*****************************************************

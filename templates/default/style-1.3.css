@@ -44,7 +44,7 @@
 }
 
 #charbrowser .ui-icon {
-   background-image: url(../images/cb_drag_handle.png);
+   background-image: url(../../images/cb_drag_handle.png);
    background-position: 0px 0px;
 }
  
@@ -216,7 +216,7 @@ BODY.CB_Body {
    position: relative;
    height: 90px;
    min-width: 950px;
-   background-image: url(../images/light.gif);
+   background-image: url(../../images/light.gif);
    padding: 0px 20px 0px;
    margin: 0px;
    border-bottom: 2px #7b714a solid;
@@ -426,11 +426,11 @@ BODY.CB_Body {
               checkboxes on flags/corpses
 -------------------------------------------------*/
 #charbrowser .CB_CheckBox_0 {
-  background-image:url(../images/check_0.png);
+  background-image:url(../../images/check_0.png);
   display: inline-block;
 }
 #charbrowser .CB_CheckBox_1 {  
-  background-image:url(../images/check_1.png);
+  background-image:url(../../images/check_1.png);
 }
 #charbrowser .CB_CheckBox_0,
 #charbrowser .CB_CheckBox_1 {  
@@ -561,8 +561,8 @@ BODY.CB_Body {
    padding-right: 8px;
    padding-left: 8px;
    height: 28px; 
-   background-image: url(../images/cb_tab_l.png), 
-                     url(../images/cb_tab_r.png);
+   background-image: url(../../images/cb_tab_l.png), 
+                     url(../../images/cb_tab_r.png);
    background-repeat: no-repeat,
                       no-repeat;
    background-position-x: left, 
@@ -584,10 +584,10 @@ BODY.CB_Body {
    height: 28px;
    white-space: nowrap;
    line-height: 36px;
-   background-image: url(../images/cb_tab_down_l.png), 
-                     url(../images/cb_tab_down_r.png),  
-                     url(../images/cb_tab_down_t.png),  
-                     url(../images/cb_tab_down_b.png);
+   background-image: url(../../images/cb_tab_down_l.png), 
+                     url(../../images/cb_tab_down_r.png),  
+                     url(../../images/cb_tab_down_t.png),  
+                     url(../../images/cb_tab_down_b.png);
    background-repeat: no-repeat,
                       no-repeat,
                       repeat-x,
@@ -614,9 +614,9 @@ BODY.CB_Body {
    color: #ffffff;
    padding: 0px 16px;
    line-height: 25px;
-   background-image: url(../images/cb_tab_up_l.png), 
-                     url(../images/cb_tab_up_r.png),  
-                     url(../images/cb_tab_up_t.png);
+   background-image: url(../../images/cb_tab_up_l.png), 
+                     url(../../images/cb_tab_up_r.png),  
+                     url(../../images/cb_tab_up_t.png);
    background-repeat: no-repeat,
                       no-repeat,
                       repeat-x;
@@ -773,12 +773,12 @@ BODY.CB_Body {
 }
 
 #charbrowser .CB_Button:hover {
-   background-image: url(../images/button_small_hover.png);
+   background-image: url(../../images/button_small_hover.png);
 }
 #charbrowser .CB_Button,
 #charbrowser .CB_Button:link,
 #charbrowser .CB_Button:visited {
-   background-image: url(../images/button_small_up.png);
+   background-image: url(../../images/button_small_up.png);
 }
 #charbrowser .CB_Button:active,
 #charbrowser .CB_ButtonDisabled,
@@ -786,7 +786,7 @@ BODY.CB_Body {
 #charbrowser .CB_ButtonDisabled:visited,
 #charbrowser .CB_ButtonDisabled:active,
 #charbrowser .CB_ButtonDisabled:hover {
-   background-image: url(../images/button_small_down.png);
+   background-image: url(../../images/button_small_down.png);
 }
 #charbrowser .CB_ButtonDisabled,
 #charbrowser .CB_ButtonDisabled:link,
@@ -826,12 +826,12 @@ BODY.CB_Body {
 }
 
 #charbrowser .CB_ButtonWrap:hover {
-   background-image: url(../images/button_big_hover.png);
+   background-image: url(../../images/button_big_hover.png);
 }
 #charbrowser .CB_ButtonWrap,
 #charbrowser .CB_ButtonWrap:link,
 #charbrowser .CB_ButtonWrap:visited {
-   background-image: url(../images/button_big_up.png);
+   background-image: url(../../images/button_big_up.png);
 }
 #charbrowser .CB_ButtonWrap:active,
 #charbrowser .CB_ButtonWrapDisabled,
@@ -839,7 +839,7 @@ BODY.CB_Body {
 #charbrowser .CB_ButtonWrapDisabled:visited,
 #charbrowser .CB_ButtonWrapDisabled:active,
 #charbrowser .CB_ButtonWrapDisabled:hover {
-   background-image: url(../images/button_big_down.png);
+   background-image: url(../../images/button_big_down.png);
 }
 #charbrowser .CB_ButtonWrapDisabled,
 #charbrowser .CB_ButtonWrapDisabled:link,
@@ -872,7 +872,7 @@ BODY.CB_Body {
    text-align: center;   
    color: #FFFFFF;
    padding: 0px 13px;
-   background-image: url(../images/rightt.gif), url(../images/leftt.gif), url(../images/midt.gif);
+   background-image: url(../../images/rightt.gif), url(../../images/leftt.gif), url(../../images/midt.gif);
    background-repeat: no-repeat, no-repeat, repeat-x;
    background-clip: padding-box, padding-box, content-box;
    background-position-x: right, left, left;
@@ -882,9 +882,9 @@ BODY.CB_Body {
 #charbrowser .WindowSuperFancy { 
    position: relative;
    margin: 0 auto;
-   background-image: url(../images/cb_super_fancy_r.png), 
-                     url(../images/cb_super_fancy_l.png),  
-                     url(../images/cb_super_fancy_bg.png);
+   background-image: url(../../images/cb_super_fancy_r.png), 
+                     url(../../images/cb_super_fancy_l.png),  
+                     url(../../images/cb_super_fancy_bg.png);
    background-repeat: repeat-y,
                       repeat-y,
                       repeat;
@@ -902,6 +902,12 @@ BODY.CB_Body {
    font-family: arial;
    font-size: 9pt;
    color: #FFFFFF;
+   box-shadow: 5px 20px 20px rgba(0, 0, 0, 0.6);  
+   opacity: 0.95;
+   transition: opacity 200ms;
+}
+#charbrowser .WindowSuperFancy:hover { 
+   opacity: 1;
 }
 #charbrowser .WindowSuperFancy:before {
    content: " ";
@@ -911,12 +917,12 @@ BODY.CB_Body {
    right: 0px;
    top: -20px;
    bottom: -19px;
-   background-image: url(../images/cb_super_fancy_tl.png), 
-                     url(../images/cb_super_fancy_tr.png), 
-                     url(../images/cb_super_fancy_bl.png), 
-                     url(../images/cb_super_fancy_br.png), 
-                     url(../images/cb_super_fancy_t.png),  
-                     url(../images/cb_super_fancy_b.png);
+   background-image: url(../../images/cb_super_fancy_tl.png), 
+                     url(../../images/cb_super_fancy_tr.png), 
+                     url(../../images/cb_super_fancy_bl.png), 
+                     url(../../images/cb_super_fancy_br.png), 
+                     url(../../images/cb_super_fancy_t.png),  
+                     url(../../images/cb_super_fancy_b.png);
    background-repeat: no-repeat,
                       no-repeat,
                       no-repeat,
@@ -959,7 +965,7 @@ BODY.CB_Body {
    text-align: center;
    color: #FFFFFF;
    padding: 0px 19px;
-   background-image: url(../images/cb_super_fancy_title.png);
+   background-image: url(../../images/cb_super_fancy_title.png);
    background-repeat: no-repeat;
    background-clip: padding-box;
    background-position-x: left;
@@ -977,7 +983,7 @@ BODY.CB_Body {
 #charbrowser .WindowComplexGM { 
    position: relative;
    margin: 0 auto;
-   background-image: url(../images/light.gif);
+   background-image: url(../../images/light.gif);
    padding-top: 19px;
    padding-left: 13px;
    padding-right: 13px;
@@ -989,6 +995,17 @@ BODY.CB_Body {
    font-family: arial;
    font-size: 9pt;
    color: #FFFFFF;
+   box-shadow: 5px 10px 20px rgba(0, 0, 0, 0.6);
+   opacity: 0.95;
+   transition: opacity 200ms;
+}
+
+#charbrowser .WindowSimple:hover,
+#charbrowser .WindowSimpleFancy:hover,
+#charbrowser .WindowComplex:hover,
+#charbrowser .WindowComplexFancy:hover,
+#charbrowser .WindowComplexGM :hover { 
+   opacity: 1;
 }
 
 #charbrowser .WindowComplex:before,
@@ -1028,19 +1045,19 @@ BODY.CB_Body {
 
 #charbrowser .WindowComplex:before,
 #charbrowser .WindowComplexGM:before {
-   background-image: url(../images/cb_simple_window_corner_tl.png), url(../images/cb_simple_window_corner_tr.png), url(../images/cb_simple_window_corner_bl.png), url(../images/cb_simple_window_corner_br.png), url(../images/dark.gif);
+   background-image: url(../../images/cb_simple_window_corner_tl.png), url(../../images/cb_simple_window_corner_tr.png), url(../../images/cb_simple_window_corner_bl.png), url(../../images/cb_simple_window_corner_br.png), url(../../images/dark.gif);
 }
 
 #charbrowser .WindowComplexFancy:before {
-   background-image: url(../images/cb_window_corner_tl.png), url(../images/cb_window_corner_tr.png), url(../images/cb_window_corner_bl.png), url(../images/cb_window_corner_br.png), url(../images/dark.gif);
+   background-image: url(../../images/cb_window_corner_tl.png), url(../../images/cb_window_corner_tr.png), url(../../images/cb_window_corner_bl.png), url(../../images/cb_window_corner_br.png), url(../../images/dark.gif);
 }
 
 #charbrowser .WindowSimple:before {
-    background-image: url(../images/cb_simple_window_corner_tl.png), url(../images/cb_simple_window_corner_tr.png), url(../images/cb_simple_window_corner_bl.png), url(../images/cb_simple_window_corner_br.png);
+    background-image: url(../../images/cb_simple_window_corner_tl.png), url(../../images/cb_simple_window_corner_tr.png), url(../../images/cb_simple_window_corner_bl.png), url(../../images/cb_simple_window_corner_br.png);
 }
 
 #charbrowser .WindowSimpleFancy:before {
-    background-image: url(../images/cb_window_corner_tl.png), url(../images/cb_window_corner_tr.png), url(../images/cb_window_corner_bl.png), url(../images/cb_window_corner_br.png);
+    background-image: url(../../images/cb_window_corner_tl.png), url(../../images/cb_window_corner_tr.png), url(../../images/cb_window_corner_bl.png), url(../../images/cb_window_corner_br.png);
 }
 
 
@@ -1073,7 +1090,7 @@ BODY.CB_Body {
 }
 
 #charbrowser .WindowNestedBlue {
-   background-image: url(../images/dark.gif);
+   background-image: url(../../images/dark.gif);
    border: 1px #6b7194 solid;
    padding-top: 6px;
    padding-left: 0px;
@@ -1093,7 +1110,7 @@ BODY.CB_Body {
    right: 10px; 
    top: 4px;
    cursor: pointer;
-   background-image: url(../images/cb_icon_popup_close.png);
+   background-image: url(../../images/cb_icon_popup_close.png);
    width: 12px;
    height: 12px;
    max-width: 12px;
@@ -1106,7 +1123,7 @@ BODY.CB_Body {
    right: 27px; 
    top: 4px;
    cursor: pointer;
-   background-image: url(../images/cb_icon_popup_closeall.png);
+   background-image: url(../../images/cb_icon_popup_closeall.png);
    width: 12px;
    height: 12px;
    max-width: 12px;
@@ -1119,7 +1136,7 @@ BODY.CB_Body {
    right: 44px; 
    top: 4px;
    cursor: pointer;
-   background-image: url(../images/cb_icon_popup_tile.png);
+   background-image: url(../../images/cb_icon_popup_tile.png);
    width: 12px;
    height: 12px;
    max-width: 12px;
@@ -1184,10 +1201,10 @@ BODY.CB_Body {
    background-size: 100%;
 }
 #charbrowser .PositionInventory  .CB_Avatar_Layer1 {
-   background-image: url(../images/avatar_underlay_blue.svg);
+   background-image: url(../../images/avatar_underlay_blue.svg);
 }
 #charbrowser .PositionInventory  .CB_Avatar_Layer3 {
-   background-image: url(../images/avatar_overlay.svg);
+   background-image: url(../../images/avatar_overlay.svg);
 }
 #charbrowser .PositionInventory  DIV.CB_CalcBox  TABLE.CB_Table THEAD TR TH:nth-child(1),
 #charbrowser .PositionInventory  DIV.CB_CalcBox  TABLE.CB_Table TBODY TR TD:nth-child(1),
@@ -1229,8 +1246,8 @@ BODY.CB_Body {
    position: absolute;
    width: 265px;
    height: 305px;
-   top: 0px;
-   left: 600px;
+   top: 100px;
+   left: 650px;
 }
 #charbrowser .BankContents {
    position: absolute;
@@ -1256,7 +1273,7 @@ BODY.CB_Body {
 }
 
 #charbrowser .PositionCharacter  DIV.CB_Char_Monogram {
-  background-image: url(../images/dark.gif);
+  background-image: url(../../images/dark.gif);
   border: 1px #444444 solid;
   position: absolute;
   text-align: center;
@@ -1644,7 +1661,7 @@ BODY.CB_Body {
    left: -7px;
 }
 #charbrowser .PositionSettings  TD.cb_setting_val_1 {
-   background-image: url(../images/cb_checkmark.png);
+   background-image: url(../../images/cb_checkmark.png);
    background-repeat: no-repeat;
    background-position: center;
 }
@@ -1816,7 +1833,7 @@ BODY.CB_Body {
   width: 10px;
   border: 0px ;
   cursor: pointer;
-  background-image: url(../images/cb_bag_icon.png);
+  background-image: url(../../images/cb_bag_icon.png);
   margin: 0;
   padding: 0;
   position: absolute;
@@ -1831,7 +1848,7 @@ BODY.CB_Body {
    border: 0px ;
    text-align: center;
    background-repeat: no-repeat;
-   background-image: url(../images/coin.gif);
+   background-image: url(../../images/coin.gif);
    margin: 0;
    padding-left: 21px;
    padding-right: 0px;
@@ -1853,16 +1870,16 @@ BODY.CB_Body {
    bottom: 0px;
 }
 #charbrowser .CoinPP:before {
-   background-image: url(../images/pp.gif);
+   background-image: url(../../images/pp.gif);
 }
 #charbrowser .CoinGP:before {
-   background-image: url(../images/gp.gif);
+   background-image: url(../../images/gp.gif);
 }
 #charbrowser .CoinSP:before {
-   background-image: url(../images/sp.gif);
+   background-image: url(../../images/sp.gif);
 }
 #charbrowser .CoinCP:before {
-   background-image: url(../images/cp.gif);
+   background-image: url(../../images/cp.gif);
 }
 
 #charbrowser .coinlocinvpp {
@@ -2168,74 +2185,74 @@ BODY.CB_Body {
          inventory slot images
 ------------------------------------------------- */
 #charbrowser .slotimage0 {
-  background-image: url(../images/slots/slot_0.gif);
+  background-image: url(../../images/slots/slot_0.gif);
 }
 #charbrowser .slotimage1 {
-  background-image: url(../images/slots/slot_1.gif);
+  background-image: url(../../images/slots/slot_1.gif);
 }
 #charbrowser .slotimage2 {
-  background-image: url(../images/slots/slot_2.gif);
+  background-image: url(../../images/slots/slot_2.gif);
 }
 #charbrowser .slotimage3 {
-  background-image: url(../images/slots/slot_3.gif);
+  background-image: url(../../images/slots/slot_3.gif);
 }
 #charbrowser .slotimage4 {
-  background-image: url(../images/slots/slot_4.gif);
+  background-image: url(../../images/slots/slot_4.gif);
 }
 #charbrowser .slotimage5 {
-  background-image: url(../images/slots/slot_5.gif);
+  background-image: url(../../images/slots/slot_5.gif);
 }
 #charbrowser .slotimage6 {
-  background-image: url(../images/slots/slot_6.gif);
+  background-image: url(../../images/slots/slot_6.gif);
 }
 #charbrowser .slotimage7 {
-  background-image: url(../images/slots/slot_7.gif);
+  background-image: url(../../images/slots/slot_7.gif);
 }
 #charbrowser .slotimage8 {
-  background-image: url(../images/slots/slot_8.gif);
+  background-image: url(../../images/slots/slot_8.gif);
 }
 #charbrowser .slotimage9 {
-  background-image: url(../images/slots/slot_9.gif);
+  background-image: url(../../images/slots/slot_9.gif);
 }
 #charbrowser .slotimage10 {
-  background-image: url(../images/slots/slot_10.gif);
+  background-image: url(../../images/slots/slot_10.gif);
 }
 #charbrowser .slotimage11 {
-  background-image: url(../images/slots/slot_11.gif);
+  background-image: url(../../images/slots/slot_11.gif);
 }
 #charbrowser .slotimage12 {
-  background-image: url(../images/slots/slot_12.gif);
+  background-image: url(../../images/slots/slot_12.gif);
 }
 #charbrowser .slotimage13 {
-  background-image: url(../images/slots/slot_13.gif);
+  background-image: url(../../images/slots/slot_13.gif);
 }
 #charbrowser .slotimage14 {
-  background-image: url(../images/slots/slot_14.gif);
+  background-image: url(../../images/slots/slot_14.gif);
 }
 #charbrowser .slotimage15 {
-  background-image: url(../images/slots/slot_15.gif);
+  background-image: url(../../images/slots/slot_15.gif);
 }
 #charbrowser .slotimage16 {
-  background-image: url(../images/slots/slot_16.gif);
+  background-image: url(../../images/slots/slot_16.gif);
 }
 #charbrowser .slotimage17 {
-  background-image: url(../images/slots/slot_17.gif);
+  background-image: url(../../images/slots/slot_17.gif);
 }
 #charbrowser .slotimage18 {
-  background-image: url(../images/slots/slot_18.gif);
+  background-image: url(../../images/slots/slot_18.gif);
 }
 #charbrowser .slotimage19 {
-  background-image: url(../images/slots/slot_19.gif);
+  background-image: url(../../images/slots/slot_19.gif);
 }
 #charbrowser .slotimage20 {
-  background-image: url(../images/slots/slot_20.gif);
+  background-image: url(../../images/slots/slot_20.gif);
 }
 #charbrowser .slotimage21 {
-  background-image: url(../images/slots/slot_21.gif);
+  background-image: url(../../images/slots/slot_21.gif);
 }
 #charbrowser .slotimage22 {
-  background-image: url(../images/slots/slot_22.gif);
+  background-image: url(../../images/slots/slot_22.gif);
 }
 #charbrowser .slotimage {
-  background-image: url(../images/slots/slot_.gif);
+  background-image: url(../../images/slots/slot_.gif);
 }

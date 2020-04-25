@@ -31,6 +31,7 @@
  *   March 26, 2020 - added server info language(Maudigan)
  *   April 2, 2020 - added store language(Maudigan)
  *   April 3, 2020 - added custom home page language(Maudigan)
+ *   April 16, 2020 - added bots language(Maudigan)
  ***************************************************************************/ 
   
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             
@@ -63,6 +64,7 @@ $language['PAGE_TITLES_SERVER'] =" Server Info";
 $language['PAGE_TITLES_CHARMOVE'] ="Character Mover"; 
 $language['PAGE_TITLES_CORPSE'] ="'s Corpses"; 
 $language['PAGE_TITLES_FACTIONS'] ="'s Factions"; 
+$language['PAGE_TITLES_BOTS'] ="'s Bots"; 
 $language['PAGE_TITLES_FLAGS'] ="'s Flags"; 
 $language['PAGE_TITLES_HELP'] ="Help"; 
 $language['PAGE_TITLES_SEARCH'] ="Profile Search Results"; 
@@ -322,6 +324,9 @@ $language['CORPSE_LOC'] = "Corpse Loc";
 $language['CORPSE_MAP'] = "Map Link"; 
 $language['CORPSE_CORPSES'] = "Corpses"; 
 
+//bots language
+$language['BOTS_BOTS'] = "Bots"; 
+
 //guild language
 $language['GUILD_GUILD'] = "Guild"; 
 $language['GUILD_MEMBERS'] = "Members"; 
@@ -572,6 +577,7 @@ $language['BUTTON_CORPSE'] = "Corpse";
 $language['BUTTON_FACTION'] = "Faction"; 
 $language['BUTTON_CHARMOVE'] = "Move"; 
 $language['BUTTON_STORE'] = "Store"; 
+$language['BUTTON_BOTS'] = "Bots"; 
 $language['BUTTON_BOOKMARK'] = "Link"; 
 $language['BUTTON_SIG'] = "Sig"; 
 $language['BUTTON_KEYS'] = "Keys"; 
@@ -597,6 +603,7 @@ $language['MESSAGE_TYPE_NUMERIC'] = "A searches type field can only contain nume
 $language['MESSAGE_NO_FIND'] = "Could not find that character."; 
 $language['MESSAGE_ITEM_NO_VIEW'] = "Server settings prevent you from viewing this item."; 
 $language['MESSAGE_NO_CORPSES'] = "This character has no corpses"; 
+$language['MESSAGE_NO_BOTS'] = "This character has no bots"; 
 $language['MESSAGE_NO_KEYS'] = "This character has no keys on the keyring"; 
 $language['MESSAGE_NO_GD'] = "This server does not appear to have GD installed, and it is required for image generation. Please contact your system admin."; 
 $language['MESSAGE_PROF_NOKEY'] = "Profile value '%s' requested but does not exist in the locator."; //added 4 "PROF" rows for new profile class rewrite 9/26/2014

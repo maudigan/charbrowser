@@ -34,10 +34,13 @@
  *      Added a cleaner itemstats list view
  *   April 4, 2020 - Maudigan
  *     cap bag slot count with a constant
+ *   April 25, 2020 - Maudigan
+ *     relocated GetFieldByQuery to db.php
  ***************************************************************************/
  
  
  
+   
  
 if ( !defined('INCHARBROWSER') )
 {
@@ -47,23 +50,6 @@ include_once(__DIR__ . "/global.php");
 include_once(__DIR__ . "/db.php");
 
 
- 
- /** Runs '$query' and returns the value of '$field' of the first (arbitrarily) found row
- *  If no row is selected by '$query', returns an emty string
- */
-function GetFieldByQuery($field, $query)
-{ 
-   global $cbsql;
-   $QueryResult = $cbsql->query($query);
-   if($cbsql->rows($QueryResult) > 0) { 
-      $rows=$cbsql->nextrow($QueryResult);
-      $Result = $rows[$field];
-   }
-   else
-      $Result = "";
-
-   return $Result;
-}
  
  function strtolower_ucfirst($txt) {
    if ($txt=="") { return $txt; }
@@ -176,7 +162,7 @@ function getsize($val) {
  */
 function GetItem($item)
 { 
-   
+   global $cbsql_content;
    global $dbelements;
    global $dbskills;
    global $dam2h;
@@ -308,7 +294,7 @@ function GetItem($item)
       //Bane DMG
       if ($item["banedmgrace"] > 0 AND $item["banedmgraceamt"] != 0) {
          $Output .= "Bane Damage: "; 
-         $Output .= GetFieldByQuery("name", "SELECT name FROM $tbraces WHERE id = '" . $item["banedmgrace"] . "'");
+         $Output .= $cbsql_content->field_query("name", "SELECT name FROM $tbraces WHERE id = '" . $item["banedmgrace"] . "'");
          $Output .= " " . number_format($item["banedmgraceamt"]) . "<br>";
       }
       
@@ -324,7 +310,7 @@ function GetItem($item)
       // Proc Effect
       if ($item["proceffect"] > 0 AND $item["proceffect"] < 65535) { 
          $temp = QuickTemplate($link_spell, array('SPELL_ID' => $item["proceffect"]));
-         $Output .= "Proc Effect: <a href='" . $temp . "'>" . GetFieldByQuery("name", "SELECT name FROM $tbspells WHERE id = '" . $item["proceffect"] . "'") . "</a>";
+         $Output .= "Proc Effect: <a href='" . $temp . "'>" . $cbsql_content->field_query("name", "SELECT name FROM $tbspells WHERE id = '" . $item["proceffect"] . "'") . "</a>";
          if ($item["proclevel2"] > 0)
             $Output .= " <i>(Level " . $item["proclevel2"] . ")</i>";
          
@@ -334,7 +320,7 @@ function GetItem($item)
       // Worn Effect
       if ($item["worneffect"] > 0 AND $item["worneffect"] < 65535) {
          $temp = QuickTemplate($link_spell, array('SPELL_ID' => $item["worneffect"])); 
-         $Output .= "Worn Effect: <a href='" . $temp . "'>"  .GetFieldByQuery("name", "SELECT name FROM $tbspells WHERE id = '" . $item["worneffect"] . "'") . "</a>";
+         $Output .= "Worn Effect: <a href='" . $temp . "'>"  .$cbsql_content->field_query("name", "SELECT name FROM $tbspells WHERE id = '" . $item["worneffect"] . "'") . "</a>";
          if ($item["wornlevel"] > 0)
             $Output .= " <i>(Level " . $item["wornlevel"] . ")</i>";
          
@@ -344,7 +330,7 @@ function GetItem($item)
       // Focus Effect
       if ($item["focuseffect"] > 0 AND $item["focuseffect"] < 65535) {
          $temp = QuickTemplate($link_spell, array('SPELL_ID' => $item["focuseffect"])); 
-         $Output .= "Focus Effect: <a href='" . $temp . "'>" . GetFieldByQuery("name", "SELECT name FROM $tbspells WHERE id = '" . $item["focuseffect"] . "'") . "</a>";
+         $Output .= "Focus Effect: <a href='" . $temp . "'>" . $cbsql_content->field_query("name", "SELECT name FROM $tbspells WHERE id = '" . $item["focuseffect"] . "'") . "</a>";
          if ($item["focuslevel"] > 0)
             $Output .= " <i>(Level " . $item["focuslevel"] . ")</i>";
          
@@ -354,7 +340,7 @@ function GetItem($item)
       // Click Effect
       if ($item["clickeffect"] > 0 AND $item["clickeffect"] < 65535) {
          $temp = QuickTemplate($link_spell, array('SPELL_ID' => $item["clickeffect"])); 
-         $Output .= $tab."Click Effect: <a href='".$temp."'>".GetFieldByQuery("name","SELECT name FROM $tbspells WHERE id=".$item["clickeffect"])."</a>";
+         $Output .= $tab."Click Effect: <a href='".$temp."'>".$cbsql_content->field_query("name","SELECT name FROM $tbspells WHERE id=".$item["clickeffect"])."</a>";
          $Output .= "&nbsp;(";
          if ($item["clicktype"] == 1)
             $Output .= "Any Slot, ";
@@ -645,7 +631,7 @@ function GetItem($item)
       // Scroll Effect
       if ($item["scrolleffect"] > 0 AND $item["scrolleffect"] < 65535) {
          $temp = QuickTemplate($link_spell, array('SPELL_ID' => $item["scrolleffect"])); 
-         $Output .= "Scroll Effect: <a href='" . $temp . "'>" . GetFieldByQuery("name", "SELECT name FROM $tbspells WHERE id = '" . $item["scrolleffect"] . "'") . "</a>";
+         $Output .= "Scroll Effect: <a href='" . $temp . "'>" . $cbsql_content->field_query("name", "SELECT name FROM $tbspells WHERE id = '" . $item["scrolleffect"] . "'") . "</a>";
          $Output .= "<br>"; 
       }   
    
@@ -725,7 +711,7 @@ function GetItem($item)
       //Bane DMG
       if (($item["banedmgrace"]>0) AND ($item["banedmgraceamt"]!=0)) {
          $Output .= $tab."Bane DMG: "; 
-         $Output .= GetFieldByQuery("name","SELECT name FROM $tbraces WHERE id=".$item["banedmgrace"]);
+         $Output .= $cbsql_content->field_query("name","SELECT name FROM $tbraces WHERE id=".$item["banedmgrace"]);
          $Output .= " ".sign($item["banedmgraceamt"])."<br>\n";
       }
       if (($item["banedmgbody"]>0) AND ($item["banedmgamt"]!=0)) { 
@@ -741,7 +727,7 @@ function GetItem($item)
       if (($item["proceffect"]>0) AND ($item["proceffect"]<65535)) { 
          //build the link from the spell template
          $temp = QuickTemplate($link_spell, array('SPELL_ID' => $item["proceffect"]));
-         $Output .= $tab."Effect: <a href='".$temp."'>".GetFieldByQuery("name","SELECT name FROM $tbspells WHERE id=".$item["proceffect"])."</a>";
+         $Output .= $tab."Effect: <a href='".$temp."'>".$cbsql_content->field_query("name","SELECT name FROM $tbspells WHERE id=".$item["proceffect"])."</a>";
          $Output .= "&nbsp;(Combat)";
          $Output .= " <i>(Level ".$item["proclevel2"].")</i>"; 
          $Output .= "<br>\n";
@@ -751,7 +737,7 @@ function GetItem($item)
       if (($item["worneffect"]>0) AND ($item["worneffect"]<65535)) { 
          //build the link from the spell template
          $temp = QuickTemplate($link_spell, array('SPELL_ID' => $item["worneffect"])); 
-         $Output .= $tab."Effect: <a href='".$temp."'>".GetFieldByQuery("name","SELECT name FROM $tbspells WHERE id=".$item["worneffect"])."</a>";
+         $Output .= $tab."Effect: <a href='".$temp."'>".$cbsql_content->field_query("name","SELECT name FROM $tbspells WHERE id=".$item["worneffect"])."</a>";
          $Output .= "&nbsp;(Worn)"; 
          $Output .= " <i>(Level ".$item["wornlevel"].")</i>"; 
          $Output .= "<br>\n";
@@ -761,7 +747,7 @@ function GetItem($item)
       if (($item["focuseffect"]>0) AND ($item["focuseffect"]<65535)) {
          //build the link from the spell template 
          $temp = QuickTemplate($link_spell, array('SPELL_ID' => $item["focuseffect"])); 
-         $Output .= $tab."Focus: <a href='".$temp."'>".GetFieldByQuery("name","SELECT name FROM $tbspells WHERE id=".$item["focuseffect"])."</a>";
+         $Output .= $tab."Focus: <a href='".$temp."'>".$cbsql_content->field_query("name","SELECT name FROM $tbspells WHERE id=".$item["focuseffect"])."</a>";
          if ($item["focuslevel"]>0) { $Output .= " <i>(Level ".$item["focuslevel"].")</i>";  }
          $Output .= "<br>\n";
       }
@@ -770,7 +756,7 @@ function GetItem($item)
       if (($item["clickeffect"]>0) AND ($item["clickeffect"]<65535)) {  
          //build the link from the spell template
          $temp = QuickTemplate($link_spell, array('SPELL_ID' => $item["clickeffect"])); 
-         $Output .= $tab."Effect: <a href='".$temp."'>".GetFieldByQuery("name","SELECT name FROM $tbspells WHERE id=".$item["clickeffect"])."</a>";
+         $Output .= $tab."Effect: <a href='".$temp."'>".$cbsql_content->field_query("name","SELECT name FROM $tbspells WHERE id=".$item["clickeffect"])."</a>";
          $Output .= "&nbsp;(";
          if ($item["clicktype"]==1) { $Output .= "Any Slot, "; }
          if ($item["clicktype"]==4) { $Output .= "Must Equip, ";   }
@@ -886,7 +872,7 @@ function GetItem($item)
       if (($item["scrolleffect"]>0) AND ($item["scrolleffect"]<65535)) {  
          //build the link from the spell template
          $temp = QuickTemplate($link_spell, array('SPELL_ID' => $item["scrolleffect"])); 
-         $Output .= $tab."Effect: <a href='".$temp."'>".GetFieldByQuery("name","SELECT name FROM $tbspells WHERE id=".$item["scrolleffect"])."</a>";
+         $Output .= $tab."Effect: <a href='".$temp."'>".$cbsql_content->field_query("name","SELECT name FROM $tbspells WHERE id=".$item["scrolleffect"])."</a>";
          $Output .= "<br>\n"; 
       }
    }

@@ -36,6 +36,8 @@
  *      display optional charname in form
  *   March 22, 2020 - Maudigan
  *     impemented common.php
+ *   April 25, 2020 - Maudigan
+ *     implement multi-tenancy
  *  
  ***************************************************************************/
   
@@ -60,7 +62,7 @@ if (isset($_GET['api']))  cb_message_die($language['MESSAGE_ERROR'],$language['M
 //TRYMOVE - attempts to move a character
 function trymove($name, $login, $zone) {
    global $language, $charmovezones;
-   global $cbsql;
+   global $cbsql, $cbsql_content;
 
    if (!$login || !$zone || !$name) return "One or more fields were left blank";
    if (!preg_match("/^[a-zA-Z]*\z/", $name)) return "The character name contains illegal characters";
@@ -75,11 +77,11 @@ FROM zone
 WHERE LCASE(short_name) = LCASE('%s') 
 LIMIT 1
 TPL;
-   $query = sprintf($tpl, $cbsql->escape_string($zone));
-   $result = $cbsql->query($query);  
-   if (!$cbsql->rows($result))  return "Unknown database error";  
+   $query = sprintf($tpl, $cbsql_content->escape_string($zone));
+   $result = $cbsql_content->query($query);  
+   if (!$cbsql_content->rows($result))  return "Unknown database error";  
   
-   $row = $cbsql->nextrow($result);
+   $row = $cbsql_content->nextrow($result);
    $zonesn = $row['short_name'];
    $zoneln = $row['long_name'];
    $zoneid = $row['zoneidnumber'];

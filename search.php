@@ -38,6 +38,8 @@
  *     impemented common.php
  *   April 2, 2020 - Maudigan
  *     dont show anon guild members names
+ *   April 17, 2020 - Maudigan
+ *     show a nicer error when there are no results
  ***************************************************************************/
  
  
@@ -114,7 +116,7 @@ TPL;
 $query = sprintf($tpl, $where, '');
 $result = $cbsql->query($query);
 $totalchars = $cbsql->rows($result);
-if (!$totalchars) cb_message_die($language['MESSAGE_ERROR'],$query);
+if (!$totalchars) cb_message_die($language['MESSAGE_ERROR'],$language['MESSAGE_NO_RESULTS_ITEMS']);
 
 //now add on the limit & ordering and query again for just this page
 $query = sprintf($tpl, $where, $order);

@@ -1,3 +1,17 @@
+v3.3.0
+----------------------------------------------------------------------
+first pass of multi tenancy implementation, first pass of bots
+
+April 25, 2020 - Setup the multi tenancy for every page except the
+                   bazaar. If you're using it, you'll need to disable
+                   the bazaar for now.
+                 Did a first pass of displaying bots. There is a "bots"
+                   button in the side menu now which will display
+                   a gallery of a characters bots. You can click the 
+                   bot to see their gear. The AC/HP/Mana/End/Atk are
+                   not accurate right now. Will be addressed in the 
+                   future.                    
+                  
 v3.2.1
 ----------------------------------------------------------------------
 css tweaks, custom templates, code relocation

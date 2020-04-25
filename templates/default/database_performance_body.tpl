@@ -2,6 +2,7 @@
 <!--        DATABASE PERFORMANCE STATISTICS        -->
 <!--------------------------------------------------->
 <div class='db_dump'>
+   <h1>{TYPE}</h1>
    <!-- BEGIN query -->
    <div class='db_query'>
       <div class='db_sql'>

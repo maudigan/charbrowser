@@ -1172,6 +1172,37 @@ BODY.CB_Body {
    top: 180px;
    left: 5px;
 }
+
+
+#charbrowser .PositionBot {
+   position: relative; 
+   width: 432px;
+   height: 505px;
+   margin: 0 auto;
+}
+#charbrowser .PositionBot .CB_Button{
+    bottom: 0px;
+    position: absolute;
+    left: 212px;
+}
+#charbrowser .PositionBot  .CB_Avatar_Layer1,
+#charbrowser .PositionBot  .CB_Avatar_Layer2,
+#charbrowser .PositionBot  .CB_Avatar_Layer3 {
+   position: absolute;
+   top: 12px;
+   left: 36px;
+   width: 70px;
+   height: 70px;
+   border-radius: 70px;
+   background-size: 100%;
+}
+#charbrowser .PositionBot  .CB_Avatar_Layer1 {
+   background-image: url(../../images/avatar_underlay_bot.svg);
+}
+#charbrowser .PositionBot  .CB_Avatar_Layer3 {
+   background-image: url(../../images/avatar_overlay.svg);
+}
+
 #charbrowser .PositionInventory {
    position: absolute; 
    width: 432px;
@@ -1179,15 +1210,21 @@ BODY.CB_Body {
    top: 0px;
    left: 120px;
 }
-#charbrowser .InventoryContents {
-   display: none;
+#charbrowser .PositionBot  .InventoryContents,
+#charbrowser .PositionInventory  .InventoryContents {
    position: absolute;
-   top: 140px;
    left:11px;
    width: 442px;
    overflow-y: auto;
    overflow-x: hidden;
    height: 405px;
+}
+#charbrowser .PositionBot .InventoryContents {
+   top: 115px;
+}
+#charbrowser .PositionInventory .InventoryContents {
+   display: none;
+   top: 140px;
 }
 #charbrowser .PositionInventory  .CB_Avatar_Layer1,
 #charbrowser .PositionInventory  .CB_Avatar_Layer2,
@@ -1272,7 +1309,8 @@ BODY.CB_Body {
    position: relative;
 }
 
-#charbrowser .PositionCharacter  DIV.CB_Char_Monogram {
+#charbrowser .PositionBot  DIV.CB_Char_Monogram,
+#charbrowser .PositionInventory  DIV.CB_Char_Monogram {
   background-image: url(../../images/dark.gif);
   border: 1px #444444 solid;
   position: absolute;
@@ -1289,33 +1327,38 @@ BODY.CB_Body {
   color: #FFFFFF ;
 }
 
-#charbrowser .PositionCharacter DIV.CB_Inv_Header {
+#charbrowser .PositionBot DIV.CB_Inv_Header,
+#charbrowser .PositionInventory DIV.CB_Inv_Header {
    position: absolute;
    left: 130px;
    top: 15px;
 }   
-#charbrowser .PositionCharacter DIV.CB_Inv_Header P:nth-child(1) {
+#charbrowser .PositionBot DIV.CB_Inv_Header P:nth-child(1),
+#charbrowser .PositionInventory DIV.CB_Inv_Header P:nth-child(1) {
    font-size: 16px;
    line-height: 18px;
    color: #EEBE16;
    margin: 0px;
    padding: 2px;
 } 
-#charbrowser .PositionCharacter DIV.CB_Inv_Header P:nth-child(2),
-#charbrowser .PositionCharacter DIV.CB_Inv_Header P:nth-child(3) {
+#charbrowser .PositionBot DIV.CB_Inv_Header P:nth-child(2),
+#charbrowser .PositionBot DIV.CB_Inv_Header P:nth-child(3), 
+#charbrowser .PositionInventory DIV.CB_Inv_Header P:nth-child(2),
+#charbrowser .PositionInventory DIV.CB_Inv_Header P:nth-child(3) {
    font-size: 13px;
    line-height: 15px;
    color: #FFFFFF;
    margin: 0px;
    padding: 2px;
 }
-#charbrowser .PositionCharacter NAV.CB_Tab_Box {
+#charbrowser .PositionInventory NAV.CB_Tab_Box {
    position: absolute;
    top: 80px;
    width: 432px;
 }
 
-#charbrowser .PositionCharacter  TABLE.CB_Char_Stats {
+#charbrowser .PositionBot  TABLE.CB_Char_Stats,
+#charbrowser .PositionInventory  TABLE.CB_Char_Stats {
   height: 370px;
   width: 150px;
   margin: 0px;
@@ -1324,11 +1367,13 @@ BODY.CB_Body {
   top: 14px;
   left: 10px;
 }
-#charbrowser .PositionCharacter  TABLE.CB_Char_Stats TBODY TR TD {
+#charbrowser .PositionBot  TABLE.CB_Char_Stats TBODY TR TD,
+#charbrowser .PositionInventory  TABLE.CB_Char_Stats TBODY TR TD {
    text-align: left;
    padding: 1px;
 }
-#charbrowser .PositionCharacter  TABLE.CB_Char_Stats TBODY TR TD.CB_Char_Stats_Divider {
+#charbrowser .PositionBot  TABLE.CB_Char_Stats TBODY TR TD.CB_Char_Stats_Divider,
+#charbrowser .PositionInventory  TABLE.CB_Char_Stats TBODY TR TD.CB_Char_Stats_Divider {
    background-color: #7b714a ;
    width: 100%;
    height: 2px;
@@ -1336,14 +1381,16 @@ BODY.CB_Body {
    padding: 0px;
    border-collapse: collapse; 
 }
-#charbrowser .PositionCharacter  TABLE.CB_Char_Stats TBODY TR TD.CB_Char_Stats_Spacer {
+#charbrowser .PositionBot  TABLE.CB_Char_Stats TBODY TR TD.CB_Char_Stats_Spacer,
+#charbrowser .PositionInventory  TABLE.CB_Char_Stats TBODY TR TD.CB_Char_Stats_Spacer {
    width: 100%;
    height: 4px;
    margin: 0px;
    padding: 0px;
    border-collapse: collapse; 
 }
-#charbrowser .PositionCharacter  TABLE.CB_Char_Stats2 {
+#charbrowser .PositionBot  TABLE.CB_Char_Stats2,
+#charbrowser .PositionInventory  TABLE.CB_Char_Stats2 {
    height: 57px;
    width: 100px;
    margin: 0px;
@@ -1352,7 +1399,8 @@ BODY.CB_Body {
    top: 10px;
    left: 334px;
 }
-#charbrowser .PositionCharacter  TABLE.CB_Char_Stats2 TBODY TR TD {
+#charbrowser .PositionBot  TABLE.CB_Char_Stats2 TBODY TR TD,
+#charbrowser .PositionInventory  TABLE.CB_Char_Stats2 TBODY TR TD {
    text-align: left;
 }
 
@@ -1576,6 +1624,80 @@ BODY.CB_Body {
    margin: 0 auto;
    position: relative;
    display: block;
+}
+
+#charbrowser .PositionBots {
+   width: 610px;
+   margin: 0 auto;
+   position: relative;
+}
+#charbrowser .PositionBots  .CB_Bot_Avatar_Window {
+   display: inline-block;
+   position: relative;
+   margin: 10px;
+   width: 180px;
+   height: 140px;
+}
+#charbrowser .PositionBots  .CB_Bot_Avatar_Window:hover {
+   border: 2px #40434e solid;
+   border-radius: 15px;
+   background-image: url(../../images/light.gif);
+   margin: 8px;
+}
+#charbrowser .PositionBots  .CB_Bot_Avatar_Window .CB_Avatar_Layer1,
+#charbrowser .PositionBots  .CB_Bot_Avatar_Window .CB_Avatar_Layer2,
+#charbrowser .PositionBots  .CB_Bot_Avatar_Window .CB_Avatar_Layer3 {
+   display: block;
+   position: absolute;
+   width: 70px;
+   height: 70px;
+   top: 10px;
+   left: 55px;
+   border-radius: 70px;
+   background-size: 100%;
+}
+#charbrowser .PositionBots  .CB_Bot_Avatar_Window .CB_Avatar_Layer1 {
+   background-image: url(../../images/avatar_underlay_bot.svg);
+}
+#charbrowser .PositionBots  .CB_Bot_Avatar_Window .CB_Avatar_Layer3 {
+   background-image: url(../../images/avatar_overlay.svg);
+}
+#charbrowser .PositionBots .CB_Bot_Avatar_Window .CB_Bot_Caption {
+   position: absolute;
+   width: 180px;
+   height: 60px;
+   top: 90px;
+   text-align: center;
+}
+#charbrowser .PositionBots .CB_Bot_Avatar_Window .CB_Bot_Caption P:nth-child(1) {
+   font-size: 16px;
+   line-height: 18px;
+   color: #EEBE16;
+   margin: 0px;
+   padding: 2px;
+} 
+#charbrowser .PositionBots .CB_Bot_Avatar_Window .CB_Bot_Caption P:nth-child(2),
+#charbrowser .PositionBots .CB_Bot_Avatar_Window .CB_Bot_Caption  P:nth-child(3) {
+   font-size: 13px;
+   line-height: 15px;
+   color: #FFFFFF;
+   margin: 0px;
+   padding: 2px;
+}
+
+#charbrowser .WindowSuperFancy HR{
+    position: absolute;
+    display: block;
+    background-image: url(../../images/cb_hr_r.png), url(../../images/cb_hr_l.png), url(../../images/cb_hr_m.png);
+    background-repeat: no-repeat, no-repeat, repeat-x;
+    background-position-x: right, left, left;
+    background-position-y: top, top, bottom;
+    background-clip: padding-box, padding-box, content-box;
+    padding: 0px 9px;
+    top: 86px;
+    height: 10px;
+    left: 2px;
+    right: 2px;
 }
 
 #charbrowser .PositionFactionBasic {

@@ -46,6 +46,9 @@
  *   April 11, 2020 - Maudigan
  *      tweaked guild name output a little
  *      added a function to calculate avatar image
+ *   April 25, 2020 - Maudigan
+ *      add profile button for bots menu, staged the begining of having 
+ *      dynamically displayed/hidden buttons
  *
  ***************************************************************************/
  
@@ -169,18 +172,20 @@ function xss_safe($string) {
 function output_profile_menu($charname, $curpage) {
    global $language;
    global $cb_template;
+   global $cb_show_bots;
    
    $menubuttons = array(
-      array( 'PAGE' => 'character', 'BUTTON_NAME' => $language['BUTTON_INVENTORY']),
-      array( 'PAGE' => 'aas', 'BUTTON_NAME' => $language['BUTTON_AAS']),
-      array( 'PAGE' => 'keys', 'BUTTON_NAME' => $language['BUTTON_KEYS']),
-      array( 'PAGE' => 'flags', 'BUTTON_NAME' => $language['BUTTON_FLAGS']),
-      array( 'PAGE' => 'skills', 'BUTTON_NAME' => $language['BUTTON_SKILLS']),
-      array( 'PAGE' => 'corpse', 'BUTTON_NAME' => $language['BUTTON_CORPSE']),
-      array( 'PAGE' => 'factions', 'BUTTON_NAME' => $language['BUTTON_FACTION']),
-      array( 'PAGE' => 'bazaar', 'BUTTON_NAME' => $language['BUTTON_STORE']),
-      array( 'PAGE' => 'signaturebuilder', 'BUTTON_NAME' => $language['BUTTON_SIG']),
-      array( 'PAGE' => 'charmove', 'BUTTON_NAME' => $language['BUTTON_CHARMOVE'])
+      array( 'PAGE' => 'character', 'BUTTON_NAME' => $language['BUTTON_INVENTORY'], 'PERMISSION' => 1),
+      array( 'PAGE' => 'aas', 'BUTTON_NAME' => $language['BUTTON_AAS'], 'PERMISSION' => 1),
+      array( 'PAGE' => 'keys', 'BUTTON_NAME' => $language['BUTTON_KEYS'], 'PERMISSION' => 1),
+      array( 'PAGE' => 'flags', 'BUTTON_NAME' => $language['BUTTON_FLAGS'], 'PERMISSION' => 1),
+      array( 'PAGE' => 'skills', 'BUTTON_NAME' => $language['BUTTON_SKILLS'], 'PERMISSION' => 1),
+      array( 'PAGE' => 'corpse', 'BUTTON_NAME' => $language['BUTTON_CORPSE'], 'PERMISSION' => 1),
+      array( 'PAGE' => 'factions', 'BUTTON_NAME' => $language['BUTTON_FACTION'], 'PERMISSION' => 1),
+      array( 'PAGE' => 'bots', 'BUTTON_NAME' => $language['BUTTON_BOTS'], 'PERMISSION' => $cb_show_bots),
+      array( 'PAGE' => 'bazaar', 'BUTTON_NAME' => $language['BUTTON_STORE'], 'PERMISSION' => 1),
+      array( 'PAGE' => 'signaturebuilder', 'BUTTON_NAME' => $language['BUTTON_SIG'], 'PERMISSION' => 1),
+      array( 'PAGE' => 'charmove', 'BUTTON_NAME' => $language['BUTTON_CHARMOVE'], 'PERMISSION' => 1),
    );
    
    $cb_template->set_filenames(array(
@@ -188,6 +193,7 @@ function output_profile_menu($charname, $curpage) {
    );
    
    foreach ($menubuttons as $menubutton) {
+      if (!$menubutton['PERMISSION']) continue;
       $cb_template->assign_block_vars( "menuitems", array(     
          'SWITCH_DIABLED' => ($menubutton['PAGE'] == $curpage) ? "Disabled" : "",   
          'PAGE' => $menubutton['PAGE'],

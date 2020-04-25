@@ -35,6 +35,8 @@
  *      modularized the profile menu output
  *   March 22, 2020 - Maudigan
  *     impemented common.php
+ *   April 25, 2020 - Maudigan
+ *     implement multi-tenancy
  *
  ***************************************************************************/
   
@@ -55,7 +57,7 @@ if(!$_GET['char']) cb_message_die($language['MESSAGE_ERROR'],$language['MESSAGE_
 else $charName = $_GET['char'];
 
 //character initializations
-$char = new profile($charName, $cbsql, $language, $showsoftdelete, $charbrowser_is_admin_page); //the profile class will sanitize the character name
+$char = new profile($charName, $cbsql, $cbsql_content, $language, $showsoftdelete, $charbrowser_is_admin_page); //the profile class will sanitize the character name
 $charID = $char->char_id(); 
 $name = $char->GetValue('name');
 $mypermission = GetPermissions($char->GetValue('gm'), $char->GetValue('anon'), $char->char_id());
@@ -69,20 +71,31 @@ if ($mypermission['corpses']) cb_message_die($language['MESSAGE_ERROR'],$languag
 *********************************************/
 //get corpses
 $tpl = <<<TPL
-SELECT z.short_name, z.zoneidnumber, 
-       cc.is_buried, cc.x, cc.y, 
-       cc.is_rezzed, cc.time_of_death 
-FROM character_corpses cc
-JOIN zone z
-  ON z.zoneidnumber = cc.zone_id 
-WHERE cc.charid = %s 
-ORDER BY cc.time_of_death DESC
+SELECT zone_id, 
+       is_buried, x, y, 
+       is_rezzed, time_of_death 
+FROM character_corpses 
+WHERE charid = %s 
+ORDER BY time_of_death DESC
 TPL;
 $query = sprintf($tpl, $charID);
 $result = $cbsql->query($query);
 if (!$cbsql->rows($result)) cb_message_die($language['CORPSE_CORPSES']." - ".$name,$language['MESSAGE_NO_CORPSES']);
+
 $corpses = array();
 while ($row = $cbsql->nextrow($result)) {
+   //get info about the zone the corpse is in
+   //from the content database
+   $tpl = <<<TPL
+   SELECT short_name
+   FROM zone 
+   WHERE zoneidnumber = '%s' 
+TPL;
+   $query = sprintf($tpl, $row['zone_id']);
+   $short_name = $cbsql_content->field_query('short_name', $query);
+
+   //add zone short_name to corpse results
+   $row['short_name'] = $short_name;
    $corpses[] = $row;
 }
  
@@ -125,7 +138,7 @@ foreach($corpses as $corpse) {
    //prepare the link to the map
    $find = array(
       'ZONE_SHORTNAME'  => $corpse['short_name'],
-      'ZONE_ID'         => $corpse["zoneidnumber"],
+      'ZONE_ID'         => $corpse["zone_id"],
       'TEXT'            => $name."`s%20Corpse",
       'X'               => floor($corpse['x']),
       'Y'               => floor($corpse['y'])
@@ -135,7 +148,7 @@ foreach($corpses as $corpse) {
    //prepare the link to the zone
    $find = array(
       'ZONE_SHORTNAME'  => $corpse['short_name'],
-      'ZONE_ID'         => $corpse["zoneidnumber"]
+      'ZONE_ID'         => $corpse["zone_id"]
    );
    $link_to_zone = QuickTemplate($link_zone, $find);
    
@@ -144,7 +157,7 @@ foreach($corpses as $corpse) {
       'TOD' => $corpse['time_of_death'],
       'LOC' => (($corpse['is_buried']) ?  "(buried)":"(".floor($corpse['y']).", ".floor($corpse['x']).")"),
       'ZONE' => (($corpse['is_buried']) ?  "shadowrest":$corpse['short_name']),
-      'ZONE_ID' => $corpse["zoneidnumber"],
+      'ZONE_ID' => $corpse["zone_id"],
       'LINK_MAP' => $link_to_map,
       'LINK_ZONE' => $link_to_zone,
       'X' => floor($corpse['y']),

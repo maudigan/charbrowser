@@ -40,6 +40,18 @@ $cb_db     =   "peq";
 $cb_host   =   "localhost";
 $cb_user   =   "";
 $cb_pass   =   "";
+$cb_port   =   3306;
+
+//Multi-tenancy, if you need a seperate db connection
+//for your content db, set this to true and set
+//your content db connection info here. If you don't
+//know what this is, leave it alone.
+$cb_use_content_db = false;
+$cb_content_db     =   "peq";
+$cb_content_host   =   "localhost";
+$cb_content_user   =   "";
+$cb_content_pass   =   "";
+$cb_content_port   =   3306;
 /***************************************************/
 
 
@@ -161,6 +173,16 @@ $cb_history_days = 30;
 **   1 - block update notice                        **
 *****************************************************/
 $cb_blockversioncheck = 0; 
+
+
+/*****************************************************
+**                  SHOW BOTS?                      **
+**   If you have bots enabled on your server you    **
+**   can turn them on with this setting             **
+**   0 - hide/disable bots                          **
+**   1 - show bots                                  **
+*****************************************************/
+$cb_show_bots = 0; 
 
 
 /*****************************************************

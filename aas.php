@@ -43,6 +43,8 @@
  *   April 3, 2020 - Maudigan
  *     dont show AAs if they dont have a first rank, some custom server
  *     hide AA by deleting their ranks
+ *   April 25, 2020 - Maudigan
+ *     implement multi-tenancy
  *
  ***************************************************************************/
   
@@ -112,7 +114,7 @@ if(!$_GET['char']) cb_message_die($language['MESSAGE_ERROR'],$language['MESSAGE_
 else $charName = $_GET['char'];
 
 //character initializations 
-$char = new profile($charName, $cbsql, $language, $showsoftdelete, $charbrowser_is_admin_page); //the profile class will sanitize the character name
+$char = new profile($charName, $cbsql, $cbsql_content, $language, $showsoftdelete, $charbrowser_is_admin_page); //the profile class will sanitize the character name
 $charID = $char->char_id(); 
 $name = $char->GetValue('name');
 $mypermission = GetPermissions($char->GetValue('gm'), $char->GetValue('anon'), $char->char_id());
@@ -142,14 +144,14 @@ SELECT id, cost, next_id
 FROM aa_ranks 
 TPL;
 $query = $tpl;
-$result = $cbsql->query($query);
+$result = $cbsql_content->query($query);
 
 //the ranks are stored in a record 
 //that is similar to a linked list
 //loop through each one and load it  
 //into a poor-man's linked list
 $aa_ranks = array();
-while ($row = $cbsql->nextrow($result)) 
+while ($row = $cbsql_content->nextrow($result)) 
 {
    $aa_rank = array('COST' => intval($row['cost']),
                     'NEXT' => intval($row['next_id']));
@@ -165,11 +167,11 @@ WHERE classes & %s
 ORDER BY type, name 
 TPL;
 $query = sprintf($tpl, $classbit);
-$result = $cbsql->query($query);
+$result = $cbsql_content->query($query);
 
 //stage them in the final array
 $aa_abilities = array();
-while ($row = $cbsql->nextrow($result)) 
+while ($row = $cbsql_content->nextrow($result)) 
 {
    //calculate all the values
    $first_rank_id = $row['first_rank_id'];

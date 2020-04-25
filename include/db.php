@@ -23,6 +23,12 @@
  *      wraps around a MqSQLi object.
  *   April 14, 2020 - Maudigan
  *      Added a subdirectory to the template folder
+ *   April 25, 2020 - Maudigan
+ *      Added a port option to the constructor
+ *      Added multi tenancy support
+ *      Added a method to quickly query a single field val
+ *      Added a datbase performance method to check which tables
+ *        were queried with an instance
  ***************************************************************************/
 
 
@@ -51,16 +57,19 @@ class Charbrowser_SQL
    var $_mysql_handle;
    
    //holds performance data about queries
-   var $_dbp_performance = array();   
+   var $_dbp_performance = array();  
+   
+   //holds data about which tables have been accessed
+   var $_dbp_tables = array();   
    
 
    
    //-------------------------------------
    //            CONSTRUCTOR
    //-------------------------------------
-   function __construct($host, $user, $pass, $database)
+   function __construct($host, $user, $pass, $database, $port)
    {
-      $this->_mysql_handle = New mysqli($host, $user, $pass, $database); 
+      $this->_mysql_handle = New mysqli($host, $user, $pass, $database, $port); 
    }
 
    
@@ -102,7 +111,7 @@ class Charbrowser_SQL
    // fetches query data parsed into the
    // database_performance_body template
    //------------------------------------
-   function dbp_fetch_parsed()
+   function dbp_fetch_parsed($type)
    {  
       //create our own template class instance so we don't interfere with the global one
       $dbp_template = new CB_Template(__DIR__ . "/../templates/" . $cb_override_template_dir, __DIR__ . "/../templates/default");
@@ -113,7 +122,13 @@ class Charbrowser_SQL
       //skip it if its empty
       if (is_array($this->_dbp_performance))
       {
+         //load the top level items into the array
+         $dbp_template->assign_vars(array( 
+            'TYPE' => $type)
+         );
+         
          //loop through each query
+         $tables = array();
          foreach ($this->_dbp_performance as $dbp_query)
          {
             //load the top level items into the array
@@ -133,6 +148,48 @@ class Charbrowser_SQL
       
       //grab the output
       $dbp_output = $dbp_template->pparse_str('database_performance');
+         
+      //cleanup
+      $dbp_template->destroy;
+      
+      return $dbp_output;
+   }
+      
+
+
+   //------------------------------------
+   //        FETCH PARSED TABLES
+   // fetches query data parsed into the
+   // database_performance_body template
+   //------------------------------------
+   function dbp_table_fetch_parsed($type)
+   {  
+      //create our own template class instance so we don't interfere with the global one
+      $dbp_template = new CB_Template(__DIR__ . "/../templates/" . $cb_override_template_dir, __DIR__ . "/../templates/default");
+      
+      //load the template
+      $dbp_template->set_filenames(array('database_table_performance' => 'database_table_performance_body.tpl'));
+      
+      //skip it if its empty
+      if (is_array($this->_dbp_tables))
+      {
+         //load the top level items into the array
+         $dbp_template->assign_vars(array( 
+            'TYPE' => $type)
+         );
+         
+         //loop through each query
+         $tables = array();
+         foreach ($this->_dbp_tables as $dbp_table)
+         {
+            //load the top level items into the array
+            $dbp_template->assign_block_vars("tables", $dbp_table);
+         }
+      
+      }
+      
+      //grab the output
+      $dbp_output = $dbp_template->pparse_str('database_table_performance');
          
       //cleanup
       $dbp_template->destroy;
@@ -199,6 +256,21 @@ class Charbrowser_SQL
             'ROWS' => $row['rows'],
             'EXTRA' => $row['Extra']
          );
+         
+         //track how many queries were done on this table
+         if (array_key_exists($row['table'], $this->_dbp_tables))
+         {
+            $this->_dbp_tables[$row['table']]['COUNT'] = $this->_dbp_tables[$row['table']]['COUNT'] + 1;
+            $this->_dbp_tables[$row['table']]['ROWS'] = $this->_dbp_tables[$row['table']]['ROWS'] + $row['rows'];
+         }
+         else
+         {
+            $this->_dbp_tables[$row['table']] = array(
+               'TABLE' => $row['table'],
+               'COUNT' => 1,
+               'ROWS' => $row['rows']
+            );
+         }
 
       }
          
@@ -211,6 +283,21 @@ class Charbrowser_SQL
       
       return $return;
    }
+   
+   //------------------------------------
+   //    MYSQL FIELD QUERY WRAPPER
+   //------------------------------------
+   function field_query($field, $query)
+   {      
+      $result = $this->query($query);
+      
+      if ($row = $result->fetch_array()) 
+      {
+         return $row[$field];
+      }
+      
+      return false;
+   }   
 
 
 
@@ -245,9 +332,20 @@ class Charbrowser_SQL
 
 
 /*********************************************
-      CREATE OUR DATABASE CLASS INSTANCE
+      CREATE OUR DATABASE CLASS INSTANCE(S)
 *********************************************/ 
-$cbsql = new Charbrowser_SQL($cb_host, $cb_user, $cb_pass, $cb_db);
+$cbsql = new Charbrowser_SQL($cb_host, $cb_user, $cb_pass, $cb_db, $cb_port);
 
 if ($cbsql->connect_error()) cb_message_die($language['MESSAGE_ERROR'], $language['MESSAGE_DB_NOCONNECT']);
+
+//do we have a seperate content DB?
+if ($cb_use_content_db) 
+{
+   $cbsql_content = new Charbrowser_SQL($cb_content_host, $cb_content_user, $cb_content_pass, $cb_content_db, $cb_content_port);
+   if ($cbsql_content->connect_error()) cb_message_die($language['MESSAGE_ERROR'], $language['MESSAGE_DB_NOCONNECT']);
+}
+else
+{
+   $cbsql_content = $cbsql;
+}
 ?>

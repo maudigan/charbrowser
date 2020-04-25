@@ -16,6 +16,10 @@
  *   September 16, 2017 - added an optional simple footer.
  *   January 7, 2018 - Maudigan
  *      Modified database to use a class.
+ *   April 25, 2020 - Maudigan
+ *     implement multi-tenancy for db performance output
+ *     output which tables were queried, and which connection it used for
+ *       testing/developing
  *
  ***************************************************************************/
  
@@ -27,12 +31,57 @@ if ( !defined('INCHARBROWSER') )
 	die("Hacking attempt");
 }
 
-//if db performance is turned on fetch the output
-if (defined('DB_PERFORMANCE') && $cbsql)
-{
-   $dbp_output = $cbsql->dbp_fetch_parsed();
-}
 
+//do we have a seperate content DB?
+//if db performance is turned on fetch the output
+if (defined('DB_PERFORMANCE')) 
+{
+   //TABLES USED
+   //if we have a content connection dump 2 segments
+   if ($cb_use_content_db) 
+   {     
+      if ($cbsql)
+      {
+         $dbp_table_output = $cbsql->dbp_table_fetch_parsed("Player Tables Queried");
+      }      
+      if ($cbsql_content)
+      {
+         $dbp_table_output_content = $cbsql_content->dbp_table_fetch_parsed("Content Tables Queried");
+      }
+   }
+   
+   //else cbsql houses all the queries
+   else
+   {
+      if ($cbsql)
+      {
+         $dbp_table_output = $cbsql->dbp_table_fetch_parsed("Tables Queried");
+      }
+   }
+   
+   //QUERIES RUN
+   //if we have a content connection dump 2 segments
+   if ($cb_use_content_db) 
+   {     
+      if ($cbsql)
+      {
+         $dbp_output = $cbsql->dbp_fetch_parsed("Player Queries");
+      }      
+      if ($cbsql_content)
+      {
+         $dbp_output_content = $cbsql_content->dbp_fetch_parsed("Content Queries");
+      }
+   }
+   
+   //else cbsql houses all the queries
+   else
+   {
+      if ($cbsql)
+      {
+         $dbp_output = $cbsql->dbp_fetch_parsed("Database Queries");
+      }
+   }
+}
 
 if ($charbrowser_simple_header)
 {
@@ -50,7 +99,10 @@ else
 $cb_template->assign_vars(array(  
   'TITLE' => $mytitle,
   'VERSION' => $version,
+  'DATABASE_TABLE_PERFORMANCE' => $dbp_table_output,
+  'DATABASE_TABLE_PERFORMANCE_CONTENT' => $dbp_table_output_content,
   'DATABASE_PERFORMANCE' => $dbp_output,
+  'DATABASE_PERFORMANCE_CONTENT' => $dbp_output_content,
   'ADVERTISEMENT' => $adscript)
 );
 

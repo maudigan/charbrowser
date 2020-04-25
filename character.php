@@ -54,6 +54,8 @@
  *     Make the way bags display more dynamic so they can be resized easily
  *   April 10, 2020 - Maudigan
  *     added race/gender/face id template vars so we can show an avatar
+ *   April 25, 2020 - Maudigan
+ *     implement multi-tenancy
  *      
  ***************************************************************************/
   
@@ -75,7 +77,7 @@ if(!$_GET['char']) cb_message_die($language['MESSAGE_ERROR'],$language['MESSAGE_
 else $charName = $_GET['char'];
      
 //character initializations 
-$char = new profile($charName, $cbsql, $language, $showsoftdelete, $charbrowser_is_admin_page); //the profile class will sanitize the character name
+$char = new profile($charName, $cbsql, $cbsql_content, $language, $showsoftdelete, $charbrowser_is_admin_page); //the profile class will sanitize the character name
 $charID = $char->char_id(); 
 $name = $char->GetValue('name');
 $mypermission = GetPermissions($char->GetValue('gm'), $char->GetValue('anon'), $char->char_id());

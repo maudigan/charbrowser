@@ -43,6 +43,8 @@
  *      that code was recopied from eqemu from the 20200316 build
  *   April 2, 2020 - Maudigan
  *     show stack size code
+ *   April 25, 2020 - Maudigan
+ *     implement multi-tenancy
  *  
  ***************************************************************************/
  
@@ -80,6 +82,7 @@ class profile {
    private $allitems;
    private $base_data;
    private $db;
+   private $db_content;
    private $language;
    private $aa_effects = array();
    
@@ -742,12 +745,13 @@ private $locator = array (
    **              CONSTRUCTOR                **
    ********************************************/   
    // get the basic data, like char id.
-   function __construct($name, &$db, &$language, $showsoftdelete = false, $charbrowser_is_admin_page = false)
+   function __construct($name, &$db, &$db_content, &$language, $showsoftdelete = false, $charbrowser_is_admin_page = false)
    {      
       //dont load characters items until we need to
       $this->items_populated = false;
       
       $this->db = $db;
+      $this->db_content = $db_content;
       $this->language = $language;
       
       //we can't call the local query method as it assumes the character id
@@ -908,39 +912,45 @@ TPL;
       //rank of that AA
       $tpl = <<<TPL
          SELECT aa_rank_effects.rank_id, aa_rank_effects.base1, 
-                aa_ranks.next_id, character_alternate_abilities.aa_value, 
-                aa_ability.name  FROM aa_rank_effects 
+                aa_ranks.next_id, aa_ability.name  
+         FROM aa_rank_effects 
          LEFT JOIN aa_ranks 
             ON aa_ranks.id = aa_rank_effects.rank_id
          LEFT JOIN aa_ability 
-            ON aa_ability.first_rank_id = aa_ranks.title_sid
-         LEFT OUTER join (
-             SELECT * FROM character_alternate_abilities
-             WHERE character_alternate_abilities.id = '%s'    
-         ) character_alternate_abilities 
-         ON character_alternate_abilities.aa_id = aa_rank_effects.rank_id   
-         where effect_id = '%s'
+            ON aa_ability.first_rank_id = aa_ranks.title_sid 
+         WHERE effect_id = '%s'
 TPL;
-      $query = sprintf($tpl, $this->char_id, $effectid);
-      $result = $this->db->query($query);
+      $query = sprintf($tpl, $effectid);
+      $result = $this->db_content->query($query);
       
       //no aa with this effect
-      if(!$this->db->rows($result)) return array();
+      if(!$this->db_content->rows($result)) return array();
       
       //first pass is to load all the AA with this effect into a linked array
       //a secondary conditional will capture if the character has the aa and their rank
       $aa_ranks = array();
       $char_ranks = array();
-      while ($row = $this->db->nextrow($result)) {
+        //build the query
+      $tpl = <<<TPL
+         SELECT aa_value 
+         FROM character_alternate_abilities
+         WHERE id = '%s' 
+         AND aa_id = '%s'
+TPL;
+      while ($row = $this->db_content->nextrow($result)) {
          //'linked' list of rank modifiers
          $aa_rank = array('MODIFIER' => intval($row['base1']),
                           'NEXT' => intval($row['next_id']));
          $aa_ranks[intval($row['rank_id'])] = $aa_rank;   
+
+         //get characters rank for this aa
+         $query = sprintf($tpl, $this->char_id, $row['rank_id']);
+         $aa_value = $this->db->field_query('aa_value', $query);
          
          //this chars rank
-         if ($row['aa_value'] > 0) {
+         if ($aa_value > 0) {
             $char_rank[intval($row['rank_id'])] = array(
-               'RELATIVE_RANK' => $row['aa_value'],
+               'RELATIVE_RANK' => $aa_value,
                'NAME' => $row['name']
             );
          }
@@ -2147,13 +2157,13 @@ TPL;
       LIMIT 1
 TPL;
       $query = sprintf($tpl, $this->level, $this->class);
-      $result = $this->db->query($query);
+      $result = $this->db_content->query($query);
 
-      if(!$this->db->rows($result)) { 
+      if(!$this->db_content->rows($result)) { 
          cb_message_die('profile.php', $this->language['MESSAGE_NO_BASE_DATA'], $this->language['MESSAGE_ERROR']);      
       }
       
-      $this->base_data = $this->db->nextrow($result);
+      $this->base_data = $this->db_content->nextrow($result);
       return $this->base_data;
    } 
 
@@ -2175,14 +2185,12 @@ TPL;
       // pull characters inventory slotid is loaded as
       // "myslot" since items table also has a slotid field.
       $tpl = <<<TPL
-      SELECT items.*, inventory.augslot1, inventory.augslot2, 
-             inventory.augslot3, inventory.augslot4, 
-             inventory.augslot5, inventory.slotid AS myslot,
-             inventory.charges
-      FROM items
-      JOIN inventory 
-        ON items.id = inventory.itemid
-      WHERE inventory.charid = '%s'  
+      SELECT itemid, augslot1, augslot2, 
+             augslot3, augslot4, 
+             augslot5, slotid AS myslot,
+             charges
+      FROM inventory
+      WHERE charid = '%s'  
 TPL;
       $query = sprintf($tpl, $this->char_id);
       $result = $this->db->query($query);
@@ -2195,12 +2203,17 @@ TPL;
       LIMIT 1
 TPL;
       while ($row = $this->db->nextrow($result)) {
+         $query = sprintf($tpl, $row["itemid"]);
+         $itemresult = $this->db_content->query($query);
+         $itemrow = $this->db_content->nextrow($itemresult);
+         //merge the inventory and item row
+         $row = array_merge($itemrow, $row);
          $tempitem = new item($row);
          for ($i = 1; $i <= 5; $i++) {
             if ($row["augslot".$i]) {
                $query = sprintf($tpl, $row["augslot".$i]);
-               $augresult = $this->db->query($query);
-               $augrow = $this->db->nextrow($augresult);
+               $augresult = $this->db_content->query($query);
+               $augrow = $this->db_content->nextrow($augresult);
                $tempitem->addaug($augrow);
                //add stats only if it's equiped
                if ($tempitem->type() == EQUIPMENT) {
@@ -2223,13 +2236,11 @@ TPL;
       // pull characters shared bank, slotid is loaded as
       // "myslot" since items table also has a slotid field.
       $tpl = <<<TPL
-      SELECT items.*, sharedbank.augslot1, sharedbank.augslot2, 
-             sharedbank.augslot3, sharedbank.augslot4, 
-             sharedbank.augslot5, sharedbank.slotid AS myslot 
-      FROM items
-      JOIN sharedbank 
-        ON items.id = sharedbank.itemid
-      WHERE sharedbank.acctid = '%s'  
+      SELECT itemid, augslot1, augslot2, 
+             augslot3, augslot4, 
+             augslot5, slotid AS myslot 
+      FROM sharedbank
+      WHERE acctid = '%s'  
 TPL;
       $query = sprintf($tpl, $this->_getValue('account_id', $default));
       $result = $this->db->query($query);
@@ -2242,12 +2253,17 @@ TPL;
       LIMIT 1
 TPL;
       while ($row = $this->db->nextrow($result)) {
+         $query = sprintf($tpl, $row["itemid"]);
+         $itemresult = $this->db_content->query($query);
+         $itemrow = $this->db_content->nextrow($itemresult);
+         //merge the inventory and item row
+         $row = array_merge($itemrow, $row);
          $tempitem = new item($row);
          for ($i = 1; $i <= 5; $i++) {
             if ($row["augslot".$i]) {
                $query = sprintf($tpl, $row["augslot".$i]);
-               $augresult = $this->db->query($query);
-               $augrow = $this->db->nextrow($augresult);
+               $augresult = $this->db_content->query($query);
+               $augrow = $this->db_content->nextrow($augresult);
                $tempitem->addaug($augrow);
             }
          }

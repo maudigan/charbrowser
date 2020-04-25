@@ -1,5 +1,8 @@
 
+{DATABASE_TABLE_PERFORMANCE}   
+{DATABASE_TABLE_PERFORMANCE_CONTENT}  
 {DATABASE_PERFORMANCE}
+{DATABASE_PERFORMANCE_CONTENT}   
 
 
    <!-- activate the item popups and other functions -->

@@ -35,6 +35,8 @@
  *      modularized the profile menu output
  *   March 22, 2020 - Maudigan
  *     impemented common.php
+ *   April 25, 2020 - Maudigan
+ *     implement multi-tenancy
  *
  ***************************************************************************/
   
@@ -74,7 +76,7 @@ if(!$_GET['char']) cb_message_die($language['MESSAGE_ERROR'],$language['MESSAGE_
 else $charName = $_GET['char'];
 
 //character initializations 
-$char = new profile($charName, $cbsql, $language, $showsoftdelete, $charbrowser_is_admin_page); //the profile class will sanitize the character name
+$char = new profile($charName, $cbsql, $cbsql_content, $language, $showsoftdelete, $charbrowser_is_admin_page); //the profile class will sanitize the character name
 $charID = $char->char_id(); 
 $name = $char->GetValue('name');
 $mypermission = GetPermissions($char->GetValue('gm'), $char->GetValue('anon'), $char->char_id());
@@ -93,8 +95,7 @@ SELECT fl.id,
        IFNULL(fl.base, 0) AS base, 
        IFNULL(flmc.mod, 0) AS classmod, 
        IFNULL(flmr.mod, 0) AS racemod, 
-       IFNULL(flmd.mod, 0) AS deitymod, 
-       IFNULL(fv.current_value, 0) AS charmod 
+       IFNULL(flmd.mod, 0) AS deitymod
 FROM faction_list AS fl 
 LEFT JOIN faction_list_mod AS flmc 
        ON fl.id = flmc.faction_id 
@@ -105,18 +106,27 @@ LEFT JOIN faction_list_mod AS flmr
 LEFT JOIN faction_list_mod AS flmd 
        ON fl.id = flmd.faction_id 
       AND (flmd.mod_name = 'd%d') 
-LEFT JOIN faction_values AS fv 
-       ON fl.id = fv.faction_id 
-      AND (fv.char_id = %d) 
 ORDER BY name ASC 
 TPL;
 $query = sprintf($tpl, $char->GetValue('class'), 
                        $char->GetValue('race'), 
-                       ($char->GetValue('deity')==396) ? "140" : $char->GetValue('deity'), 
-                       $charID);
-$result = $cbsql->query($query);
+                       ($char->GetValue('deity')==396) ? "140" : $char->GetValue('deity'));
+$result = $cbsql_content->query($query);
 $factions = array();
-while ($row = $cbsql->nextrow($result)) {
+while ($row = $cbsql_content->nextrow($result)) {   
+   //get info about the chars faction from
+   //the player db connection
+   $tpl = <<<TPL
+   SELECT current_value 
+   FROM faction_values 
+   WHERE char_id = '%s' 
+   AND faction_ID = '%s' 
+TPL;
+   $query = sprintf($tpl, $charID, $row['id']);
+   $charmod = intval($cbsql->field_query('current_value', $query));
+
+   //add charmod to faction results
+   $row['charmod'] = $charmod;
    $factions[] = $row;
 }
  

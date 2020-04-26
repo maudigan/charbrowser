@@ -72,10 +72,13 @@ class CharacterFactionValuesRepository
      *
      * @return mixed|null
      */
-    public static function findOrFetch($character_id, $faction_id)
+    public static function findOne($character_id, $faction_id)
     {
         global $cbsql;
 
+        /**
+         * Use cache if available
+         */
         if (CharacterFactionValueStore::get($faction_id)) {
             return CharacterFactionValueStore::get($faction_id);
         }

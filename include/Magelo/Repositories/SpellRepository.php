@@ -90,6 +90,9 @@ class SpellRepository
          */
         global $cbsql_content;
 
+        /**
+         * Use cache if available
+         */
         if (SpellStore::get($item_id)) {
             return SpellStore::get($item_id);
         }

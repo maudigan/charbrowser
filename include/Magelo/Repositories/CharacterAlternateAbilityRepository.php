@@ -76,6 +76,9 @@ class CharacterAlternateAbilityRepository
     {
         global $cbsql;
 
+        /**
+         * Use cache if available
+         */
         if (CharacterAlternateAbilityStore::get($ability_id)) {
             return CharacterAlternateAbilityStore::get($ability_id);
         }

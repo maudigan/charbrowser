@@ -92,6 +92,9 @@ class ItemRepository
     {
         global $cbsql_content;
 
+        /**
+         * Use cache if available
+         */
         if (ItemStore::get($item_id)) {
             return ItemStore::get($item_id);
         }

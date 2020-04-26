@@ -9,5 +9,5 @@ class CharacterAlternateAbilityStore
     /**
      * @var string
      */
-    private static $namespace = 'abilities';
+    private static $namespace = 'character_alternate_ability';
 }

@@ -282,7 +282,7 @@ setTimeout(function () {
 
   $('#charbrowser .CB_Can_Drag').draggable();
 
-  console.log("[Total] Draggables rendered in [%s] seconds", (performance.now() - startTime) / 1000);
+  console.log("Draggables rendered in [%s] seconds", (performance.now() - startTime) / 1000);
 
   //loop through every item stat window
   //and make it resize with a minimum of its
@@ -305,7 +305,7 @@ setTimeout(function () {
     }
   });
 
-  console.log("[Total] PositionItem Resizables rendered in [%s] seconds", (performance.now() - startTime) / 1000);
+  console.log("PositionItem Resizables rendered in [%s] seconds", (performance.now() - startTime) / 1000);
 
   //loop through every resize element
   //and make it resize and have a minimum
@@ -342,8 +342,8 @@ setTimeout(function () {
     }
   });
 
-  console.log("[Total] PositionBag Resizables in [%s] seconds", (performance.now() - startTime) / 1000);
+  console.log("PositionBag Resizables in [%s] seconds", (performance.now() - startTime) / 1000);
 
-  console.log("[Total] Draggables / resizables rendered in [%s] seconds", (performance.now() - startTime) / 1000);
+  console.log("Total Draggables / resizables rendered in [%s] seconds", (performance.now() - startTime) / 1000);
 
 }, 100)

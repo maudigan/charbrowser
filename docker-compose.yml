@@ -1,0 +1,47 @@
+version: '2.4'
+
+networks:
+  backend:
+    driver: bridge
+
+services:
+
+  #############################################
+  # web
+  #############################################
+
+  web:
+    restart: always
+    image: apache-php-5.6:latest
+    build:
+      context: ./containers/apache-php-5.6
+    hostname: web
+    ports:
+      - 80:80
+    volumes:
+      - ./:/var/www/html
+    networks:
+      - backend
+    environment:
+      PHP_OPCACHE_REVALIDATE_FREQUENCY: 0
+
+  #############################################
+  # mariadb
+  #############################################
+
+  mariadb:
+    restart: always
+    build: ./containers/mariadb
+    ports:
+      - 3306:3306
+    volumes:
+      - ./data/mariadb:/var/lib/mysql
+    environment:
+      - MYSQL_DATABASE=${MARIADB_DATABASE:-peq}
+      - MYSQL_USER=${MARIADB_USER:-eqemu}
+      - MYSQL_PASSWORD=${MARIADB_PASSWORD:-eqemu}
+      - MYSQL_ROOT_PASSWORD=${MARIADB_ROOT_PASSWORD:-root}
+      - MYSQL_ALLOW_EMPTY_PASSWORD=NO
+      - TZ=${TZ:-US/Central}
+    networks:
+      - backend

@@ -114,4 +114,39 @@ class ItemRepository
         return $item;
     }
 
+    /**
+     * @param $item_ids
+     *
+     * @return array
+     */
+    public static function preloadByItemIds($item_ids)
+    {
+        global $cbsql_content;
+
+        if (count($item_ids) > 0) {
+            $items = $cbsql_content->fetch_all(
+                $cbsql_content->query(
+                    sprintf(
+                        "SELECT * FROM %s WHERE id IN (%s)",
+                        self::$table,
+                        implode(", ", $item_ids)
+                    )
+                )
+            );
+
+            $item_store = [];
+            foreach ($items as $item) {
+                $item_id = $item['id'];
+
+                if (!$item_store[$item_id]) {
+                    $item_store[$item_id] = $item;
+                }
+            }
+
+            ItemStore::setStore($item_store);
+        }
+
+        return [];
+    }
+
 }

@@ -142,7 +142,7 @@ if ($items_where != "") {
 
 $filtered_item_ids_where = "";
 if (count($filtered_item_ids) > 0) {
-   $filtered_item_ids_where = " WHERE trader.item_id IN (" . implode(", ", $filtered_item_ids) . ") ";
+   $filtered_item_ids_where = ($where != "" ? " AND" : " WHERE") . " trader.item_id IN (" . implode(", ", $filtered_item_ids) . ") ";
 }
 
 //build the query, leave a spot for the where
@@ -154,11 +154,11 @@ SELECT character_data.name as charactername,
 FROM character_data 
 INNER JOIN trader
         ON character_data.id = trader.char_id
-        %s %s
+        %s %s %s
 TPL;
 
 $item_ids = [];
-$result   = $cbsql->query(sprintf($tpl, $filtered_item_ids_where, $order));
+$result   = $cbsql->query(sprintf($tpl, $where, $filtered_item_ids_where, $order));
 while ($row = $cbsql->nextrow($result)) {
    $item_ids[] = $row['item_id'];
 }
@@ -170,7 +170,7 @@ if (count($item_ids) == 0) {
 ItemRepository::preloadByItemIds($item_ids);
 
 //now add on the limit & ordering and query again for just this page
-$result = $cbsql->query(sprintf($tpl, $filtered_item_ids_where, $order));
+$result = $cbsql->query(sprintf($tpl, $where, $filtered_item_ids_where, $order));
 $lots   = [];
 while ($row = $cbsql->nextrow($result)) {
    $trader_item_id = $row['item_id'];

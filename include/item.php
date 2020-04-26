@@ -167,11 +167,11 @@ function GetItem($item)
    global $dam2h;
    global $dbitypes;
    global $tbspells;
-   global $tbraces;
    global $dbbodytypes;
    global $dbbardskills;
    global $link_spell;
    global $itemstatsdisplay;
+   global $constants;
 
    //return buffer, build item here
    $Output = "";
@@ -293,7 +293,7 @@ function GetItem($item)
       //Bane DMG
       if ($item["banedmgrace"] > 0 AND $item["banedmgraceamt"] != 0) {
          $Output .= "Bane Damage: ";
-         $Output .= $cbsql_content->field_query("name", "SELECT name FROM $tbraces WHERE id = '" . $item["banedmgrace"] . "'");
+         $Output .= $constants['races'][$item["banedmgrace"]];
          $Output .= " " . number_format($item["banedmgraceamt"]) . "<br>";
       }
 
@@ -710,7 +710,7 @@ function GetItem($item)
       //Bane DMG
       if (($item["banedmgrace"]>0) AND ($item["banedmgraceamt"]!=0)) {
          $Output .= $tab."Bane DMG: ";
-         $Output .= $cbsql_content->field_query("name","SELECT name FROM $tbraces WHERE id=".$item["banedmgrace"]);
+         $Output .= $constants['races'][$item["banedmgrace"]];
          $Output .= " ".sign($item["banedmgraceamt"])."<br>\n";
       }
       if (($item["banedmgbody"]>0) AND ($item["banedmgamt"]!=0)) {

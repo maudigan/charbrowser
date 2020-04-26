@@ -32,6 +32,9 @@
  *     standard front page
  ***************************************************************************/
 
+/**
+ * Autoloader
+ */
 namespace Magelo;
 
 spl_autoload_register(
@@ -41,6 +44,8 @@ spl_autoload_register(
         include_once($class);
     }
 );
+
+$constants = require_once(__DIR__ . "/include/constants.php");
 
 /*********************************************
                  INCLUDES

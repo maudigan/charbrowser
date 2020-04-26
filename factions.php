@@ -41,8 +41,6 @@
  ***************************************************************************/
 
 use Magelo\Repositories\CharacterFactionValuesRepository;
-use Magelo\Stores\CharacterFactionValueStore;
-
 
 /*********************************************
                  INCLUDES
@@ -124,7 +122,7 @@ CharacterFactionValuesRepository::preloadFactionValues($charID);
 $result   = $cbsql_content->query($query);
 $factions = [];
 while ($row = $cbsql_content->nextrow($result)) {
-    $faction        = CharacterFactionValueStore::get($row['id']);
+    $faction        = CharacterFactionValuesRepository::getFaction($row['id']);
     $faction_value  = $faction ? $faction['current_value'] : 0;
     $row['charmod'] = intval($faction_value);
     $factions[]     = $row;

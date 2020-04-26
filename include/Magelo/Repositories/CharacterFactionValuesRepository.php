@@ -53,12 +53,26 @@ class CharacterFactionValuesRepository
     }
 
     /**
+     * @param $faction_id
+     *
+     * @return array|mixed|null
+     */
+    public static function getFaction($faction_id)
+    {
+        if (CharacterFactionValueStore::get($faction_id)) {
+            return CharacterFactionValueStore::get($faction_id);
+        }
+
+        return [];
+    }
+
+    /**
      * @param $character_id
      * @param $faction_id
      *
      * @return mixed|null
      */
-    public static function findOne($character_id, $faction_id)
+    public static function findOrFetch($character_id, $faction_id)
     {
         global $cbsql;
 

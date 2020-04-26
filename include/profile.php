@@ -52,8 +52,6 @@
 use Magelo\Repositories\CharacterAlternateAbilityRepository;
 use Magelo\Repositories\ItemRepository;
 use Magelo\Repositories\SpellRepository;
-use Magelo\Stores\CharacterAlternateAbilityStore;
-use Magelo\Stores\SpellStore;
 
 if ( !defined('INCHARBROWSER') )
 {
@@ -953,12 +951,7 @@ TPL;
          $aa_ranks[intval($row['rank_id'])] = $aa_rank;
 
          //get characters rank for this aa
-
-         // $query = sprintf($tpl, $this->char_id, $row['rank_id']);
-         // $aa_value = $this->db->field_query('aa_value', $query);
-         // $aa       = CharacterAlternateAbilityRepository::findOne($this->char_id, $row['rank_id']);
-
-         $aa = CharacterAlternateAbilityStore::get($aa_id);
+         $aa = CharacterAlternateAbilityRepository::getAbility($row['rank_id']);
 
          //this chars rank
          if ($aa['aa_value'] > 0) {

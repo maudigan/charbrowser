@@ -43,15 +43,19 @@ class SpellRepository
             }
         }
 
-        return $cbsql_content->fetch_all(
-            $cbsql_content->query(
-                sprintf(
-                    "SELECT * FROM %s WHERE id IN (%s)",
-                    self::$table,
-                    implode(", ", $spell_ids)
+        if (count($spell_ids) > 0) {
+            return $cbsql_content->fetch_all(
+                $cbsql_content->query(
+                    sprintf(
+                        "SELECT * FROM %s WHERE id IN (%s)",
+                        self::$table,
+                        implode(", ", $spell_ids)
+                    )
                 )
-            )
-        );
+            );
+        }
+
+        return [];
     }
 
 

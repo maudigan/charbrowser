@@ -20,15 +20,20 @@ class ItemRepository
     {
         global $cbsql_content;
 
-        return $cbsql_content->fetch_all(
-            $cbsql_content->query(
-                sprintf(
-                    "SELECT * FROM %s WHERE id IN (%s)",
-                    self::$table,
-                    implode(", ", InventoryRepository::getItemIdsByCharacterId($character_id))
+        $item_ids = InventoryRepository::getItemIdsByCharacterId($character_id);
+        if (count($item_ids) > 0) {
+            return $cbsql_content->fetch_all(
+                $cbsql_content->query(
+                    sprintf(
+                        "SELECT * FROM %s WHERE id IN (%s)",
+                        self::$table,
+                        implode(", ", $item_ids)
+                    )
                 )
-            )
-        );
+            );
+        }
+
+        return [];
     }
 
     /**
@@ -40,15 +45,20 @@ class ItemRepository
     {
         global $cbsql_content;
 
-        return $cbsql_content->fetch_all(
-            $cbsql_content->query(
-                sprintf(
-                    "SELECT * FROM %s WHERE id IN (%s)",
-                    self::$table,
-                    implode(", ", SharedBankRepository::getItemIdsByAccountId($account_id))
+        $item_ids = SharedBankRepository::getItemIdsByAccountId($account_id);
+        if (count($item_ids) > 0) {
+            return $cbsql_content->fetch_all(
+                $cbsql_content->query(
+                    sprintf(
+                        "SELECT * FROM %s WHERE id IN (%s)",
+                        self::$table,
+                        implode(", ", $item_ids)
+                    )
                 )
-            )
-        );
+            );
+        }
+
+        return [];
     }
 
     /**

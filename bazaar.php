@@ -38,7 +38,7 @@
  *
  ***************************************************************************/
 
-use Magelo\Repositories\ItemRepository;
+use CharBrowser\Repositories\ItemRepository;
 
 
 /*********************************************

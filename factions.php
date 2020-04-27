@@ -40,7 +40,7 @@
  *
  ***************************************************************************/
 
-use Magelo\Repositories\CharacterFactionValuesRepository;
+use CharBrowser\Repositories\CharacterFactionValuesRepository;
 
 /*********************************************
                  INCLUDES

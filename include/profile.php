@@ -49,9 +49,9 @@
  ***************************************************************************/
 
 
-use Magelo\Repositories\CharacterAlternateAbilityRepository;
-use Magelo\Repositories\ItemRepository;
-use Magelo\Repositories\SpellRepository;
+use CharBrowser\Repositories\CharacterAlternateAbilityRepository;
+use CharBrowser\Repositories\ItemRepository;
+use CharBrowser\Repositories\SpellRepository;
 
 if ( !defined('INCHARBROWSER') )
 {

@@ -39,7 +39,7 @@
  ***************************************************************************/
 
 
-use Magelo\Repositories\SpellRepository;
+use CharBrowser\Repositories\SpellRepository;
 
 if ( !defined('INCHARBROWSER') )
 {

@@ -943,10 +943,10 @@ TPL;
       while ($row = $this->db_content->nextrow($result)) {
          //'linked' list of rank modifiers
 
-         $aa_rank = [
+         $aa_rank = array(
              'MODIFIER' => intval($row['base1']),
              'NEXT'     => intval($row['next_id']),
-         ];
+         );
 
          $aa_ranks[intval($row['rank_id'])] = $aa_rank;
 
@@ -955,10 +955,10 @@ TPL;
 
          //this chars rank
          if ($aa['aa_value'] > 0) {
-            $char_rank[intval($row['rank_id'])] = [
+            $char_rank[intval($row['rank_id'])] = array(
                 'RELATIVE_RANK' => $aa['aa_value'],
                 'NAME'          => $row['name'],
-            ];
+            );
          }
       }
 

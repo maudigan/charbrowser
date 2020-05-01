@@ -334,7 +334,9 @@ class Charbrowser_SQL
    //------------------------------------
    function fetch_all($result)
    {
-      return $result->fetch_all(MYSQLI_ASSOC);
+      $rows = array();
+      while ($rows[] = $result->fetch_array());
+      return $rows;
    }
 }
 

@@ -54,7 +54,7 @@ class CharacterAlternateAbilityRepository
     {
         $abilities = self::getAlternateAbilitiesByCharacterId($character_id);
 
-        $character_alternate_ability_store = [];
+        $character_alternate_ability_store = array();
         foreach ($abilities as $ability) {
             $aa_id = $ability['aa_id'];
 
@@ -77,7 +77,7 @@ class CharacterAlternateAbilityRepository
             return CharacterAlternateAbilityStore::get($ability_id);
         }
 
-        return [];
+        return array();
     }
 
     /**

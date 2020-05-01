@@ -54,7 +54,7 @@ class CharacterFactionValuesRepository
     {
         $factions = self::getFactionValuesByCharacterId($character_id);
 
-        $character_faction_value_store = [];
+        $character_faction_value_store = array();
         foreach ($factions as $faction) {
             $faction_value = $faction['faction_id'];
 
@@ -77,7 +77,7 @@ class CharacterFactionValuesRepository
             return CharacterFactionValueStore::get($faction_id);
         }
 
-        return [];
+        return array();
     }
 
     /**

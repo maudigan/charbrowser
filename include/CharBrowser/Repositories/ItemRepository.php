@@ -49,7 +49,7 @@ class ItemRepository
             );
         }
 
-        return [];
+        return array();
     }
 
     /**
@@ -74,7 +74,7 @@ class ItemRepository
             );
         }
 
-        return [];
+        return array();
     }
 
     /**
@@ -87,7 +87,7 @@ class ItemRepository
             self::getItemsByAccountId($account_id)
         );
 
-        $item_store = [];
+        $item_store = array();
         foreach ($items as $item) {
             $item_id = $item['id'];
 
@@ -150,7 +150,7 @@ class ItemRepository
                 )
             );
 
-            $item_store = [];
+            $item_store = array();
             foreach ($items as $item) {
                 $item_id = $item['id'];
 
@@ -162,7 +162,7 @@ class ItemRepository
             ItemStore::setStore($item_store);
         }
 
-        return [];
+        return array();
     }
 
 }

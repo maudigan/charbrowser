@@ -1,7 +1,7 @@
 <?php
 
-return [
-    'races' => [
+return array(
+    'races' => array(
         1   => 'Human',
         2   => 'Barbarian',
         3   => 'Erudite',
@@ -680,5 +680,5 @@ return [
         676 => 'Braxy Mount',
         677 => 'Kangon Mount',
         678 => 'Erudite',
-    ],
-];
+    ),
+);

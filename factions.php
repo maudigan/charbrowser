@@ -120,7 +120,7 @@ $query = sprintf(
 CharacterFactionValuesRepository::preloadFactionValues($charID);
 
 $result   = $cbsql_content->query($query);
-$factions = [];
+$factions = array();
 while ($row = $cbsql_content->nextrow($result)) {
     $faction        = CharacterFactionValuesRepository::getFaction($row['id']);
     $faction_value  = $faction ? $faction['current_value'] : 0;

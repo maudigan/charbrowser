@@ -45,7 +45,7 @@ class SharedBankRepository
             )
         );
 
-        $item_ids = [];
+        $item_ids = array();
         while ($row = $cbsql->nextrow($result)) {
             if ($row['itemid']) {
                 $item_ids[] = $row['itemid'];

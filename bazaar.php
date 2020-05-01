@@ -131,7 +131,7 @@ if($slot > -1) {
 //build the orderby & limit clauses
 $order = "ORDER BY $orderby $direction LIMIT $start, $perpage";
 
-$filtered_item_ids = [];
+$filtered_item_ids = array();
 if ($items_where != "") {
    $query  = sprintf("SELECT id FROM items %s", $items_where);
    $result = $cbsql_content->query($query);
@@ -157,7 +157,7 @@ INNER JOIN trader
         %s %s %s
 TPL;
 
-$item_ids = [];
+$item_ids = array();
 $result   = $cbsql->query(sprintf($tpl, $where, $filtered_item_ids_where, $order));
 while ($row = $cbsql->nextrow($result)) {
    $item_ids[] = $row['item_id'];
@@ -171,7 +171,7 @@ ItemRepository::preloadByItemIds($item_ids);
 
 //now add on the limit & ordering and query again for just this page
 $result = $cbsql->query(sprintf($tpl, $where, $filtered_item_ids_where, $order));
-$lots   = [];
+$lots   = array();
 while ($row = $cbsql->nextrow($result)) {
    $trader_item_id = $row['item_id'];
    $row            = array_merge($row, ItemRepository::findOne($trader_item_id));

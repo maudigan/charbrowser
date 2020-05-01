@@ -1,3 +1,11 @@
+v3.3.1
+----------------------------------------------------------------------
+performance improvements
+
+May 1, 2020 - added data preloading to improve load on the database
+              delay jquery drag/resize to improve page load speed
+              (akkadius)
+                   
 v3.3.0
 ----------------------------------------------------------------------
 first pass of multi tenancy implementation, first pass of bots

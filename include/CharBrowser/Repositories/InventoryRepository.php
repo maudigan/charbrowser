@@ -45,7 +45,7 @@ class InventoryRepository
             )
         );
 
-        $item_ids      = [];
+        $item_ids      = array();
         while ($row = $cbsql->nextrow($result)) {
             if ($row['itemid']) {
                 $item_ids[] = $row['itemid'];
@@ -81,15 +81,15 @@ class InventoryRepository
             )
         );
 
-        $effect_fields = [
+        $effect_fields = array(
             "proceffect",
             "worneffect",
             "focuseffect",
             "clickeffect",
             "scrolleffect",
-        ];
+        );
 
-        $spell_ids = [];
+        $spell_ids = array();
         while ($row = $cbsql->nextrow($result)) {
             foreach ($effect_fields as $effect_field) {
                 if ($row[$effect_field]) {

@@ -41,15 +41,15 @@ class SpellRepository
 
         $items = ItemRepository::getItemsByCharacterId($character_id);
 
-        $effect_fields = [
+        $effect_fields = array(
             "proceffect",
             "worneffect",
             "focuseffect",
             "clickeffect",
             "scrolleffect",
-        ];
+        );
 
-        $spell_ids = [];
+        $spell_ids = array();
         foreach ($items as $item) {
             foreach ($effect_fields as $effect_field) {
                 if ($item[$effect_field] && $item[$effect_field] > 0) {
@@ -70,7 +70,7 @@ class SpellRepository
             );
         }
 
-        return [];
+        return array();
     }
 
 
@@ -80,7 +80,7 @@ class SpellRepository
     public static function preloadSpellsUsedByCharacterId($character_id)
     {
         $items      = self::getSpellsUsedByCharacterId($character_id);
-        $item_store = [];
+        $item_store = array();
 
         foreach ($items as $item) {
             $item_id = $item['id'];

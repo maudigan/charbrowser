@@ -309,7 +309,8 @@ function GetItem($item)
       // Proc Effect
       if ($item["proceffect"] > 0 AND $item["proceffect"] < 65535) {
          $temp = QuickTemplate($link_spell, array('SPELL_ID' => $item["proceffect"]));
-         $Output .= "Proc Effect: <a href='" . $temp . "'>" . SpellRepository::findOne($item["proceffect"])['name'] . "</a>";
+         $itemrow = SpellRepository::findOne($item["proceffect"]);
+         $Output .= "Proc Effect: <a href='" . $temp . "'>" . $itemrow['name'] . "</a>";
          if ($item["proclevel2"] > 0)
             $Output .= " <i>(Level " . $item["proclevel2"] . ")</i>";
 
@@ -319,7 +320,8 @@ function GetItem($item)
       // Worn Effect
       if ($item["worneffect"] > 0 AND $item["worneffect"] < 65535) {
          $temp = QuickTemplate($link_spell, array('SPELL_ID' => $item["worneffect"]));
-         $Output .= "Worn Effect: <a href='" . $temp . "'>"  . SpellRepository::findOne($item["worneffect"])['name'] . "</a>";
+         $itemrow = SpellRepository::findOne($item["worneffect"]);
+         $Output .= "Worn Effect: <a href='" . $temp . "'>"  . $itemrow['name'] . "</a>";
          if ($item["wornlevel"] > 0)
             $Output .= " <i>(Level " . $item["wornlevel"] . ")</i>";
 
@@ -329,7 +331,8 @@ function GetItem($item)
       // Focus Effect
       if ($item["focuseffect"] > 0 AND $item["focuseffect"] < 65535) {
          $temp = QuickTemplate($link_spell, array('SPELL_ID' => $item["focuseffect"]));
-         $Output .= "Focus Effect: <a href='" . $temp . "'>" . SpellRepository::findOne($item["focuseffect"])['name'] . "</a>";
+         $itemrow = SpellRepository::findOne($item["focuseffect"]);
+         $Output .= "Focus Effect: <a href='" . $temp . "'>" . $itemrow['name'] . "</a>";
          if ($item["focuslevel"] > 0)
             $Output .= " <i>(Level " . $item["focuslevel"] . ")</i>";
 
@@ -339,7 +342,8 @@ function GetItem($item)
       // Click Effect
       if ($item["clickeffect"] > 0 AND $item["clickeffect"] < 65535) {
          $temp = QuickTemplate($link_spell, array('SPELL_ID' => $item["clickeffect"]));
-         $Output .= $tab."Click Effect: <a href='".$temp."'>".SpellRepository::findOne($item["clickeffect"])['name']."</a>";
+         $itemrow = SpellRepository::findOne($item["clickeffect"]);
+         $Output .= $tab."Click Effect: <a href='".$temp."'>".$itemrow['name']."</a>";
          $Output .= "&nbsp;(";
          if ($item["clicktype"] == 1)
             $Output .= "Any Slot, ";
@@ -630,7 +634,8 @@ function GetItem($item)
       // Scroll Effect
       if ($item["scrolleffect"] > 0 AND $item["scrolleffect"] < 65535) {
          $temp = QuickTemplate($link_spell, array('SPELL_ID' => $item["scrolleffect"]));
-         $Output .= "Scroll Effect: <a href='" . $temp . "'>" . SpellRepository::findOne($item["scrolleffect"])['name'] . "</a>";
+         $itemrow = SpellRepository::findOne($item["scrolleffect"]);
+         $Output .= "Scroll Effect: <a href='" . $temp . "'>" . $itemrow['name'] . "</a>";
          $Output .= "<br>";
       }
 
@@ -726,7 +731,9 @@ function GetItem($item)
       if (($item["proceffect"]>0) AND ($item["proceffect"]<65535)) {
          //build the link from the spell template
          $temp = QuickTemplate($link_spell, array('SPELL_ID' => $item["proceffect"]));
-         $Output .= $tab."Effect: <a href='".$temp."'>".SpellRepository::findOne($item["proceffect"])['name']."</a>";
+         
+         $itemrow = SpellRepository::findOne($item["proceffect"]);
+         $Output .= $tab."Effect: <a href='".$temp."'>".$itemrow['name']."</a>";
          $Output .= "&nbsp;(Combat)";
          $Output .= " <i>(Level ".$item["proclevel2"].")</i>";
          $Output .= "<br>\n";
@@ -736,7 +743,8 @@ function GetItem($item)
       if (($item["worneffect"]>0) AND ($item["worneffect"]<65535)) {
          //build the link from the spell template
          $temp = QuickTemplate($link_spell, array('SPELL_ID' => $item["worneffect"]));
-         $Output .= $tab."Effect: <a href='".$temp."'>".SpellRepository::findOne($item["worneffect"])['name']."</a>";
+         $itemrow = SpellRepository::findOne($item["worneffect"]);
+         $Output .= $tab."Effect: <a href='".$temp."'>".$itemrow['name']."</a>";
          $Output .= "&nbsp;(Worn)";
          $Output .= " <i>(Level ".$item["wornlevel"].")</i>";
          $Output .= "<br>\n";
@@ -746,7 +754,8 @@ function GetItem($item)
       if (($item["focuseffect"]>0) AND ($item["focuseffect"]<65535)) {
          //build the link from the spell template
          $temp = QuickTemplate($link_spell, array('SPELL_ID' => $item["focuseffect"]));
-         $Output .= $tab."Focus: <a href='".$temp."'>".SpellRepository::findOne($item["focuseffect"])['name']."</a>";
+         $itemrow = SpellRepository::findOne($item["focuseffect"]);
+         $Output .= $tab."Focus: <a href='".$temp."'>".$itemrow['name']."</a>";
          if ($item["focuslevel"]>0) { $Output .= " <i>(Level ".$item["focuslevel"].")</i>";  }
          $Output .= "<br>\n";
       }
@@ -755,7 +764,8 @@ function GetItem($item)
       if (($item["clickeffect"]>0) AND ($item["clickeffect"]<65535)) {
          //build the link from the spell template
          $temp = QuickTemplate($link_spell, array('SPELL_ID' => $item["clickeffect"]));
-         $Output .= $tab."Effect: <a href='".$temp."'>".SpellRepository::findOne($item["clickeffect"])['name']."</a>";
+         $itemrow = SpellRepository::findOne($item["clickeffect"]);
+         $Output .= $tab."Effect: <a href='".$temp."'>".$itemrow['name']."</a>";
          $Output .= "&nbsp;(";
          if ($item["clicktype"]==1) { $Output .= "Any Slot, "; }
          if ($item["clicktype"]==4) { $Output .= "Must Equip, ";   }

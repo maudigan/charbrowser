@@ -7,23 +7,23 @@
  *   (at your option) any later version.
  *
  *   Portions of this program are derived from publicly licensed software
- *   projects including, but not limited to phpBB, Magelo Clone, 
+ *   projects including, but not limited to phpBB, Magelo Clone,
  *   EQEmulator, EQEditor, and Allakhazam Clone.
  *
  *                                  Author:
- *                           Maudigan(Airwalking) 
+ *                           Maudigan(Airwalking)
  *
  *   September 29, 2014 - Maudigan
- *       This is a new rewrite to accomodate the retirement of the 
+ *       This is a new rewrite to accomodate the retirement of the
  *       character blob. The load function was removed and a constructor
  *       was added instead.
  *   October 4, 2014 - Maudigan
- *      renamed sql $cb_template to $query_tpl so as to not interfere with 
- *      the html template object it shouldn't be a problem here, just 
+ *      renamed sql $cb_template to $query_tpl so as to not interfere with
+ *      the html template object it shouldn't be a problem here, just
  *      done to be consistent.
  *   May 24, 2016 - maudigan
  *      added a second parameter to GetValue, it lets you specify the
- *      value that is returned when no record is found. The default 
+ *      value that is returned when no record is found. The default
  *      was set to 0 for the skills.php page to display correctly
  *   January 7, 2018 - Maudigan
  *      Modified database to use a class.
@@ -45,12 +45,14 @@
  *     show stack size code
  *   April 25, 2020 - Maudigan
  *     implement multi-tenancy
- *  
+ *
  ***************************************************************************/
- 
- 
- 
- 
+
+
+use CharBrowser\Repositories\CharacterAlternateAbilityRepository;
+use CharBrowser\Repositories\ItemRepository;
+use CharBrowser\Repositories\SpellRepository;
+
 if ( !defined('INCHARBROWSER') )
 {
    die("Hacking attempt");
@@ -85,13 +87,12 @@ class profile {
    private $db_content;
    private $language;
    private $aa_effects = array();
-   
 
 /********************************************
 **           DATA LOCATOR ARRAYS           **
 ** these describe where different types    **
 ** of character data are found             **
-********************************************/ 
+********************************************/
 
 // the name of the second pk of a table
 // --------------------------------------------------------------
@@ -110,12 +111,12 @@ private $locator_pk = array (
 // --------------------------------------------------------------
 // SYNTAX:  "<DATA>" => array("<TABLE>", "<COLUMN>", "<INDEX>"),
 // --------------------------------------------------------------
-// <DATA>   = The shortname reference for the value, 
+// <DATA>   = The shortname reference for the value,
 //            it usually matches the column name.
 // <TABLE>  = the name of the table the data comes from
 // <COLUMN> = the column the data appears in
 // <INDEX>  = if there are multiple rows for the character
-//            because of a second PK, then this is the 
+//            because of a second PK, then this is the
 //            value of that second PK, otherwise its false.
 private $locator = array (
    "id" => array("character_data", "id", false),
@@ -738,29 +739,29 @@ private $locator = array (
    "aa_value_196" => array("character_alternate_abilities", "aa_value", 196),
    "aa_value_197" => array("character_alternate_abilities", "aa_value", 197),
    "aa_value_198" => array("character_alternate_abilities", "aa_value", 198),
-   "aa_value_199" => array("character_alternate_abilities", "aa_value", 199),   
-);   
-   
+   "aa_value_199" => array("character_alternate_abilities", "aa_value", 199),
+);
+
    /********************************************
    **              CONSTRUCTOR                **
-   ********************************************/   
+   ********************************************/
    // get the basic data, like char id.
    function __construct($name, &$db, &$db_content, &$language, $showsoftdelete = false, $charbrowser_is_admin_page = false)
-   {      
+   {
       //dont load characters items until we need to
       $this->items_populated = false;
-      
+
       $this->db = $db;
       $this->db_content = $db_content;
       $this->language = $language;
-      
+
       //we can't call the local query method as it assumes the character id
       //which we need to get in the first place
       $table_name = "character_data";
-      
+
       //don't go sticking just anything in the database
       if (!IsAlphaSpace($name)) cb_message_die($this->language['MESSAGE_ERROR'],$this->language['MESSAGE_NAME_ALPHA']);
-      
+
       //build the query
       $tpl = <<<TPL
 SELECT * 
@@ -768,13 +769,13 @@ FROM `%s`
 WHERE `name` = '%s'
 TPL;
       $query = sprintf($tpl, $table_name, $name);
-      
+
       //get the result/error
       $result = $this->db->query($query);
-      
+
       //collect the data from returned row
       if($this->db->rows($result))
-      { 
+      {
          //fetch the row
          $row = $this->db->nextrow($result);
          //save it
@@ -784,24 +785,24 @@ TPL;
          $this->race = $row['race'];
          $this->class = $row['class'];
          $this->level = $row['level'];
-      }   
+      }
       else cb_message_die($this->language['MESSAGE_ERROR'],$this->language['MESSAGE_NO_FIND']);
 
       //dont display deleted characters
-      if (!$showsoftdelete && !$charbrowser_is_admin_page && $row['deleted_at']) cb_message_die($this->language['MESSAGE_ERROR'],$this->language['MESSAGE_NO_FIND']);       
-   
+      if (!$showsoftdelete && !$charbrowser_is_admin_page && $row['deleted_at']) cb_message_die($this->language['MESSAGE_ERROR'],$this->language['MESSAGE_NO_FIND']);
+
    }
-   
+
    /********************************************
    **              DESTRUCTOR                 **
-   ********************************************/  
+   ********************************************/
    function __destruct()
    {
       unset($this->db);
-      unset($this->language); 
+      unset($this->language);
    }
-   
-   
+
+
    /********************************************
    **            PUBLIC FUNCTIONS             **
    ********************************************/
@@ -811,14 +812,14 @@ TPL;
    {
       return $this->account_id;
    }
-   
-   
+
+
    // Return char ID
    public function char_id()
    {
       return $this->char_id;
    }
-   
+
    //gets all the records for a double pk character from a table
    public function GetTable($table_name)
    {
@@ -827,26 +828,26 @@ TPL;
       //it has to bee in the locator arrays
       return $this->_getTableCache($table_name);
    }
-   
+
    //gets a single record for a character from a table
    public function GetRecord($table_name)
-   {      
-      //table name goes straight into a query 
+   {
+      //table name goes straight into a query
       // so we need to escape it
       $table_name = $this->db->escape_string($table_name);
-      
+
       return $this->_getRecordCache($table_name);
-   }   
-   
+   }
+
    //uses the locator data to find the requested setting
    public function GetValue($data_key, $default = 0)
    {
       return $this->_getValue($data_key, $default);
    }
-   
+
    //given an item type, fetch this chars skill for that item
    public function GetSkillValByItemType($type)
-   {  
+   {
       switch ($type) {
          case 0: // 1H Slashing
             return $this->_getValue('1h_slashing', 0);
@@ -858,7 +859,7 @@ TPL;
             return $this->_getValue('1h_blunt', 0);
          case 4: // 2H Blunt
             return $this->_getValue('2h_blunt', 0);
-         case 35: // 2H Piercing 
+         case 35: // 2H Piercing
             return $this->_getValue('2h_piercing', 0);
          case 45: // Martial/Hand to Hand
             return $this->_getValue('hand_to_hand', 0);
@@ -866,10 +867,10 @@ TPL;
             return $this->_getValue('hand_to_hand', 0);
       }
    }
-   
+
    //given an item type, fetch this chars skill for that item
    public function GetSkillNameByItemType($type)
-   {  
+   {
       switch ($type) {
          case 0: // 1H Slashing
             return '1H Slashing';
@@ -881,7 +882,7 @@ TPL;
             return '1H Blunt';
          case 4: // 2H Blunt
             return '2H Blunt';
-         case 35: // 2H Piercing 
+         case 35: // 2H Piercing
             return '2H Piercing';
          case 45: // Martial/Hand to Hand
             return 'Hand to Hand';
@@ -889,26 +890,26 @@ TPL;
             return 'Hand to Hand';
       }
    }
-   
-   
+
+
    //return array of all the items for this character
    public function GetAllItems()
    {
       $this->_populateItems();
       return $this->allitems;
    }
-   
+
 
    //gets the name, rank and mod for an AA effect
-   public function GetAAModsByEffect($effectid) 
-   {   
+   public function GetAAModsByEffect($effectid)
+   {
       //see if we already cached this effect id
       if (array_key_exists($effectid, $this->aa_effects)) {
          return $this->aa_effects[$effectid];
       }
-      
-      //this will load every rank of every aa with the $effect id. 
-      //this first rank of that aa will be joined to the characters 
+
+      //this will load every rank of every aa with the $effect id.
+      //this first rank of that aa will be joined to the characters
       //rank of that AA
       $tpl = <<<TPL
          SELECT aa_rank_effects.rank_id, aa_rank_effects.base1, 
@@ -922,56 +923,61 @@ TPL;
 TPL;
       $query = sprintf($tpl, $effectid);
       $result = $this->db_content->query($query);
-      
+
       //no aa with this effect
       if(!$this->db_content->rows($result)) return array();
-      
+
       //first pass is to load all the AA with this effect into a linked array
       //a secondary conditional will capture if the character has the aa and their rank
       $aa_ranks = array();
       $char_ranks = array();
         //build the query
-      $tpl = <<<TPL
-         SELECT aa_value 
-         FROM character_alternate_abilities
-         WHERE id = '%s' 
-         AND aa_id = '%s'
-TPL;
+
+//      $tpl = <<<TPL
+//         SELECT aa_value
+//         FROM character_alternate_abilities
+//         WHERE id = '%s'
+//         AND aa_id = '%s'
+//TPL;
+
       while ($row = $this->db_content->nextrow($result)) {
          //'linked' list of rank modifiers
-         $aa_rank = array('MODIFIER' => intval($row['base1']),
-                          'NEXT' => intval($row['next_id']));
-         $aa_ranks[intval($row['rank_id'])] = $aa_rank;   
+
+         $aa_rank = [
+             'MODIFIER' => intval($row['base1']),
+             'NEXT'     => intval($row['next_id']),
+         ];
+
+         $aa_ranks[intval($row['rank_id'])] = $aa_rank;
 
          //get characters rank for this aa
-         $query = sprintf($tpl, $this->char_id, $row['rank_id']);
-         $aa_value = $this->db->field_query('aa_value', $query);
-         
+         $aa = CharacterAlternateAbilityRepository::getAbility($row['rank_id']);
+
          //this chars rank
-         if ($aa_value > 0) {
-            $char_rank[intval($row['rank_id'])] = array(
-               'RELATIVE_RANK' => $aa_value,
-               'NAME' => $row['name']
-            );
+         if ($aa['aa_value'] > 0) {
+            $char_rank[intval($row['rank_id'])] = [
+                'RELATIVE_RANK' => $aa['aa_value'],
+                'NAME'          => $row['name'],
+            ];
          }
       }
-      
+
       if (count($char_rank) < 1) return array();
-      
+
 
       //calculate this char's modifier
       $output = array();
       foreach ($char_rank as $aa_id => $aa_data) {
          //first rank
          $rank_id = $aa_id;
-         
+
          //walk through the ranks to find the rank id
          //if they're rank 3, we should look 2 times to
          //jump forward 2 ranks to the 3rd rank modifier
          for ($i = $aa_data['RELATIVE_RANK']; $i > 1; $i--) {
-            $rank_id = $aa_ranks[$rank_id]['NEXT'];   
+            $rank_id = $aa_ranks[$rank_id]['NEXT'];
          }
-         
+
          //log it if it worked
          if ($rank_id) {
             $output[] = array(
@@ -983,26 +989,26 @@ TPL;
             );
          }
       }
-      
+
       $this->aa_effects[$effectid] = $output;
-      return $output; 
-   }  
-   
+      return $output;
+   }
+
    //gets the mod total for an AA effect
-   public function GetAAModTotalByEffect($effectid) 
-   {   
+   public function GetAAModTotalByEffect($effectid)
+   {
       //get every rank for this effect
       $effects = $this->GetAAModsByEffect($effectid);
-      
+
       $total = 0;
       foreach($effects as $value) {
          $total += $value['MODIFIER'];
       }
-      
+
       return $total;
    }
-   
-  
+
+
    //function copied/converted from EQEMU sourcecode may 2, 2009
    //gets I/W/N for the type of int/wis casting this char does
    public function GetCasterClass(){
@@ -1030,7 +1036,7 @@ TPL;
          return 'N';
          break;
       }
-   }   
+   }
 
 
    //pulled from EQEMU 20200316
@@ -1040,14 +1046,14 @@ TPL;
       $item_val = $this->getItemMana(); //item mana
       $base_item_val = $base_val + $item_val;
       $caster_class = $this->GetCasterClass();
-      
+
       if ($calculation_description == 'unset') {
          if ($caster_class == 'N') return 0;
-         $max_mana = $this->GetAAModTotalByEffect(SE_MANAPOOL) + $base_item_val;  //mana bonus effect 97 
+         $max_mana = $this->GetAAModTotalByEffect(SE_MANAPOOL) + $base_item_val;  //mana bonus effect 97
          return $max_mana;
       }
       else {
-         $max_val = $base_item_val;  
+         $max_val = $base_item_val;
          $aa_mods = $this->GetAAModsByEffect(SE_MANAPOOL);
          $aa_total_mod = 0;
 
@@ -1056,8 +1062,8 @@ TPL;
          $calculation_description[] = array('TYPE' => 'mana.row', 'DESCRIPTION' => 'Base Mana', 'VALUE' => number_format($base_val));
          $calculation_description[] = array('TYPE' => 'mana.row', 'DESCRIPTION' => 'Item Modifiers', 'VALUE' => number_format($item_val));
          $calculation_description[] = array('TYPE' => 'mana.footer', 'DESCRIPTION' => 'Equiped Subtotal', 'SUBTOTAL' => number_format($base_item_val), 'ROLLTOTAL' => number_format($max_val));
-         
-         
+
+
          $calculation_description[] = array('TYPE' => 'mana', 'TYPE_HEAD' => "AA Modifiers", 'VALUE_HEAD' => "Value");
          if (count($aa_mods) > 0) {
             foreach($aa_mods as $value) {
@@ -1068,9 +1074,9 @@ TPL;
          else {
             $calculation_description[] = array('TYPE' => 'mana.row', 'DESCRIPTION' => 'None', 'VALUE' => '0');
          }
-         $max_val = max($aa_total_mod + $max_val, 0);  
+         $max_val = max($aa_total_mod + $max_val, 0);
          $calculation_description[] = array('TYPE' => 'mana.footer', 'DESCRIPTION' => 'Mod Subtotal', 'SUBTOTAL' => number_format($aa_total_mod), 'ROLLTOTAL' => number_format($max_val));
-         
+
          //non casters lose all their mana
          $class_mod = 0;
          $class_mod_desc = 'None';
@@ -1082,10 +1088,10 @@ TPL;
          $calculation_description[] = array('TYPE' => 'mana', 'TYPE_HEAD' => "Class Modifiers", 'VALUE_HEAD' => "Value");
          $calculation_description[] = array('TYPE' => 'mana.row', 'DESCRIPTION' => $class_mod_desc, 'VALUE' => number_format($class_mod));
          $calculation_description[] = array('TYPE' => 'mana.footer', 'DESCRIPTION' => 'Equiped Subtotal', 'SUBTOTAL' => number_format($class_mod), 'ROLLTOTAL' => number_format($max_val));
-         return $max_val;  
+         return $max_val;
       }
    }
-   
+
    //pulled from EQEMU 20200316
    //gets basic mana without gear/effects/etc
    public function CalcBaseMana()
@@ -1096,7 +1102,7 @@ TPL;
       switch ($this->GetCasterClass()) {
          case 'I':
             $WisInt = $this->getINT();
-            
+
             $ConvertedWisInt = $WisInt;
             $over200 = $WisInt;
             if ($WisInt > 100) {
@@ -1134,7 +1140,7 @@ TPL;
       return $this->_cppCastInt($max_m);
    }
 
-   
+
    //pulled from EQEMU 20200316
    //calculate the display endurance
    public function CalcMaxEndurance(&$calculation_description = 'unset') {
@@ -1143,10 +1149,10 @@ TPL;
       $base_item_val = $base_val + $item_val;
       if ($calculation_description == 'unset') {
          $max_val = $this->GetAAModTotalByEffect(SE_ENDURANCEPOOL) + $base_item_val; //aa effects 190
-         return max(0, $max_val);  
+         return max(0, $max_val);
       }
       else {
-         $max_val = $base_item_val;  
+         $max_val = $base_item_val;
          $aa_mods = $this->GetAAModsByEffect(SE_ENDURANCEPOOL);
          $aa_total_mod = 0;
 
@@ -1155,8 +1161,8 @@ TPL;
          $calculation_description[] = array('TYPE' => 'endurance.row', 'DESCRIPTION' => 'Base Endurance', 'VALUE' => number_format($base_val));
          $calculation_description[] = array('TYPE' => 'endurance.row', 'DESCRIPTION' => 'Item Modifiers', 'VALUE' => number_format($item_val));
          $calculation_description[] = array('TYPE' => 'endurance.footer', 'DESCRIPTION' => 'Equiped Subtotal', 'SUBTOTAL' => number_format($base_item_val), 'ROLLTOTAL' => number_format($max_val));
-         
-         
+
+
          $calculation_description[] = array('TYPE' => 'endurance', 'TYPE_HEAD' => "AA Modifiers", 'VALUE_HEAD' => "Value");
          if (count($aa_mods) > 0) {
             foreach($aa_mods as $value) {
@@ -1167,12 +1173,12 @@ TPL;
          else {
             $calculation_description[] = array('TYPE' => 'endurance.row', 'DESCRIPTION' => 'None', 'VALUE' => '0');
          }
-         $max_val = max($aa_total_mod + $max_val, 0);  
+         $max_val = max($aa_total_mod + $max_val, 0);
          $calculation_description[] = array('TYPE' => 'endurance.footer', 'DESCRIPTION' => 'Mod Subtotal', 'SUBTOTAL' => number_format($aa_total_mod), 'ROLLTOTAL' => number_format($max_val));
-         return $max_val;  
+         return $max_val;
       }
    }
-   
+
 
    //pulled from EQEMU 20200316
    //gets basic endurance without gear/effects/etc
@@ -1194,7 +1200,7 @@ TPL;
 
       return $this->_cppCastInt($base_end);
    }
- 
+
 
    //pulled from EQEMU 20200316
    //calculate the display hp
@@ -1202,7 +1208,7 @@ TPL;
       $base_val = $this->CalcBaseHP(); //base HP
       $item_val = $this->getItemHP(); //item HP
       $base_item_val = $this->_cppCastInt($base_val + $item_val);
-      $max_val = $base_item_val;  
+      $max_val = $base_item_val;
       if ($calculation_description == 'unset') {
          $nd = 10000;
          $nd += $this->GetAAModTotalByEffect(SE_MAXHPCHANGE);   //Natural Durability, Physical Enhancement, Planar Durability effect 214
@@ -1226,7 +1232,7 @@ TPL;
          $calculation_description[] = array('TYPE' => 'hp.row', 'DESCRIPTION' => 'Base Hitpoints', 'VALUE' => number_format($base_val));
          $calculation_description[] = array('TYPE' => 'hp.row', 'DESCRIPTION' => 'Item Modifiers', 'VALUE' => number_format($item_val));
          $calculation_description[] = array('TYPE' => 'hp.footer', 'DESCRIPTION' => 'Equiped Subtotal', 'SUBTOTAL' => number_format($base_item_val), 'ROLLTOTAL' => number_format($max_val));
- 
+
          //percent aa mods
          $calculation_description[] = array('TYPE' => 'hp', 'TYPE_HEAD' => "AA Percent Modifiers", 'VALUE_HEAD' => "Value");
          $calculation_description[] = array('TYPE' => 'hp.row', 'DESCRIPTION' => "Basic Hitpoints", 'VALUE' => "100%");
@@ -1236,8 +1242,8 @@ TPL;
          }
          $nd = $aa_total_mod_pct;
          $max_val = $this->_cppCastInt((float)$max_val * (float)$nd / (float)10000);
-         $calculation_description[] = array('TYPE' => 'hp.footer', 'DESCRIPTION' => 'Percent Mod Subtotal', 'SUBTOTAL' => ($aa_total_mod_pct/100)."%", 'ROLLTOTAL' => number_format($max_val)); 
-         
+         $calculation_description[] = array('TYPE' => 'hp.footer', 'DESCRIPTION' => 'Percent Mod Subtotal', 'SUBTOTAL' => ($aa_total_mod_pct/100)."%", 'ROLLTOTAL' => number_format($max_val));
+
          //aa mods
          $calculation_description[] = array('TYPE' => 'hp', 'TYPE_HEAD' => "AA Modifiers", 'VALUE_HEAD' => "Value");
          if (count($aa_mods) > 0) {
@@ -1249,14 +1255,14 @@ TPL;
          else {
             $calculation_description[] = array('TYPE' => 'hp.row', 'DESCRIPTION' => 'None', 'VALUE' => '0');
          }
-         $max_val = $aa_total_mod + $max_val; 
+         $max_val = $aa_total_mod + $max_val;
          $calculation_description[] = array('TYPE' => 'hp.footer', 'DESCRIPTION' => 'Mod Subtotal', 'SUBTOTAL' => number_format($aa_total_mod), 'ROLLTOTAL' => number_format($max_val));
-         return $max_val;  
+         return $max_val;
       }
    }
-   
 
-   
+
+
    //pulled from EQEMU 20200316
    //gets basic hp without gear/effects/etc
    public function CalcBaseHP() {
@@ -1271,14 +1277,14 @@ TPL;
          $base_hp += $base_data['hp'] + ($base_data['hp_fac'] * $stats);
          $base_hp += ($this->getHSTA() * 10);
       }
-      
+
       return $this->_cppCastInt($base_hp);
    }
- 
+
 
    //pulled from EQEMU 20200316
    //based on dev quotes
-   public function compute_defense(&$calculation_description = 'unset') {  
+   public function compute_defense(&$calculation_description = 'unset') {
       $defense_mod = $this->_cppCastInt($this->_getValue('defense', 0) * 400 / 225);
       $agi_mod = $this->_cppCastInt((8000 * ($this->getAGI() - 40)) / 36000);
       $hagi_mod = $this->_cppCastInt($this->getHAGI() / 10);
@@ -1299,12 +1305,12 @@ TPL;
          $calculation_description[] = array('TYPE' => 'ac.row', 'DESCRIPTION' => '(Agility - 40) x 8/36', 'VALUE' => number_format($agi_mod));
          $calculation_description[] = array('TYPE' => 'ac.row', 'DESCRIPTION' => 'Heroic Agility / 10', 'VALUE' => number_format($hagi_mod));
          $calculation_description[] = array('TYPE' => 'ac.footer', 'DESCRIPTION' => 'Defense Mod', 'SUBTOTAL' => number_format($def_total), 'ROLLTOTAL' => number_format($def_return));
-         
-         return $def_return; 
+
+         return $def_return;
       }
-   } 
-   
-   
+   }
+
+
    //pulled from EQEMU 20200316
    //get the displayed attack value
    public function GetTotalATK(&$calculation_description = 'unset') {
@@ -1315,10 +1321,10 @@ TPL;
       $atkitem_mod = $this->getItemATK() * 1.342;
       $atkstr_mod = ($this->getSTR() - 66) * 0.9;
       $atkmainhand_mod = $mainhandSkill * 2.69;
-      
+
       $atksubtotal = $this->_cppCastInt($atkitem_mod + $atkoffense_mod + $atkstr_mod + $atkmainhand_mod);
-      $max_val = $atksubtotal;  
-      
+      $max_val = $atksubtotal;
+
       if ($calculation_description == 'unset') {
          $max_val += $this->GetAAModTotalByEffect(SE_ATK); //aa attack mods by effectid 2
          return max(10, $max_val);
@@ -1335,7 +1341,7 @@ TPL;
          $calculation_description[] = array('TYPE' => 'attack.row', 'DESCRIPTION' => '(Strength - 66) x 0.9', 'VALUE' => number_format($atkstr_mod));
          $calculation_description[] = array('TYPE' => 'attack.row', 'DESCRIPTION' => $mainhandSkillName.' x 2.69', 'VALUE' => number_format($atkmainhand_mod));
          $calculation_description[] = array('TYPE' => 'attack.footer', 'DESCRIPTION' => 'Equiped Subtotal', 'SUBTOTAL' => number_format($atksubtotal), 'ROLLTOTAL' => number_format($atksubtotal));
-         
+
          $calculation_description[] = array('TYPE' => 'attack', 'TYPE_HEAD' => "AA Modifiers", 'VALUE_HEAD' => "Value");
          if (count($aa_mods) > 0) {
             foreach($aa_mods as $value) {
@@ -1346,13 +1352,13 @@ TPL;
          else {
             $calculation_description[] = array('TYPE' => 'attack.row', 'DESCRIPTION' => 'None', 'VALUE' => '0');
          }
-         $max_val = max($aa_total_mod + $max_val, 0);  
+         $max_val = max($aa_total_mod + $max_val, 0);
          $calculation_description[] = array('TYPE' => 'attack.footer', 'DESCRIPTION' => 'Mod Subtotal', 'SUBTOTAL' => number_format($aa_total_mod), 'ROLLTOTAL' => number_format($max_val));
-         return max(10, $max_val); 
+         return max(10, $max_val);
       }
    }
-   
-   
+
+
    //pulled from EQEMU 20200316
    //get the AC cap where returns diminish
    public function GetACSoftcap()
@@ -1480,8 +1486,8 @@ TPL;
          default:
             return 0.3;
       }
-   }   
-   
+   }
+
 
    //pulled from EQEMU 20200316
    //fetch the AC bonus for this chars class
@@ -1611,12 +1617,12 @@ TPL;
       }
 
       return $this->_cppCastInt($ac_bonus);
-   }   
+   }
 
 
    //pulled from https://gist.github.com/fe1c0e77a5f9c40d6ce037c8efe2cf9a
    //calculates the AC that is displayed in the inventory window
-   public function GetDisplayAC(&$calculation_description = 'unset') {  
+   public function GetDisplayAC(&$calculation_description = 'unset') {
       $ac_sum_skipcaps = $this->ACSum(true);
       $ac_defense = $this->compute_defense($calculation_description);
       $ac_def_total = $this->_cppCastInt(1000 * ($ac_sum_skipcaps + $ac_defense) / 847);
@@ -1629,21 +1635,21 @@ TPL;
          $calculation_description[] = array('TYPE' => 'ac.row', 'DESCRIPTION' => 'Uncapped Mitigation AC / 0.847', 'VALUE' => number_format($ac_sum_skipcaps/0.847));
          $calculation_description[] = array('TYPE' => 'ac.row', 'DESCRIPTION' => 'Defense Mod / 0.847', 'VALUE' => number_format($ac_defense/0.847));
          $calculation_description[] = array('TYPE' => 'ac.footer', 'DESCRIPTION' => 'Subtotal', 'SUBTOTAL' => number_format($ac_def_total), 'ROLLTOTAL' => number_format($ac_def_total));
-         
-         return $ac_def_total; 
+
+         return $ac_def_total;
       }
    }
-   
+
    //pulled from EQEMU 20200316
    //AKA mitigation AC, this is the value used for combat, not the one displayed (which isnt used)
    public function ACSumOriginal($skip_caps = false)
    {
-   
+
       $ac = 0; // this should be base AC whenever shrouds come around
       $ac += $this->getItemAC(); // items + food + tribute
-      
+
       $shield_ac = 0;
-      
+
       /* need to implement shield modifier TODO
       if (HasShieldEquiped()) {
          auto client = CastToClient();
@@ -1656,17 +1662,17 @@ TPL;
          }
          shield_ac += client->GetHeroicSTR() / 10;
       }*/
-      
+
       // EQ math
       $ac = $this->_cppCastInt(($ac * 4) / 3);
-      
+
       // anti-twink,
       if (!$skip_caps && $this->level < 50) {
          $ac = $this->_cppCastInt(min($ac, 25 + 6 * $this->level));
       }
-      
+
       $ac = $this->_cppCastInt(max(0, $ac + $this->GetClassRaceACBonus()));
-      
+
       $spell_aa_ac = $this->GetAAModTotalByEffect(1) + $this->GetAAModTotalByEffect(416); //aa AC bonuses effect 1 a& 416
       if ($this->class >= CB_CLASS_NECROMANCER && $this->class <= CB_CLASS_ENCHANTER) {
          $ac += $this->_cppCastInt($this->_getValue('defense', 0) / 2 + $spell_aa_ac / 3);
@@ -1678,7 +1684,7 @@ TPL;
       $AGI = $this->getAGI();
       if ($AGI > 70)
          $ac += $this->_cppCastInt($AGI / 20);
-         
+
       if ($ac < 0)
          $ac = 0;
 
@@ -1691,7 +1697,7 @@ TPL;
             $softcap = ($softcap * (100 + $total_aclimitmod)) / 100;
          }
          $softcap += $shield_ac;
-         
+
          if ($ac > $softcap) {
             $over_cap = $ac - $softcap;
             $ac = $softcap + $this->_cppCastInt($over_cap * $returns);
@@ -1699,20 +1705,20 @@ TPL;
       }
 
       return $this->_cppCastInt($ac);
-   }   
-   
+   }
+
    //pulled from EQEMU 20200316
    //AKA mitigation AC, this is the value used for combat, not the one displayed (which isnt used)
    public function ACSum($skip_caps = false, &$calculation_description = 'unset')
    {
       if (!is_array($calculation_description)) $calculation_description = array();
-   
+
       $aa_mods1 = $this->GetAAModsByEffect(SE_ARMORCLASS); //effect 1
       $aa_mods2 = $this->GetAAModsByEffect(SE_ACV2); //effect 416
       $calculation_description[] = array('TYPE' => 'mit_ac', 'TYPE_HEAD' => "AC Alt Abilities", 'VALUE_HEAD' => "Value");
       if (count($aa_mods1) + count($aa_mods2) < 1) {
          $calculation_description[] = array('TYPE' => 'mit_ac.row', 'DESCRIPTION' => 'None', 'VALUE' => '0');
-      } 
+      }
       else {
          foreach($aa_mods1 as $value) {
             $aa_total_mod1 += $value['MODIFIER'];
@@ -1723,22 +1729,22 @@ TPL;
             $calculation_description[] = array('TYPE' => 'mit_ac.row', 'DESCRIPTION' => $value['NAME']." ".$value['RELATIVE_RANK'], 'VALUE' => $value['MODIFIER']);
          }
       }
-      $calculation_description[] = array('TYPE' => 'mit_ac.footer', 'DESCRIPTION' => 'AC AA Total', 'SUBTOTAL' => number_format($aa_total_mod1), 'ROLLTOTAL' => number_format($aa_total_mod1));   
-   
-   
+      $calculation_description[] = array('TYPE' => 'mit_ac.footer', 'DESCRIPTION' => 'AC AA Total', 'SUBTOTAL' => number_format($aa_total_mod1), 'ROLLTOTAL' => number_format($aa_total_mod1));
+
+
       $aa_mods3 = $this->GetAAModsByEffect(SE_COMBATSTABILITY); //effect 259
       $calculation_description[] = array('TYPE' => 'mit_ac', 'TYPE_HEAD' => "Stability Alt Abilities", 'VALUE_HEAD' => "Value");
       if (count($aa_mods3) < 1) {
          $calculation_description[] = array('TYPE' => 'mit_ac.row', 'DESCRIPTION' => 'None', 'VALUE' => '0');
-      } 
+      }
       else {
          foreach($aa_mods3 as $value) {
             $aa_total_mod2 += $value['MODIFIER'];
             $calculation_description[] = array('TYPE' => 'mit_ac.row', 'DESCRIPTION' => $value['NAME']." ".$value['RELATIVE_RANK'], 'VALUE' => $value['MODIFIER']);
          }
       }
-      $calculation_description[] = array('TYPE' => 'mit_ac.footer', 'DESCRIPTION' => 'Stability AA Total', 'SUBTOTAL' => number_format($aa_total_mod2), 'ROLLTOTAL' => number_format($aa_total_mod2));   
-   
+      $calculation_description[] = array('TYPE' => 'mit_ac.footer', 'DESCRIPTION' => 'Stability AA Total', 'SUBTOTAL' => number_format($aa_total_mod2), 'ROLLTOTAL' => number_format($aa_total_mod2));
+
       //softcap vars
       if (!$skip_caps) { //pulled from https://gist.github.com/fe1c0e77a5f9c40d6ce037c8efe2cf9a
          $softcap = $this->GetACSoftcap();
@@ -1752,10 +1758,10 @@ TPL;
          $calculation_description[] = array('TYPE' => 'mit_ac.row', 'DESCRIPTION' => "Base Softcap", 'VALUE' => number_format($original_softcap));
          $calculation_description[] = array('TYPE' => 'mit_ac.row', 'DESCRIPTION' => "Softcap After Stability AA", 'VALUE' => number_format($softcap));
          $calculation_description[] = array('TYPE' => 'mit_ac.row', 'DESCRIPTION' => "Softcap Returns", 'VALUE' => $softcapreturns);
-      }      
-   
+      }
+
       $totalAC = 0; // this should be base AC whenever shrouds come around
-      
+
       $shield_ac = 0;
       /* need to implement shield modifier TODO
       if (HasShieldEquiped()) {
@@ -1769,15 +1775,15 @@ TPL;
          }
          shield_ac += client->GetHeroicSTR() / 10;
       }*/
-      
-      
+
+
       $calculation_description[] = array('TYPE' => 'mit_ac', 'TYPE_HEAD' => "Modifiers", 'VALUE_HEAD' => "Value");
-         
+
       // EQ math
       $item_mod = $this->_cppCastInt(($this->getItemAC() * 4) / 3); // items + food + tribute
       $calculation_description[] = array('TYPE' => 'mit_ac.row', 'DESCRIPTION' => "Item AC x 4/3", 'VALUE' => number_format($item_mod));
       $totalAC = $item_mod;
-      
+
       // anti-twink,
       $level_cap_mod = 0;
       if (!$skip_caps && $this->level < 50) {
@@ -1788,7 +1794,7 @@ TPL;
          }
       }
       $totalAC += $level_cap_mod;
-      
+
       //race class bonus
       $race_class_mod = $this->_cppCastInt($this->GetClassRaceACBonus());
       $temptotal = $item_mod + $level_cap_mod + $race_class_mod;
@@ -1797,8 +1803,8 @@ TPL;
       }
       $calculation_description[] = array('TYPE' => 'mit_ac.row', 'DESCRIPTION' => "Race-Class Bonus", 'VALUE' => number_format($race_class_mod));
       $totalAC += $race_class_mod;
-      
-      
+
+
 
       //int caster mod
       if ($this->class >= CB_CLASS_NECROMANCER && $this->class <= CB_CLASS_ENCHANTER) {
@@ -1812,8 +1818,8 @@ TPL;
          $calculation_description[] = array('TYPE' => 'mit_ac.row', 'DESCRIPTION' => "AC AA / 4", 'VALUE' => number_format($this->_cppCastInt($aa_total_mod1 / 4)));
       }
       $totalAC += $int_caster_mod;
-      
-          
+
+
       //agility bonus
       $AGI = $this->getAGI();
       $agi_bonus_mod = 0;
@@ -1822,7 +1828,7 @@ TPL;
          $calculation_description[] = array('TYPE' => 'mit_ac.row', 'DESCRIPTION' => "AGI / 20", 'VALUE' => number_format($agi_bonus_mod));
       }
       $totalAC += $agi_bonus_mod;
-         
+
       //cant go below 0
       if ($totalAC < 0) {
          $calculation_description[] = array('TYPE' => 'mit_ac.row', 'DESCRIPTION' => "Min AC Correction", 'VALUE' => "+".number_format($totalAC));
@@ -1831,23 +1837,23 @@ TPL;
 
 
       if (!$skip_caps) { //pulled from https://gist.github.com/fe1c0e77a5f9c40d6ce037c8efe2cf9a
-         
+
          if ($totalAC > $softcap) {
             $tempTotalAC = $totalAC;
             $over_cap = $totalAC - $softcap;
             $totalAC = $softcap + $this->_cppCastInt($over_cap * $softcapreturns);
             $softcap_mod = 0 - ($tempTotalAC - $totalAC);
          }
-         
+
          $calculation_description[] = array('TYPE' => 'mit_ac.row', 'DESCRIPTION' => "Softcap Mod", 'VALUE' => number_format($softcap_mod));
       }
 
       $totalAC = $this->_cppCastInt($totalAC);
-      $calculation_description[] = array('TYPE' => 'mit_ac.footer', 'DESCRIPTION' => 'Mitigation AC', 'SUBTOTAL' => number_format($totalAC), 'ROLLTOTAL' => number_format($totalAC));   
+      $calculation_description[] = array('TYPE' => 'mit_ac.footer', 'DESCRIPTION' => 'Mitigation AC', 'SUBTOTAL' => number_format($totalAC), 'ROLLTOTAL' => number_format($totalAC));
       return $totalAC;
-   }   
-   
-   
+   }
+
+
    //get the skill id for your mainhand attack
    public function GetMainhandSkillID()
    {
@@ -1860,114 +1866,114 @@ TPL;
          return $handtohand;
       }
    }
-   
-   
+
+
    //get stats including items
    public function getSTR()
    {
       $this->_populateItems();
       return $this->_getValue('str', 0) + $this->itemstats->STR();
    }
-   
+
    public function getSTA()
    {
       $this->_populateItems();
       return $this->_getValue('sta', 0) + $this->itemstats->STA();
    }
-   
+
    public function getDEX()
    {
       $this->_populateItems();
       return $this->_getValue('dex', 0) + $this->itemstats->DEX();
    }
-   
+
    public function getAGI()
    {
       $this->_populateItems();
       return $this->_getValue('agi', 0) + $this->itemstats->AGI();
    }
-   
+
    public function getINT()
    {
       $this->_populateItems();
       return $this->_getValue('int', 0) + $this->itemstats->INT();
    }
-   
+
    public function getWIS()
    {
       $this->_populateItems();
       return $this->_getValue('wis', 0) + $this->itemstats->WIS();
    }
-   
+
    public function getCHA()
    {
       $this->_populateItems();
       return $this->_getValue('cha', 0) + $this->itemstats->CHA();
    }
-   
+
    public function getHSTR()
    {
       $this->_populateItems();
       return $this->itemstats->HSTR();
    }
-   
+
    public function getHSTA()
    {
       $this->_populateItems();
       return $this->itemstats->HSTA();
    }
-   
+
    public function getHDEX()
    {
       $this->_populateItems();
       return $this->itemstats->HDEX();
    }
-   
+
    public function getHAGI()
    {
       $this->_populateItems();
       return $this->itemstats->HAGI();
    }
-   
+
    public function getHINT()
    {
       $this->_populateItems();
       return $this->itemstats->HINT();
    }
-   
+
    public function getHWIS()
    {
       $this->_populateItems();
       return $this->itemstats->HWIS();
    }
-   
+
    public function getHCHA()
    {
       $this->_populateItems();
       return $this->itemstats->HCHA();
    }
-   
+
    public function getPR()
    {
       $this->_populateItems();
-      
+
       $byClass = array(0,0,0,0,4,0,0,0,8,0,0,0,0,0,0,0);
 
-      if($this->race == 8) $retval =  20; 
-      else if($this->race == 330) $retval = 30; 
-      else if($this->race == 74) $retval =  30; 
-      else if($this->race == 11) $retval =  20; 
+      if($this->race == 8) $retval =  20;
+      else if($this->race == 330) $retval = 30;
+      else if($this->race == 74) $retval =  30;
+      else if($this->race == 11) $retval =  20;
       else $retval =  15;
 
       $retval += $byClass[$this->class] + $this->itemstats->PR();
-      
+
       return $retval;
    }
-   
+
    public function getMR()
    {
       $this->_populateItems();
-      
+
       $byClass = array(0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
 
       if($this->race == 8) $retval = 30;
@@ -1977,14 +1983,14 @@ TPL;
       else $retval = 25;
 
       $retval += $byClass[$this->class] + $this->itemstats->MR();
-      
+
       return $retval;
    }
-   
+
    public function getDR()
    {
       $this->_populateItems();
-      
+
       $byClass = array(0,0,8,0,4,0,0,0,0,0,0,0,0,0,4,0);
 
       if($this->race == 3) $retval = 10;
@@ -1992,14 +1998,14 @@ TPL;
       else $retval = 15;
 
       $retval += $byClass[$this->class] + $this->itemstats->DR();
-      
+
       return $retval;
    }
-   
+
    public function getFR()
    {
       $this->_populateItems();
-      
+
       $byClass = array(0,0,0,4,0,0,8,0,0,0,0,0,0,0,0,0);
 
       if($this->race == 128) $retval = 30;
@@ -2007,147 +2013,147 @@ TPL;
       else $retval = 25;
 
       $retval += $byClass[$this->class] + $this->itemstats->FR();
-      
+
       return $retval;
    }
-   
+
    public function getCR()
    {
       $this->_populateItems();
-      
-      $byClass = array(0,0,0,4,0,0,0,0,0,0,0,0,0,0,4,0); 
+
+      $byClass = array(0,0,0,4,0,0,0,0,0,0,0,0,0,0,4,0);
 
       if($this->race == 2) $retval = 35;
       else if($this->race == 128) $retval = 15;
       else $retval = 25;
 
       $retval += $byClass[$this->class] + $this->itemstats->CR();
-      
+
       return $retval;
    }
-   
+
    public function getCOR()
    {
       $this->_populateItems();
       return $this->itemstats->COR();
    }
-   
+
    public function getHPR()
    {
       $this->_populateItems();
       return $this->itemstats->HPR();
    }
-   
+
    public function getHFR()
    {
       $this->_populateItems();
       return $this->itemstats->HFR();
    }
-   
+
    public function getHMR()
    {
       $this->_populateItems();
       return $this->itemstats->HMR();
    }
-   
+
    public function getHDR()
    {
       $this->_populateItems();
       return $this->itemstats->HDR();
    }
-   
+
    public function getHCR()
    {
       $this->_populateItems();
       return $this->itemstats->HCR();
    }
-   
+
    public function getHCOR()
    {
       $this->_populateItems();
       return $this->itemstats->HCOR();
    }
-   
+
    public function getWT()
    {
       $this->_populateItems();
       return $this->itemstats->WT();
    }
-   
+
    public function getFT()
    {
       $this->_populateItems();
       return $this->itemstats->FT();
    }
-   
+
    public function getDS()
    {
       $this->_populateItems();
       return $this->itemstats->DS();
    }
-   
+
    public function getHaste()
    {
       $this->_populateItems();
       return $this->itemstats->haste();
    }
-   
+
    public function getRegen()
    {
       $this->_populateItems();
       return $this->itemstats->regen();
    }
-   
+
    public function getItemAC()
    {
       $this->_populateItems();
       return $this->itemstats->AC();
    }
-   
+
    public function getItemHP()
    {
       $this->_populateItems();
       return $this->itemstats->hp();
    }
-   
+
    public function getItemATK()
    {
       $this->_populateItems();
       return $this->itemstats->attack();
    }
-   
+
    public function getItemEndurance()
    {
       $this->_populateItems();
       return $this->itemstats->endurance();
    }
-   
+
    public function getItemMana()
    {
       $this->_populateItems();
       return $this->itemstats->mana();
    }
 
-   
-   
+
+
 /********************************************
 **            PRIVATE FUNCTIONS            **
 ********************************************/
-   
+
    //we have converted c++ code here
    //much of it stores floats in integers
    //causing an implicit conversion
    //this does that same conversion
-   private function _cppCastInt($val) 
+   private function _cppCastInt($val)
    {
       return floor($val);
    }
-   
+
    //fetches base data for this character
-   private function _getBaseData() 
-   {    
+   private function _getBaseData()
+   {
       if (is_array($this->base_data)) return $this->base_data;
-      
+
       //load and cache the base data for this race/class
       $tpl = <<<TPL
       SELECT * 
@@ -2159,22 +2165,22 @@ TPL;
       $query = sprintf($tpl, $this->level, $this->class);
       $result = $this->db_content->query($query);
 
-      if(!$this->db_content->rows($result)) { 
-         cb_message_die('profile.php', $this->language['MESSAGE_NO_BASE_DATA'], $this->language['MESSAGE_ERROR']);      
+      if(!$this->db_content->rows($result)) {
+         cb_message_die('profile.php', $this->language['MESSAGE_NO_BASE_DATA'], $this->language['MESSAGE_ERROR']);
       }
-      
+
       $this->base_data = $this->db_content->nextrow($result);
       return $this->base_data;
-   } 
+   }
 
 
    //query this profiles items and add up all the stats
    private function _populateItems()
-   {      
+   {
       //only run it once
       if ($this->items_populated) return;
       $this->items_populated = true;
-      
+
       //place where all the items stats are added up
       $this->itemstats = new stats();
 
@@ -2196,24 +2202,20 @@ TPL;
       $result = $this->db->query($query);
       // loop through inventory results saving Name, Icon, and preload HTML for each
       // item to be pasted into its respective div later
-      $tpl = <<<TPL
-      SELECT * 
-      FROM items 
-      WHERE id = '%s' 
-      LIMIT 1
-TPL;
+
+      CharacterAlternateAbilityRepository::preloadAlternateAbilities($this->char_id);
+      ItemRepository::preloadItemsByAccountCharacter($this->account_id, $this->char_id);
+      SpellRepository::preloadSpellsUsedByCharacterId($this->char_id);
+
       while ($row = $this->db->nextrow($result)) {
-         $query = sprintf($tpl, $row["itemid"]);
-         $itemresult = $this->db_content->query($query);
-         $itemrow = $this->db_content->nextrow($itemresult);
+         $itemrow = ItemRepository::findOne($row['itemid']);
          //merge the inventory and item row
          $row = array_merge($itemrow, $row);
          $tempitem = new item($row);
          for ($i = 1; $i <= 5; $i++) {
-            if ($row["augslot".$i]) {
-               $query = sprintf($tpl, $row["augslot".$i]);
-               $augresult = $this->db_content->query($query);
-               $augrow = $this->db_content->nextrow($augresult);
+            if ($row["augslot" . $i]) {
+               $aug_item_id = $row["augslot" . $i];
+               $augrow      = ItemRepository::findOne($aug_item_id);
                $tempitem->addaug($augrow);
                //add stats only if it's equiped
                if ($tempitem->type() == EQUIPMENT) {
@@ -2224,10 +2226,10 @@ TPL;
 
          if ($tempitem->type() == EQUIPMENT)
             $this->itemstats->additem($row);
-        
+
          if ($tempitem->type() == EQUIPMENT || $tempitem->type() == INVENTORY)
             $this->itemstats->addWT($row['weight']);
-         
+
          $this->allitems[$tempitem->slot()] = &$tempitem;
          unset($tempitem);
       }
@@ -2253,39 +2255,36 @@ TPL;
       LIMIT 1
 TPL;
       while ($row = $this->db->nextrow($result)) {
-         $query = sprintf($tpl, $row["itemid"]);
-         $itemresult = $this->db_content->query($query);
-         $itemrow = $this->db_content->nextrow($itemresult);
+         $itemrow = ItemRepository::findOne($row['itemid']);
          //merge the inventory and item row
-         $row = array_merge($itemrow, $row);
+         $row      = array_merge($itemrow, $row);
          $tempitem = new item($row);
          for ($i = 1; $i <= 5; $i++) {
-            if ($row["augslot".$i]) {
-               $query = sprintf($tpl, $row["augslot".$i]);
-               $augresult = $this->db_content->query($query);
-               $augrow = $this->db_content->nextrow($augresult);
+            if ($row["augslot" . $i]) {
+               $aug_item_id = $row["augslot" . $i];
+               $augrow      = ItemRepository::findOne($aug_item_id);
                $tempitem->addaug($augrow);
             }
          }
-        
+
          $this->allitems[$tempitem->slot()] = $tempitem;
       }
    }
-   
+
    //uses the locator data to find the requested setting
    private function _getValue($data_key, $default)
-   {       
+   {
       // Pull Profile Info
       if (!array_key_exists($data_key, $this->locator))
       {
          cb_message_die('profile.php', sprintf($this->language['MESSAGE_PROF_NOKEY'], $data_key),$this->language['MESSAGE_ERROR']);
       }
-      
+
       //get the locator data for this setting so we can find it
       $table_name  = $this->locator[$data_key][LOCATOR_TABLE];
       $column_name = $this->locator[$data_key][LOCATOR_COLUMN];
       $index       = $this->locator[$data_key][LOCATOR_INDEX];
-      
+
       //if the locator lists a strict index of false then there
       //will only be 1 record
       if ($index === false)
@@ -2293,46 +2292,46 @@ TPL;
          //fetch the cached record
          $cached_record = $this->_getRecordCache($table_name);
       }
-      
+
       //otherwise the locator lists a numeric value representing
       //the value of the second pk
       else
-      {         
+      {
          //fetch this table from the db/cache
          $cached_table = $this->_getTableCache($table_name);
-      
-         //this table has no rows at all         
+
+         //this table has no rows at all
          if ($cached_table == PROF_NOROWS)
          {
             return false;
          }
-         
+
          //this is not a failure, this just means the character doesn't have a record
          //for this skill, or whatever is being requested
          if (!array_key_exists($index, $cached_table))
          {
             return $default;
          }
-         
+
          $cached_record = $cached_table[$index];
       }
-            
-            
+
+
       //make sure our column exists in the record
       if (!array_key_exists($column_name, $cached_record))
       {
             cb_message_die('profile.php', sprintf($this->language['MESSAGE_PROF_NOCACHE'], $data_key, $table_name, $column_name),$this->language['MESSAGE_ERROR']);
       }
-      
+
       //return the value
       return $cached_record[$column_name];
    }
-   
-   
-   
+
+
+
    // gets a TABLE, it loads it into memory so the same TABLE
-   // isnt double queried. It keeps every record and uses the 
-   // second column as the array index 
+   // isnt double queried. It keeps every record and uses the
+   // second column as the array index
    private function _getTableCache($table_name)
    {
       //get the name of the second pk on the table
@@ -2341,17 +2340,17 @@ TPL;
          cb_message_die('profile.php', sprintf($this->language['MESSAGE_PROF_NOTABKEY'], $table_name),$this->language['MESSAGE_ERROR']);
       }
       $second_column_name = $this->locator_pk[$table_name];
-      
+
       //if we haven't already loaded data from this table then load it
       if (!array_key_exists($table_name, $this->cached_tables))
       {
-         //since we are accessing the database, we'll go ahead and 
+         //since we are accessing the database, we'll go ahead and
          //load every column for the character and store it for later use
          $result = $this->_doCharacterQuery($table_name);
 
          //parse the result
          if($this->db->rows($result))
-         { 
+         {
             //this is a table with two primary keys, we need to load it
             //into a supporting array, indexed by it's second pk
             $temp_array = array();
@@ -2361,64 +2360,64 @@ TPL;
             }
 
             $this->cached_tables[$table_name] = $temp_array;
-         } 
-         else 
+         }
+         else
          {
             return PROF_NOROWS;
          }
       }
-      
+
       //hand the table/record over
       return $this->cached_tables[$table_name];
    }
-   
-   
-   
+
+
+
    // gets a RECORD, it loads it into memory so the same RECORD
    // isnt double queried.
    private function _getRecordCache($table_name)
    {
-      
+
       //if we haven't already loaded data from this table then load it
       if (!array_key_exists($table_name, $this->cached_records))
       {
-         //since we are accessing the database, we'll go ahead and 
+         //since we are accessing the database, we'll go ahead and
          //load every column for the character and store it for later use
          $result = $this->_doCharacterQuery($table_name);
 
          //parse the result
          if($this->db->rows($result))
-         { 
+         {
             //this is a simple table with only 1 row per character
             //we just store it in the root structure
             $this->cached_records[$table_name] = $this->db->nextrow($result);
-         } 
+         }
          else cb_message_die('profile.php', sprintf($this->language['MESSAGE_PROF_NOROWS'], $table_name),$this->language['MESSAGE_ERROR']);
       }
-      
+
       //hand the table/record over
       return $this->cached_records[$table_name];
    }
-   
+
    //gets all the records from a table for this character instance
    //we even get ones we dont need; they'll get cached for later use
    private function _doCharacterQuery($table_name)
-   {   
+   {
       //build the query
       $tpl = <<<TPL
       SELECT * 
       FROM `%s` 
       WHERE `id` = '%d'
 TPL;
-      $query = sprintf($tpl, $table_name, $this->char_id);   
-      
+      $query = sprintf($tpl, $table_name, $this->char_id);
+
       //get the result/error
       $result = $this->db->query($query);
-      
+
       //serve em up
       return $result;
-   }   
-   
+   }
+
 }
 
 

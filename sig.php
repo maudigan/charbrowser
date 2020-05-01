@@ -7,11 +7,11 @@
  *   (at your option) any later version.
  *
  *   Portions of this program are derived from publicly licensed software
- *   projects including, but not limited to phpBB, Magelo Clone, 
+ *   projects including, but not limited to phpBB, Magelo Clone,
  *   EQEmulator, EQEditor, and Allakhazam Clone.
  *
  *                                  Author:
- *                           Maudigan(Airwalking) 
+ *                           Maudigan(Airwalking)
  *
  *   February 24, 2014 - Changed items to png files (Maudigan c/o Warmonger)
  *   September 26, 2014 - Maudigan
@@ -22,7 +22,7 @@
  *   May 24, 2016 - Maudigan
  *      general code cleanup, whitespace correction, removed old comments,
  *      organized some code. A lot has changed, but not much functionally
- *      do a compare to 2.41 to see the differences. 
+ *      do a compare to 2.41 to see the differences.
  *      Implemented new database wrapper.
  *   January 7, 2018 - Maudigan
  *      Modified database to use a class.
@@ -45,11 +45,21 @@
  *   April 25, 2020 - Maudigan
  *     implement multi-tenancy
  ***************************************************************************/
- 
- 
+
+/**
+ * Autoloader
+ */
+spl_autoload_register(
+    function ($class_name) {
+        $class_name = str_replace("\\", "/", $class_name);
+        $class      = __DIR__ . "/include/{$class_name}.php";
+        include_once($class);
+    }
+);
+
 /*********************************************
                  INCLUDES
-*********************************************/ 
+*********************************************/
 define('INCHARBROWSER', true);
 $charbrowser_image_script = true;
 include_once(__DIR__ . "/include/common.php");
@@ -58,25 +68,25 @@ include_once(__DIR__ . "/include/itemclass.php");
 include_once(__DIR__ . "/include/db.php");
 
 
- 
+
 /*********************************************
              SUPPORT FUNCTIONS
 *********************************************/
 //convert passed hex color to RGB
-function HexToRGB($hex) { 
-   $hex = str_replace("#", "", $hex); 
-   $color = array(); 
-   if(strlen($hex) == 3) { 
-      $color['r'] = hexdec(substr($hex, 0, 1) . $r); 
-      $color['g'] = hexdec(substr($hex, 1, 1) . $g); 
-      $color['b'] = hexdec(substr($hex, 2, 1) . $b); 
-   } 
-   else if(strlen($hex) == 6) { 
-      $color['r'] = hexdec(substr($hex, 0, 2)); 
-      $color['g'] = hexdec(substr($hex, 2, 2)); 
-      $color['b'] = hexdec(substr($hex, 4, 2)); 
-   } 
-   return $color; 
+function HexToRGB($hex) {
+   $hex = str_replace("#", "", $hex);
+   $color = array();
+   if(strlen($hex) == 3) {
+      $color['r'] = hexdec(substr($hex, 0, 1) . $r);
+      $color['g'] = hexdec(substr($hex, 1, 1) . $g);
+      $color['b'] = hexdec(substr($hex, 2, 1) . $b);
+   }
+   else if(strlen($hex) == 6) {
+      $color['r'] = hexdec(substr($hex, 0, 2));
+      $color['g'] = hexdec(substr($hex, 2, 2));
+      $color['b'] = hexdec(substr($hex, 4, 2));
+   }
+   return $color;
 }
 
 
@@ -97,7 +107,7 @@ $path = array(
    'SCREEN'       => 'images/signatures/screens/%s.png',
    'STATBORDER'   => 'images/signatures/statborders/%s.png',
    'EPICBORDER'   => 'images/signatures/epicborders/%s.png',
-   'EPIC'         => 'images/items/item_%s.png', 
+   'EPIC'         => 'images/items/item_%s.png',
    'FONT'         => (SERVER_HAS_FREETYPE) ? 'fonts/%s.ttf' : 'fontsold/%s.gdf'
 );
 
@@ -159,8 +169,8 @@ $epic_icon_width_height = 40;
 
 $signaturewidth = 500;
 $signatureheight = 100;
-  
- 
+
+
 /*********************************************
          SETUP PROFILE/PERMISSIONS
 *********************************************/
@@ -169,7 +179,7 @@ else $charName = $_GET['char'];
 
 //character initializations
 $char = new profile($charName, $cbsql, $cbsql_content, $language, $showsoftdelete, $charbrowser_is_admin_page); //the profile class will sanitize the character name
-$charID = $char->char_id(); 
+$charID = $char->char_id();
 $name = $char->GetValue('name');
 $mypermission = GetPermissions($char->GetValue('gm'), $char->GetValue('anon'), $char->char_id());
 
@@ -193,20 +203,20 @@ if ($char->GetValue('anon') != 1 || $showguildwhenanon || $charbrowser_is_admin_
    /* this will get implemented in the server code soon, uncomment and remove the code below
    //load guild name dynamically
    $tpl = <<<TPL
-   SELECT guilds.name, guild_ranks.title 
+   SELECT guilds.name, guild_ranks.title
    FROM guilds
    JOIN guild_members
      ON guilds.id = guild_members.guild_id
    JOIN guild_ranks
-     ON guild_members.rank = guild_ranks.rank 
+     ON guild_members.rank = guild_ranks.rank
     AND guild_members.guild_id = guild_ranks.guild_id
-   WHERE guild_members.char_id = '%s' 
+   WHERE guild_members.char_id = '%s'
    LIMIT 1
    TPL;
    $query = sprintf($tpl, $charID);
    $result = $cbsql->query($query);
    if($cbsql->rows($result))
-   { 
+   {
       $row = $cbsql->nextrow($result);
       $guild_name = $row['name'];
       $guild_rank = $row['title'];
@@ -224,7 +234,7 @@ TPL;
    $query = sprintf($tpl, $charID);
    $result = $cbsql->query($query);
    if($cbsql->rows($result))
-   { 
+   {
       $row = $cbsql->nextrow($result);
       $guild_name = $row['name'];
       $guild_rank = $guildranks[$row['rank']];
@@ -306,7 +316,7 @@ if($epicbg && $epicicon) {
    $tempimage = imagecreatefrompng($epicbg);
    imagecopy($image, $tempimage, $epic_x, $epic_y, 0, 0, $epic_width_height, $epic_width_height);
    imagedestroy($tempimage);
-   $tempimage = imagecreatefrompng($epicicon);  
+   $tempimage = imagecreatefrompng($epicicon);
    imagecopy($image, $tempimage, $epic_x + $epic_icon_offset, $epic_y + $epic_icon_offset, 0, 0, $epic_icon_width_height , $epic_icon_width_height );
    imagedestroy($tempimage);
 }
@@ -318,7 +328,7 @@ function drawtext( $image, $text, $size, $font, $color, $offsetx, $offsety, $sha
    $color = imagecolorallocate($image, $color['r'], $color['g'], $color['b']);
 
    if (SERVER_HAS_FREETYPE) {
-      $bbox = imagettfbbox($size, 0, $font, $text); 
+      $bbox = imagettfbbox($size, 0, $font, $text);
       $height = abs($bbox[1]) + abs($bbox[5]);
       $width = abs($bbox[4]) + abs($bbox[0]);
       $x = $offsetx + abs($bbox[0]);
@@ -383,7 +393,7 @@ if ($border) {
                OUTPUT IMAGE
 *********************************************/
 ob_clean(); //make sure we haven't sent a text header
-header("Content-Type: image/png"); 
-imagepng($image); 
+header("Content-Type: image/png");
+imagepng($image);
 ImageDestroy($image);
 ?>

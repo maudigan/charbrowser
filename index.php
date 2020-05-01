@@ -7,18 +7,18 @@
  *   (at your option) any later version.
  *
  *   Portions of this program are derived from publicly licensed software
- *   projects including, but not limited to phpBB, Magelo Clone, 
+ *   projects including, but not limited to phpBB, Magelo Clone,
  *   EQEmulator, EQEditor, and Allakhazam Clone.
  *
  *                                  Author:
- *                           Maudigan(Airwalking) 
+ *                           Maudigan(Airwalking)
  *
  *   September 28, 2014 - Maudigan
  *      added code to monitor database performance
  *   May 24, 2016 - Maudigan
  *      general code cleanup, whitespace correction, removed old comments,
  *      organized some code. A lot has changed, but not much functionally
- *      do a compare to 2.41 to see the differences. 
+ *      do a compare to 2.41 to see the differences.
  *      Implemented new database wrapper.
  *   September 16, 2017 - Maudigan
  *      Modify script to be able to redirect to the other pages using the
@@ -31,53 +31,64 @@
  *     if the custom home.php is present, use it instead of the
  *     standard front page
  ***************************************************************************/
-  
- 
+
+/**
+ * Autoloader
+ */
+spl_autoload_register(
+    function ($class_name) {
+        $class_name = str_replace("\\", "/", $class_name);
+        $class      = __DIR__ . "/include/{$class_name}.php";
+        include_once($class);
+    }
+);
+
+$constants = require_once(__DIR__ . "/include/constants.php");
+
 /*********************************************
                  INCLUDES
-*********************************************/ 
+*********************************************/
 define('INCHARBROWSER', true);
 include_once(__DIR__ . "/include/common.php");
- 
- 
- 
+
+
 //use the home page override if it's present
 //and no other page is set
-if (empty($_REQUEST['page']) && file_exists( __DIR__ . "/home.php")) {   
+if (empty($_REQUEST['page']) && file_exists( __DIR__ . "/home.php")) {
    $_REQUEST['page'] = 'home';
 }
 
- 
+
 /*********************************************
                INDEX REQUESTED
 *********************************************/
 if (empty($_REQUEST['page']))
-{ 
+{
    /*********************************************
                   DROP INDEX HEADER
    *********************************************/
    $d_title = $subtitle;
    include(__DIR__ . "/include/header.php");
-    
-    
+
+
    /*********************************************
                  POPULATE BODY
-   *********************************************/  
+   *********************************************/
    $cb_template->set_filenames(array(
      'index' => 'index_body.tpl')
    );
 
-   $cb_template->assign_both_vars(array(  
+   $cb_template->assign_both_vars(array(
       'TITLE' => $mytitle,
       'VERSION' => $version)
    );
-   $cb_template->assign_vars(array(  
+   $cb_template->assign_vars(array(
       'L_VERSION' => $language['INDEX_VERSION'],
       'L_BY' => $language['INDEX_BY'],
       'L_INTRO' => $language['INDEX_INTRO'])
    );
- 
- 
+
+
    /*********************************************
               OUTPUT BODY AND FOOTER
    *********************************************/
@@ -85,7 +96,7 @@ if (empty($_REQUEST['page']))
 
    $cb_template->destroy;
 
-   include(__DIR__ . "/include/footer.php");   
+   include(__DIR__ . "/include/footer.php");
 }
 
 
@@ -96,27 +107,27 @@ else
 {
    /*********************************************
                 INPUT VALIDATION
-   *********************************************/ 
+   *********************************************/
    //we use the page variable to redirect this script to one of the other php scripts
    //this permits us to use index.php to display every single page in the utility
-    
-   // Make sure the request isn't escaping to another unintended directory 
+
+   // Make sure the request isn't escaping to another unintended directory
    // this is risky, so we're super strict and only allow alpha characters
    if (!preg_match('/^[a-zA-Z]+$/', $_REQUEST['page']))
-   { 
+   {
       cb_message_die($language['MESSAGE_ERROR'],$language['MESSAGE_NOPAGE']);
-   } 
+   }
 
    //get the absolute path to the requested script
    $page = __DIR__ . "/" . $_REQUEST['page'] . ".php";
 
    //make sure the script exists so the include doesn't error
    if (!file_exists($page))
-   { 
+   {
       cb_message_die($language['MESSAGE_ERROR'],$language['MESSAGE_NOPAGE']);
-   } 
-   
+   }
+
    include($page);
-} 
+}
 
 ?>

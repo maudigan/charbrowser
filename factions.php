@@ -7,15 +7,15 @@
  *   (at your option) any later version.
  *
  *   Portions of this program are derived from publicly licensed software
- *   projects including, but not limited to phpBB, Magelo Clone, 
+ *   projects including, but not limited to phpBB, Magelo Clone,
  *   EQEmulator, EQEditor, and Allakhazam Clone.
  *
  *                                  Author:
- *                           Maudigan(Airwalking) 
+ *                           Maudigan(Airwalking)
  *
  *   November 24, 2013 - Maudigan
  *   Updated query to be compatible with the new way factions are stored in
- *     the database 
+ *     the database
  *   General code/comment/whitespace cleanup
  *   September 26, 2014 - Maudigan
  *      Updated character table name
@@ -25,7 +25,7 @@
  *   May 24, 2016 - Maudigan
  *      general code cleanup, whitespace correction, removed old comments,
  *      organized some code. A lot has changed, but not much functionally
- *      do a compare to 2.41 to see the differences. 
+ *      do a compare to 2.41 to see the differences.
  *      Implemented new database wrapper.
  *   October 3, 2016 - Maudigan
  *      Made the faction links customizable
@@ -39,17 +39,18 @@
  *     implement multi-tenancy
  *
  ***************************************************************************/
-  
- 
+
+use CharBrowser\Repositories\CharacterFactionValuesRepository;
+
 /*********************************************
                  INCLUDES
-*********************************************/ 
+*********************************************/
 define('INCHARBROWSER', true);
 include_once(__DIR__ . "/include/common.php");
 include_once(__DIR__ . "/include/profile.php");
 include_once(__DIR__ . "/include/db.php");
- 
- 
+
+
 /*********************************************
              SUPPORT FUNCTIONS
 *********************************************/
@@ -67,24 +68,24 @@ function FactionToString($character_value) {
    if($character_value <= -1000) return $language['FACTION_SCOWLS'];
    return $language['FACTION_INDIFF'];
 }
-  
- 
+
+
 /*********************************************
          SETUP PROFILE/PERMISSIONS
 *********************************************/
 if(!$_GET['char']) cb_message_die($language['MESSAGE_ERROR'],$language['MESSAGE_NO_CHAR']);
 else $charName = $_GET['char'];
 
-//character initializations 
+//character initializations
 $char = new profile($charName, $cbsql, $cbsql_content, $language, $showsoftdelete, $charbrowser_is_admin_page); //the profile class will sanitize the character name
-$charID = $char->char_id(); 
+$charID = $char->char_id();
 $name = $char->GetValue('name');
 $mypermission = GetPermissions($char->GetValue('gm'), $char->GetValue('anon'), $char->char_id());
 
 //block view if user level doesnt have permission
 if ($mypermission['factions']) cb_message_die($language['MESSAGE_ERROR'],$language['MESSAGE_ITEM_NO_VIEW']);
- 
- 
+
+
 /*********************************************
         GATHER RELEVANT PAGE DATA
 *********************************************/
@@ -108,42 +109,38 @@ LEFT JOIN faction_list_mod AS flmd
       AND (flmd.mod_name = 'd%d') 
 ORDER BY name ASC 
 TPL;
-$query = sprintf($tpl, $char->GetValue('class'), 
-                       $char->GetValue('race'), 
-                       ($char->GetValue('deity')==396) ? "140" : $char->GetValue('deity'));
-$result = $cbsql_content->query($query);
-$factions = array();
-while ($row = $cbsql_content->nextrow($result)) {   
-   //get info about the chars faction from
-   //the player db connection
-   $tpl = <<<TPL
-   SELECT current_value 
-   FROM faction_values 
-   WHERE char_id = '%s' 
-   AND faction_ID = '%s' 
-TPL;
-   $query = sprintf($tpl, $charID, $row['id']);
-   $charmod = intval($cbsql->field_query('current_value', $query));
 
-   //add charmod to faction results
-   $row['charmod'] = $charmod;
-   $factions[] = $row;
+$query = sprintf(
+    $tpl,
+    $char->GetValue('class'),
+    $char->GetValue('race'),
+    ($char->GetValue('deity') == 396) ? "140" : $char->GetValue('deity')
+);
+
+CharacterFactionValuesRepository::preloadFactionValues($charID);
+
+$result   = $cbsql_content->query($query);
+$factions = [];
+while ($row = $cbsql_content->nextrow($result)) {
+    $faction        = CharacterFactionValuesRepository::getFaction($row['id']);
+    $faction_value  = $faction ? $faction['current_value'] : 0;
+    $row['charmod'] = intval($faction_value);
+    $factions[]     = $row;
 }
- 
- 
+
 /*********************************************
                DROP HEADER
 *********************************************/
 $d_title = " - ".$name.$language['PAGE_TITLES_FACTIONS'];
 include(__DIR__ . "/include/header.php");
- 
- 
+
+
 /*********************************************
             DROP PROFILE MENU
 *********************************************/
 output_profile_menu($name, 'factions');
- 
- 
+
+
 /*********************************************
               POPULATE BODY
 *********************************************/
@@ -158,10 +155,10 @@ else {
    );
 }
 
-$cb_template->assign_both_vars(array(  
+$cb_template->assign_both_vars(array(
    'NAME'        => $name)
 );
-$cb_template->assign_vars(array(  
+$cb_template->assign_vars(array(
    'L_FACTIONS'  => $language['FACTION_FACTIONS'],
    'L_NAME'      => $language['FACTION_NAME'],
    'L_FACTION'   => $language['FACTION_FACTION'],
@@ -170,17 +167,17 @@ $cb_template->assign_vars(array(
    'L_CLASS'     => $language['FACTION_CLASS'],
    'L_RACE'      => $language['FACTION_RACE'],
    'L_DEITY'     => $language['FACTION_DEITY'],
-   'L_TOTAL'     => $language['FACTION_TOTAL'], 
+   'L_TOTAL'     => $language['FACTION_TOTAL'],
    'L_DONE'      => $language['BUTTON_DONE'])
 );
-  
+
 foreach($factions as $faction) {
    $total = $faction['base'] + $faction['charmod'] + $faction['classmod'] + $faction['racemod'] + $faction['deitymod'];
-   $cb_template->assign_both_block_vars("factions", array( 
+   $cb_template->assign_both_block_vars("factions", array(
       'ID'      => $faction['id'],
       'LINK' => QuickTemplate($link_faction, array('FACTION_ID' => $faction['id'])),
       'NAME'    => $faction['name'],
-      'FACTION' => FactionToString($total), 
+      'FACTION' => FactionToString($total),
       'BASE'    => $faction['base'],
       'CHAR'    => $faction['charmod'],
       'CLASS'   => $faction['classmod'],
@@ -189,8 +186,8 @@ foreach($factions as $faction) {
       'TOTAL'   => $total)
    );
 }
- 
- 
+
+
 /*********************************************
            OUTPUT BODY AND FOOTER
 *********************************************/

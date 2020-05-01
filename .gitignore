@@ -47,3 +47,6 @@ config.php
 ### server files ###
 error_log
 log.txt
+
+.idea
+data

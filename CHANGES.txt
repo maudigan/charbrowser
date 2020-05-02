@@ -1,3 +1,11 @@
+v3.3.2
+----------------------------------------------------------------------
+bazaar patch
+
+May 2, 2020 - fixed the bazaar sorting, filtering and pagination
+              redesigned the querying to reduce db load
+              (maudigan)
+              
 v3.3.1
 ----------------------------------------------------------------------
 performance improvements

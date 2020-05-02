@@ -38,7 +38,6 @@
  *
  ***************************************************************************/
 
-use CharBrowser\Repositories\ItemRepository;
 
 
 /*********************************************
@@ -89,94 +88,123 @@ if ($blockbazaar) cb_message_die($language['MESSAGE_ERROR'],$language['MESSAGE_I
 /*********************************************
         BUILD AND EXECUTE THE SEARCH
 *********************************************/
+
+//generating our list of items is problematic because the trader records and the item
+// records can be in a different database. We accomplish it by querying the trader results
+// prefiltered with the trader filters. We use that to build a list of IDs. We then query
+// all the item results using that list of IDs and any user filters. 
+//we then manually join those item results and the trader results from before, then sort
+// it by the user provided ordering. 
+
+//QUERY ALL THE TRADER ITEMS, PREFILTERED BY TRADER FIELDS
 //build the where clause
-$where = "";
-$items_where = "";
-$divider = "WHERE ";
-if ($item) {
-   $items_where .= $divider."items.Name LIKE '%".str_replace("_", "%", str_replace(" ","%",$item))."%'";
-   $divider = " AND ";
-}
-if ($seller) {
-   $where .= $divider."character_data.name = '".$seller."'";
-   $divider = " AND ";
-}
-if ($pricemin) {
-   $modprice = $pricemin * 1000;
-   $where .= $divider."trader.item_cost >= $modprice";
-   $divider = " AND ";
-}
-if ($pricemax) {
-   $modprice = $pricemax * 1000;
-   $where .= $divider."trader.item_cost <= $modprice";
-   $divider = " AND ";
-}
-if($class > -1) {
-   $items_where .= $divider."items.classes & $class";
-   $divider = " AND ";
-}
-if($race > -1) {
-   $items_where .= $divider."items.races   & $race";
-   $divider = " AND ";
-}
-if($type > -1) {
-   $items_where .= $divider."items.itemtype = $type";
-   $divider = " AND ";
-}
-if($slot > -1) {
-   $items_where .= $divider."items.slots   & $slot";
-   $divider = " AND ";
-}
+$filters = array();
+if ($seller) $filters[] = "character_data.name = '".$seller."'";
+if ($pricemin) $filters[] = "trader.item_cost >= ".($pricemin * 1000);
+if ($pricemax) $filters[] = "trader.item_cost <= ".($pricemax * 1000);
+$where = generate_where($filters);
 
-//build the orderby & limit clauses
-$order = "ORDER BY $orderby $direction LIMIT $start, $perpage";
-
-$filtered_item_ids = array();
-if ($items_where != "") {
-   $query  = sprintf("SELECT id FROM items %s", $items_where);
-   $result = $cbsql_content->query($query);
-   while ($row = $cbsql_content->nextrow($result)) {
-      $filtered_item_ids[] = $row['id'];
-   }
-}
-
-$filtered_item_ids_where = "";
-if (count($filtered_item_ids) > 0) {
-   $filtered_item_ids_where = ($where != "" ? " AND" : " WHERE") . " trader.item_id IN (" . implode(", ", $filtered_item_ids) . ") ";
-}
-
-//build the query, leave a spot for the where
-//and the orderby clauses
 $tpl = <<<TPL
 SELECT character_data.name as charactername,
        trader.item_cost as tradercost,
-       trader.*
+       trader.item_id
 FROM character_data 
 INNER JOIN trader
         ON character_data.id = trader.char_id
-        %s %s %s
+        %s
 TPL;
 
-$item_ids = array();
-$result   = $cbsql->query(sprintf($tpl, $where, $filtered_item_ids_where, $order));
-while ($row = $cbsql->nextrow($result)) {
-   $item_ids[] = $row['item_id'];
+$query = sprintf($tpl, $where);
+$result = $cbsql->query($query);
+
+//error if there's no items for sell
+if (!$cbsql->rows($result)) cb_message_die($language['MESSAGE_ERROR'],$language['MESSAGE_NO_RESULTS_ITEMS']);
+   
+//build item id list for items being sold   
+$filtered_trader_items_id = array();   
+$filtered_trader_rows = array();   
+while ($row = $cbsql_content->nextrow($result)) {
+   $filtered_trader_items_id[] = $row['item_id'];
+   $filtered_trader_rows[] = $row;
+}
+$filtered_trader_items_in = implode(", ", $filtered_trader_items_id);
+
+
+
+//GET THE ITEM ROWS FOR ALL THE ITEMS FOR SELL, PREFILTERED
+//build the where clause
+$filters = array();
+$filters[] = "id IN (".$filtered_trader_items_in.")";
+if ($item) $filters[] = "Name LIKE '%".str_replace("_", "%", str_replace(" ","%",$item))."%'";
+if($class > -1) $filters[] = "classes & ".$class;
+if($race > -1) $filters[] = "races & ".$race;
+if($type > -1) $filters[] = "itemtype = ".$type;
+if($slot > -1) $filters[] = "slots & ".$slot;
+$where = generate_where($filters);
+
+$tpl = <<<TPL
+SELECT *
+FROM items 
+%s
+TPL;
+
+$query = sprintf($tpl, $where);
+$result = $cbsql_content->query($query);
+
+//error if there's no results that match
+if (!$cbsql->rows($result)) cb_message_die($language['MESSAGE_ERROR'],$language['MESSAGE_NO_RESULTS_ITEMS']);
+   
+//load the items into an array for the join later
+$filtered_items = array();   
+while ($row = $cbsql_content->nextrow($result)) {
+   $filtered_items[$row['id']] = $row;
 }
 
-if (count($item_ids) == 0) {
-   cb_message_die($language['MESSAGE_ERROR'],$language['MESSAGE_NO_RESULTS_ITEMS']);
+
+//DO A MANUAL JOIN OF THE RESULTS
+//loop through the trader rows and join the item stats to it in a new array
+$joined_results = array();
+foreach ($filtered_trader_rows as $trader_row) {
+   $curid = $trader_row['item_id'];
+   
+   //check if an item result exists for this trader row
+   //if it does, join them into a new result
+   if (array_key_exists($curid, $filtered_items)) {
+      $joined_results[] = array_merge($trader_row, $filtered_items[$curid]);
+   }
+}
+$totalitems = count($joined_results);
+
+
+//DO A MANUAL SORT OF THE RESULTS
+function str_orderby($a, $b) {
+   global $direction;
+   global $orderby;
+   if ($direction == "ASC") {
+      return strcmp($a[$orderby], $b[$orderby]);
+   }
+   else {
+      return strcmp($b[$orderby], $a[$orderby]);
+   }
+}
+function int_orderby($a, $b) {
+   global $direction;
+   global $orderby;
+   if ($direction == "ASC") {
+      return $a[$orderby] - $b[$orderby];
+   }
+   else {
+      return $b[$orderby] - $a[$orderby];
+   }
+}
+if ($orderby == 'tradercost') {
+   usort($joined_results, "int_orderby");
+}
+else {
+   usort($joined_results, "str_orderby");
 }
 
-ItemRepository::preloadByItemIds($item_ids);
 
-//now add on the limit & ordering and query again for just this page
-$result = $cbsql->query(sprintf($tpl, $where, $filtered_item_ids_where, $order));
-$lots   = array();
-while ($row = $cbsql->nextrow($result)) {
-   $trader_item_id = $row['item_id'];
-   $row            = array_merge($row, ItemRepository::findOne($trader_item_id));
-   $lots[]         = $row;
-}
 
 /*********************************************
                DROP HEADER
@@ -234,9 +262,11 @@ $cb_template->assign_vars(array(
    'L_SEARCH_PRICE_MAX' => $language['BAZAAR_SEARCH_PRICE_MAX'])
 );
 
-//dump items
+//dump items for this page
 $slotcounter = 0;
-foreach($lots as $lot) {
+$finish = min($start + $perpage, $totalitems);
+for ($i = $start; $i < $finish; $i++) { 
+   $lot = $joined_results[$i];
    $tempitem = new item($lot);
    $price = $lot["tradercost"];
    $plat = number_format(floor($price/1000));

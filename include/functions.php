@@ -49,6 +49,8 @@
  *   April 25, 2020 - Maudigan
  *      add profile button for bots menu, staged the begining of having 
  *      dynamically displayed/hidden buttons
+ *   May 2, 2020 - Maudigan
+ *      add function to build where clause 
  *
  ***************************************************************************/
  
@@ -72,6 +74,21 @@ function timer_start($index)
    global $timers;
    $timers[$index] = microtime();
 } 
+
+//recieves an array of filters, returns where clause
+function generate_where($filters) {
+   $where = "";
+   $divider = "WHERE ";
+
+   if (is_array($filters)) {
+      foreach ($filters as $filter) {
+         $where .= $divider.$filter;
+         $divider = " AND ";
+      }
+   }
+   
+   return $where;
+}
 
 //returns how long the timer as been running in seconds
 function timer_stop($index)

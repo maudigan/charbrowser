@@ -50,7 +50,7 @@
       <table class='CB_Table CB_Highlight_Rows'>
          <thead> 
             <tr>                  
-               <th><a href="{ORDER_LINK}&orderby=name">{L_ITEM}</a></th>
+               <th><a href="{ORDER_LINK}&orderby=Name">{L_ITEM}</a></th>
                <th><a href="{ORDER_LINK}&orderby=tradercost">{L_PRICE}</a></th>
                <th><a href="{ORDER_LINK}&orderby=charactername">{L_NAME}</a></th>
             </tr>

@@ -34,6 +34,8 @@
  *     impemented common.php
  *   April 25, 2020 - Maudigan
  *     implement multi-tenancy
+ *   May 3, 2020 - Maudigan
+ *     changes to minimize database access
  *
  ***************************************************************************/
 
@@ -66,7 +68,7 @@ if ($mypermission['keys']) cb_message_die($language['MESSAGE_ERROR'],$language['
 /*********************************************
         GATHER RELEVANT PAGE DATA
 *********************************************/
-//get keys from the db
+//get keys from the character db
 $tpl = <<<TPL
 SELECT item_id 
 FROM keyring 
@@ -74,30 +76,27 @@ WHERE char_id =  %s
 TPL;
 $query = sprintf($tpl, $charID);
 $result = $cbsql->query($query);
-$keys = array();
-if ($cbsql->rows($result))
-{
-   while($row = $cbsql->nextrow($result))
-   {
-      //get info about the key item
-      //from the content database
-      $tpl = <<<TPL
-      SELECT Name
-      FROM items 
-      WHERE id = '%s' 
-TPL;
-      $query = sprintf($tpl, $row['item_id']);
-      $key_name = $cbsql_content->field_query('Name', $query);
 
-      //add item name to key results
-      $row['key'] = $key_name;
-      $keys[] = $row;
-   }
-}
-else
-{
-   cb_message_die($language['KEYS_KEY']." - ".$name,$language['MESSAGE_NO_KEYS']);
-}
+//error if there's no results that match
+if (!$cbsql->rows($result)) cb_message_die($language['KEYS_KEY'],$language['MESSAGE_NO_KEYS']);
+
+$keys = $cbsql->fetch_all($result);  
+$key_ids = get_id_list($keys, 'item_id');
+
+
+//get item data using list of key ids
+$tpl = <<<TPL
+SELECT Name, id
+FROM items 
+WHERE id in (%s)
+ORDER BY Name ASC
+TPL;
+
+$query = sprintf($tpl, $key_ids);
+$result = $cbsql_content->query($query);
+
+$keys = $cbsql_content->fetch_all($result);  
+
 
 
 /*********************************************
@@ -130,9 +129,9 @@ $cb_template->assign_vars(array(
 
 foreach ($keys as $key) {
    $cb_template->assign_both_block_vars("keys", array(
-      'KEY' => $key['key'],
-      'ITEM_ID' => $key["item_id"],
-      'LINK' => QuickTemplate($link_item, array('ITEM_ID' => $key["item_id"])))
+      'KEY' => $key['Name'],
+      'ITEM_ID' => $key["id"],
+      'LINK' => QuickTemplate($link_item, array('ITEM_ID' => $key["id"])))
    );
 }
 

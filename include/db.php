@@ -29,6 +29,9 @@
  *      Added a method to quickly query a single field val
  *      Added a datbase performance method to check which tables
  *        were queried with an instance
+ *   May 3, 2020 - Maudigan
+ *      fixed fetch_all to not return an extra blank row
+ *      split up rows searched and rows returned for the db performance code
  ***************************************************************************/
 
 
@@ -231,6 +234,7 @@ class Charbrowser_SQL
       timer_start('query');
       $return = $this->_mysql_handle->query($query);
       $time = timer_stop('query');
+      $rowcount = $return->num_rows;
 
       //report errors
       if (!$return)
@@ -261,14 +265,16 @@ class Charbrowser_SQL
          if (array_key_exists($row['table'], $this->_dbp_tables))
          {
             $this->_dbp_tables[$row['table']]['COUNT'] = $this->_dbp_tables[$row['table']]['COUNT'] + 1;
-            $this->_dbp_tables[$row['table']]['ROWS'] = $this->_dbp_tables[$row['table']]['ROWS'] + $row['rows'];
+            $this->_dbp_tables[$row['table']]['ROWSSEARCHED'] = $this->_dbp_tables[$row['table']]['ROWSSEARCHED'] + $row['rows'];
+            $this->_dbp_tables[$row['table']]['ROWSRETURNED'] = $this->_dbp_tables[$row['table']]['ROWSRETURNED'] + $rowcount;
          }
          else
          {
             $this->_dbp_tables[$row['table']] = array(
                'TABLE' => $row['table'],
                'COUNT' => 1,
-               'ROWS' => $row['rows']
+               'ROWSSEARCHED' => $row['rows'],
+               'ROWSRETURNED' => $rowcount
             );
          }
 
@@ -335,7 +341,9 @@ class Charbrowser_SQL
    function fetch_all($result)
    {
       $rows = array();
-      while ($rows[] = $result->fetch_array());
+      while ($row = $result->fetch_array()) {
+         $rows[] = $row;
+      }
       return $rows;
    }
 }

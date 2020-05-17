@@ -45,6 +45,8 @@
  *     show stack size code
  *   April 25, 2020 - Maudigan
  *     implement multi-tenancy
+ *   May 3, 2020 - Maudigan
+ *     allow construction with id or name
  *
  ***************************************************************************/
 
@@ -760,15 +762,23 @@ private $locator = array (
       $table_name = "character_data";
 
       //don't go sticking just anything in the database
-      if (!IsAlphaSpace($name)) cb_message_die($this->language['MESSAGE_ERROR'],$this->language['MESSAGE_NAME_ALPHA']);
+      if (!IsAlphaNumericSpace($name)) cb_message_die($this->language['MESSAGE_ERROR'],$this->language['MESSAGE_NAME_ALPHA']);
 
+      //initializing with name or id?
+      if (is_numeric($name)) {
+         $column_name = 'id';
+      }
+      else {
+         $column_name = 'name';
+      }
+      
       //build the query
       $tpl = <<<TPL
 SELECT * 
 FROM `%s` 
-WHERE `name` = '%s'
+WHERE `%s` = '%s'
 TPL;
-      $query = sprintf($tpl, $table_name, $name);
+      $query = sprintf($tpl, $table_name, $column_name, $name);
 
       //get the result/error
       $result = $this->db->query($query);

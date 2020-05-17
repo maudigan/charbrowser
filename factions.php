@@ -37,10 +37,11 @@
  *     impemented common.php
  *   April 25, 2020 - Maudigan
  *     implement multi-tenancy
+ *   May 4, 2020 - Maudigan
+ *     clean up of the content/character data join
  *
  ***************************************************************************/
 
-use CharBrowser\Repositories\CharacterFactionValuesRepository;
 
 /*********************************************
                  INCLUDES
@@ -89,7 +90,7 @@ if ($mypermission['factions']) cb_message_die($language['MESSAGE_ERROR'],$langua
 /*********************************************
         GATHER RELEVANT PAGE DATA
 *********************************************/
-//get factions from the db
+//get content factions from the content db
 $tpl = <<<TPL
 SELECT fl.id, 
        fl.name, 
@@ -116,17 +117,25 @@ $query = sprintf(
     $char->GetValue('race'),
     ($char->GetValue('deity') == 396) ? "140" : $char->GetValue('deity')
 );
+$result = $cbsql_content->query($query);
+$content_factions = $cbsql_content->fetch_all($result);
 
-CharacterFactionValuesRepository::preloadFactionValues($charID);
+//get the characters factions from the player db
+$tpl = <<<TPL
+SELECT current_value,
+       faction_ID
+FROM faction_values 
+WHERE char_id = '%s' 
+TPL;
+$query = sprintf($tpl, $charID);
+$result = $cbsql->query($query);
+$character_factions = $cbsql->fetch_all($result);
 
-$result   = $cbsql_content->query($query);
-$factions = array();
-while ($row = $cbsql_content->nextrow($result)) {
-    $faction        = CharacterFactionValuesRepository::getFaction($row['id']);
-    $faction_value  = $faction ? $faction['current_value'] : 0;
-    $row['charmod'] = intval($faction_value);
-    $factions[]     = $row;
-}
+
+//DO A MANUAL JOIN OF THE RESULTS
+$joined_factions = manual_join($content_factions, 'id', $character_factions, 'faction_ID', 'left');
+
+
 
 /*********************************************
                DROP HEADER
@@ -171,15 +180,16 @@ $cb_template->assign_vars(array(
    'L_DONE'      => $language['BUTTON_DONE'])
 );
 
-foreach($factions as $faction) {
-   $total = $faction['base'] + $faction['charmod'] + $faction['classmod'] + $faction['racemod'] + $faction['deitymod'];
+foreach($joined_factions as $faction) {
+   $charmod = intval($faction['current_value']);
+   $total = $faction['base'] + $charmod + $faction['classmod'] + $faction['racemod'] + $faction['deitymod'];
    $cb_template->assign_both_block_vars("factions", array(
       'ID'      => $faction['id'],
       'LINK' => QuickTemplate($link_faction, array('FACTION_ID' => $faction['id'])),
       'NAME'    => $faction['name'],
       'FACTION' => FactionToString($total),
       'BASE'    => $faction['base'],
-      'CHAR'    => $faction['charmod'],
+      'CHAR'    => $charmod,
       'CLASS'   => $faction['classmod'],
       'RACE'    => $faction['racemod'],
       'DEITY'   => $faction['deitymod'],

@@ -10,7 +10,8 @@
             <tr>
                <th>Table</th>
                <th>Num Queries</th>
-               <th>Rows</th>
+               <th>Rows Searched</th>
+               <th>Rows Returned</th>
             </tr>
          </thead>
          <tbody>
@@ -18,7 +19,8 @@
                   <tr>
                      <td>{tables.TABLE}</td>
                      <td>{tables.COUNT}</td>
-                     <td>{tables.ROWS}</td>
+                     <td>{tables.ROWSSEARCHED}</td>
+                     <td>{tables.ROWSRETURNED}</td>
                   </tr>
          <!-- END tables -->
          </tbody>

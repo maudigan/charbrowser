@@ -61,10 +61,8 @@ $query = sprintf($tpl, $charID);
 $result = $cbsql->query($query);
 if (!$cbsql->rows($result)) cb_message_die($language['BOTS_BOTS']." - ".$name,$language['MESSAGE_NO_BOTS']);
 
-$bots = array();
-while ($row = $cbsql->nextrow($result)) {
-   $bots[] = $row;
-}
+
+$bots = $cbsql->fetch_all($result);  
  
  
 /*********************************************

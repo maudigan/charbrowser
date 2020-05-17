@@ -16,6 +16,8 @@
  *   April 17, 2020 - initial revision (Maudigan) 
  *   April 25, 2020 - Maudigan
  *     implement multi-tenancy
+ *   May 3, 2020 - Maudigan
+ *     optimize character initialization
  *      
  ***************************************************************************/
   
@@ -44,16 +46,8 @@ $botID = $bot->bot_id();
 $botName = $bot->GetValue('name');
 
 //char initialization      
-$tpl = <<<TPL
-   SELECT name
-   FROM character_data
-   WHERE id = '%s'  
-TPL;
-$query = sprintf($tpl, $charID);
-$result = $cbsql->query($query);
-if (!($row = $cbsql->nextrow($result))) cb_message_die($language['MESSAGE_ERROR'],$language['MESSAGE_NO_CHAR']);
-$charName = $row['name'];
-$char = new profile($charName, $cbsql, $cbsql_content, $language, $showsoftdelete, $charbrowser_is_admin_page);
+$char = new profile($charID, $cbsql, $cbsql_content, $language, $showsoftdelete, $charbrowser_is_admin_page);
+$charName = $char->GetValue('name');
 $mypermission = GetPermissions($char->GetValue('gm'), $char->GetValue('anon'), $char->char_id());
 
 //block view if user level doesnt have permission

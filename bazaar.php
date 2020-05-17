@@ -35,6 +35,10 @@
  *   April 3, 2020 - Maudigan
  *     add icons to inspect
  *     added number_format to prices
+ *     added seller to the sort links
+ *   May 17, 2020 - Maudigan
+ *     rewrote the query logic to be a little cleaner, faster and to use
+ *     the new php sort/join functions
  *
  ***************************************************************************/
 
@@ -67,7 +71,7 @@ $direction  = (($_GET['direction']=="DESC") ? "DESC" : "ASC");
 $perpage=25;
 
 //build baselink
-$baselink=(($charbrowser_wrapped) ? $_SERVER['SCRIPT_NAME'] : "index.php") . "?page=bazaar&class=$class&race=$race&slot=$slot&type=$type&pricemin=$pricemin&pricemax=$pricemax&item=$item";
+$baselink=(($charbrowser_wrapped) ? $_SERVER['SCRIPT_NAME'] : "index.php") . "?page=bazaar&char=$seller&class=$class&race=$race&slot=$slot&type=$type&pricemin=$pricemin&pricemax=$pricemax&item=$item";
 
 //security against sql injection
 if (!IsAlphaSpace($item)) cb_message_die($language['MESSAGE_ERROR'],$language['MESSAGE_ITEM_ALPHA']);
@@ -121,20 +125,15 @@ $result = $cbsql->query($query);
 if (!$cbsql->rows($result)) cb_message_die($language['MESSAGE_ERROR'],$language['MESSAGE_NO_RESULTS_ITEMS']);
    
 //build item id list for items being sold   
-$filtered_trader_items_id = array();   
-$filtered_trader_rows = array();   
-while ($row = $cbsql_content->nextrow($result)) {
-   $filtered_trader_items_id[] = $row['item_id'];
-   $filtered_trader_rows[] = $row;
-}
-$filtered_trader_items_in = implode(", ", $filtered_trader_items_id);
+$filtered_trader_rows = $cbsql->fetch_all($result);  
+$filtered_trader_item_ids = get_id_list($filtered_trader_rows, 'item_id');
 
 
 
 //GET THE ITEM ROWS FOR ALL THE ITEMS FOR SELL, PREFILTERED
 //build the where clause
 $filters = array();
-$filters[] = "id IN (".$filtered_trader_items_in.")";
+$filters[] = "id IN (".$filtered_trader_item_ids.")";
 if ($item) $filters[] = "Name LIKE '%".str_replace("_", "%", str_replace(" ","%",$item))."%'";
 if($class > -1) $filters[] = "classes & ".$class;
 if($race > -1) $filters[] = "races & ".$race;
@@ -154,56 +153,25 @@ $result = $cbsql_content->query($query);
 //error if there's no results that match
 if (!$cbsql->rows($result)) cb_message_die($language['MESSAGE_ERROR'],$language['MESSAGE_NO_RESULTS_ITEMS']);
    
-//load the items into an array for the join later
-$filtered_items = array();   
-while ($row = $cbsql_content->nextrow($result)) {
-   $filtered_items[$row['id']] = $row;
-}
+//get the item results as an array
+$filtered_items = $cbsql_content->fetch_all($result);  
 
 
 //DO A MANUAL JOIN OF THE RESULTS
 //loop through the trader rows and join the item stats to it in a new array
-$joined_results = array();
-foreach ($filtered_trader_rows as $trader_row) {
-   $curid = $trader_row['item_id'];
-   
-   //check if an item result exists for this trader row
-   //if it does, join them into a new result
-   if (array_key_exists($curid, $filtered_items)) {
-      $joined_results[] = array_merge($trader_row, $filtered_items[$curid]);
-   }
-}
+$joined_results = manual_join($filtered_trader_rows, 'item_id', $filtered_items, 'id', 'inner');
 $totalitems = count($joined_results);
 
 
+
 //DO A MANUAL SORT OF THE RESULTS
-function str_orderby($a, $b) {
-   global $direction;
-   global $orderby;
-   if ($direction == "ASC") {
-      return strcmp($a[$orderby], $b[$orderby]);
-   }
-   else {
-      return strcmp($b[$orderby], $a[$orderby]);
-   }
-}
-function int_orderby($a, $b) {
-   global $direction;
-   global $orderby;
-   if ($direction == "ASC") {
-      return $a[$orderby] - $b[$orderby];
-   }
-   else {
-      return $b[$orderby] - $a[$orderby];
-   }
-}
 if ($orderby == 'tradercost') {
-   usort($joined_results, "int_orderby");
+   $sort_type = 'int';
 }
 else {
-   usort($joined_results, "str_orderby");
+   $sort_type = 'string';
 }
-
+sort_by($joined_results, $orderby, $direction, $sort_type);
 
 
 /*********************************************

@@ -1,3 +1,45 @@
+v3.3.3
+----------------------------------------------------------------------
+performance patch
+
+May 17, 2020 - Added support functions to functions.php. One takes
+               a mysql result array and the PK name, and returns a
+               comma delimited list of the IDs; one takes two mysql
+               result arrays, two column names and a type of join
+               and returns a joined recordset (a php join); and one
+               takes a mysql result array, a column name and a sort
+               direction and returns a sorted recordset (a php sort)
+               these are meant to replace query like features to
+               support multi tenancy. The functions are kind of
+               sloppy and need another once over once its clear
+               what all is needed from them.
+               
+               Updated bazaar.php to use the new functions
+               
+               Updated factions.php to use the new functions
+               
+               Updated fetch_all in db.php to not return an extra
+               blank row and made the db performance code count
+               rows searched and rows returned
+               
+               modified profile.php constructor to take a char name
+               or a char id instead of just the name
+               
+               Updated bots to use the new functions and to use the
+               new ID constructor for the profile (removes 1 query)
+               
+               Updated keys.php to use the new functions
+               (removes 1 query per key shown)
+
+               modified corpse.php. It was doing 1 query for corpses
+               and then 1 additional query for each corpse. That whole
+               process has been replaced with an IN clause and a php
+               join of the records (removes 1 query per corpse)
+               
+               updated search.php to use the new functions and
+               optimized (removes 1 query)
+              (maudigan)
+              
 v3.3.2
 ----------------------------------------------------------------------
 bazaar patch

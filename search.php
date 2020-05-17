@@ -40,6 +40,8 @@
  *     dont show anon guild members names
  *   April 17, 2020 - Maudigan
  *     show a nicer error when there are no results
+ *   May 4, 2020 - Maudigan
+ *     reduce the nyumber of queries, implement the where building function
  ***************************************************************************/
  
  
@@ -74,28 +76,16 @@ if (!is_numeric($start)) cb_message_die($language['MESSAGE_ERROR'],$language['ME
         BUILD AND EXECUTE THE SEARCH
 *********************************************/ 
 //build where clause
-$where = "";
-$divider = "WHERE ";
-if (!$showsoftdelete && !$charbrowser_is_admin_page) {
-   $where .= $divider."character_data.deleted_at IS NULL"; 
-   $divider = " AND ";
-}
-if ($name) {
-   $where .= $divider."character_data.name LIKE '%".str_replace("_", "%", str_replace(" ","%",$name))."%'"; 
-   $divider = " AND ";
-}
+$filters = array();
+if (!$showsoftdelete && !$charbrowser_is_admin_page) $filters[] = "character_data.deleted_at IS NULL"; 
+if ($name) $filters[] = "character_data.name LIKE '%".str_replace("_", "%", str_replace(" ","%",$name))."%'"; 
 if ($guild) {
-   $where .= $divider."guilds.name LIKE '%".str_replace("_", "%", str_replace(" ","%",$guild))."%'";
-   $divider = " AND ";
+   $filters[] = "guilds.name LIKE '%".str_replace("_", "%", str_replace(" ","%",$guild))."%'";
+   
    //if the char is anon, dont show them in a guild search
-   if (!$showguildwhenanon && !$charbrowser_is_admin_page) {
-      $where .= $divider."character_data.anon != '1'";
-      $divider = " AND ";
-   }
+   if (!$showguildwhenanon && !$charbrowser_is_admin_page) $filters[] = "character_data.anon != '1'";
 }
-
-//build the orderby & limit clauses
-$order = "ORDER BY $orderby $direction LIMIT $start, $numToDisplay;";
+$where = generate_where($filters);
 
 //build the query, leave a spot for the where
 //and the orderby clauses
@@ -109,22 +99,19 @@ LEFT JOIN guild_members
 LEFT JOIN guilds
        ON guilds.id = guild_members.guild_id 
 %s 
-%s
+ORDER BY %s %s
 TPL;
  
-//query once with no limit by just to get the count
-$query = sprintf($tpl, $where, '');
+$query = sprintf($tpl, $where, $orderby, $direction);
 $result = $cbsql->query($query);
-$totalchars = $cbsql->rows($result);
+
+//fetch the results
+$characters = $cbsql->fetch_all($result);
+$totalchars = count($characters);
+
+//error if there is no guild
 if (!$totalchars) cb_message_die($language['MESSAGE_ERROR'],$language['MESSAGE_NO_RESULTS_ITEMS']);
 
-//now add on the limit & ordering and query again for just this page
-$query = sprintf($tpl, $where, $order);
-$result = $cbsql->query($query);
-$characters = array();
-while ($row = $cbsql->nextrow($result)) {
-   $characters[] = $row;
-}
  
  
 /*********************************************
@@ -152,7 +139,9 @@ $cb_template->assign_vars(array(
    'L_CLASS' => $language['SEARCH_CLASS'],)
 );
 
-foreach ($characters as $character) {
+$finish = $start + $numToDisplay;
+for ($i = $start; $i < $finish; $i++) {
+   $character = $characters[$i];
    //dont show anon guild names unless config enables it
    if ($character["anon"] != 1 || $showguildwhenanon || $charbrowser_is_admin_page) {
       $charguildname = getGuildLink($character["guildname"]);

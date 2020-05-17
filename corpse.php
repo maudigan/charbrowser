@@ -37,6 +37,8 @@
  *     impemented common.php
  *   April 25, 2020 - Maudigan
  *     implement multi-tenancy
+ *   May 3, 2020 - Maudigan
+ *     changes to minimize database access
  *
  ***************************************************************************/
   
@@ -82,23 +84,24 @@ $query = sprintf($tpl, $charID);
 $result = $cbsql->query($query);
 if (!$cbsql->rows($result)) cb_message_die($language['CORPSE_CORPSES']." - ".$name,$language['MESSAGE_NO_CORPSES']);
 
-$corpses = array();
-while ($row = $cbsql->nextrow($result)) {
-   //get info about the zone the corpse is in
-   //from the content database
-   $tpl = <<<TPL
-   SELECT short_name
-   FROM zone 
-   WHERE zoneidnumber = '%s' 
-TPL;
-   $query = sprintf($tpl, $row['zone_id']);
-   $short_name = $cbsql_content->field_query('short_name', $query);
+$corpses = $cbsql->fetch_all($result);  
+$zone_ids = get_id_list($corpses, 'zone_id');
 
-   //add zone short_name to corpse results
-   $row['short_name'] = $short_name;
-   $corpses[] = $row;
-}
- 
+//get zone data
+$tpl = <<<TPL
+SELECT short_name, zoneidnumber
+FROM zone 
+WHERE zoneidnumber IN (%s) 
+TPL;
+$query = sprintf($tpl, $zone_ids);
+$result = $cbsql_content->query($query);
+
+$zones = $cbsql_content->fetch_all($result);  
+
+//join zones and corpse queries
+$corpse_zones = manual_join($corpses, 'zone_id', $zones, 'zoneidnumber', 'inner');
+
+
  
 /*********************************************
                DROP HEADER
@@ -133,7 +136,7 @@ $cb_template->assign_vars(array(
 );
 
 //dump corpses
-foreach($corpses as $corpse) {
+foreach($corpse_zones as $corpse) {
 
    //prepare the link to the map
    $find = array(

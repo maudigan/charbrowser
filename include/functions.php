@@ -51,6 +51,10 @@
  *      dynamically displayed/hidden buttons
  *   May 2, 2020 - Maudigan
  *      add function to build where clause 
+ *   May 3, 2020 - Maudigan
+ *      add function to get comma concatenated list of id's in an array
+ *      add a function to join to arrays on a specific field
+ *      add a function to sort arrays by sub element
  *
  ***************************************************************************/
  
@@ -75,6 +79,42 @@ function timer_start($index)
    $timers[$index] = microtime();
 } 
 
+//sort arrays by sub element
+function str_orderby($a, $b) {
+   global $gcb_sort_dir;
+   global $gcb_sort_col;
+   if ($gcb_sort_dir == "ASC") {
+      return strcmp($a[$gcb_sort_col], $b[$gcb_sort_col]);
+   }
+   else {
+      return strcmp($b[$gcb_sort_col], $a[$gcb_sort_col]);
+   }
+}
+function int_orderby($a, $b) {
+   global $gcb_sort_dir;
+   global $gcb_sort_col;
+   if ($gcb_sort_dir == "ASC") {
+      return $a[$gcb_sort_col] - $b[$gcb_sort_col];
+   }
+   else {
+      return $b[$gcb_sort_col] - $a[$gcb_sort_col];
+   }
+}
+function sort_by(&$array, $column, $direction = 'ASC', $type = 'string') {
+   global $gcb_sort_dir;
+   global $gcb_sort_col;
+   
+   //TODO, probably shouldn't be doing this with globals
+   $gcb_sort_col = $column;
+   $gcb_sort_dir = $direction;
+   if ($type == 'string') {
+      usort($array, "str_orderby");
+   }
+   else {
+      usort($array, "int_orderby");
+   }
+}
+
 //recieves an array of filters, returns where clause
 function generate_where($filters) {
    $where = "";
@@ -88,6 +128,72 @@ function generate_where($filters) {
    }
    
    return $where;
+}
+
+//recieves an array and a sub element
+//returns a comma concatenated list of all of
+//those values
+function get_id_list($array, $key) {
+
+   if (!is_array($array)) return "";
+   
+   $all_id = array();
+   foreach($array as $row) {
+      $all_id[] = $row[$key];
+   }
+   
+   return implode(", ", $all_id);
+}
+
+//do a manual join of two db result sets
+function manual_join($array1, $key1, $array2, $key2, $type = 'inner') {
+   
+   //return empty set if we dont have valid inputs
+   if (!is_array($array1) || !is_array($array2)) return array();
+   
+   //index the left array by the left key
+   $left = array();
+   foreach ($array1 as $row) {
+      $left[$row[$key1]] = $row;
+   }
+   
+   //index the right array by the right key
+   $right = array();
+   foreach ($array2 as $row) {
+      $right[$row[$key2]] = $row;
+   }
+   
+   //right join
+   //if its a right join just swap the left/right
+   if ($type == 'right') {
+      $temp = $left;
+      $left = $right;
+      $right = $temp;
+      $type = 'left';
+   }
+   
+   //left join
+   $joined = array();
+   if ($type == 'left') {
+      foreach ($left as $key => $row) {
+         if (array_key_exists($key, $right)) {
+            $joined[] = array_merge($left[$key], $right[$key]);
+         }
+         else {
+            $joined[] = $left[$key];
+         }
+      }
+   }
+   //inner join
+   elseif ($type = 'inner') {
+      foreach ($left as $key => $row) {
+         if (array_key_exists($key, $right)) {
+            $joined[] = array_merge($left[$key], $right[$key]);
+         }
+      }
+   }
+   
+   return $joined;
 }
 
 //returns how long the timer as been running in seconds

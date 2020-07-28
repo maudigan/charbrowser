@@ -55,6 +55,9 @@
  *      add function to get comma concatenated list of id's in an array
  *      add a function to join to arrays on a specific field
  *      add a function to sort arrays by sub element
+ *   July 28, 2020 - Maudigan
+ *      The manual_join function wasn't handling rows with the duplicate keys
+ *      well since it was indexing the array by that key. 
  *
  ***************************************************************************/
  
@@ -146,22 +149,10 @@ function get_id_list($array, $key) {
 }
 
 //do a manual join of two db result sets
-function manual_join($array1, $key1, $array2, $key2, $type = 'inner') {
+function manual_join($left, $leftKey, $right, $rightKey, $type = 'inner') {
    
    //return empty set if we dont have valid inputs
-   if (!is_array($array1) || !is_array($array2)) return array();
-   
-   //index the left array by the left key
-   $left = array();
-   foreach ($array1 as $row) {
-      $left[$row[$key1]] = $row;
-   }
-   
-   //index the right array by the right key
-   $right = array();
-   foreach ($array2 as $row) {
-      $right[$row[$key2]] = $row;
-   }
+   if (!is_array($left) || !is_array($right)) return array();
    
    //right join
    //if its a right join just swap the left/right
@@ -169,31 +160,47 @@ function manual_join($array1, $key1, $array2, $key2, $type = 'inner') {
       $temp = $left;
       $left = $right;
       $right = $temp;
+      $temp = $leftKey;
+      $leftKey = $rightKey;
+      $rightKey = $temp;
       $type = 'left';
    }
    
    //left join
    $joined = array();
    if ($type == 'left') {
-      foreach ($left as $key => $row) {
-         if (array_key_exists($key, $right)) {
-            $joined[] = array_merge($left[$key], $right[$key]);
+      foreach ($left as $row) {
+         $keyVal = $row[$leftKey];
+         //if this keyvalue exists in the right array, join them
+         if (keyval_to_index($right, $rightKey, $keyVal, $index)) {
+            $joined[] = array_merge($row, $right[$index]);
          }
          else {
-            $joined[] = $left[$key];
+            $joined[] = $row;
          }
       }
    }
    //inner join
    elseif ($type = 'inner') {
-      foreach ($left as $key => $row) {
-         if (array_key_exists($key, $right)) {
-            $joined[] = array_merge($left[$key], $right[$key]);
+      foreach ($left as $row) {
+         $keyVal = $row[$leftKey];
+         //if this keyvalue exists in the right array, join them
+         if (keyval_to_index($right, $rightKey, $keyVal, $index)) {
+            $joined[] = array_merge($row, $right[$index]);
          }
       }
    }
    
    return $joined;
+}
+
+//finds a value in a column in an array and returns the index of the array element
+function keyval_to_index($array, $key, $keyval, &$index) {
+   if (!is_array($array)) return false;
+   foreach ($array as $index => $row) {
+      if ($row[$key] == $keyval) return true;
+   }
+   return false;
 }
 
 //returns how long the timer as been running in seconds

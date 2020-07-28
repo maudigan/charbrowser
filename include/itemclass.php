@@ -32,6 +32,9 @@
  *     cap bag slots to 10
  *   April 6, 2020 - Maudigan
  *     made bag cap a constant
+ *   July 28, 2020 - Maudigan
+ *     cached the items db row in constructor
+ *     added a function to get a column value from the db row
  *
  ***************************************************************************/ 
   
@@ -81,6 +84,9 @@ class item {
         var $myvslot; 
         //if it goes in a bag, this is 1-10 for which bag slot 
         
+        var $myrow;
+        //cache the items db row
+        
         var $myaugshtml = array(); 
         var $myaugsname = array(); 
         var $myaugsid = array(); 
@@ -98,6 +104,7 @@ class item {
          } 
 
          public function item($row) { 
+           $this->myrow = $row;
            $this->myslot = $row['myslot']; 
            $this->myhtml = GetItem($row); 
            $this->myslotcount = $row['bagslots']; 
@@ -282,6 +289,10 @@ class item {
            } 
          } 
 
+        
+        function fetchColumn($col) { 
+          return $this->myrow[$col]; 
+        } 
         
         function aughtml($key) { 
           return $this->myaugshtml[$key]; 

@@ -1453,7 +1453,7 @@ BODY.CB_Body {
 
 
 #charbrowser .PositionBazaar {
-   width: 625px;
+   width: 825px;
    margin: 0 auto;
    position: relative;
 }
@@ -1484,7 +1484,7 @@ BODY.CB_Body {
 }
 #charbrowser .PositionBazaarRight {
    display: inline-block;
-   width: 450px;
+   width: 650px;
    min-height: 500px;
 }
 

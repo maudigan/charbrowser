@@ -39,6 +39,8 @@
  *   May 17, 2020 - Maudigan
  *     rewrote the query logic to be a little cleaner, faster and to use
  *     the new php sort/join functions
+ *   July 28, 2020
+ *     put gold before silver in the item cost display
  *
  ***************************************************************************/
 
@@ -61,6 +63,7 @@ $orderby    = (($_GET['orderby']) ? $_GET['orderby'] : "Name");
 $class      = (($_GET['class']!="") ? $_GET['class'] : "-1");
 $race       = (($_GET['race']!="") ? $_GET['race'] : "-1");
 $slot       = (($_GET['slot']!="") ? $_GET['slot'] : "-1");
+$stat       = (($_GET['stat']!="") ? $_GET['stat'] : "-1");
 $type       = (($_GET['type']!="") ? $_GET['type'] : "-1");
 $pricemin   = $_GET['pricemin'];
 $pricemax   = $_GET['pricemax'];
@@ -71,7 +74,7 @@ $direction  = (($_GET['direction']=="DESC") ? "DESC" : "ASC");
 $perpage=25;
 
 //build baselink
-$baselink=(($charbrowser_wrapped) ? $_SERVER['SCRIPT_NAME'] : "index.php") . "?page=bazaar&char=$seller&class=$class&race=$race&slot=$slot&type=$type&pricemin=$pricemin&pricemax=$pricemax&item=$item";
+$baselink=(($charbrowser_wrapped) ? $_SERVER['SCRIPT_NAME'] : "index.php") . "?page=bazaar&char=$seller&class=$class&race=$race&slot=$slot&type=$type&pricemin=$pricemin&pricemax=$pricemax&item=$item&stat=$stat";
 
 //security against sql injection
 if (!IsAlphaSpace($item)) cb_message_die($language['MESSAGE_ERROR'],$language['MESSAGE_ITEM_ALPHA']);
@@ -84,6 +87,7 @@ if (!is_numeric($class)) cb_message_die($language['MESSAGE_ERROR'],$language['ME
 if (!is_numeric($race)) cb_message_die($language['MESSAGE_ERROR'],$language['MESSAGE_RACE_NUMERIC']);
 if (!is_numeric($slot)) cb_message_die($language['MESSAGE_ERROR'],$language['MESSAGE_SLOT_NUMERIC']);
 if (!is_numeric($type)) cb_message_die($language['MESSAGE_ERROR'],$language['MESSAGE_TYPE_NUMERIC']);
+if (!array_key_exists ($stat, $language['BAZAAR_ARRAY_SEARCH_STAT']))  cb_message_die($language['MESSAGE_ERROR'],$language['MESSAGE_STAT_INVALID']);
 
 //dont display bazaaar if blocked in config.php
 if ($blockbazaar) cb_message_die($language['MESSAGE_ERROR'],$language['MESSAGE_ITEM_NO_VIEW']);
@@ -165,11 +169,11 @@ $totalitems = count($joined_results);
 
 
 //DO A MANUAL SORT OF THE RESULTS
-if ($orderby == 'tradercost') {
-   $sort_type = 'int';
+if ($orderby == 'Name' || $orderby == 'charactername') {
+   $sort_type = 'string';
 }
 else {
-   $sort_type = 'string';
+   $sort_type = 'int';
 }
 sort_by($joined_results, $orderby, $direction, $sort_type);
 
@@ -225,6 +229,7 @@ $cb_template->assign_vars(array(
    'L_SEARCH_CLASS' => $language['BAZAAR_SEARCH_CLASS'],
    'L_SEARCH_RACE' => $language['BAZAAR_SEARCH_RACE'],
    'L_SEARCH_SLOT' => $language['BAZAAR_SEARCH_SLOT'],
+   'L_SEARCH_STAT' => $language['BAZAAR_SEARCH_STAT'],
    'L_SEARCH_TYPE' => $language['BAZAAR_SEARCH_TYPE'],
    'L_SEARCH_PRICE_MIN' => $language['BAZAAR_SEARCH_PRICE_MIN'],
    'L_SEARCH_PRICE_MAX' => $language['BAZAAR_SEARCH_PRICE_MAX'])
@@ -245,7 +250,7 @@ for ($i = $start; $i < $finish; $i++) {
    $copper  = number_format($price % 10);
    $cb_template->assign_both_block_vars("items", array(
       'SELLER' => $lot['charactername'],
-      'PRICE' => (($plat)?$plat."p ":"").(($silver)?$silver."s ":"").(($gold)?$gold."g ":"").(($copper)?$copper."c ":""),
+      'PRICE' => (($plat)?$plat."p ":"").(($gold)?$gold."g ":"").(($silver)?$silver."s ":"").(($copper)?$copper."c ":""),
       'NAME' => $tempitem->name(),
       'ID' => $tempitem->id(),
       'ICON' => $tempitem->icon(),
@@ -253,7 +258,20 @@ for ($i = $start; $i < $finish; $i++) {
       'HTML' => $tempitem->html(),
       'SLOT' => $slotcounter)
    );
+   if ($stat != -1) {   
+      $cb_template->assign_block_vars("items.stat_col", array(
+         'STAT' => $tempitem->fetchColumn($stat))
+      );
+   }
    $slotcounter ++;
+}
+
+//if they selected a stat, output a conditional template display
+if ($stat != -1) {   
+   $cb_template->assign_block_vars("switch_stat", array(
+      'STAT' => $stat,
+      'L_STAT' => $language['BAZAAR_ARRAY_SEARCH_STAT'][$stat])
+   );
 }
 
 
@@ -284,6 +302,13 @@ foreach ($language['BAZAAR_ARRAY_SEARCH_SLOT'] as $key => $value ) {
       'VALUE' => $key,
       'OPTION' => $value,
       'SELECTED' => (($slot == $key) ? "selected":""))
+   );
+}
+foreach ($language['BAZAAR_ARRAY_SEARCH_STAT'] as $key => $value ) {
+   $cb_template->assign_block_vars("select_stat", array(
+      'VALUE' => $key,
+      'OPTION' => $value,
+      'SELECTED' => (($stat == $key) ? "selected":""))
    );
 }
 

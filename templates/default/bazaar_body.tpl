@@ -31,6 +31,13 @@
             <!-- END select_slot -->
          </select>
 
+         <label for='stat'>{L_SEARCH_STAT}</label>
+         <select name='stat' id='stat'>
+            <!-- BEGIN select_stat -->
+            <option value='{select_stat.VALUE}' {select_stat.SELECTED}>{select_stat.OPTION}</option>
+            <!-- END select_stat -->
+         </select>
+
          <label for='type'>{L_SEARCH_TYPE}</label>
          <select name='type' id='type'>
             <!-- BEGIN select_type -->
@@ -53,6 +60,9 @@
                <th><a href="{ORDER_LINK}&orderby=Name">{L_ITEM}</a></th>
                <th><a href="{ORDER_LINK}&orderby=tradercost">{L_PRICE}</a></th>
                <th><a href="{ORDER_LINK}&orderby=charactername">{L_NAME}</a></th>
+               <!-- BEGIN switch_stat -->
+               <th><a href="{ORDER_LINK}&orderby={switch_stat.STAT}">{switch_stat.L_STAT}</a></th>
+               <!-- END switch_stat -->
             </tr>
          </thead>
          </tbody>
@@ -61,6 +71,9 @@
                <td><a hoverChild='#item{items.SLOT}' class='CB_HoverParent' href='#'>{items.NAME}</a></td>
                <td>{items.PRICE}</td>
                <td><a href='{INDEX_URL}?page=character&char={items.SELLER}'>{items.SELLER}</a></td>
+               <!-- BEGIN stat_col -->
+               <td>{items.stat_col.STAT}</td>
+               <!-- END stat_col -->
             </tr>
             <!-- END items -->
          </tbody>

@@ -1,3 +1,13 @@
+v3.4.0
+----------------------------------------------------------------------
+bazaar enhancement
+
+July 28, 2020 - fixed an error that hid some rows on the bazaar 
+                results
+                added the ability to see/sort by stats in bazaar
+                results
+               (maudigan)
+
 v3.3.3
 ----------------------------------------------------------------------
 performance patch

@@ -44,6 +44,8 @@
  *     impemented common.php
  *   April 25, 2020 - Maudigan
  *     implement multi-tenancy
+ *   January 17, 2022 - Maudigan
+ *     implemented databucket support for Vxed flags
  *
  ***************************************************************************/ 
    
@@ -66,6 +68,22 @@ function getflag($condition, $flagname) {
    if (!array_key_exists($flagname,$quest_globals)) return 0; 
    if ($quest_globals[$flagname]<$condition) return 0; 
    return 1; 
+} 
+
+//check a databuket value
+function getdatabucket($keyname) { 
+   global $cbsql;    
+    $tpl = <<<TPL
+   SELECT value 
+   FROM data_buckets 
+   WHERE `key` = '%s'
+TPL;
+   $query = sprintf($tpl, $keyname);
+   $result = $cbsql->query($query);
+   if($row = $cbsql->nextrow($result)) 
+      return $row['value'];   
+   else  
+      return null;
 } 
 
 
@@ -369,22 +387,21 @@ $cb_template->assign_both_block_vars( "head.flags" , array( 'FLAG' => getflag(1,
 $cb_template->assign_both_block_vars( "head" , array( 'ID' => 13, 'NAME' => $language['FLAG_GoD_Vxed']) ); 
 $cb_template->assign_both_block_vars( "head.flags" , array( 'FLAG' => getflag(1, "god_vxed_access"), 'TEXT' => $language['FLAG_GoD_KT_2']) ); 
 //Sewer 1 
-if (getflag(1, "temp_sewers") || getflag(2, "sewers")) $cb_template->assign_both_block_vars( "head.flags" , array( 'FLAG' => "1", 'TEXT' => $language['FLAG_GoD_Sewer_1_1']) ); 
+if (getdatabucket($charID."-god_snplant") == '1') $cb_template->assign_both_block_vars( "head.flags" , array( 'FLAG' => "1", 'TEXT' => $language['FLAG_GoD_Sewer_1_1']) ); 
+elseif (getdatabucket($charID."-god_snplant") == 'T') $cb_template->assign_both_block_vars( "head.flags" , array( 'FLAG' => "1", 'TEXT' => $language['FLAG_GoD_Sewer_1_T']) ); 
 else $cb_template->assign_both_block_vars( "head.flags" , array( 'FLAG' => "0", 'TEXT' => $language['FLAG_GoD_Sewer_1_1']) ); 
-$cb_template->assign_both_block_vars( "head.flags" , array( 'FLAG' => getflag(2, "sewers"), 'TEXT' => $language['FLAG_GoD_Sewer_1_2']) ); 
-//Sewer 2 
-if (getflag(2, "temp_sewers") || getflag(3, "sewers")) $cb_template->assign_both_block_vars( "head.flags" , array( 'FLAG' => "1", 'TEXT' => $language['FLAG_GoD_Sewer_2_1']) ); 
+//Sewer 2
+if (getdatabucket($charID."-god_sncrematory") == '1') $cb_template->assign_both_block_vars( "head.flags" , array( 'FLAG' => "1", 'TEXT' => $language['FLAG_GoD_Sewer_2_1']) ); 
+elseif (getdatabucket($charID."-god_sncrematory") == 'T') $cb_template->assign_both_block_vars( "head.flags" , array( 'FLAG' => "1", 'TEXT' => $language['FLAG_GoD_Sewer_2_T']) ); 
 else $cb_template->assign_both_block_vars( "head.flags" , array( 'FLAG' => "0", 'TEXT' => $language['FLAG_GoD_Sewer_2_1']) ); 
-$cb_template->assign_both_block_vars( "head.flags" , array( 'FLAG' => getflag(3, "sewers"), 'TEXT' => $language['FLAG_GoD_Sewer_2_2']) ); 
-//sewer 3 
-if (getflag(3, "temp_sewers") || getflag(4, "sewers")) $cb_template->assign_both_block_vars( "head.flags" , array( 'FLAG' => "1", 'TEXT' => $language['FLAG_GoD_Sewer_3_1']) ); 
+//Sewer 3
+if (getdatabucket($charID."-god_snlair") == '1') $cb_template->assign_both_block_vars( "head.flags" , array( 'FLAG' => "1", 'TEXT' => $language['FLAG_GoD_Sewer_3_1']) ); 
+elseif (getdatabucket($charID."-god_snlair") == 'T') $cb_template->assign_both_block_vars( "head.flags" , array( 'FLAG' => "1", 'TEXT' => $language['FLAG_GoD_Sewer_3_T']) ); 
 else $cb_template->assign_both_block_vars( "head.flags" , array( 'FLAG' => "0", 'TEXT' => $language['FLAG_GoD_Sewer_3_1']) ); 
-$cb_template->assign_both_block_vars( "head.flags" , array( 'FLAG' => getflag(4, "sewers"), 'TEXT' => $language['FLAG_GoD_Sewer_3_2']) ); 
-//sewer 4 
-if (getflag(4, "temp_sewers") || getflag(5, "sewers")) $cb_template->assign_both_block_vars( "head.flags" , array( 'FLAG' => "1", 'TEXT' => $language['FLAG_GoD_Sewer_4_1']) ); 
+//Sewer 4
+if (getdatabucket($charID."-god_snpool") == '1') $cb_template->assign_both_block_vars( "head.flags" , array( 'FLAG' => "1", 'TEXT' => $language['FLAG_GoD_Sewer_4_1']) ); 
+elseif (getdatabucket($charID."-god_snpool") == 'T') $cb_template->assign_both_block_vars( "head.flags" , array( 'FLAG' => "1", 'TEXT' => $language['FLAG_GoD_Sewer_4_T']) ); 
 else $cb_template->assign_both_block_vars( "head.flags" , array( 'FLAG' => "0", 'TEXT' => $language['FLAG_GoD_Sewer_4_1']) ); 
-if (getflag(1, "god_vxed_access") && getflag(5, "sewers")) $cb_template->assign_both_block_vars( "head.flags" , array( 'FLAG' => "1", 'TEXT' => $language['FLAG_GoD_Sewer_4_2']) ); 
-else $cb_template->assign_both_block_vars( "head.flags" , array( 'FLAG' => "0", 'TEXT' => $language['FLAG_GoD_Sewer_4_2']) ); 
 //Tipt 
 $cb_template->assign_both_block_vars( "head" , array( 'ID' => 14, 'NAME' => $language['FLAG_GoD_Tipt']) ); 
 $cb_template->assign_both_block_vars( "head.flags" , array( 'FLAG' => getflag(1, "god_tipt_access"), 'TEXT' => $language['FLAG_GoD_KT_3']) ); 

@@ -32,6 +32,8 @@
  *   April 2, 2020 - added store language(Maudigan)
  *   April 3, 2020 - added custom home page language(Maudigan)
  *   April 16, 2020 - added bots language(Maudigan)
+ *   January 17, 2022 - Maudigan
+ *     modified Vxed flags to support the data bucket changes
  ***************************************************************************/ 
   
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             
@@ -476,14 +478,14 @@ $language['FLAG_PoP_Rathe'] = "You have defeated the Rathe Council within Plane 
    April 15, 2011 
    Complete  
 ******************************************************/ 
-$language['FLAG_GoD_Sewer_1_1'] = "You have hailed Ansharu after defeating the Ancient Kayserops in the Purifying Plant!"; 
-$language['FLAG_GoD_Sewer_1_2'] = "You have hailed Scribe Gurru in Barindu after completing the Purifying Plant!"; 
-$language['FLAG_GoD_Sewer_2_1'] = "You have turned in the 4 remains to to Gzifa the Pure in the Crematory!"; 
-$language['FLAG_GoD_Sewer_2_2'] = "You have hailed Scribe Gurru in Barindu after completing the Crematory!"; 
-$language['FLAG_GoD_Sewer_3_1'] = "You have returned Alej's tools to him in the Lair of Trapped Ones!"; 
-$language['FLAG_GoD_Sewer_3_2'] = "You have hailed Scribe Gurru in Barindu after completing the Lair of Trapped Ones!"; 
-$language['FLAG_GoD_Sewer_4_1'] = "You have returned the map pieces to Utandi in the Pool of Sludge!"; 
-$language['FLAG_GoD_Sewer_4_2'] = "You have hailed Scribe Gurru in Barindu after completing the Pool of Sludge!"; 
+$language['FLAG_GoD_Sewer_1_1'] = "You have completed the Purifying Plant trial!"; 
+$language['FLAG_GoD_Sewer_2_1'] = "You have completed the Crematory trial!"; 
+$language['FLAG_GoD_Sewer_3_1'] = "You have completed the Lair of Trapped Ones trial!"; 
+$language['FLAG_GoD_Sewer_4_1'] = "You have completed the Pool of Sludge trial!"; 
+$language['FLAG_GoD_Sewer_1_T'] = "You have completed the Purifying Plant trial OUT OF ORDER! Talk to the scribe to fix it!"; 
+$language['FLAG_GoD_Sewer_2_T'] = "You have completed the Crematory trial OUT OF ORDER! Talk to the scribe to fix it!"; 
+$language['FLAG_GoD_Sewer_3_T'] = "You have completed the Lair of Trapped Ones trial OUT OF ORDER! Talk to the scribe to fix it!"; 
+$language['FLAG_GoD_Sewer_4_T'] = "You have completed the Pool of Sludge trial OUT OF ORDER! Talk to the scribe to fix it!"; 
 $language['FLAG_GoD_Vxed'] = "Vxed, The Crumbling Caverns"; 
 $language['FLAG_GoD_Tipt'] = "Tipt, Treacherous Crags"; 
 $language['FLAG_GoD_KT_1'] = "Kod'Taz, Broken Trial Grounds"; 

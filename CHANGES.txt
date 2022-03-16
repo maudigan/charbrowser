@@ -1,5 +1,12 @@
 v3.4.1
 ----------------------------------------------------------------------
+item type
+
+Jan 28, 2020 - added item type to item displays and to the API
+              (maudigan)
+
+v3.4.1
+----------------------------------------------------------------------
 data buckets
 
 Jan 28, 2020 - updated the vxed flags to read from data buckets

@@ -41,6 +41,8 @@
  *     the new php sort/join functions
  *   July 28, 2020
  *     put gold before silver in the item cost display
+ *   March 16, 2022 - Maudigan
+ *     added item type to the API for each item
  *
  ***************************************************************************/
 
@@ -256,6 +258,7 @@ for ($i = $start; $i < $finish; $i++) {
       'ICON' => $tempitem->icon(),
       'LINK' => QuickTemplate($link_item, array('ITEM_ID' => $tempitem->id())),
       'HTML' => $tempitem->html(),
+      'ITEMTYPE' => $tempitem->skill(),
       'SLOT' => $slotcounter)
    );
    if ($stat != -1) {   

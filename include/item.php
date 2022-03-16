@@ -36,6 +36,8 @@
  *     cap bag slot count with a constant
  *   April 25, 2020 - Maudigan
  *     relocated GetFieldByQuery to db.php
+ *   March 16, 2022 - Maudigan
+ *     added item type to item display
  ***************************************************************************/
 
 
@@ -153,6 +155,52 @@ function getsize($val) {
       case 3: return "Large"; break;
       case 4: return "Giant"; break;
       default: return "$val?"; break;
+   }
+}
+
+function getitemtype($val) {
+   switch($val) {
+      case 3: return "1H Blunt"; break;
+      case 0: return "1H Slashing"; break;
+      case 4: return "2H Blunt"; break;
+      case 35: return "2H Piercing"; break;
+      case 1: return "2H Slashing"; break;
+      case 38: return "Alcohol"; break;
+      case 5: return "Archery"; break;
+      case 10: return "Armor"; break;
+      case 27: return "Arrow"; break;
+      case 54: return "Augmentation"; break;
+      case 18: return "Bandages"; break;
+      case 25: return "Brass Instrument"; break;
+      case 52: return "Charm"; break;
+      case 34: return "Coin"; break;
+      case 17: return "Combinable"; break;
+      case 40: return "Compass"; break;
+      case 15: return "Drink"; break;
+      case 37: return "Fishing Bait"; break;
+      case 36: return "Fishing Pole"; break;
+      case 14: return "Food"; break;
+      case 11: return "Gems"; break;
+      case 29: return "Jewelry"; break;
+      case 33: return "Key"; break;
+      case 39: return "Key (bis)"; break;
+      case 16: return "Light"; break;
+      case 12: return "Lockpicks"; break;
+      case 45: return "Martial"; break;
+      case 32: return "Note"; break;
+      case 26: return "Percussion Instrument"; break;
+      case 2: return "Piercing"; break;
+      case 42: return "Poison"; break;
+      case 21: return "Potion"; break;
+      case 20: return "Scroll"; break;
+      case 8: return "Shield"; break;
+      case 30: return "Skull"; break;
+      case 24: return "Stringed Instrument"; break;
+      case 19: return "Throwing"; break;
+      case 7: return "Throwing range items"; break;
+      case 31: return "Tome"; break;
+      case 23: return "Wind Instrument"; break;
+      default: return "$val"; break;
    }
 }
 
@@ -638,6 +686,8 @@ function GetItem($item)
          $Output .= "Scroll Effect: <a href='" . $temp . "'>" . $itemrow['name'] . "</a>";
          $Output .= "<br>";
       }
+      
+      $Output .= "Item Type: ".getitemtype($item['itemtype'])."<br>";
 
    //else use legacy view
    } else {
@@ -884,6 +934,9 @@ function GetItem($item)
          $Output .= $tab."Effect: <a href='".$temp."'>".$cbsql_content->field_query("name","SELECT name FROM $tbspells WHERE id=".$item["scrolleffect"])."</a>";
          $Output .= "<br>\n";
       }
+      
+      
+      $Output .= "<br><br>Item Type: ".getitemtype($item['itemtype'])."<br>";
    }
 
 

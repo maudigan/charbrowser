@@ -18,6 +18,8 @@
  *     implement multi-tenancy
  *   May 3, 2020 - Maudigan
  *     optimize character initialization
+ *   March 16, 2022 - Maudigan
+ *     added item type to the API for each item
  *      
  ***************************************************************************/
   
@@ -218,7 +220,8 @@ foreach ($allitems as $value) {
       'STACK' => $value->stack(),
       'ID' => $value->id(),
       'LINK' => QuickTemplate($link_item, array('ITEM_ID' => $value->id())),
-      'HTML' => $value->html())
+      'HTML' => $value->html(),
+      'ITEMTYPE' => $value->skill())
    );
    for ( $i = 0 ; $i < $value->augcount() ; $i++ ) {
       $cb_template->assign_both_block_vars("item.augment", array(       

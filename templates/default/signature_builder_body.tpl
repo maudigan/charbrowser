@@ -43,7 +43,7 @@
             
             <div> 
                <label for='colorone'>{L_FONT_COLOR_ONE}</label>
-               <input class='color' id='colorone' name='colorone' value='FFFFFF' type='text'> 
+               <input id='colorone' name='colorone' value='#FFFFFF' type='text' data-jscolor="{palette:'#fffbba #48F762 #8398F7 #C680F7 #F77ED1 #F74F4F #F7B14F #CCCCCC #7A7A7A #000000', paletteCols:10, hideOnPaletteClick:true}"> 
             </div> 
             
             <div>
@@ -74,7 +74,7 @@
             
             <div>
                <label for='colortwo'>{L_FONT_COLOR_TWO}</label>
-               <input class='color' id='colortwo' name='colortwo' value='FFFFFF' type='text'>        
+               <input id='colortwo' name='colortwo' value='#FFFFFF' type='text' data-jscolor="{palette:'#fffbba #48F762 #8398F7 #C680F7 #F77ED1 #F74F4F #F7B14F #CCCCCC #7A7A7A #000000', paletteCols:10, hideOnPaletteClick:true}">
             </div>
          </div>
          
@@ -99,7 +99,7 @@
                  
             <div>
                <label for='bgcolor'>{L_MAIN_COLOR}</label>
-               <input class='color' id='bgcolor' name='bgcolor' value='2A2A2A' type='text'>    
+               <input id='bgcolor' name='bgcolor' value='#2A2A2A' type='text' data-jscolor="{palette:'#fffbba #48F762 #8398F7 #C680F7 #F77ED1 #F74F4F #F7B14F #CCCCCC #7A7A7A #000000', paletteCols:10, hideOnPaletteClick:true}">    
             </div>
             
             <div>
@@ -176,7 +176,7 @@
                        
             <div>
                <label for='statcolor'>{L_STAT_COLOR}</label>
-               <input class='color' id='statcolor' name='statcolor' value='FFFFFF' type='text'> 
+               <input id='statcolor' name='statcolor' value='#FFFFFF' type='text' data-jscolor="{palette:'#fffbba #48F762 #8398F7 #C680F7 #F77ED1 #F74F4F #F7B14F #CCCCCC #7A7A7A #000000', paletteCols:10, hideOnPaletteClick:true}"> 
             </div>
          </div>
          <div id='tabbox4' class='CB_SigTabBoxes'> 
@@ -216,22 +216,22 @@
       var path = "{SIGNATURE_ROOT_URL}cbsig/" + 
          document.sigform.fontone.value + "-" + 
          document.sigform.sizeone.value + "-" + 
-         document.sigform.colorone.value + "-" + 
+         document.sigform.colorone.value.substr(1) + "-" + 
          document.sigform.shadowone.value + "/" + 
          document.sigform.fonttwo.value + "-" + 
          document.sigform.sizetwo.value + "-" + 
-         document.sigform.colortwo.value + "-" + 
+         document.sigform.colortwo.value.substr(1) + "-" + 
          document.sigform.shadowtwo.value + "/" + 
          document.sigform.epicborder.value + "/" + 
          document.sigform.statborder.value + "-" + 
-         document.sigform.statcolor.value + "-" + 
+         document.sigform.statcolor.value.substr(1) + "-" + 
          document.sigform.statone.value + "-" + 
          document.sigform.stattwo.value + "-" + 
          document.sigform.statthree.value + "-" + 
          document.sigform.statfour.value + "-" + 
          document.sigform.statfive.value + "/" +  
          document.sigform.border.value + "/" +  
-         document.sigform.bgcolor.value + "-" +  
+         document.sigform.bgcolor.value.substr(1) + "-" +  
          document.sigform.mainbg.value + "-" +  
          document.sigform.mainscreen.value + "/" +  
          name + ".png";

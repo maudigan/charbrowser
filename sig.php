@@ -46,16 +46,7 @@
  *     implement multi-tenancy
  ***************************************************************************/
 
-/**
- * Autoloader
- */
-spl_autoload_register(
-    function ($class_name) {
-        $class_name = str_replace("\\", "/", $class_name);
-        $class      = __DIR__ . "/include/{$class_name}.php";
-        include_once($class);
-    }
-);
+
 
 /*********************************************
                  INCLUDES

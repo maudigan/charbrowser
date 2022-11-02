@@ -2,7 +2,8 @@
 <html dir='ltr'>
    <head>
       <title>{TITLE} {SUBTITLE}</title>
-      <link rel='stylesheet' href='{ROOT_URL}templates/default/style-1.5.css' type='text/css'/>
+      <link rel='stylesheet' href='{ROOT_URL}templates/default/style-1.6.css' type='text/css'/>
+      <link rel='stylesheet' href='{ROOT_URL}templates/default/style-item-icons-1.0.css' type='text/css'/>
       <meta http-equiv='Content-Type' content='text/html; charset=iso-8859-1'>
       <meta http-equiv='Content-Style-Type' content='text/css'>
       <!-- For Chrome for Android: -->
@@ -46,6 +47,8 @@
                   <li><a href='{INDEX_URL}?page=signaturebuilder'>{L_SIGBUILD}</a></li>
                   <li><a href='{INDEX_URL}?page=charmove'>{L_CHARMOVE}</a></li>
                   <li><a href='{INDEX_URL}?page=bazaar'>{L_BAZAAR}</a></li>
+                  <li><a href='{INDEX_URL}?page=barter'>{L_BARTER}</a></li>
+                  <li><a href='{INDEX_URL}?page=adventure'>{L_LEADERBOARD}</a></li>
                   <li><a href='{INDEX_URL}?page=server'>{L_SERVER}</a></li>
                   <li><a href='{INDEX_URL}?page=settings'>{L_SETTINGS}</a></li>
                   <li><a href='http://mqemulator.net/forum2/viewforum.php?f=20'>{L_REPORT_ERRORS}</a></li>

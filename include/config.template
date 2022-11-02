@@ -58,10 +58,12 @@ $cb_content_port   =   3306;
 /*****************************************************
 **                  General Settings                **
 *****************************************************/
-$numToDisplay = 25 ;//search results per page                 
-$highlightgm  = 1  ;//highlight GM inventories 0=off 1=on
-$blockbazaar  = 0  ;//disable bazaar 0=on 1=off     
-    
+$numToDisplay        = 25 ;//search results per page
+$highlightgm         = 1  ;//highlight GM inventories 0=off 1=on
+$blockbazaar         = 0  ;//disable bazaar 0=on 1=off
+$blockbarter         = 0  ;//disable barter 0=on 1=off
+$blockadventurestats = 0  ;//disable ldon leaderboards 0=on 1=off
+
      
 /*****************************************************
 **                  Title  settings                 **
@@ -244,8 +246,10 @@ $permissions = array(
     'bank'              => 0,
     'sharedbank'        => 0,
     'corpses'           => 0,
+    'corpse'            => 0,
     'flags'             => 0,
     'AAs'               => 0,
+    'leadership'        => 0,
     'factions'          => 0,
     'advfactions'       => 0,
     'skills'            => 0,
@@ -261,8 +265,10 @@ $permissions = array(
     'bank'              => 1,
     'sharedbank'        => 0,
     'corpses'           => 0,
+    'corpse'            => 0,
     'flags'             => 0,
     'AAs'               => 0,
+    'leadership'        => 0,
     'factions'          => 0,
     'advfactions'       => 1,
     'skills'            => 0,
@@ -278,8 +284,10 @@ $permissions = array(
     'bank'              => 1,
     'sharedbank'        => 0,
     'corpses'           => 1,
+    'corpse'            => 1,
     'flags'             => 1,
     'AAs'               => 1,
+    'leadership'        => 1,
     'factions'          => 1,
     'advfactions'       => 1,
     'skills'            => 1,
@@ -295,8 +303,10 @@ $permissions = array(
     'bank'              => 0,
     'sharedbank'        => 0,
     'corpses'           => 0,
+    'corpse'            => 0,
     'flags'             => 0,
     'AAs'               => 0,
+    'leadership'        => 0,
     'factions'          => 0,
     'advfactions'       => 1,
     'skills'            => 0,
@@ -312,8 +322,10 @@ $permissions = array(
     'bank'              => 0,
     'sharedbank'        => 0,
     'corpses'           => 0,
+    'corpse'            => 0,
     'flags'             => 0,
     'AAs'               => 0,
+    'leadership'        => 0,
     'factions'          => 0,
     'advfactions'       => 1,
     'skills'            => 0,
@@ -329,8 +341,10 @@ $permissions = array(
     'bank'              => 1,
     'sharedbank'        => 0,
     'corpses'           => 1,
+    'corpse'            => 1,
     'flags'             => 1,
     'AAs'               => 1,
+    'leadership'        => 1,
     'factions'          => 1,
     'advfactions'       => 1,
     'skills'            => 1,
@@ -547,5 +561,5 @@ $link_faction = "http://mqemulator.net/faction.php?id={FACTION_ID}";
 **  config.template and then fill in your settings **
 **  again.                                         **
 *****************************************************/
-$cb_config_version = 'v2.0.0';
+$cb_config_version = 'v2.1.0';
 ?>

@@ -86,12 +86,12 @@
 
          <!-- SLOT ICONS FOR WORN ITEMS -->
          <!-- BEGIN equipitem --> 
-         <div hoverChild='#slot{equipitem.SLOT}' class='Slot slotloc{equipitem.SLOT} CB_HoverParent' style='background-image: url({ROOT_URL}images/items/item_{equipitem.ICON}.png);'><span>{equipitem.STACK}</span></div>  
+         <div hoverChild='#slot{equipitem.SLOT}' class='Slot Item_{equipitem.ICON} slotloc{equipitem.SLOT} CB_HoverParent'><span>{equipitem.STACK}</span></div>  
          <!-- END equipitem --> 
          
          <!-- SLOT ICONS FOR INVENTORY -->
          <!-- BEGIN invitem --> 
-         <div hoverChild='#slot{invitem.SLOT}' class='Slot slotloc{invitem.SLOT} CB_HoverParent' style='background-image: url({ROOT_URL}images/items/item_{invitem.ICON}.png);'><span>{invitem.STACK}</span></div> 
+         <div hoverChild='#slot{invitem.SLOT}' class='Slot Item_{invitem.ICON} slotloc{invitem.SLOT} CB_HoverParent'><span>{invitem.STACK}</span></div> 
          <!-- BEGIN switch_is_bag --> 
          <div hoverChild='#bag{invitem.SLOT}' class='BagOpenSlot slotloc{invitem.SLOT} CB_HoverParent'></div>
          <!-- END switch_is_bag --> 
@@ -308,7 +308,7 @@
          <!-- END sharedbankslots -->   
 
          <!-- BEGIN bankitem --> 
-         <div hoverChild='#slot{bankitem.SLOT}' class='Slot slotloc{bankitem.SLOT} CB_HoverParent' style='background-image: url({ROOT_URL}images/items/item_{bankitem.ICON}.png);'><span>{bankitem.STACK}</span></div> 
+         <div hoverChild='#slot{bankitem.SLOT}' class='Slot Item_{bankitem.ICON} slotloc{bankitem.SLOT} CB_HoverParent'><span>{bankitem.STACK}</span></div> 
          <!-- BEGIN switch_is_bag --> 
          <div hoverChild='#bag{bankitem.SLOT}' class='BagOpenSlot slotloc{bankitem.SLOT} CB_HoverParent'></div>
          <!-- END switch_is_bag --> 
@@ -316,7 +316,7 @@
 
          <div class='sharedbankheaderloc'>{L_SHARED_BANK}</div>
          <!-- BEGIN sharedbankitem --> 
-         <div hoverChild='#slot{sharedbankitem.SLOT}' class='Slot slotloc{sharedbankitem.SLOT} CB_HoverParent' style='background-image: url({ROOT_URL}images/items/item_{sharedbankitem.ICON}.png);'><span>{sharedbankitem.STACK}</span></div> 
+         <div hoverChild='#slot{sharedbankitem.SLOT}' class='Slot Item_{sharedbankitem.ICON} slotloc{sharedbankitem.SLOT} CB_HoverParent'><span>{sharedbankitem.STACK}</span></div> 
          <!-- BEGIN switch_is_bag --> 
          <div hoverChild='#bag{sharedbankitem.SLOT}' class='BagOpenSlot slotloc{sharedbankitem.SLOT} CB_HoverParent'></div>
          <!-- END switch_is_bag --> 
@@ -340,7 +340,7 @@
    <!-- BEGIN bagslots --> 
    <div class='BagSlot slotimage'>
       <!-- BEGIN bagitems --> 
-      <div hoverChild='#slot{bags.bagslots.bagitems.BI_SLOT}' class='BagSlot CB_HoverParent' style='background-image: url({ROOT_URL}images/items/item_{bags.bagslots.bagitems.BI_ICON}.png);'>
+      <div hoverChild='#slot{bags.bagslots.bagitems.BI_SLOT}' class='BagSlot Item_{bags.bagslots.bagitems.BI_ICON} CB_HoverParent'>
          <span>{bags.bagslots.bagitems.STACK}</span>
       </div> 
       <!-- END bagitems -->    
@@ -362,15 +362,15 @@
    </div> 
    <div class='Stats'>        
       <div class='Slot slotlocinspect slotimage'></div> 
-      <div class='Slot slotlocinspect' style='background-image: url({ROOT_URL}images/items/item_{item.ICON}.png);'><span>{item.STACK}</span></div> 
+      <div class='Slot Item_{item.ICON} slotlocinspect'><span>{item.STACK}</span></div> 
       {item.HTML} 
       <!-- BEGIN augment --> 
       <div class='WindowNestedTan'>
          <div class='WindowNestedTanTitleBar'>
             <a href='{item.augment.AUG_LINK}'>{item.augment.AUG_NAME}</a>
          </div>   
-         <div class='Slot slotlocinspectaug slotimage'></div> 
-         <div class='Slot slotlocinspectaug' style='background-image: url({ROOT_URL}images/items/item_{item.augment.AUG_ICON}.png);'></div> 
+         <div class='Slot InspectAugSlot slotimage'></div> 
+         <div class='InspectAugSlot ItemAugment_{item.augment.AUG_ICON}'></div> 
          {item.augment.AUG_HTML} 
       </div> 
       <!-- END augment -->   

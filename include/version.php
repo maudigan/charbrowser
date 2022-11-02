@@ -28,12 +28,12 @@ if ( !defined('INCHARBROWSER') )
 }
 
 //version information
-$version      =    "v3.4.3"; 
+$version      =    "v3.5.0"; 
 
 //this file always gets replaced on a reinstall
 //this gets compared to the config file version stamp
 //to detect old config files. This only gets updated
 //when major changes needing attention are made to
 //the config.template
-$cb_expected_config_version = 'v2.0.0'
+$cb_expected_config_version = 'v2.1.0'
 ?>

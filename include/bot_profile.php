@@ -17,6 +17,9 @@
  *       Initial revision
  *   April 25, 2020 - Maudigan
  *     implement multi-tenancy
+ *   October 31, 2022 - Maudigan
+ *     made some minor changes to make the inventory query similar to
+ *     the query in profile.php
  *  
  ***************************************************************************/
  
@@ -29,6 +32,8 @@ if ( !defined('INCHARBROWSER') )
 }
 
 include_once(__DIR__ . "/statsclass.php");
+include_once(__DIR__ . "/spellcache.php");
+include_once(__DIR__ . "/itemcache.php");
 
 define('PROF_NOROWS', false);
 
@@ -561,6 +566,9 @@ TPL;
    //query this profiles items and add up all the stats
    private function _populateItems()
    {      
+      global $cbspellcache;
+      global $cbitemcache;
+      
       //only run it once
       if ($this->items_populated) return;
       $this->items_populated = true;
@@ -571,39 +579,48 @@ TPL;
       //holds all of the items and info about them
       $this->allitems = array();
 
-      //FETCH INVENTORY
+      //FETCH INVENTORY ROWS
       // pull bots inventory slotid is loaded as
       // "myslot" since items table also has a slotid field.
       $tpl = <<<TPL
-      SELECT item_id, augment_1, augment_2, 
-             augment_3, augment_4, 
-             augment_5, augment_6,
-             slot_id AS myslot, inst_charges
+      SELECT item_id AS itemid, 
+             augment_1 AS augslot1, 
+             augment_2 AS augslot2, 
+             augment_3 AS augslot3, 
+             augment_4 AS augslot4, 
+             augment_5 AS augslot5, 
+             augment_6 AS augslot6,
+             slot_id AS myslot, 
+             inst_charges AS charges
       FROM bot_inventories
       WHERE bot_id = '%s'  
 TPL;
       $query = sprintf($tpl, $this->bot_id);
       $result = $this->db->query($query);
+      $inventory_results = $this->db->fetch_all($result);
+      
+      //CACHE ITEMS
+      //preload all the items on the inventory using the item set
+      $cbitemcache->build_cache_inventory($inventory_results);
+      
+      //CACHE SPELLS
+      //preload all the spells that are on all the preloaded items
+      $item_list = $cbitemcache->fetch_cache();
+      $cbspellcache->build_cache_itemset($item_list);
+      
+      //PROCESS INVENTORY ROWS
       // loop through inventory results saving Name, Icon, and preload HTML for each
       // item to be pasted into its respective div later
-      $tpl = <<<TPL
-      SELECT * 
-      FROM items 
-      WHERE id = '%s' 
-      LIMIT 1
-TPL;
-      while ($row = $this->db->nextrow($result)) {
-         $query = sprintf($tpl, $row["item_id"]);
-         $itemresult = $this->db_content->query($query);
-         $itemrow = $this->db_content->nextrow($itemresult);
+      foreach ($inventory_results as $row)
+      {
+         $itemrow = $cbitemcache->get_item($row['itemid']);
          //merge the inventory and item row
          $row = array_merge($itemrow, $row);
          $tempitem = new item($row);
          for ($i = 1; $i <= 5; $i++) {
-            if ($row["augment_".$i]) {
-               $query = sprintf($tpl, $row["augment_".$i]);
-               $augresult = $this->db_content->query($query);
-               $augrow = $this->db_content->nextrow($augresult);
+            if ($row["augslot".$i]) {
+               $aug_item_id = $row["augslot" . $i];
+               $augrow      = $cbitemcache->get_item($aug_item_id);
                $tempitem->addaug($augrow);
                //add stats only if it's equiped
                if ($tempitem->type() == EQUIPMENT) {

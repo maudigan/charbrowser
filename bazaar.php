@@ -55,6 +55,7 @@ define('INCHARBROWSER', true);
 include_once(__DIR__ . "/include/common.php");
 include_once(__DIR__ . "/include/itemclass.php");
 include_once(__DIR__ . "/include/db.php");
+include_once(__DIR__ . "/include/spellcache.php");
 
 
 /*********************************************
@@ -134,8 +135,6 @@ if (!$cbsql->rows($result)) cb_message_die($language['MESSAGE_ERROR'],$language[
 $filtered_trader_rows = $cbsql->fetch_all($result);  
 $filtered_trader_item_ids = get_id_list($filtered_trader_rows, 'item_id');
 
-
-
 //GET THE ITEM ROWS FOR ALL THE ITEMS FOR SELL, PREFILTERED
 //build the where clause
 $filters = array();
@@ -160,14 +159,12 @@ $result = $cbsql_content->query($query);
 if (!$cbsql->rows($result)) cb_message_die($language['MESSAGE_ERROR'],$language['MESSAGE_NO_RESULTS_ITEMS']);
    
 //get the item results as an array
-$filtered_items = $cbsql_content->fetch_all($result);  
-
+$filtered_items = $cbsql_content->fetch_all($result); 
 
 //DO A MANUAL JOIN OF THE RESULTS
 //loop through the trader rows and join the item stats to it in a new array
 $joined_results = manual_join($filtered_trader_rows, 'item_id', $filtered_items, 'id', 'inner');
 $totalitems = count($joined_results);
-
 
 
 //DO A MANUAL SORT OF THE RESULTS
@@ -178,6 +175,17 @@ else {
    $sort_type = 'int';
 }
 sort_by($joined_results, $orderby, $direction, $sort_type);
+
+
+//LIMIT TO 1 PAGE OF RESULTS
+$truncated_results = array();
+$finish = min($start + $perpage, $totalitems);
+for ($i = $start; $i < $finish; $i++) { 
+   $truncated_results[] = $joined_results[$i];
+}
+
+//precache all the spells on the items using the item set
+$cbspellcache->build_cache_itemset($truncated_results);
 
 
 /*********************************************
@@ -239,9 +247,8 @@ $cb_template->assign_vars(array(
 
 //dump items for this page
 $slotcounter = 0;
-$finish = min($start + $perpage, $totalitems);
-for ($i = $start; $i < $finish; $i++) { 
-   $lot = $joined_results[$i];
+foreach ($truncated_results as $lot)
+{
    $tempitem = new item($lot);
    $price = $lot["tradercost"];
    $plat = number_format(floor($price/1000));
@@ -261,7 +268,8 @@ for ($i = $start; $i < $finish; $i++) {
       'ITEMTYPE' => $tempitem->skill(),
       'SLOT' => $slotcounter)
    );
-   if ($stat != -1) {   
+   if ($stat != -1) 
+   {   
       $cb_template->assign_block_vars("items.stat_col", array(
          'STAT' => $tempitem->fetchColumn($stat))
       );

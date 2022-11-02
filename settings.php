@@ -50,11 +50,15 @@ $l_permission = array (
    'inventory'       => $language['SETTINGS_INVENTORY'],
    'coininventory'   => $language['SETTINGS_ICOIN'], 
    'coinbank'        => $language['SETTINGS_BCOIN'],
+   'coinsharedbank'  => $language['SETTINGS_SCOIN'],
    'bags'            => $language['SETTINGS_BAGS'],
    'bank'            => $language['SETTINGS_BANK'],
+   'sharedbank'      => $language['SETTINGS_SHRDBANK'],
    'corpses'         => $language['SETTINGS_CORPSES'],
+   'corpse'          => $language['SETTINGS_CORPSE'],
    'flags'           => $language['SETTINGS_FLAGS'],
    'AAs'             => $language['SETTINGS_AAS'],
+   'leadership'      => $language['SETTINGS_LEADERSHIP'],
    'keys'            => $language['SETTINGS_KEYS'],
    'factions'        => $language['SETTINGS_FACTIONS'],
    'advfactions'     => $language['SETTINGS_ADVFACTIONS'],    
@@ -162,6 +166,8 @@ $cb_template->assign_both_vars(array(
    'S_RESULTS' => $numToDisplay,
    'S_HIGHLIGHT_GM' => (($highlightgm)?$language['SETTINGS_ENABLED']:$language['SETTINGS_DISABLED']),
    'S_BAZAAR' => (($blockbazaar)?$language['SETTINGS_DISABLED']:$language['SETTINGS_ENABLED']),
+   'S_BARTER' => (($blockbarter)?$language['SETTINGS_DISABLED']:$language['SETTINGS_ENABLED']),
+   'S_ADVENTURE' => (($blockadventurestats)?$language['SETTINGS_DISABLED']:$language['SETTINGS_ENABLED']),
    'S_CHARMOVE' => (($blockcharmove)?$language['SETTINGS_DISABLED']:$language['SETTINGS_ENABLED']),
    'S_GUILDVIEW' => (($blockguilddata)?$language['SETTINGS_DISABLED']:$language['SETTINGS_ENABLED']),
    'S_SERVERVIEW' => (($blockserverdata)?$language['SETTINGS_DISABLED']:$language['SETTINGS_ENABLED']))
@@ -175,6 +181,8 @@ $cb_template->assign_vars(array(
    'L_UPDATES_EXIST' => $language['SETTINGS_UPDATES_EXIST'],
    'L_DOWNLOAD' => $language['SETTINGS_DOWNLOAD'],
    'L_BAZAAR' => $language['SETTINGS_BAZAAR'],
+   'L_BARTER' => $language['SETTINGS_BARTER'],
+   'L_ADVENTURE' => $language['SETTINGS_ADVENTURE'],
    'L_SETTINGS' => $language['SETTINGS_SETTINGS'],
    'L_BACK' => $language['BUTTON_BACK'])
 );

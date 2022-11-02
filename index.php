@@ -30,20 +30,10 @@
  *   April 3, 2020 - Maudigan
  *     if the custom home.php is present, use it instead of the
  *     standard front page
+ *   October 24, 2022 adjust how constants/globals work for races
  ***************************************************************************/
 
-/**
- * Autoloader
- */
-spl_autoload_register(
-    function ($class_name) {
-        $class_name = str_replace("\\", "/", $class_name);
-        $class      = __DIR__ . "/include/{$class_name}.php";
-        include_once($class);
-    }
-);
 
-$constants = require_once(__DIR__ . "/include/constants.php");
 
 /*********************************************
                  INCLUDES

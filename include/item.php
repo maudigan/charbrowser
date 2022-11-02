@@ -41,8 +41,6 @@
  ***************************************************************************/
 
 
-use CharBrowser\Repositories\SpellRepository;
-
 if ( !defined('INCHARBROWSER') )
 {
    die("Hacking attempt");
@@ -219,7 +217,7 @@ function GetItem($item)
    global $dbbardskills;
    global $link_spell;
    global $itemstatsdisplay;
-   global $constants;
+   global $cbspellcache;
 
    //return buffer, build item here
    $Output = "";
@@ -341,7 +339,7 @@ function GetItem($item)
       //Bane DMG
       if ($item["banedmgrace"] > 0 AND $item["banedmgraceamt"] != 0) {
          $Output .= "Bane Damage: ";
-         $Output .= $constants['races'][$item["banedmgrace"]];
+         $Output .= $dbnpcraces[$item["banedmgrace"]];
          $Output .= " " . number_format($item["banedmgraceamt"]) . "<br>";
       }
 
@@ -357,7 +355,7 @@ function GetItem($item)
       // Proc Effect
       if ($item["proceffect"] > 0 AND $item["proceffect"] < 65535) {
          $temp = QuickTemplate($link_spell, array('SPELL_ID' => $item["proceffect"]));
-         $itemrow = SpellRepository::findOne($item["proceffect"]);
+         $itemrow = $cbspellcache->get_spell($item["proceffect"]);
          $Output .= "Proc Effect: <a href='" . $temp . "'>" . $itemrow['name'] . "</a>";
          if ($item["proclevel2"] > 0)
             $Output .= " <i>(Level " . $item["proclevel2"] . ")</i>";
@@ -368,7 +366,7 @@ function GetItem($item)
       // Worn Effect
       if ($item["worneffect"] > 0 AND $item["worneffect"] < 65535) {
          $temp = QuickTemplate($link_spell, array('SPELL_ID' => $item["worneffect"]));
-         $itemrow = SpellRepository::findOne($item["worneffect"]);
+         $itemrow = $cbspellcache->get_spell($item["worneffect"]);
          $Output .= "Worn Effect: <a href='" . $temp . "'>"  . $itemrow['name'] . "</a>";
          if ($item["wornlevel"] > 0)
             $Output .= " <i>(Level " . $item["wornlevel"] . ")</i>";
@@ -379,7 +377,7 @@ function GetItem($item)
       // Focus Effect
       if ($item["focuseffect"] > 0 AND $item["focuseffect"] < 65535) {
          $temp = QuickTemplate($link_spell, array('SPELL_ID' => $item["focuseffect"]));
-         $itemrow = SpellRepository::findOne($item["focuseffect"]);
+         $itemrow = $cbspellcache->get_spell($item["focuseffect"]);
          $Output .= "Focus Effect: <a href='" . $temp . "'>" . $itemrow['name'] . "</a>";
          if ($item["focuslevel"] > 0)
             $Output .= " <i>(Level " . $item["focuslevel"] . ")</i>";
@@ -390,7 +388,7 @@ function GetItem($item)
       // Click Effect
       if ($item["clickeffect"] > 0 AND $item["clickeffect"] < 65535) {
          $temp = QuickTemplate($link_spell, array('SPELL_ID' => $item["clickeffect"]));
-         $itemrow = SpellRepository::findOne($item["clickeffect"]);
+         $itemrow = $cbspellcache->get_spell($item["clickeffect"]);
          $Output .= $tab."Click Effect: <a href='".$temp."'>".$itemrow['name']."</a>";
          $Output .= "&nbsp;(";
          if ($item["clicktype"] == 1)
@@ -682,7 +680,7 @@ function GetItem($item)
       // Scroll Effect
       if ($item["scrolleffect"] > 0 AND $item["scrolleffect"] < 65535) {
          $temp = QuickTemplate($link_spell, array('SPELL_ID' => $item["scrolleffect"]));
-         $itemrow = SpellRepository::findOne($item["scrolleffect"]);
+         $itemrow = $cbspellcache->get_spell($item["scrolleffect"]);
          $Output .= "Scroll Effect: <a href='" . $temp . "'>" . $itemrow['name'] . "</a>";
          $Output .= "<br>";
       }
@@ -765,7 +763,7 @@ function GetItem($item)
       //Bane DMG
       if (($item["banedmgrace"]>0) AND ($item["banedmgraceamt"]!=0)) {
          $Output .= $tab."Bane DMG: ";
-         $Output .= $constants['races'][$item["banedmgrace"]];
+         $Output .= $dbnpcraces['races'][$item["banedmgrace"]];
          $Output .= " ".sign($item["banedmgraceamt"])."<br>\n";
       }
       if (($item["banedmgbody"]>0) AND ($item["banedmgamt"]!=0)) {
@@ -782,7 +780,7 @@ function GetItem($item)
          //build the link from the spell template
          $temp = QuickTemplate($link_spell, array('SPELL_ID' => $item["proceffect"]));
          
-         $itemrow = SpellRepository::findOne($item["proceffect"]);
+         $itemrow = $cbspellcache->get_spell($item["proceffect"]);
          $Output .= $tab."Effect: <a href='".$temp."'>".$itemrow['name']."</a>";
          $Output .= "&nbsp;(Combat)";
          $Output .= " <i>(Level ".$item["proclevel2"].")</i>";
@@ -793,7 +791,7 @@ function GetItem($item)
       if (($item["worneffect"]>0) AND ($item["worneffect"]<65535)) {
          //build the link from the spell template
          $temp = QuickTemplate($link_spell, array('SPELL_ID' => $item["worneffect"]));
-         $itemrow = SpellRepository::findOne($item["worneffect"]);
+         $itemrow = $cbspellcache->get_spell($item["worneffect"]);
          $Output .= $tab."Effect: <a href='".$temp."'>".$itemrow['name']."</a>";
          $Output .= "&nbsp;(Worn)";
          $Output .= " <i>(Level ".$item["wornlevel"].")</i>";
@@ -804,7 +802,7 @@ function GetItem($item)
       if (($item["focuseffect"]>0) AND ($item["focuseffect"]<65535)) {
          //build the link from the spell template
          $temp = QuickTemplate($link_spell, array('SPELL_ID' => $item["focuseffect"]));
-         $itemrow = SpellRepository::findOne($item["focuseffect"]);
+         $itemrow = $cbspellcache->get_spell($item["focuseffect"]);
          $Output .= $tab."Focus: <a href='".$temp."'>".$itemrow['name']."</a>";
          if ($item["focuslevel"]>0) { $Output .= " <i>(Level ".$item["focuslevel"].")</i>";  }
          $Output .= "<br>\n";
@@ -814,7 +812,7 @@ function GetItem($item)
       if (($item["clickeffect"]>0) AND ($item["clickeffect"]<65535)) {
          //build the link from the spell template
          $temp = QuickTemplate($link_spell, array('SPELL_ID' => $item["clickeffect"]));
-         $itemrow = SpellRepository::findOne($item["clickeffect"]);
+         $itemrow = $cbspellcache->get_spell($item["clickeffect"]);
          $Output .= $tab."Effect: <a href='".$temp."'>".$itemrow['name']."</a>";
          $Output .= "&nbsp;(";
          if ($item["clicktype"]==1) { $Output .= "Any Slot, "; }
@@ -834,33 +832,33 @@ function GetItem($item)
       // Stats / HP / Mana / Endurance
       $Stats = "";
       if($item[ "astr"] != 0)  $Stats        .= " STR: "            . $item ["astr"];
-      if($item["heroic_str"] != 0) $Stats .= " " . $item["heroic_str"] ;
+      if($item["heroic_str"] != 0) $Stats .= " <font color = 'gold'>" . sign($item["heroic_str"]) . "</font>";
       if($item[ "asta"] != 0)  $Stats        .= " STA: "            . $item ["asta"];
-      if($item["heroic_sta"] != 0) $Stats .= " " . $item["heroic_sta"] ;
+      if($item["heroic_sta"] != 0) $Stats .= " <font color = 'gold'>" . sign($item["heroic_sta"]) . "</font>";
       if($item[ "aagi"] != 0)  $Stats        .= " AGI: "            . $item ["aagi"];
-      if($item["heroic_agi"] != 0) $Stats .= " " . $item["heroic_agi"] ;
+      if($item["heroic_agi"] != 0) $Stats .= " <font color = 'gold'>" . sign($item["heroic_agi"]) . "</font>";
       if($item[ "adex"] != 0)  $Stats        .= " DEX: "            . $item ["adex"];
-      if($item["heroic_dex"] != 0) $Stats .= " " . $item["heroic_dex"] ;
+      if($item["heroic_dex"] != 0) $Stats .= " <font color = 'gold'>" . sign($item["heroic_dex"]) . "</font>";
       if($item[ "awis"] != 0)  $Stats        .= " WIS: "            . $item ["awis"];
-      if($item["heroic_wis"] != 0) $Stats .= " " . $item["heroic_wis"] ;
+      if($item["heroic_wis"] != 0) $Stats .= " <font color = 'gold'>" . sign($item["heroic_wis"]) . "</font>";
       if($item[ "aint"] != 0)  $Stats        .= " INT: "            . $item ["aint"];
-      if($item["heroic_int"] != 0) $Stats .= " " . $item["heroic_int"] ;
+      if($item["heroic_int"] != 0) $Stats .= " <font color = 'gold'>" . sign($item["heroic_int"]) . "</font>";
       if($item[ "acha"] != 0)  $Stats        .= " CHA: "            . $item ["acha"];
-      if($item["heroic_cha"] != 0) $Stats .= " " . $item["heroic_cha"] ;
+      if($item["heroic_cha"] != 0) $Stats .= " <font color = 'gold'>" . sign($item["heroic_cha"]) . "</font>";
       if($Stats != "") { $Output .= $tab.$Stats."<br>\n"; }
 
       //resists
       $Stats = "";
       if($item[   "fr"] != 0)  $Stats .= " Fire: "           . $item["fr"] ;
-      if($item["heroic_fr"] != 0) $Stats .= " " . $item["heroic_fr"] ;
+      if($item["heroic_fr"] != 0) $Stats .= " <font color = 'gold'>" . sign($item["heroic_fr"]) . "</font>";
       if($item[   "dr"] != 0)  $Stats .= " Disease: "        . $item["dr"] ;
-      if($item["heroic_dr"] != 0) $Stats .= " " . $item["heroic_dr"] ;
+      if($item["heroic_dr"] != 0) $Stats .= " <font color = 'gold'>" . sign($item["heroic_dr"]) . "</font>";
       if($item[   "cr"] != 0)  $Stats .= " Cold: "           . $item["cr"] ;
-      if($item["heroic_cr"] != 0) $Stats .= " " . $item["heroic_cr"] ;
+      if($item["heroic_cr"] != 0) $Stats .= " <font color = 'gold'>" . sign($item["heroic_cr"]) . "</font>";
       if($item[   "mr"] != 0)  $Stats .= " Magic: "          . $item["mr"] ;
-      if($item["heroic_mr"] != 0) $Stats .= " " . $item["heroic_mr"];
+      if($item["heroic_mr"] != 0) $Stats .= " <font color = 'gold'>" . sign($item["heroic_mr"]) . "</font>";
       if($item[   "pr"] != 0)  $Stats .= " Poison: "         . $item["pr"];
-      if($item["heroic_pr"] != 0) $Stats .= " " . $item["heroic_pr"];
+      if($item["heroic_pr"] != 0) $Stats .= " <font color = 'gold'>" . sign($item["heroic_pr"]) . "</font>";
       if($item[   "hp"] != 0)  $Stats .= " HP: "            .sign($item   ["hp"]);
       if($item[ "mana"] != 0)  $Stats .= " MANA: "          .sign($item ["mana"]);
       if($item["endur"] != 0)  $Stats .= " Endurance: "     .sign($item["endur"]);
@@ -928,10 +926,11 @@ function GetItem($item)
       }
 
       // scroll
-      if (($item["scrolleffect"]>0) AND ($item["scrolleffect"]<65535)) {
+      if (($item["scrolleffect"] > 0) AND ($item["scrolleffect"] < 65535)) {
          //build the link from the spell template
          $temp = QuickTemplate($link_spell, array('SPELL_ID' => $item["scrolleffect"]));
-         $Output .= $tab."Effect: <a href='".$temp."'>".$cbsql_content->field_query("name","SELECT name FROM $tbspells WHERE id=".$item["scrolleffect"])."</a>";
+         $itemrow = $cbspellcache->get_spell($item["scrolleffect"]);
+         $Output .= $tab."Effect: <a href='".$temp."'>".$itemrow['name']."</a>";
          $Output .= "<br>\n";
       }
       

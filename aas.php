@@ -96,7 +96,7 @@ function getRankCost($first_rank, $value)
       if (array_key_exists($next_rank, $aa_ranks))
          return getRankCost($next_rank, --$value);
       else //too high of a value was provided
-         return ' ';
+         return '--';
    }
    elseif ($value == 0) //next most likely scenario
    {

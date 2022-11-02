@@ -12,34 +12,9 @@
  *
  *                                  Author:
  *                           Maudigan(Airwalking) 
- * 
- *   September 26, 2014 - Maudigan 
- *      Updated character table name 
- *      repaired double carriage returns through whole file
- *   September 28, 2014 - Maudigan
- *      added code to monitor database performance
- *      altered character profile initialization to remove redundant query
- *   May 24, 2016 - Maudigan
- *      general code cleanup, whitespace correction, removed old comments,
- *      organized some code. A lot has changed, but not much functionally
- *      do a compare to 2.41 to see the differences. 
- *      Implemented new database wrapper.
- *   May 30, 2016 - Maudigan
- *      Swapped from player_corpses to character_corpses; this was part of
- *      blob conversion that I had missed
- *   October 3, 2016 - Maudigan
- *      Made the corpse links customizable
- *   January 7, 2018 - Maudigan
- *      Modified database to use a class.
- *   March 9, 2020 - Maudigan
- *      modularized the profile menu output
- *   March 22, 2020 - Maudigan
- *     impemented common.php
- *   April 25, 2020 - Maudigan
- *     implement multi-tenancy
- *   May 3, 2020 - Maudigan
- *     changes to minimize database access
  *
+ *   October 30, 2022 - initial revision (Maudigan) 
+ *      
  ***************************************************************************/
   
  
@@ -48,124 +23,302 @@
 *********************************************/ 
 define('INCHARBROWSER', true);
 include_once(__DIR__ . "/include/common.php");
+include_once(__DIR__ . "/include/corpse_profile.php");
 include_once(__DIR__ . "/include/profile.php");
+include_once(__DIR__ . "/include/itemclass.php");
 include_once(__DIR__ . "/include/db.php");
   
  
 /*********************************************
          SETUP PROFILE/PERMISSIONS
 *********************************************/
-if(!$_GET['char']) cb_message_die($language['MESSAGE_ERROR'],$language['MESSAGE_NO_CHAR']);
-else $charName = $_GET['char'];
+if(!$_GET['corpse']) cb_message_die($language['MESSAGE_ERROR'],$language['MESSAGE_NO_CHAR']);
+else $CorpseID = $_GET['corpse'];
+     
+//bot initializations 
+$corpse = new corpse_profile($CorpseID, $cbsql, $cbsql_content, $language, $charbrowser_is_admin_page); //the profile class will sanitize the char id
+$charID = $corpse->char_id(); 
+$CorpseID = $corpse->corpse_id();
+$corpseName = $corpse->GetValue('charname');
 
-//character initializations
-$char = new profile($charName, $cbsql, $cbsql_content, $language, $showsoftdelete, $charbrowser_is_admin_page); //the profile class will sanitize the character name
-$charID = $char->char_id(); 
-$name = $char->GetValue('name');
+//char initialization      
+$char = new profile($charID, $cbsql, $cbsql_content, $language, $showsoftdelete, $charbrowser_is_admin_page);
+$charName = $char->GetValue('name');
 $mypermission = GetPermissions($char->GetValue('gm'), $char->GetValue('anon'), $char->char_id());
 
 //block view if user level doesnt have permission
-if ($mypermission['corpses']) cb_message_die($language['MESSAGE_ERROR'],$language['MESSAGE_ITEM_NO_VIEW']);
+if ($mypermission['corpse']) cb_message_die($language['MESSAGE_ERROR'],$language['MESSAGE_ITEM_NO_VIEW']);
  
  
 /*********************************************
         GATHER RELEVANT PAGE DATA
 *********************************************/
-//get corpses
-$tpl = <<<TPL
-SELECT zone_id, 
-       is_buried, x, y, 
-       is_rezzed, time_of_death 
-FROM character_corpses 
-WHERE charid = %s 
-ORDER BY time_of_death DESC
-TPL;
-$query = sprintf($tpl, $charID);
-$result = $cbsql->query($query);
-if (!$cbsql->rows($result)) cb_message_die($language['CORPSE_CORPSES']." - ".$name,$language['MESSAGE_NO_CORPSES']);
+//get corpse info
+$corpse_class      = $corpse->GetValue('class');
+$corpse_race       = $corpse->GetValue('race');
+$corpse_gender     = $corpse->GetValue('gender');
+$corpse_face       = $corpse->GetValue('face');
 
-$corpses = $cbsql->fetch_all($result);  
-$zone_ids = get_id_list($corpses, 'zone_id');
 
 //get zone data
 $tpl = <<<TPL
-SELECT short_name, zoneidnumber
-FROM zone 
-WHERE zoneidnumber IN (%s) 
+   SELECT long_name, short_name, zoneidnumber
+   FROM zone 
+   WHERE zoneidnumber = '%s' 
 TPL;
-$query = sprintf($tpl, $zone_ids);
+$query = sprintf($tpl, $corpse->GetValue('zone_id'));
 $result = $cbsql_content->query($query);
 
-$zones = $cbsql_content->fetch_all($result);  
+if (!($zone = $cbsql->nextrow($result)))
+{
+   $zone = array(
+      'long_name' => 'unknown',
+      'short_name' => 'unknown',
+      'zoneidnumber' => '0'
+   );
+}
 
-//join zones and corpse queries
-$corpse_zones = manual_join($corpses, 'zone_id', $zones, 'zoneidnumber', 'inner');
 
-
- 
 /*********************************************
                DROP HEADER
 *********************************************/
-$d_title = " - ".$name.$language['PAGE_TITLES_CORPSE'];
+$d_title = " - ".$corpseName.$language['PAGE_TITLES_CORPSE'];
 include(__DIR__ . "/include/header.php");
  
  
 /*********************************************
             DROP PROFILE MENU
 *********************************************/
-output_profile_menu($name, 'corpse');
- 
+output_profile_menu($charName, 'corpse');
+
  
 /*********************************************
               POPULATE BODY
 *********************************************/
 $cb_template->set_filenames(array(
-   'corpse' => 'corpse_body.tpl')
+  'corpse' => 'corpse_body.tpl')
 );
 
-$cb_template->assign_both_vars(array(  
-   'NAME' => $name)
+
+//prepare the link to the map
+$find = array(
+   'ZONE_SHORTNAME'  => $zone['short_name'],
+   'ZONE_ID'         => $zone["zoneidnumber"],
+   'TEXT'            => $charName."`s%20Corpse",
+   'X'               => floor($corpse->GetValue('x')),
+   'Y'               => floor($corpse->GetValue('y'))
 );
-$cb_template->assign_vars(array( 
-   'L_REZZED' => $language['CORPSE_REZZED'],
+$link_to_map = QuickTemplate($link_map, $find);
+
+//prepare the link to the death zone
+$find = array(
+   'ZONE_SHORTNAME'  => $zone['short_name'],
+   'ZONE_ID'         => $zone["zoneidnumber"]
+);
+$link_to_zone_died = QuickTemplate($link_zone, $find);
+
+$tod = strtotime($corpse->GetValue('time_of_death'));
+   
+$cb_template->assign_both_vars(array(  
+   'NAME' => $charName,
+   'FIRST_NAME' => $corpseName.$language['PAGE_TITLES_CORPSE'],
+   'LAST_NAME' => $char->GetValue('last_name'),
+   'TITLE' => $char->GetValue('title'),
+   'LEVEL' => $corpse->GetValue('level'),
+   'PP' => $corpse->GetValue('platinum'),
+   'GP' => $corpse->GetValue('gold'),
+   'SP' => $corpse->GetValue('silver'),
+   'CP' => $corpse->GetValue('copper'),
+   'HEADING' => $corpse->GetValue('heading'),
+   'TOD' =>  date('l, j F Y g:i A', $tod),
+   'TOD_DAY' =>  date('l', $tod),
+   'TOD_DATE' =>  date('F j, Y', $tod),
+   'TOD_TIME' =>  date('g:i A', $tod),
+   'REZZED_TEXT' => ($corpse->GetValue('is_rezzed') ? $language['CORPSE_REZZED_YES']:$language['CORPSE_REZZED_NO']),  
+   'REZZED_STYLE' => ($corpse->GetValue('is_rezzed') ? "CB_Avatar_Rezzed":""),  
+   'BURIED_TEXT' => ($corpse->GetValue('is_buried') ? $language['CORPSE_BURIED_YES']:$language['CORPSE_BURIED_NO']), 
+   'DIED_ZONE_LONG_NAME' => $zone['long_name'],
+   'DIED_ZONE_SHORT_NAME' => $zone['short_name'],
+   'DIED_LOC' => "(".floor($corpse->GetValue('y')).", ".floor($corpse->GetValue('x')).")",
+   'DIED_ZONE_ID' => $zone['zoneidnumber'],
+   'LINK_MAP' => $link_to_map,
+   'DIED_LINK_ZONE' => $link_to_zone_died,
+   'CLASS' => $dbclassnames[$corpse_class],
+   'RACE' => $dbracenames[$corpse_race],
+   'RACE_ID' => $corpse_race,
+   'GENDER_ID' => $corpse_gender,
+   'FACE_ID' => $corpse_face,
+   'AVATAR_IMG' => getAvatarImage($corpse_race, $corpse_gender, $corpse_face, $corpse->GetValue('is_buried')),
+   'CLASS_NUM' => $corpse_class,
+   'DEITY' => $dbdeities[$corpse->GetValue('deity')],
+   'WEIGHT' => round($corpse->getWT()/10))
+);
+
+$cb_template->assign_vars(array(  
+   'L_HEADER_INVENTORY' => $language['CHAR_INVENTORY'],
+   'L_WEIGHT' => $language['CHAR_WEIGHT'],
+   'L_WEIGHT_MAX' => $language['CORPSE_WEIGHT_MAX'],
+   'L_CONTAINER' => $language['CHAR_CONTAINER'], 
+   'L_BURIED' => $language['CORPSE_BURIED'],
    'L_TOD' => $language['CORPSE_TOD'],
-   'L_LOC' => $language['CORPSE_LOC'],
-   'L_MAP' => $language['CORPSE_MAP'],
-   'L_CORPSES' => $language['CORPSE_CORPSES'],
+   'L_VIEW_ON_MAP' => $language['CORPSE_VIEW_ON_MAP'],
+   'L_STATUS' => $language['CORPSE_STATUS'],
+   'L_BURIED_PREAMBLE' => $language['CORPSE_BURIED_PREAMBLE'],
    'L_DONE' => $language['BUTTON_DONE'])
 );
 
-//dump corpses
-foreach($corpse_zones as $corpse) {
+//burried switch
+if ($corpse->GetValue('is_buried'))
+{
+   $find = array(
+      'ZONE_SHORTNAME'  => "shadowrest",
+      'ZONE_ID'         => "187"
+   );
+   $link_to_zone_buried = QuickTemplate($link_zone, $find);
+   
+   $cb_template->assign_both_block_vars("switch_is_buried", array(
+      'ZONE_LONG_NAME' => 'Shadowrest',
+      'ZONE_SHORT_NAME' => 'shadowrest',
+      'ZONE_ID' => '`87',
+      'LINK_TO_ZONE_BURIED' => $link_to_zone_buried)
+   );
+}
 
-   //prepare the link to the map
-   $find = array(
-      'ZONE_SHORTNAME'  => $corpse['short_name'],
-      'ZONE_ID'         => $corpse["zone_id"],
-      'TEXT'            => $name."`s%20Corpse",
-      'X'               => floor($corpse['x']),
-      'Y'               => floor($corpse['y'])
+
+
+//---------------------------------
+//     SLOTS TEMPLATE VARS
+//---------------------------------
+//INVENTORY
+for ( $i = SLOT_INVENTORY_START; $i <= SLOT_INVENTORY_END; $i++ ) {
+   $cb_template->assign_block_vars("invslots", array( 
+      'SLOT' => $i)
    );
-   $link_to_map = QuickTemplate($link_map, $find);
+}
+//EQUIPMENT
+for ( $i = SLOT_EQUIPMENT_START; $i <= SLOT_EQUIPMENT_END; $i++ ) {
+   $cb_template->assign_block_vars("equipslots", array( 
+      'SLOT' => $i)
+   );
+}
+
+
+//---------------------------------
+// ITEM ICONS TEMPLATE VARS
+//---------------------------------
+$allitems = $corpse->getAllItems();
+
+//INVENTORY
+if (!$mypermission['bags']) {
+   foreach ($allitems as $value) {
+      if ($value->type() != INVENTORY) continue; 
+      $cb_template->assign_block_vars("invitem", array( 
+         'SLOT' => $value->slot(),      
+         'ICON' => $value->icon(),      
+         'STACK' => $value->stack())
+      );
+      if ($value->slotcount() > 0) {
+         $cb_template->assign_block_vars("invitem.switch_is_bag", array());
+      }
+   }
+}
+
+
+//EQUIPMENT
+foreach ($allitems as $value) {
+   if ($value->type() != EQUIPMENT) continue; 
+   $cb_template->assign_block_vars("equipitem", array( 
+      'SLOT' => $value->slot(),      
+      'ICON' => $value->icon(),      
+      'STACK' => $value->stack())
+   );
+}
+
+//---------------------------------
+//     BAG WINDOW TEMPLATE VARS
+//---------------------------------
+//these are the vars to drop items/slots/etc
+//for bag contents, this does equipment,
+//inventory, bank and shared bank
+foreach ($allitems as $value) {
+   if ($value->type() == INVENTORY && $mypermission['bags']) continue; 
    
-   //prepare the link to the zone
-   $find = array(
-      'ZONE_SHORTNAME'  => $corpse['short_name'],
-      'ZONE_ID'         => $corpse["zone_id"]
-   );
-   $link_to_zone = QuickTemplate($link_zone, $find);
+   if ($value->slotcount() > 0)  {
+       
+      //stage the bag in a temporary array
+      $tempbag = array(); 
+      
+      //create each empty slot in the bag
+      for ($i = 1;$i <= $value->slotcount(); $i++) {
+         $tempbag[$i] = 0;
+      }
+         
+      //find the item that goes in this slot   
+      foreach ($allitems as $subvalue) {
+         if ($subvalue->type() == $value->slot()) {
+            //if the item is in this bag, but the bag doesn't have enough
+            //slots to display it, skip it
+            if ($subvalue->vslot() > $value->slotcount() || $subvalue->vslot() > MAX_BAG_SLOTS) {
+               continue;
+            }
+            $tempbag[$subvalue->vslot()] = array(
+               'BI_SLOT' => $subvalue->slot(),
+               'BI_RELATIVE_SLOT' => $subvalue->vslot(),
+               'BI_ICON' => $subvalue->icon(),      
+               'STACK' => $subvalue->stack()
+            );
+         }
+      }
+         
+      //populate the template now   
+      $cb_template->assign_block_vars("bags", array( 
+         'SLOT' => $value->slot(),  
+         'SLOTCOUNT' => $value->slotcount(),      
+         'ROWS' => floor($value->slotcount()/2))
+      );
+      
+      foreach($tempbag as $slotid => $slot) {
+         $cb_template->assign_block_vars("bags.bagslots", array( 
+            'BS_SLOT' => $slotid)
+         );
+         //if there's array data in it, it's got an item
+         if (is_array($slot)) {
+            $cb_template->assign_block_vars("bags.bagslots.bagitems", $slot
+            );
+         }
+      }
+   } 
+}
+
+
+//---------------------------------
+//   ITEM WINDOW TEMPLATE VARS
+//---------------------------------
+//the item inspect windows that hold
+//the item stats. this does equipment,
+//inventory
+foreach ($allitems as $value) {
+   if ($value->type() == INVENTORY && $mypermission['bags']) continue; 
    
-   $cb_template->assign_both_block_vars("corpses", array( 
-      'REZZED' => ((!$corpse['is_rezzed']) ? "0":"1"),      
-      'TOD' => $corpse['time_of_death'],
-      'LOC' => (($corpse['is_buried']) ?  "(buried)":"(".floor($corpse['y']).", ".floor($corpse['x']).")"),
-      'ZONE' => (($corpse['is_buried']) ?  "shadowrest":$corpse['short_name']),
-      'ZONE_ID' => $corpse["zone_id"],
-      'LINK_MAP' => $link_to_map,
-      'LINK_ZONE' => $link_to_zone,
-      'X' => floor($corpse['y']),
-      'Y' => floor($corpse['x']))
+   $cb_template->assign_both_block_vars("item", array(
+      'SLOT' => $value->slot(),     
+      'ICON' => $value->icon(),   
+      'NAME' => $value->name(),  
+      'STACK' => $value->stack(),
+      'ID' => $value->id(),
+      'LINK' => QuickTemplate($link_item, array('ITEM_ID' => $value->id())),
+      'HTML' => $value->html(),
+      'ITEMTYPE' => $value->skill())
    );
+   for ( $i = 0 ; $i < $value->augcount() ; $i++ ) {
+      $cb_template->assign_both_block_vars("item.augment", array(       
+         'AUG_NAME' => $value->augname($i),
+         'AUG_ID' => $value->augid($i),
+         'AUG_LINK' => QuickTemplate($link_item, array('ITEM_ID' => $value->augid($i))),
+         'AUG_ICON' => $value->augicon($i),
+         'AUG_HTML' => $value->aughtml($i))
+      );
+   }
 }
  
  
@@ -175,6 +328,6 @@ foreach($corpse_zones as $corpse) {
 $cb_template->pparse('corpse');
 
 $cb_template->destroy;
- 
+
 include(__DIR__ . "/include/footer.php");
 ?>

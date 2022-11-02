@@ -47,13 +47,11 @@
  *     implement multi-tenancy
  *   May 3, 2020 - Maudigan
  *     allow construction with id or name
+ *   October 20, 2022 - Maudigan
+ *     added leadership table locator data
  *
  ***************************************************************************/
 
-
-use CharBrowser\Repositories\CharacterAlternateAbilityRepository;
-use CharBrowser\Repositories\ItemRepository;
-use CharBrowser\Repositories\SpellRepository;
 
 if ( !defined('INCHARBROWSER') )
 {
@@ -61,6 +59,8 @@ if ( !defined('INCHARBROWSER') )
 }
 
 include_once(__DIR__ . "/statsclass.php");
+include_once(__DIR__ . "/spellcache.php");
+include_once(__DIR__ . "/itemcache.php");
 
 define('PROF_NOROWS', false);
 
@@ -106,6 +106,7 @@ private $locator_pk = array (
    "character_alternate_abilities" => "aa_id",
    "character_skills" => "skill_id",
    "character_languages" => "lang_id",
+   "character_leadership_abilities" => "slot",
 );
 
 
@@ -941,14 +942,9 @@ TPL;
       //a secondary conditional will capture if the character has the aa and their rank
       $aa_ranks = array();
       $char_ranks = array();
-        //build the query
 
-//      $tpl = <<<TPL
-//         SELECT aa_value
-//         FROM character_alternate_abilities
-//         WHERE id = '%s'
-//         AND aa_id = '%s'
-//TPL;
+      //grab the cached character aas
+      $character_aas = $this->_getTableCache('character_alternate_abilities');
 
       while ($row = $this->db_content->nextrow($result)) {
          //'linked' list of rank modifiers
@@ -961,7 +957,7 @@ TPL;
          $aa_ranks[intval($row['rank_id'])] = $aa_rank;
 
          //get characters rank for this aa
-         $aa = CharacterAlternateAbilityRepository::getAbility($row['rank_id']);
+         $aa = $character_aas[$row['rank_id']];
 
          //this chars rank
          if ($aa['aa_value'] > 0) {
@@ -2186,7 +2182,10 @@ TPL;
 
    //query this profiles items and add up all the stats
    private function _populateItems()
-   {
+   {  
+      global $cbspellcache;
+      global $cbitemcache;
+   
       //only run it once
       if ($this->items_populated) return;
       $this->items_populated = true;
@@ -2197,35 +2196,73 @@ TPL;
       //holds all of the items and info about them
       $this->allitems = array();
 
-      //FETCH INVENTORY
+      //FETCH INVENTORY ROWS
       // pull characters inventory slotid is loaded as
       // "myslot" since items table also has a slotid field.
       $tpl = <<<TPL
-      SELECT itemid, augslot1, augslot2, 
-             augslot3, augslot4, 
-             augslot5, slotid AS myslot,
+      SELECT itemid, 
+             augslot1, 
+             augslot2, 
+             augslot3, 
+             augslot4, 
+             augslot5, 
+             augslot6,
+             slotid AS myslot,
              charges
       FROM inventory
       WHERE charid = '%s'  
 TPL;
       $query = sprintf($tpl, $this->char_id);
       $result = $this->db->query($query);
+      $inventory_results = $this->db->fetch_all($result);
+      
+      
+      //FETCH SHARED BANK ROWS
+      // pull characters shared bank, slotid is loaded as
+      // "myslot" since items table also has a slotid field.
+      $tpl = <<<TPL
+      SELECT itemid, 
+             augslot1, 
+             augslot2, 
+             augslot3, 
+             augslot4, 
+             augslot5,
+             augslot6,
+             slotid AS myslot,
+             charges
+      FROM sharedbank
+      WHERE acctid = '%s'  
+TPL;
+      $query = sprintf($tpl, $this->_getValue('account_id', $default));
+      $result = $this->db->query($query);
+      $bank_results = $this->db->fetch_all($result);
+      
+      
+      //CACHE ITEMS
+      //preload all the items on the inventory using the item set
+      $full_results = array_merge($inventory_results, $bank_results);
+      $cbitemcache->build_cache_inventory($full_results);
+      
+      
+      //CACHE SPELLS
+      //preload all the spells that are on all the preloaded items
+      $item_list = $cbitemcache->fetch_cache();
+      $cbspellcache->build_cache_itemset($item_list);
+      
+
+      //PROCESS INVENTORY ROWS
       // loop through inventory results saving Name, Icon, and preload HTML for each
       // item to be pasted into its respective div later
-
-      CharacterAlternateAbilityRepository::preloadAlternateAbilities($this->char_id);
-      ItemRepository::preloadItemsByAccountCharacter($this->account_id, $this->char_id);
-      SpellRepository::preloadSpellsUsedByCharacterId($this->char_id);
-
-      while ($row = $this->db->nextrow($result)) {
-         $itemrow = ItemRepository::findOne($row['itemid']);
+      foreach ($inventory_results as $row)
+      {
+         $itemrow = $cbitemcache->get_item($row['itemid']);
          //merge the inventory and item row
          $row = array_merge($itemrow, $row);
          $tempitem = new item($row);
          for ($i = 1; $i <= 5; $i++) {
             if ($row["augslot" . $i]) {
                $aug_item_id = $row["augslot" . $i];
-               $augrow      = ItemRepository::findOne($aug_item_id);
+               $augrow      = $cbitemcache->get_item($aug_item_id);
                $tempitem->addaug($augrow);
                //add stats only if it's equiped
                if ($tempitem->type() == EQUIPMENT) {
@@ -2244,35 +2281,19 @@ TPL;
          unset($tempitem);
       }
 
-      //FETCH SHARED BANK
-      // pull characters shared bank, slotid is loaded as
-      // "myslot" since items table also has a slotid field.
-      $tpl = <<<TPL
-      SELECT itemid, augslot1, augslot2, 
-             augslot3, augslot4, 
-             augslot5, slotid AS myslot 
-      FROM sharedbank
-      WHERE acctid = '%s'  
-TPL;
-      $query = sprintf($tpl, $this->_getValue('account_id', $default));
-      $result = $this->db->query($query);
+      //PROCESS SHARED BANK ROWS
       // loop through inventory results saving Name, Icon, and preload HTML for each
       // item to be pasted into its respective div later
-      $tpl = <<<TPL
-      SELECT * 
-      FROM items 
-      WHERE id = '%s' 
-      LIMIT 1
-TPL;
-      while ($row = $this->db->nextrow($result)) {
-         $itemrow = ItemRepository::findOne($row['itemid']);
+      foreach ($bank_results as $row)
+      {
+         $itemrow = $cbitemcache->get_item($row['itemid']);
          //merge the inventory and item row
          $row      = array_merge($itemrow, $row);
          $tempitem = new item($row);
          for ($i = 1; $i <= 5; $i++) {
             if ($row["augslot" . $i]) {
                $aug_item_id = $row["augslot" . $i];
-               $augrow      = ItemRepository::findOne($aug_item_id);
+               $augrow      = $cbitemcache->get_item($aug_item_id);
                $tempitem->addaug($augrow);
             }
          }

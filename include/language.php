@@ -34,6 +34,12 @@
  *   April 16, 2020 - added bots language(Maudigan)
  *   January 17, 2022 - Maudigan
  *     modified Vxed flags to support the data bucket changes
+ *   October 19, 2022 - added leadership button 
+ *                      add title bar to profile menu (Maudigan)
+ *   October 24, 2022 - added spell and itemcache error messages (Maudigan)
+ *                      added language for barter page
+ *   October 28, 2022 - added adventure board language (maudigan)
+ *   November 1, 2022 - added language for corpses page update (Maudigan)
  ***************************************************************************/ 
   
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             
@@ -50,21 +56,27 @@ $language['HEADER_NAME'] = "Name";
 $language['HEADER_SETTINGS'] = "Settings"; 
 $language['HEADER_HOME'] = "Home"; 
 $language['HEADER_SERVER'] = "Server"; 
-$language['HEADER_BAZAAR'] = "The Bazaar"; 
-$language['HEADER_CHARMOVE'] = "Character Mover"; 
-$language['HEADER_SIGBUILD'] = "Signature Builder"; 
-$language['HEADER_REPORT_ERRORS'] = "Report Errors"; 
+$language['HEADER_BAZAAR'] = "Bazaar"; 
+$language['HEADER_BARTER'] = "Barter"; 
+$language['HEADER_LEADERBOARD'] = "LDON"; 
+$language['HEADER_CHARMOVE'] = "CharMover"; 
+$language['HEADER_SIGBUILD'] = "Signature"; 
+$language['HEADER_REPORT_ERRORS'] = "Errors"; 
 $language['HEADER_HELP'] = "Help"; 
 $language['HEADER_NAVIGATE'] = "Navigate"; 
 
 //page title languages 
 $language['PAGE_TITLES_AAS'] ="'s Alternate Abilities"; 
+$language['PAGE_TITLES_LEADERSHIP'] ="'s Leadership Abilities"; 
 $language['PAGE_TITLES_BAZAAR'] ="The Bazaar"; 
+$language['PAGE_TITLES_BARTER'] ="Barter";  
+$language['PAGE_TITLES_ADVENTURE_LEADERBOARD'] ="Adventure Leaderboard"; 
 $language['PAGE_TITLES_CHARACTER'] ="'s Profile"; 
 $language['PAGE_TITLES_GUILD'] =" Guild Info"; 
 $language['PAGE_TITLES_SERVER'] =" Server Info"; 
 $language['PAGE_TITLES_CHARMOVE'] ="Character Mover"; 
-$language['PAGE_TITLES_CORPSE'] ="'s Corpses"; 
+$language['PAGE_TITLES_CORPSES'] ="'s Corpses"; 
+$language['PAGE_TITLES_CORPSE'] ="'s Corpse"; 
 $language['PAGE_TITLES_FACTIONS'] ="'s Factions"; 
 $language['PAGE_TITLES_BOTS'] ="'s Bots"; 
 $language['PAGE_TITLES_FLAGS'] ="'s Flags"; 
@@ -123,11 +135,14 @@ $language['SIGNATURE_TABS'] = array(
    4 => 'Output'
 );
 
+
 //index language 
-$language['INDEX_INTRO'] ="<p>The character profile and the bazaar have been modified to now have item popups. Instead of the static single item displayed at the bottom you can now have multiple items up and do side by side compares.</p> 
-<p>To get the item popup simply hover over an items icon and the items stats will display in a small popup window near your cursor. The process is the same for the bazaar but you hover over the item name. In both cases you can click the icon/link to lock the item display on the screen. A second click will clear the item from being locked.</p>
-<p>You can click and drag each item popup to arrange them. Each item popup will have 3 buttons in the title bar. The first button will tile the items into rows and columns. The third button will close all open popups. The last button will close just the current popup.</p>
-<p>This new item viewing process interfered with the previous way you used to open a bag to see the contents. To replace that each bag will have an small arrow in the top left corner. Clicking that arrow will open the bag for inspection.</p>"; 
+$language['INDEX_INTRO'] = "<p>Check out the new Leadership Ability page. Open it using the \"Leader.\" button in the left-hand menu when viewing a character profile. It displays all your Group and Raid Abilities.</p>
+<p>You can now browse the Barter Window from CharBrowser. You can access it with the \"Barter\" link in the header, or with the \"Barter\" button on the left when viewing a character profile. If you view it from a character profile it will cross-reference that character's inventory with all the items being bought, showing you just the matches. You can change/add the character being cross-referenced by adjusting the \"Seller\" field.</p>
+<p>The LDON Adventure Leaderboard is now visible. You can see the generic board using the \"LDON\" link in the header, or if you'd like to see how a character stacks up to everyone else, use the \"LDON\" button in the left-hand menu when viewing a character profile. This will highlight that characters standing.</p>
+<p>The corpses page has been redesigned with some new features. Each corpse shows as an avatar tile. If it's black and white, that character has been rezzed; in color means it needs a rez. If the corpse avatar shows as a gravestone, the corpse has been buried in Shadowhaven. If the avatar tile shows a round, bag icon, it means the corpse has cash or items on it. You can hover over these symbols to see a popup describing in more detail.</p>
+<p>If you click on one of the corpse avatar tiles, you will now be brought to a detil view of the corpse, which shows you all the items and coin on the corpse.</p>
+<p>There are also a handful of bug fixes and performance upgrades that should see improved page rendering times, particularly on the inventory page and any pages showing item popups.</p>";
 $language['INDEX_VERSION'] = "Version"; 
 $language['INDEX_BY'] = "By"; 
 
@@ -138,6 +153,19 @@ $language['SEARCH_CLASS'] = "Class";
 $language['SEARCH_NAME'] = "Name"; 
 $language['SEARCH_PREVIOUS'] = "Prev"; 
 $language['SEARCH_NEXT'] = "Next"; 
+
+//barter language 
+$language['BARTER_BARTER'] = "Barter Window"; 
+$language['BARTER_NAME'] = "Buyer"; 
+$language['BARTER_SELLER'] = "Seller"; 
+$language['BARTER_ITEM'] = "Item"; 
+$language['BARTER_PRICE'] = "Price"; 
+$language['BARTER_QUANTITY'] = "Qty"; 
+$language['BARTER_SEARCH'] = "Search"; 
+$language['BARTER_SEARCH_NAME'] = "Name"; 
+$language['BARTER_SELLER_NOPERM'] = "That seller's inventory is private."; 
+$language['BARTER_SELLERS_INVENTORY'] = "%s's Inventory";
+$language['BARTER_MATCHING_BUYERS'] = "Matching Buyers";
 
 //bazaar language 
 $language['BAZAAR_BAZAAR'] = "The Bazaar"; 
@@ -300,7 +328,51 @@ $language['BAZAAR_ARRAY_SEARCH_STAT'] = array (
   'heroic_wis' => 'Heroic Wisdom', 
   'backstabdmg' => 'Backstab', 
   'extradmgsamt' => 'Extra Damage'
-); 
+);  
+
+//spellcache language
+$language['MESSAGE_SPELL_NOROWS'] = "Couldn't locate spell (%s).";
+
+//itemcache language
+$language['MESSAGE_ITEM_NOROWS'] = "Couldn't locate item (%s).";
+
+//leadership language  
+$language['LEADERSHIP'] = "Leadership"; 
+$language['LEADERSHIP_TAB_1'] = "Group Abilities"; 
+$language['LEADERSHIP_TAB_2'] = "Raid Abilities"; 
+$language['GROUP_POINTS'] = "Group Points"; 
+$language['RAID_POINTS'] = "Raid Points"; 
+$language['GROUP_POINTS_OF'] = " of 8"; 
+$language['RAID_POINTS_OF'] = " of 10"; 
+
+//leadership aa names's
+// the array index needs to match the ID of the AA
+$groupaa = array();
+$groupaa[0] = 'Mark NPC';
+$groupaa[1] = 'NPC Health';
+$groupaa[4] = 'Delegate Mark NPC';
+$groupaa[6] = 'Insepect Buffs';
+$groupaa[8] = 'Spell Awareness';
+$groupaa[9] = 'Offense Enhancement';
+$groupaa[10] = 'Mana Enhancement';
+$groupaa[11] = 'Health Enhancement';
+$groupaa[12] = 'Health Regeneration';
+$groupaa[13] = 'Find Path to PC';
+$groupaa[14] = 'Health of Target\'s Target';
+
+$raidaa = array();
+$raidaa[16] = 'Mark NPC';
+$raidaa[17] = 'NPC Health';
+$raidaa[19] = 'Delegate Main Assist';
+$raidaa[20] = 'Delegate Mark NPC';
+$raidaa[23] = 'Spell Awareness';
+$raidaa[24] = 'Offense Enhancement';
+$raidaa[25] = 'Mana Enhancement';
+$raidaa[26] = 'Health Enhancement';
+$raidaa[27] = 'Health Regeneration';
+$raidaa[28] = 'Find Path to PC';
+$raidaa[29] = 'Health of Target\'s Target';
+
 
 //alternate abilities language 
 $language['AAS_ALTERNATE_ABILITIES'] = "Alternate Abilities"; 
@@ -357,12 +429,26 @@ $language['FACTION_RACE'] = "Race";
 $language['FACTION_DEITY'] = "Deity"; 
 $language['FACTION_TOTAL'] = "Total"; 
 
+//corpses language 
+$language['CORPSES_CORPSES'] = "Corpses"; 
+$language['CORPSES_STUFF'] = "This corpse has %s remaining.";
+$language['CORPSES_ITEM'] = "an item";
+$language['CORPSES_ITEMS'] = "items";
+$language['CORPSES_COIN'] = "coin";
+$language['CORPSES_AND'] = "and";
+$language['CORPSES_BURIED'] = " and has been buried in Shadowrest.";
+$language['CORPSES_REZZED'] = "This corpse has already been resurrected";
+$language['CORPSES_UNREZZED'] = "This corpse has NOT been resurrected";
+
 //corpse language 
-$language['CORPSE_REZZED'] = "Rezurrected"; 
-$language['CORPSE_TOD'] = "Time of Death"; 
-$language['CORPSE_LOC'] = "Corpse Loc"; 
-$language['CORPSE_MAP'] = "Map Link"; 
-$language['CORPSE_CORPSES'] = "Corpses"; 
+$language['CORPSE_WEIGHT_MAX'] = "UNLTD."; 
+$language['CORPSE_REZZED_YES'] = "Resurrected"; 
+$language['CORPSE_REZZED_NO'] = "Not Resurrected"; 
+$language['CORPSE_BURIED'] = "Buried"; 
+$language['CORPSE_VIEW_ON_MAP'] = "View on Map"; 
+$language['CORPSE_STATUS'] = "Status"; 
+$language['CORPSE_BURIED_PREAMBLE'] = "This corpse is buried in "; 
+$language['CORPSE_TOD'] = "Time/Place of Death";
 
 //bots language
 $language['BOTS_BOTS'] = "Bots"; 
@@ -390,6 +476,28 @@ $language['HOME_HOME'] = "Home";
 $language['HOME_COL1'] = "Col 1"; 
 $language['HOME_COL2'] = "Col 2"; 
 $language['HOME_COL3'] = "Col 3"; 
+
+//adventure language
+$language['ADVENTURE_LEADERBOARD'] = "Adventure Leaderboard";
+$language['ADVENTURE_RANK'] = "Rank";
+$language['ADVENTURE_NAME'] = "Name";
+$language['ADVENTURE_SUCCESS'] = "Success";
+$language['ADVENTURE_FAILURE'] = "Failure";
+$language['ADVENTURE_PERCENT'] = "Percent";
+$language['ADVENTURE_SELECT_CATEGORY'] = array ( 
+   0  => "Total wins", 
+   1  => "Total win %", 
+   2  => "Deepest Guk wins", 
+   3  => "Deepest Guk win %", 
+   4  => "Miragul's wins", 
+   5  => "Miragul's win %", 
+   6  => "Mistmoore wins", 
+   7  => "Mistmoore win %", 
+   8  => "Rujarkian wins", 
+   9  => "Rujarkian win %", 
+   10 => "Takish wins", 
+   11 => "Takish win %"
+); 
 
 //server language
 $language['SERVER_MIN_LEVEL'] = "Minimum Level";
@@ -539,6 +647,9 @@ $language['SKILLS_CASTING'] = "Cast.";
 $language['SKILLS_COMBAT'] = "Combat"; 
 $language['SKILLS_LANGUAGE'] = "Lang."; 
 
+//profile menu
+$language['PROFILE_MENU_TITLE'] = "Actions"; 
+
 //settings language 
 $language['SETTINGS_SETTINGS'] = "Settings"; 
 $language['SETTINGS_RESULTS'] = "Search results per page"; 
@@ -547,6 +658,8 @@ $language['SETTINGS_CHARMOVE'] = "Character Mover";
 $language['SETTINGS_GUILDVIEW'] = "Guild View"; 
 $language['SETTINGS_SERVERVIEW'] = "Server View"; 
 $language['SETTINGS_BAZAAR'] = "The Bazaar"; 
+$language['SETTINGS_BARTER'] = "Barter Window"; 
+$language['SETTINGS_ADVENTURE'] = "LDON Leaderboard";
 $language['SETTINGS_USERS_GM'] = "GMs"; 
 $language['SETTINGS_USERS_ANON'] = "Anonymous"; 
 $language['SETTINGS_USERS_RP'] = "Role Players"; 
@@ -556,11 +669,15 @@ $language['SETTINGS_USERS_PRIVATE'] = "Private";
 $language['SETTINGS_INVENTORY'] = "Inv. Page"; 
 $language['SETTINGS_ICOIN'] = "Inv. Coin"; 
 $language['SETTINGS_BCOIN'] = "Bank Coin"; 
+$language['SETTINGS_SCOIN'] = "Shrd. Coin"; 
 $language['SETTINGS_BAGS'] = "Bags Area"; 
 $language['SETTINGS_BANK'] = "Bank"; 
+$language['SETTINGS_SHRDBANK'] = "Shrd. Bank"; 
 $language['SETTINGS_CORPSES'] = "Corpses"; 
+$language['SETTINGS_CORPSE'] = "Corpse Dtl."; 
 $language['SETTINGS_FLAGS'] = "Flags"; 
 $language['SETTINGS_AAS'] = "AAs"; 
+$language['SETTINGS_LEADERSHIP'] = "Leadership"; 
 $language['SETTINGS_KEYS'] = "Keys"; 
 $language['SETTINGS_FACTIONS'] = "Factions"; 
 $language['SETTINGS_ADVFACTIONS'] = "Adv Factions"; 
@@ -611,12 +728,15 @@ $language['BUTTON_BACK'] = "Back";
 $language['BUTTON_DONE'] = "Done"; 
 $language['BUTTON_INVENTORY'] = "Profile"; 
 $language['BUTTON_AAS'] = "AAs"; 
+$language['BUTTON_LEADERSHIP'] = "Leader."; 
 $language['BUTTON_FLAGS'] = "Flags"; 
 $language['BUTTON_SKILLS'] = "Skills"; 
-$language['BUTTON_CORPSE'] = "Corpse"; 
+$language['BUTTON_CORPSES'] = "Corpses"; 
 $language['BUTTON_FACTION'] = "Faction"; 
 $language['BUTTON_CHARMOVE'] = "Move"; 
-$language['BUTTON_STORE'] = "Store"; 
+$language['BUTTON_STORE'] = "Store";
+$language['BUTTON_BARTER'] = "Barter"; 
+$language['BUTTON_ADVENTURE'] = "LDON"; 
 $language['BUTTON_BOTS'] = "Bots"; 
 $language['BUTTON_BOOKMARK'] = "Link"; 
 $language['BUTTON_SIG'] = "Sig"; 
@@ -627,7 +747,8 @@ $language['MESSAGE_ERROR'] = "Error";
 $language['MESSAGE_DISABLED'] = "Disabled"; 
 $language['MESSAGE_NO_CHAR'] = "You must specify a character."; 
 $language['MESSAGE_NO_GUILD'] = "You must specify a guild."; 
-$language['MESSAGE_NO_RESULTS_GUILD'] = "No guilds matched your search."; 
+$language['MESSAGE_NO_RESULTS_GUILD'] = "No guilds matched your search.";
+$language['MESSAGE_CORPSE_NON_NUMERIC'] = "A non numeric corpse id was provided."; 
 $language['MESSAGE_NAME_ALPHA'] = "A characters name can only contain alphabetic characters."; 
 $language['MESSAGE_ITEM_ALPHA'] = "An item search can only contain alphabetic characters for security."; 
 $language['MESSAGE_NO_RESULTS'] = "No characters matched your search."; 
@@ -638,6 +759,7 @@ $language['MESSAGE_START_NUMERIC'] = "A searches start field can only contain nu
 $language['MESSAGE_PRICE_NUMERIC'] = "A searches price field can only contain numeric characters."; 
 $language['MESSAGE_STAT_INVALID'] = "The selected stat is invalid."; 
 $language['MESSAGE_CLASS_NUMERIC'] = "A searches class field can only contain numeric characters."; 
+$language['MESSAGE_CATEGORY_INVALID'] = "The provided LDON leaderboard category is invalid."; 
 $language['MESSAGE_RACE_NUMERIC'] = "A searches race field can only contain numeric characters."; 
 $language['MESSAGE_SLOT_NUMERIC'] = "A searches slot field can only contain numeric characters."; 
 $language['MESSAGE_TYPE_NUMERIC'] = "A searches type field can only contain numeric characters."; 

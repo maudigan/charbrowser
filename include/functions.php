@@ -58,6 +58,13 @@
  *   July 28, 2020 - Maudigan
  *      The manual_join function wasn't handling rows with the duplicate keys
  *      well since it was indexing the array by that key. 
+ *   October 19, 2022 - Maudigan
+ *      added leadership button (Maudigan)
+ *   October 29, 2022 - Maudigan
+ *      rewrote the generate_where function to include a customizable divider
+ *        and simplified the functions logic
+ *   November 1, 2022 - Added thea bility to have a gravestone as an
+ *      an avatar image
  *
  ***************************************************************************/
  
@@ -119,16 +126,14 @@ function sort_by(&$array, $column, $direction = 'ASC', $type = 'string') {
 }
 
 //recieves an array of filters, returns where clause
-function generate_where($filters) {
-   $where = "";
-   $divider = "WHERE ";
-
-   if (is_array($filters)) {
-      foreach ($filters as $filter) {
-         $where .= $divider.$filter;
-         $divider = " AND ";
-      }
-   }
+function generate_where($filters, $divider = "AND") {
+   //if it's not an array 
+   if (!is_array($filters)) return "";
+   
+   if (!count($filters)) return "";
+   
+   //build where
+   $where = "WHERE ".implode(" ".$divider." ", $filters);
    
    return $where;
 }
@@ -238,7 +243,9 @@ function getGuildLink ($guildname, $guildrank = "") {
 }  
 
 
-function getAvatarImage($race, $gender, $face) {
+function getAvatarImage($race, $gender, $face, $burried = 0) {
+   if ($burried) return "gravestone.png";
+   
    $tmp = "race_%s_gender_%s_face_%s.png";
    $race = intval($race);
    $gender = intval($gender);
@@ -304,36 +311,56 @@ function output_profile_menu($charname, $curpage) {
    global $cb_template;
    global $cb_show_bots;
    
-   $menubuttons = array(
+   //two sets of buttons, the profile ones which target the cur character, 
+   //and the other which are just plain old vanilla links
+   $profilebuttons = array(
       array( 'PAGE' => 'character', 'BUTTON_NAME' => $language['BUTTON_INVENTORY'], 'PERMISSION' => 1),
       array( 'PAGE' => 'aas', 'BUTTON_NAME' => $language['BUTTON_AAS'], 'PERMISSION' => 1),
+      array( 'PAGE' => 'leadership', 'BUTTON_NAME' => $language['BUTTON_LEADERSHIP'], 'PERMISSION' => 1),
       array( 'PAGE' => 'keys', 'BUTTON_NAME' => $language['BUTTON_KEYS'], 'PERMISSION' => 1),
       array( 'PAGE' => 'flags', 'BUTTON_NAME' => $language['BUTTON_FLAGS'], 'PERMISSION' => 1),
       array( 'PAGE' => 'skills', 'BUTTON_NAME' => $language['BUTTON_SKILLS'], 'PERMISSION' => 1),
-      array( 'PAGE' => 'corpse', 'BUTTON_NAME' => $language['BUTTON_CORPSE'], 'PERMISSION' => 1),
+      array( 'PAGE' => 'corpses', 'BUTTON_NAME' => $language['BUTTON_CORPSES'], 'PERMISSION' => 1),
       array( 'PAGE' => 'factions', 'BUTTON_NAME' => $language['BUTTON_FACTION'], 'PERMISSION' => 1),
       array( 'PAGE' => 'bots', 'BUTTON_NAME' => $language['BUTTON_BOTS'], 'PERMISSION' => $cb_show_bots),
       array( 'PAGE' => 'bazaar', 'BUTTON_NAME' => $language['BUTTON_STORE'], 'PERMISSION' => 1),
+      array( 'PAGE' => 'barter', 'BUTTON_NAME' => $language['BUTTON_BARTER'], 'PERMISSION' => 1),
+      array( 'PAGE' => 'adventure', 'BUTTON_NAME' => $language['BUTTON_ADVENTURE'], 'PERMISSION' => 1),
       array( 'PAGE' => 'signaturebuilder', 'BUTTON_NAME' => $language['BUTTON_SIG'], 'PERMISSION' => 1),
       array( 'PAGE' => 'charmove', 'BUTTON_NAME' => $language['BUTTON_CHARMOVE'], 'PERMISSION' => 1),
+   );
+   
+   $otherbuttons = array(
+      array( 'BUTTON_NAME' => $language['BUTTON_BOOKMARK'], 'BUTTON_INDEX' => '#', 'BUTTON_TITLE' => $language['BUTTON_BOOKMARK'],  'BUTTON_ONCLICK' => 'cb_BookmarkThisPage();'),
    );
    
    $cb_template->set_filenames(array(
      'menu' => 'profile_menu.tpl')
    );
    
-   foreach ($menubuttons as $menubutton) {
-      if (!$menubutton['PERMISSION']) continue;
-      $cb_template->assign_block_vars( "menuitems", array(     
-         'SWITCH_DIABLED' => ($menubutton['PAGE'] == $curpage) ? "Disabled" : "",   
-         'PAGE' => $menubutton['PAGE'],
-         'L_BUTTON_FACE' => $menubutton['BUTTON_NAME'])
+   foreach ($profilebuttons as $profilebutton) {
+      if (!$profilebutton['PERMISSION']) continue;
+      $cb_template->assign_block_vars( "profilebuttons", array(     
+         'SWITCH_DIABLED' => ($profilebutton['PAGE'] == $curpage) ? "Disabled" : "",   
+         'PAGE' => $profilebutton['PAGE'],
+         'L_BUTTON_FACE' => $profilebutton['BUTTON_NAME'])
+      );
+   }
+   
+   foreach ($otherbuttons as $otherbutton) {
+      $cb_template->assign_block_vars( "otherbuttons", array(     
+         'SWITCH_DIABLED' => ($otherbutton['PAGE'] == $curpage) ? "Disabled" : "",
+         'ONCLICK' => $otherbutton['BUTTON_ONCLICK'],
+         'BUTTON_INDEX' => $otherbutton['BUTTON_INDEX'],
+         'L_BUTTON_FACE' => $otherbutton['BUTTON_NAME'],
+         'L_BUTTON_TITLE' => $otherbutton['BUTTON_TITLE'])
       );
    }
 
    $cb_template->assign_vars(array(     
       'CURPROFILE' => $charname,
-      'L_BOOKMARK' => $language['BUTTON_BOOKMARK'])
+      'BUTTON_COUNT' => count($profilebuttons) + count($otherbuttons),
+      'L_PROFILE_MENU_TITLE' => $language['PROFILE_MENU_TITLE'])
    );
    
    $cb_template->pparse('menu');
@@ -400,8 +427,10 @@ function GetPermissions($gm, $anonlevel, $char_id) {
          'bank'              => 0,
          'sharedbank'        => 0,
          'corpses'           => 0,
+         'corpse'            => 0,
          'flags'             => 0,
          'AAs'               => 0,
+         'leadership'        => 0,
          'factions'          => 0,
          'advfactions'       => 0,
          'skills'            => 0,

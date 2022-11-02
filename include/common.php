@@ -20,6 +20,7 @@
  *   April 14, 2020 - relocated the API security check to here instead of
  *                    global.php
  *                    Added a subdirectory to the template folder (Maudigan)
+ *   October 24, 2022 - add page execution time (Maudigan)
  *
  ***************************************************************************/
 
@@ -31,6 +32,9 @@ if ( !defined('INCHARBROWSER') )
 //this script only needs to run once
 if ( !defined('CB_COMMON_RUN') )
 {
+   ///marktime for when we start running
+   $cb_start_time = microtime(true);
+   
    /*********************************************
                     INCLUDES
    *********************************************/

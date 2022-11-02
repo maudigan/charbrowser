@@ -26,6 +26,8 @@
    {L_CHARMOVE}: <em>{S_CHARMOVE}</em><br>
    {L_GUILDVIEW}: <em>{S_GUILDVIEW}</em><br>
    {L_SERVERVIEW}: <em>{S_SERVERVIEW}</em><br>
+   {L_BARTER}: <em>{S_BARTER}</em><br>
+   {L_ADVENTURE}: <em>{S_ADVENTURE}</em><br>
    <!-- BEGIN switch_new_version -->
    <div class='CB_is_old'>
       <p>{switch_new_version.PUBLISHED}</p>

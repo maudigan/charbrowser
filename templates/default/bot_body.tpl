@@ -63,7 +63,7 @@
 
       <!-- SLOT ICONS FOR WORN ITEMS -->
       <!-- BEGIN equipitem --> 
-      <div hoverChild='#slot{equipitem.SLOT}' class='Slot slotloc{equipitem.SLOT} CB_HoverParent' style='background-image: url({ROOT_URL}images/items/item_{equipitem.ICON}.png);'><span>{equipitem.STACK}</span></div>  
+      <div hoverChild='#slot{equipitem.SLOT}' class='Slot Item_{equipitem.ICON} slotloc{equipitem.SLOT} CB_HoverParent'><span>{equipitem.STACK}</span></div>  
       <!-- END equipitem --> 
       
    </div>  
@@ -83,15 +83,15 @@
    </div> 
    <div class='Stats'>        
       <div class='Slot slotlocinspect slotimage'></div> 
-      <div class='Slot slotlocinspect' style='background-image: url({ROOT_URL}images/items/item_{item.ICON}.png);'><span>{item.STACK}</span></div> 
+      <div class='Slot Item_{item.ICON} slotlocinspect'><span>{item.STACK}</span></div> 
       {item.HTML} 
       <!-- BEGIN augment --> 
       <div class='WindowNestedTan'>
          <div class='WindowNestedTanTitleBar'>
             <a href='{item.augment.AUG_LINK}'>{item.augment.AUG_NAME}</a>
          </div>   
-         <div class='Slot slotlocinspectaug slotimage'></div> 
-         <div class='Slot slotlocinspectaug' style='background-image: url({ROOT_URL}images/items/item_{item.augment.AUG_ICON}.png);'></div> 
+         <div class='InspectAugSlot slotimage'></div> 
+         <div class='InspectAugSlot ItemAugment_{item.augment.AUG_ICON} slotlocinspectaug'></div> 
          {item.augment.AUG_HTML} 
       </div> 
       <!-- END augment -->   

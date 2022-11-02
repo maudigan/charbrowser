@@ -1,3 +1,110 @@
+v3.5.0
+----------------------------------------------------------------------
+LDON Leaderboard, Barter, Leadership AA, Corpse Detail, enhancements,
+performance, bugfixes
+
+Nov 1, 2022 - ENHANCEMENTS:
+              Modified the Actions Menu (left hand menu) to be 
+              resizeable and have a header.
+
+              Added a Leadership AA window. Accessed with the 
+              "Leader." button on the Action menu. This shows a 
+              characters Guild and Raid Abilities.
+              
+              Added two versions of the Barter Window, one generic, 
+              and one personalized one. The generic one is accessed 
+              with the "Barter" link in the header. The personalized 
+              one is accessed with the "Barter" button in the Actions 
+              menu. The generic one just shows all the WTB items and 
+              their price, with some basic search criteria. The 
+              personalized one displays the current characters 
+              inventory (like in game) and uses their inventory as a 
+              filter for matching buyers. Searching with a "Seller" 
+              name also cross referenecs a characters inventory.
+              
+              Added two versions of the LDON/Adventure Leaderboard. 
+              The generic one is accessed with the "LDON" link in the 
+              header, and the personalized on is viewed with the 
+              "LDON" button in the Actions menu. Both versions show 
+              100 characters max (by default). When viewing the 
+              personalied one, your current characters row will show 
+              up below the scroll box, in gold, displaying that 
+              characters rank. The gold row will also show up in its 
+              correct order in the scroll box results.
+              
+              Redesigned/beautified the corpses page. The corpses now 
+              display as avatar tiles, showing the date and zone of 
+              death. The avatar will show as gold and in-color if the 
+              corpse NEEDS to be rezzed, and gray if already rezzed. 
+              The avatar will be replaced by the Shadowhaven tombstone
+              if the character has been buried. If there are items or 
+              coin on the corpse a small bag icon will display by the 
+              avatar. Hovering over the avatar or bag icon will 
+              explain the meaning of the symbols.
+              
+              Added a detail corpse view. You access it by clicking 
+              one of the avatar tiles on the corpses page. This new 
+              detail view shows the corpses inventory, specific 
+              details about where/when they died (unless moved), 
+              rezzed status, burried status, all items and coin on the
+              corpse, and links to the zone and a map of where the 
+              corpse is.
+              
+              Enhanced the Bazaar. The window is resizeable and 
+              scrollable now. The items now display a small item icon 
+              next to the name.
+              
+              Added the "&nohead" GET variable. When appended to the 
+              URL it hides the header completely, this is intended to 
+              be used by server admins with the in-game web browser.
+              
+              PERFORMANCE:
+              The item icons have been replaced with sheets of sprites
+              that are 10x10, and some CSS to locate each item icon by
+              its ID. This loads slightly slower at first for the 
+              user, but in the longrun it caches quicker and improves 
+              performance. It also greatly reduces the time taken to 
+              unzip/transfer the charbrowser files since the 6,869 
+              individual icon files are replaced with 108 icon sheets.              
+              
+              Reduced the number of queries on the bot page. Took all 
+              the individual spell effect queries and consolidated them 
+              to one big "IN" clause.
+              
+              The item and spell repository classes design still caused 
+              some redundant queries. Those were redesigned causing some
+              performance improvements. The bazaar page now only runs 
+              3 queries instead of 2 plus 1 per spell effect on each 
+              item. The changes were implemented into the profile 
+              class, bot profile class, and the new corpse profile 
+              class. This further reduced the number of queries 
+              resulting in the character profile page loading about 
+              20% faster. 
+              
+              Removed the alternate ability repository. During the 
+              multi-tenancy change over the repository was quikckly 
+              added to reduce the number of queries being done, but it
+              replicated the table caching feature already present in 
+              the profile class. It now uses that original system 
+              instead.
+              
+              Did a general file cleanup of files that no longer 
+              seemed necessary.
+              
+              Added a page-load timer to help monitor performance. 
+              It's displayed above the database performance data, and 
+              is enabled using the same DB_PERFORMANCE constant that 
+              the database performance output uses.
+              
+              BUGFIX:
+              Fixed a bug that would display the header twice in some 
+              error cases.
+              
+              Fixed an oversight that let users see the advanced 
+              faction data, even when it was disabled.
+              
+              (maudigan)
+
 v3.4.3
 ----------------------------------------------------------------------
 jscolor

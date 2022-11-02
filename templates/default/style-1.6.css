@@ -1,0 +1,2670 @@
+/*************************************************************************** 
+ * 
+ *   This program is free software; you can redistribute it and/or modify 
+ *   it under the terms of the GNU General Public License as published by 
+ *   the Free Software Foundation; either version 2 of the License, or 
+ *   (at your option) any later version. 
+ * 
+ *   Portions of this program are derived from publicly licensed software 
+ *   projects including, but not limited to phpBB, Magelo Clone, 
+ *   EQEmulator, EQEditor, and Allakhazam Clone. 
+ * 
+ *                                  Author: 
+ *                           Maudigan(Airwalking) 
+ * 
+ *   September 23, 2018 - added wrapper class for the entire html page
+ *                        to help prevent naming colisions when doing
+ *                        a wrapped index (Maudigan).
+ *   November 10,2018 - Added uleats inventory changes (Maudigan): 
+ *                         Ammo moved 21 to 22
+ *                         Power source moved 9999 to 21 
+ *                         Cursor moves 30 to 33
+ *                         Bags moved 22-29 to 23-32 (+1 and two new slots)
+ *                         Cursor bag contents moved 331-340 to 351-360
+ *                         New bags contents are in 331-340 and 341-350
+ *   November 10,2018 - Reordered general slots from top to bottom
+ *                      into left to right (Maudigan)
+ *                      Fixed type on bagbuttonrow where 'px' was missing
+ *   March 7,2020 - made tweaks to add in item popups
+ *                  set cursor:pointer for buttons
+ *   March 31,2020 - totally rewrote the HTML, lots of changes (Maudigan)
+ *   April 6, 2020 - Maudigan
+ *     Make the way bags display more dynamic so they can be resized easily
+ *   April 11, 2020 - Maudigan
+ *     added styles for the avatar icons
+ *   October 19, 2022 - Maudigan
+ *     make profile menu resizable 
+ *     add position classes for leadership window
+ *   October 24, 2022 - Maudigan
+ *     adjusted styles to display page execution timer
+ *   October 29, 2022
+ *     added styles for adventure page
+ *     added sticky table header style
+ *                      
+ ***************************************************************************/ 
+
+ /* ----------------------------------------------
+         wraps around the entire page
+         to help prevent naming collisions
+         added 9/23/2018
+-------------------------------------------------*/
+#charbrowser {
+}
+
+#charbrowser .ui-icon {
+   background-image: url(../../images/cb_drag_handle.png);
+   background-position: 0px 0px;
+}
+ 
+#charbrowser * {
+   margin: 0px;
+   padding: 0px;
+   list-style-type: none;
+   text-decoration: none;
+   border: 0px;
+}
+
+
+#charbrowser H2 {
+   font-family: arial;
+   font-size: 9pt ;
+   font-weight: bold;
+   color: #8aa3ff;
+   vertical-align: top;
+   margin: 0px;
+   padding-top: 20px;
+   padding-bottom: 5px;
+   padding-left: 15px;
+   padding-right: 15px;
+   border-collapse: collapse; 
+   text-align: center;
+}
+
+
+#charbrowser P {
+   padding-bottom: 10px;
+}
+#charbrowser EM {
+   font-weight: 600;
+}
+
+
+/* webkit scroll*/
+#charbrowser  ::-webkit-scrollbar {
+  width: 5px;
+}
+#charbrowser  ::-webkit-scrollbar-track {
+   background: none;
+}
+#charbrowser  ::-webkit-scrollbar-thumb {
+  background: #888;
+  border-radius: 5px;
+  background: #7b714a;
+}
+#charbrowser  ::-webkit-scrollbar-thumb:hover {
+  background: #bbb480;
+}
+
+
+/* ----------------------------------------------
+         pagination style
+-------------------------------------------------*/
+#charbrowser .CB_Pagination {
+   display: block;
+   margin: 30px 0px 3px;
+   text-align: center;
+   font-size: 10pt;
+}
+#charbrowser .CB_Pagination B{
+   font-weight: 700;
+}
+#charbrowser .CB_Pagination A:link,
+#charbrowser .CB_Pagination A:visited,
+#charbrowser .CB_Pagination A:active {
+   color: #8aa3ff;
+}
+#charbrowser .CB_Pagination A:hover {
+   color: #b9c8ff;
+}
+
+/* ----------------------------------------------
+      bar chart style on guild/server page
+-------------------------------------------------*/
+#charbrowser .CB_Chart_Bar {
+    width: 100%;
+    position: relative;
+}
+#charbrowser .CB_Chart_Bar DIV SPAN {
+   position: absolute;
+   left: 26px;
+   top: 6px;
+   text-shadow: 1px 1px 1px black, 
+                0px 1px 1px black, 
+                -1px 1px 1px black, 
+                1px 0px 1px black, 
+                -1px 0px 1px black, 
+                1px -1px 1px black, 
+                0px -1px 1px black, 
+                -1px -1px 1px black;
+   opacity: 1;
+}
+#charbrowser .CB_Chart_Bar DIV {
+   height: 17px;
+   border: 0px solid white;
+   background: linear-gradient(180deg, rgba(138,163,255,1) 0px, rgba(138,163,255,0.3) 100%);
+   margin: 3px 5px;
+   opacity: 0.8;
+   border-radius: 5px;
+   border: 1px solid #beccff;
+}
+#charbrowser .CB_Chart_Bar:hover DIV {
+   opacity: 1;
+}
+
+
+
+/* ----------------------------------------------
+      update notification on settings page
+-------------------------------------------------*/
+#charbrowser .CB_is_old {
+   border: 1px solid #dd0000;
+   color: #dd0000;
+   margin: 20px;
+   padding: 20px;
+}
+#charbrowser .CB_is_old  P:nth-child(1) {
+   text-align: right;
+   font-style: italic;
+   font-size: 8pt;
+}
+#charbrowser .CB_is_old  P:nth-child(2) {
+   text-align: center;
+   font-weight: 100;
+   letter-spacing: 3px;
+   font-size: 10pt;
+    margin-bottom: 9px;
+}
+#charbrowser .CB_is_old  P:nth-child(3) {
+   font-size: 10pt;
+}
+#charbrowser .CB_is_old  P:nth-child(4) {
+   text-align: left;
+}
+#charbrowser .CB_is_old A:link,
+#charbrowser .CB_is_old A:visited,
+#charbrowser .CB_is_old A:active,
+#charbrowser .CB_is_old A:hover {
+   color: #cc0000;
+   border: 1px dotted #cc0000;
+   padding: 3px;
+   margin: 20px 0px 0px 0px;
+   display: inline-block;
+   text-decoration: none;
+   background-color: none;
+   font-size: 10pt;
+}
+#charbrowser .CB_is_old A:hover {
+   color: #dd0000;
+   border: 1px dotted #dd0000;
+   background-color: rgba(255, 255, 255, 0.2);
+}
+
+
+
+
+/* ----------------------------------------------
+      header and body styles on every page
+-------------------------------------------------*/ 
+BODY.CB_Body {
+   padding: 0px;
+   margin: 0px;
+}
+
+#charbrowser HEADER {
+   position: relative;
+   height: 90px;
+   min-width: 950px;
+   background-image: url(../../images/light.gif);
+   padding: 0px 20px 0px;
+   margin: 0px;
+   border-bottom: 2px #7b714a solid;
+   font-family: arial;
+   font-size: 9pt;
+   color: #FFFFFF;
+}
+#charbrowser DIV.PositionHeaderSimple SPAN.CB_imghelper {
+   display: inline-block;
+   height: 80px;
+   vertical-align: middle;
+}
+#charbrowser HEADER SPAN.CB_imghelper {
+   display: inline-block;
+   height: 100%;
+   vertical-align: middle;
+}
+
+#charbrowser DIV.PositionHeaderSimple FORM,
+#charbrowser HEADER FORM {
+   position: absolute;
+   right: 40px;
+   top: 25px;
+   line-height: 19px;
+}
+#charbrowser DIV.PositionHeaderSimple IMG,
+#charbrowser HEADER IMG {
+   transform: scale(0.75);
+   vertical-align: middle;
+   transform-origin: left center;
+}
+#charbrowser DIV.PositionHeaderSimple IMG {
+   max-width: 325px;
+   max-height: 80px;
+}
+
+    
+#charbrowser DIV.PositionHeaderSimple FORM INPUT[type=submit],
+#charbrowser HEADER FORM INPUT[type=submit] {
+    border: 1px solid #8aa3ff;
+    background: none;
+    color: #8aa3ff;
+    font-size: 7pt;
+    height: 17px;
+    width: 40px;
+    display: inline-block;
+    vertical-align: middle;
+}
+#charbrowser DIV.PositionHeaderSimple FORM INPUT[type=submit]:hover,
+#charbrowser HEADER FORM INPUT[type=submit]:hover {
+    color: #b9c8ff;
+    border: 1px dotted #b9c8ff;
+    background-color: rgba(255, 255, 255, 0.2);
+}
+#charbrowser DIV.PositionHeaderSimple FORM INPUT[type=text],
+#charbrowser HEADER FORM INPUT[type=text] {
+   border: 2px #555555 solid;
+   background-color: #0b0b10;
+   color: #FFFFFF;
+   height: 19px;
+   width: 160px;
+   padding: 0px 10px 0px 10px;
+   margin: 0px 20px 0px 3px;
+   font-family:arial;
+   font-size: 8pt; 
+   display: inline-block;
+   vertical-align: middle;
+   box-sizing: border-box;
+}
+#charbrowser DIV.PositionHeaderSimple FORM LABEL,
+#charbrowser HEADER FORM LABEL {
+   color: #FFFFFF;
+   height: 19px;
+   padding: 0px;
+   margin: 0px 2px 0px 10px;
+   font-family:arial;
+   font-size: 9pt; 
+   font-weight: 600;
+   display: inline-block;
+   vertical-align: middle;
+   line-height: 23px;
+}
+#charbrowser DIV.PositionHeaderSimple NAV,
+#charbrowser HEADER NAV {
+   position: absolute;
+   line-height: 19px;
+   right: 40px;
+   top: 60px;
+}
+#charbrowser DIV.PositionHeaderSimple NAV UL LI,
+#charbrowser HEADER NAV UL LI {
+   display: inline;
+   padding-left: 7px;
+   padding-right: 7px;
+   border-left: 1px solid #ffffff;
+}
+#charbrowser DIV.PositionHeaderSimple NAV UL LI:first-child,
+#charbrowser HEADER NAV UL LI:first-child {
+   border-left: none;
+} 
+#charbrowser DIV.PositionHeaderSimple NAV UL LI A:link,
+#charbrowser DIV.PositionHeaderSimple NAV UL LI A:visited,
+#charbrowser DIV.PositionHeaderSimple NAV UL LI A:active,
+#charbrowser HEADER NAV UL LI A:link,
+#charbrowser HEADER NAV UL LI A:visited,
+#charbrowser HEADER NAV UL LI A:active {
+   color: #cccccc;
+   font-weight: 600;
+}
+#charbrowser DIV.PositionHeaderSimple NAV UL LI A:hover,
+#charbrowser HEADER NAV UL LI A:hover {
+   color: #ffffff;
+   font-weight: 600;
+}
+
+#charbrowser MAIN {
+   background: rgb(0,0,0);
+   background: linear-gradient(180deg, rgba(50,50,50,1) 0px, rgba(60,60,60,1) 10px, rgba(90,90,90,1) 25px, rgba(255,255,255,0) 400px, rgba(255,255,255,1) 100%);
+   padding-top: 50px;
+   color: #FFFFFF;
+   font-family:arial;
+   min-height: 400px;
+   min-width: 990px;
+}
+
+#charbrowser DIV.body_simple {
+   font-family:arial;
+   padding-top: 75px;
+}
+
+
+/* ----------------------------------------------
+         database performance classes
+         don't get rid of these!
+         added 9/28/2014
+-------------------------------------------------*/
+#charbrowser DIV.db_dump
+{
+   padding: 50px;
+}
+#charbrowser DIV.db_query
+{
+   background-color: #444;
+   border-radius:  10px;
+   padding: 15px;
+   margin: 15px auto;    
+   color: #bbb;
+   font-family: "Courier New";
+   font-size: 10pt;
+   font-weight: bold;
+}
+#charbrowser DIV.db_sql,
+#charbrowser DIV.db_time,
+#charbrowser TABLE.db_explain  
+{
+  margin: 20px;
+}
+
+#charbrowser TABLE.db_explain  
+{
+  border-collapse: collapse;
+}
+
+#charbrowser TABLE.db_explain  TD 
+{
+  border-top: 1px #777 solid;
+}
+
+#charbrowser TABLE.db_explain  TD,
+#charbrowser TABLE.db_explain  TH 
+{
+  padding: 5px;
+}
+
+#charbrowser DIV.db_sql P,
+#charbrowser DIV.db_time P,
+#charbrowser TABLE.db_explain  TD
+{
+  color: #aaa;
+  font-family: "Courier New";
+  font-size: 10pt;
+}
+
+#charbrowser TABLE.db_explain  THEAD TH:nth-child(even),
+#charbrowser TABLE.db_explain  TBODY TD:nth-child(even)
+{
+  background-color: #666;
+}
+
+
+#charbrowser TABLE.db_explain  TH
+{
+  color: #bbb;
+  font-family: "Courier New";
+  font-size: 10pt;
+  font-weight: bold;
+}
+
+#charbrowser DIV.db_sql H1,
+#charbrowser DIV.db_time H1,
+#charbrowser TABLE.db_explain CAPTION
+{
+  color: #cca;
+  font-family: "Courier New";
+  font-weight: bold;
+  font-size: 12pt;
+  text-align: left;
+}
+
+
+/* ----------------------------------------------
+              checkboxes on flags/corpses
+-------------------------------------------------*/
+#charbrowser .CB_CheckBox_0 {
+  background-image:url(../../images/check_0.png);
+  display: inline-block;
+}
+#charbrowser .CB_CheckBox_1 {  
+  background-image:url(../../images/check_1.png);
+}
+#charbrowser .CB_CheckBox_0,
+#charbrowser .CB_CheckBox_1 {  
+   height: 16px;
+   min-width: 16px;
+   margin: 1px;
+   padding: 1px;
+   display: inline-block;
+   background-repeat: no-repeat;
+}
+#charbrowser .CB_CheckBox_0 SPAN,
+#charbrowser .CB_CheckBox_1 SPAN,
+#charbrowser .CB_CheckBox_0 A,
+#charbrowser .CB_CheckBox_1 A {  
+   padding-left: 20px;
+}
+
+
+/* ----------------------------------------------
+        tab box on various super fancy
+------------------------------------------------- */
+#charbrowser NAV.CB_Tab_Box UL {
+   display: flex;
+   margin-top: 15px;
+   margin-bottom: 20px;
+   margin-left: 0px;
+   margin-right: 0px;
+   padding: 0px;
+}
+
+#charbrowser NAV.CB_Tab_Box UL LI {
+   cursor: pointer;
+   list-style-type: none;
+   flex-grow: 1;
+   text-align: center;
+   border-top: 1px solid #858996;
+   border-bottom: 2px solid #575139;
+   border-left: 1px solid #40434e;
+   border-right: 1px solid #858996;
+   border-top-right-radius: 15px;
+   border-top-left-radius: 15px;    
+   color: #808080;
+   background-color: rgba(255,255,255,0.0);
+}
+
+#charbrowser NAV.CB_Tab_Box UL LI:hover {  
+   color: #ffffff;
+   background-color: rgba(255,255,255,0.2);
+}
+
+#charbrowser NAV.CB_Tab_Box UL LI.CB_Tab_Open {
+   cursor: default;
+   border-top: 2px solid #949187;
+   border-bottom: none;
+   border-left: 2px solid #8a7d4a;
+   border-right: 2px solid #949187;
+   background-color: rgba(255,255,255,0.0);
+   color: #ffffff;
+}
+
+#charbrowser NAV.CB_Tab_Box UL LI.CB_Tab_Open:hover {
+   cursor: default;
+   background-color: rgba(255,255,255,0.0);
+}
+
+
+
+/* ----------------------------------------------
+            tab box on various pages
+------------------------------------------------- */
+#charbrowser NAV.CB_Tab_Box UL {
+   display: flex;
+   margin-top: 15px;
+   margin-bottom: 20px;
+   margin-left: 0px;
+   margin-right: 0px;
+   padding: 0px;
+}
+
+#charbrowser NAV.CB_Tab_Box UL LI {
+   cursor: pointer;
+   list-style-type: none;
+   flex-grow: 1;
+   text-align: center;
+   border-top: 1px solid #858996;
+   border-bottom: 2px solid #575139;
+   border-left: 1px solid #40434e;
+   border-right: 1px solid #858996;
+   border-top-right-radius: 15px;
+   border-top-left-radius: 15px;    
+   color: #808080;
+   background-color: rgba(255,255,255,0.0);
+}
+
+#charbrowser NAV.CB_Tab_Box UL LI:hover {  
+   color: #ffffff;
+   background-color: rgba(255,255,255,0.2);
+}
+
+#charbrowser NAV.CB_Tab_Box UL LI.CB_Tab_Open {
+   cursor: default;
+   border-top: 2px solid #949187;
+   border-bottom: none;
+   border-left: 2px solid #8a7d4a;
+   border-right: 2px solid #949187;
+   background-color: rgba(255,255,255,0.0);
+   color: #ffffff;
+}
+
+#charbrowser NAV.CB_Tab_Box UL LI.CB_Tab_Open:hover {
+   cursor: default;
+   background-color: rgba(255,255,255,0.0);
+}
+
+
+
+/* ----------------------------------------------
+     tab box on various super fancy windows
+------------------------------------------------- */
+#charbrowser .WindowSuperFancy NAV.CB_Tab_Box UL {
+   display: flex;
+   margin-top: 15px;
+   margin-bottom: 20px;
+   margin-left: -18px;
+   margin-right: -18px;
+   padding-bottom: 7px;
+   padding-top: 0px;
+   padding-right: 8px;
+   padding-left: 8px;
+   height: 28px; 
+   background-image: url(../../images/cb_tab_l.png), 
+                     url(../../images/cb_tab_r.png);
+   background-repeat: no-repeat,
+                      no-repeat;
+   background-position-x: left, 
+                          right;
+   background-position-y: bottom, 
+                          bottom; 
+   background-clip: padding-box, 
+                    padding-box;
+}
+
+#charbrowser .WindowSuperFancy NAV.CB_Tab_Box UL LI {
+   cursor: pointer;
+   list-style-type: none;
+   flex-grow: 1;
+   text-align: center;
+   border-width: 0px;   
+   color: #808080;
+   padding: 0px 20px;
+   height: 28px;
+   white-space: nowrap;
+   line-height: 36px;
+   background-image: url(../../images/cb_tab_down_l.png), 
+                     url(../../images/cb_tab_down_r.png),  
+                     url(../../images/cb_tab_down_t.png),  
+                     url(../../images/cb_tab_down_b.png);
+   background-repeat: no-repeat,
+                      no-repeat,
+                      repeat-x,
+                      repeat-x;
+   background-position-x: left, 
+                          right, 
+                          left, 
+                          left;
+   background-position-y: top, 
+                          top, 
+                          top, 
+                          bottom; 
+   background-clip: padding-box, 
+                    padding-box, 
+                    content-box, 
+                    content-box;
+   background-color: transparent;
+}
+
+#charbrowser .WindowSuperFancy NAV.CB_Tab_Box UL LI:hover,
+#charbrowser .WindowSuperFancy NAV.CB_Tab_Box UL LI.CB_Tab_Open {
+   cursor: default;
+   border-width: 0px;
+   color: #ffffff;
+   padding: 0px 16px;
+   line-height: 25px;
+   background-image: url(../../images/cb_tab_up_l.png), 
+                     url(../../images/cb_tab_up_r.png),  
+                     url(../../images/cb_tab_up_t.png);
+   background-repeat: no-repeat,
+                      no-repeat,
+                      repeat-x;
+   background-position-x: left, 
+                          right, 
+                          left;
+   background-position-y: top, 
+                          top, 
+                          top; 
+   background-clip: padding-box, 
+                    padding-box, 
+                    content-box;
+   background-color: transparent;
+}
+
+#charbrowser .WindowSuperFancy NAV.CB_Tab_Box UL LI.CB_Tab_Open:hover {
+   cursor: default;
+}
+
+
+/* ----------------------------------------------
+        table stylesheets on various pages
+------------------------------------------------- */
+#charbrowser DIV.StaticTableHeadParent {
+   padding: 0px;
+   margin: 0px;
+}
+#charbrowser DIV.StaticTableHeadParent THEAD TR TH{
+   padding: 0px;
+   margin: 0px;
+   position: sticky;
+   top: 0px;
+   background-image: url(../../images/dark.gif);
+}
+
+#charbrowser TABLE.CB_Table {
+   font-family: arial;
+   font-size: 9pt;
+   color: #FFFFFF;
+   width: 100%;
+   vertical-align: top;
+   margin-top: 0px;
+   margin-left: 0px;
+   margin-right: 0px;   
+   margin-bottom: 5px;
+   padding: 0px;
+   border-collapse: collapse; 
+}
+
+
+#charbrowser TABLE.CB_Table A:link,
+#charbrowser TABLE.CB_Table A:visited,
+#charbrowser TABLE.CB_Table A:active,
+#charbrowser TABLE.CB_Table A:hover {
+   color: #8aa3ff;
+}
+
+#charbrowser TABLE.CB_Table THEAD TR TH {
+   font-family: arial;
+   font-size: 9pt ;
+   font-weight: bold;
+   color: #8aa3ff;
+   vertical-align: top;
+   margin: 0px;
+   padding-top: 20px;
+   padding-bottom: 5px;
+   padding-left: 15px;
+   padding-right: 15px;
+   border-collapse: collapse; 
+   text-align: center;
+   white-space: nowrap;
+}
+
+#charbrowser TABLE.CB_Table TBODY TR TD {
+   font-family: arial;
+   font-size: 9pt ;
+   color: #ffffff;
+   vertical-align: top;
+   margin: 0px;
+   padding-top: 2px;
+   padding-bottom: 2px;
+   padding-left: 15px;
+   padding-right: 15px;
+   border-collapse: collapse; 
+   text-align: center;
+}
+
+#charbrowser TABLE.CB_Table TFOOT TR TD {
+   font-family: arial;
+   font-size: 9pt ;
+   color: #ffffff;
+   vertical-align: top;
+   margin: 0px;
+   padding: 5px 15px;
+   border-collapse: collapse; 
+   text-align: center;
+}
+
+/* makes rows highlight in brown */
+#charbrowser TABLE.CB_Highlight_Rows TBODY TR:hover {
+   background: linear-gradient(180deg, rgba(123,113,74,1) 0%, rgba(123,113,74,0.4) 50%, rgba(123,113,74,1) 100%);
+}
+
+
+
+
+
+/* ----------------------------------------------
+              anchor stylesheets
+------------------------------------------------- */
+
+#charbrowser A { 
+   text-decoration: none; 
+   font-weight: none;
+   color: #d1b370; 
+}
+#charbrowser A:link { 
+   text-decoration: none; 
+   font-weight: none;
+   color: #d1b370; 
+}
+#charbrowser A:active { 
+   text-decoration: none; 
+   font-weight: none;
+   color: #d1b370; 
+}
+#charbrowser A:visited { 
+   text-decoration: none; 
+   font-weight: none;
+   color: #a7905f; 
+}
+#charbrowser A:hover { 
+   text-decoration: none; 
+   font-weight: none;
+   color: #d1b370; 
+}
+
+/* ----------------------------------------------
+       button styles on most pages
+------------------------------------------------- */
+#charbrowser .CB_ButtonDisabled,
+#charbrowser .CB_ButtonDisabled:link,
+#charbrowser .CB_ButtonDisabled:visited,
+#charbrowser .CB_ButtonDisabled:active,
+#charbrowser .CB_ButtonDisabled:hover,
+#charbrowser .CB_Button,
+#charbrowser .CB_Button:link,
+#charbrowser .CB_Button:visited,
+#charbrowser .CB_Button:active,
+#charbrowser .CB_Button:hover {
+   height: 23px;
+   width: 48px;
+   border: 0px;
+   text-align: center;
+   padding: 0px;
+   margin: 10px auto;
+   display: block;
+   font-size: 9px;
+   line-height: 21px;
+   text-decoration: none; 
+   font-weight: none;
+   color: #ffffff;
+   opacity: 1.0;
+   cursor: pointer;
+   position: relative;
+}
+
+#charbrowser .CB_Button:hover {
+   background-image: url(../../images/button_small_hover.png);
+}
+#charbrowser .CB_Button,
+#charbrowser .CB_Button:link,
+#charbrowser .CB_Button:visited {
+   background-image: url(../../images/button_small_up.png);
+}
+#charbrowser .CB_Button:active,
+#charbrowser .CB_ButtonDisabled,
+#charbrowser .CB_ButtonDisabled:link,
+#charbrowser .CB_ButtonDisabled:visited,
+#charbrowser .CB_ButtonDisabled:active,
+#charbrowser .CB_ButtonDisabled:hover {
+   background-image: url(../../images/button_small_down.png);
+}
+#charbrowser .CB_ButtonDisabled,
+#charbrowser .CB_ButtonDisabled:link,
+#charbrowser .CB_ButtonDisabled:visited,
+#charbrowser .CB_ButtonDisabled:active,
+#charbrowser .CB_ButtonDisabled:hover {
+   cursor: default;
+}
+
+
+
+#charbrowser .CB_ButtonWrapDisabled,
+#charbrowser .CB_ButtonWrap {
+   height: 40px;
+   width: 40px;
+   border: 0px ;
+   text-align: center;
+   padding: 0px;
+   margin: 1px;
+   display: inline-block;
+   font-size: 9px;
+   line-height: 40px;
+   text-decoration: none; 
+   font-weight: none;
+   color: #ffffff;
+   opacity: 1.0;
+   position: relative;
+   background-repeat: no-repeat;
+}
+
+#charbrowser .CB_ButtonWrapDisabled A:link,
+#charbrowser .CB_ButtonWrapDisabled A:visited,
+#charbrowser .CB_ButtonWrapDisabled A:active,
+#charbrowser .CB_ButtonWrapDisabled A:hover,
+#charbrowser .CB_ButtonWrap A:link,
+#charbrowser .CB_ButtonWrap A:visited,
+#charbrowser .CB_ButtonWrap A:active,
+#charbrowser .CB_ButtonWrap A:hover {
+   text-decoration: none; 
+   color: #ffffff;
+   display: inline-block;
+   height: 40px;
+   width: 40px;
+}
+
+#charbrowser .CB_ButtonWrap:hover {
+   background-image: url(../../images/button_big_hover.png);
+   cursor: pointer;
+}
+#charbrowser .CB_ButtonWrap {
+   background-image: url(../../images/button_big_up.png);
+   cursor: pointer;
+}
+#charbrowser .CB_ButtonWrapDisabled {
+   background-image: url(../../images/button_big_down.png);
+   cursor: default;
+}
+
+
+/* ----------------------------------------------
+          general window stylesheets
+------------------------------------------------- */
+
+#charbrowser .CB_Center_Text {
+   text-align: center;
+   display: block;
+   margin: 10px;
+ }
+#charbrowser .WindowTitleBar {
+   position: absolute;
+   overflow: hidden;
+   top: -11px;
+   left: 6px;
+   right: 6px;
+   height: 21px;
+   font-family: arial;
+   font-size: 9pt;
+   line-height: 21px;
+   text-align: center;   
+   color: #FFFFFF;
+   padding: 0px 13px;
+   background-image: url(../../images/rightt.gif), url(../../images/leftt.gif), url(../../images/midt.gif);
+   background-repeat: no-repeat, no-repeat, repeat-x;
+   background-clip: padding-box, padding-box, content-box;
+   background-position-x: right, left, left;
+   display: block;
+   margin: 0px 0px;    
+}
+#charbrowser .WindowSuperFancy { 
+   position: relative;
+   margin: 0 auto;
+   background-image: url(../../images/cb_super_fancy_r.png), 
+                     url(../../images/cb_super_fancy_l.png),  
+                     url(../../images/cb_super_fancy_bg.png);
+   background-repeat: repeat-y,
+                      repeat-y,
+                      repeat;
+   background-position-x: right, 
+                          left, 
+                          left;
+   background-position-y: top, 
+                          top, 
+                          top;                         
+   padding-top: 10px;
+   padding-left: 20px;
+   padding-right: 20px;
+   padding-bottom: 10px;
+   z-index: 0;
+   font-family: arial;
+   font-size: 9pt;
+   color: #FFFFFF;
+   box-shadow: 5px 20px 20px rgba(0, 0, 0, 0.6);  
+   opacity: 0.95;
+   transition: opacity 200ms;
+}
+#charbrowser .WindowSuperFancy:hover { 
+   opacity: 1;
+}
+#charbrowser .WindowSuperFancy:before {
+   content: " ";
+   position: absolute;
+   z-index: -1;
+   left: -4px;
+   right: 0px;
+   top: -20px;
+   bottom: -19px;
+   background-image: url(../../images/cb_super_fancy_tl.png), 
+                     url(../../images/cb_super_fancy_tr.png), 
+                     url(../../images/cb_super_fancy_bl.png), 
+                     url(../../images/cb_super_fancy_br.png), 
+                     url(../../images/cb_super_fancy_t.png),  
+                     url(../../images/cb_super_fancy_b.png);
+   background-repeat: no-repeat,
+                      no-repeat,
+                      no-repeat,
+                      no-repeat,
+                      repeat-x,
+                      repeat-x;
+   background-position-x: left, 
+                          right, 
+                          left, 
+                          right, 
+                          left, 
+                          left;
+   background-position-y: top, 
+                          top, 
+                          bottom, 
+                          bottom, 
+                          top, 
+                          bottom; 
+   background-clip: padding-box, 
+                    padding-box, 
+                    padding-box, 
+                    padding-box, 
+                    content-box, 
+                    content-box;
+   padding-top: 0px;
+   padding-left: 20px;
+   padding-right: 20px;
+   padding-bottom: 0px;
+   pointer-events: none;
+}
+
+#charbrowser .WindowSuperFancy .WindowTitleBar {
+   position: absolute;
+   overflow: hidden;
+   top: -10px;
+   height: 30px;
+   font-family: arial;
+   font-size: 9px;
+   line-height: 16px;
+   text-align: center;
+   color: #FFFFFF;
+   padding: 0px 19px;
+   background-image: url(../../images/cb_super_fancy_title.png);
+   background-repeat: no-repeat;
+   background-clip: padding-box;
+   background-position-x: left;
+   background-position-y: top;
+   display: block;
+   background-size: 100%;
+   margin: 0 auto;
+   width: 134px;  
+}
+
+#charbrowser .WindowSimple,
+#charbrowser .WindowSimpleFancy,
+#charbrowser .WindowComplex,
+#charbrowser .WindowComplexFancy,
+#charbrowser .WindowComplexGM { 
+   position: relative;
+   margin: 0 auto;
+   background-image: url(../../images/light.gif);
+   padding-top: 19px;
+   padding-left: 13px;
+   padding-right: 13px;
+   padding-bottom: 17px;
+   z-index: 0;
+   border-width: 2px;
+   border-style: solid;
+   border-color: rgb(180, 173, 134) rgb(142, 134, 107) rgb(61, 58, 48) rgb(177, 170, 142);
+   font-family: arial;
+   font-size: 9pt;
+   color: #FFFFFF;
+   box-shadow: 5px 10px 20px rgba(0, 0, 0, 0.6);
+   opacity: 0.95;
+   transition: opacity 200ms;
+}
+
+#charbrowser .WindowSimple:hover,
+#charbrowser .WindowSimpleFancy:hover,
+#charbrowser .WindowComplex:hover,
+#charbrowser .WindowComplexFancy:hover,
+#charbrowser .WindowComplexGM :hover { 
+   opacity: 1;
+}
+
+#charbrowser .WindowComplex:before,
+#charbrowser .WindowComplexGM:before,
+#charbrowser .WindowComplexFancy:before,
+#charbrowser .WindowSimpleFancy:before,
+#charbrowser .WindowSimple:before {
+    content: " ";
+    position: absolute;
+    z-index: -1;
+    padding: 19px;
+    left: -12px;
+    right: -12px;
+    top: -5px;
+    bottom: -11px;
+    pointer-events: none;
+}
+
+#charbrowser .WindowComplex:before,
+#charbrowser .WindowComplexGM:before,
+#charbrowser .WindowComplexFancy:before {
+   outline-offset: -20px;
+   outline: 2px #40434e solid;
+   background-repeat: no-repeat, no-repeat, no-repeat, no-repeat, repeat;
+   background-position-x: left, right, left, right, left;
+   background-position-y: top, top, bottom, bottom, top;
+   background-clip: padding-box, padding-box, padding-box, padding-box, content-box;
+}
+
+#charbrowser .WindowSimpleFancy:before,
+#charbrowser .WindowSimple:before {
+    background-repeat: no-repeat, no-repeat, no-repeat, no-repeat;
+    background-position-x: left, right, left, right;
+    background-position-y: top, top, bottom, bottom;
+    background-clip: padding-box, padding-box, padding-box, padding-box;
+}
+
+#charbrowser .WindowComplex:before,
+#charbrowser .WindowComplexGM:before {
+   background-image: url(../../images/cb_simple_window_corner_tl.png), url(../../images/cb_simple_window_corner_tr.png), url(../../images/cb_simple_window_corner_bl.png), url(../../images/cb_simple_window_corner_br.png), url(../../images/dark.gif);
+}
+
+#charbrowser .WindowComplexFancy:before {
+   background-image: url(../../images/cb_window_corner_tl.png), url(../../images/cb_window_corner_tr.png), url(../../images/cb_window_corner_bl.png), url(../../images/cb_window_corner_br.png), url(../../images/dark.gif);
+}
+
+#charbrowser .WindowSimple:before {
+    background-image: url(../../images/cb_simple_window_corner_tl.png), url(../../images/cb_simple_window_corner_tr.png), url(../../images/cb_simple_window_corner_bl.png), url(../../images/cb_simple_window_corner_br.png);
+}
+
+#charbrowser .WindowSimpleFancy:before {
+    background-image: url(../../images/cb_window_corner_tl.png), url(../../images/cb_window_corner_tr.png), url(../../images/cb_window_corner_bl.png), url(../../images/cb_window_corner_br.png);
+}
+
+
+#charbrowser .WindowNestedTanTitleBar {
+   font-family: arial;
+   font-size: 9pt;
+   text-align: center;   
+   color: #FFFFFF;
+   padding: 0;
+   display: block;
+   margin: 5px 0px;
+}
+
+#charbrowser .WindowNestedTan {
+   padding-top: 5px;
+   padding-left: 8px;
+   padding-right: 8px;
+   padding-bottom: 5px;
+   margin-top: 10px;
+   margin-left: 8px;
+   margin-right: 8px;
+   margin-bottom: 10px;
+   font-family: arial;
+   font-size: 7pt;
+   color: #FFFFFF;
+   text-align: left;
+   vertical-align: top;
+   border: 1px #7b714a dotted;
+   position: relative;
+}
+
+#charbrowser .WindowNestedBlue {
+   background-image: url(../../images/dark.gif);
+   border: 1px #6b7194 solid;
+   padding-top: 6px;
+   padding-left: 0px;
+   padding-right: 0px;
+   padding-bottom: 6px;
+   font-family: arial;
+   font-size: 9pt;
+   color: #FFFFFF;
+   margin-top: 0px;
+   margin-left: 0px;
+   margin-right: 0px;
+   margin-bottom: 0px;
+}
+
+#charbrowser .WindowClose {
+   position: absolute; 
+   right: 10px; 
+   top: 4px;
+   cursor: pointer;
+   background-image: url(../../images/cb_icon_popup_close.png);
+   width: 12px;
+   height: 12px;
+   max-width: 12px;
+   max-height: 12px;
+   padding: 0px;
+}
+
+#charbrowser .WindowCloseAll {
+   position: absolute; 
+   right: 27px; 
+   top: 4px;
+   cursor: pointer;
+   background-image: url(../../images/cb_icon_popup_closeall.png);
+   width: 12px;
+   height: 12px;
+   max-width: 12px;
+   max-height: 12px;
+   padding: 0px;
+}
+
+#charbrowser .WindowTile {
+   position: absolute; 
+   right: 44px; 
+   top: 4px;
+   cursor: pointer;
+   background-image: url(../../images/cb_icon_popup_tile.png);
+   width: 12px;
+   height: 12px;
+   max-width: 12px;
+   max-height: 12px;
+   padding: 0px;
+}
+
+
+
+/* ----------------------------------------------
+                 INPUT FIELDS
+------------------------------------------------- */
+#charbrowser INPUT[type=text],
+#charbrowser SELECT {
+  border: 1px #555555 solid;
+  background-color: #0b0b10;
+  height: 17px;
+  color: #FFFFFF;
+  padding: 1px 5px 1px 5px;
+  font-family:arial;
+  font-size: 8pt; 
+  box-sizing: border-box;
+}
+
+/* ----------------------------------------------
+               SPECIFIC WINDOWS
+    These are for locating and/or overriding
+    the default general window styles
+    These have to come AFTER the general
+    window styles so they properly override
+------------------------------------------------- */
+#charbrowser .PositionMenu {
+   position: absolute;
+   top: 180px;
+   left: 5px;
+   width: 88px;
+   font-size: 0px;
+}
+
+#charbrowser .PositionCorpse,
+#charbrowser .PositionBot {
+   position: relative; 
+   width: 432px;
+   height: 505px;
+   margin: 0 auto;
+}
+#charbrowser .PositionCorpse .CB_Button,
+#charbrowser .PositionBot .CB_Button {
+    bottom: 0px;
+    position: absolute;
+    left: 212px;
+}
+#charbrowser .PositionCorpse  .CB_Avatar_Layer1,
+#charbrowser .PositionCorpse  .CB_Avatar_Layer2,
+#charbrowser .PositionCorpse  .CB_Avatar_Layer3,
+#charbrowser .PositionBot  .CB_Avatar_Layer1,
+#charbrowser .PositionBot  .CB_Avatar_Layer2,
+#charbrowser .PositionBot  .CB_Avatar_Layer3 {
+   position: absolute;
+   top: 12px;
+   left: 36px;
+   width: 70px;
+   height: 70px;
+   border-radius: 70px;
+   background-size: 100%;
+}
+#charbrowser .PositionCorpse  .CB_Avatar_Layer1 {
+   background-image: url(../../images/avatar_underlay_gold.svg);
+}
+#charbrowser .PositionBot  .CB_Avatar_Layer1 {
+   background-image: url(../../images/avatar_underlay_bot.svg);
+}
+#charbrowser .PositionCorpse  .CB_Avatar_Layer3,
+#charbrowser .PositionBot  .CB_Avatar_Layer3 {
+   background-image: url(../../images/avatar_overlay.svg);
+}
+
+#charbrowser .PositionInventory {
+   position: absolute; 
+   width: 432px;
+   height: 535px;
+   top: 0px;
+   left: 120px;
+}
+#charbrowser .PositionCorpse  .InventoryContents,
+#charbrowser .PositionBot  .InventoryContents,
+#charbrowser .PositionInventory  .InventoryContents {
+   position: absolute;
+   left:11px;
+   width: 442px;
+   overflow-y: auto;
+   overflow-x: hidden;
+   height: 405px;
+}
+#charbrowser .PositionCorpse .InventoryContents,
+#charbrowser .PositionBot .InventoryContents {
+   top: 115px;
+}
+#charbrowser .PositionInventory .InventoryContents {
+   display: none;
+   top: 140px;
+}
+#charbrowser .PositionInventory  .CB_Avatar_Layer1,
+#charbrowser .PositionInventory  .CB_Avatar_Layer2,
+#charbrowser .PositionInventory  .CB_Avatar_Layer3 {
+   position: absolute;
+   top: 12px;
+   left: 36px;
+   width: 70px;
+   height: 70px;
+   border-radius: 70px;
+   background-size: 100%;
+}
+#charbrowser .PositionInventory  .CB_Avatar_Layer1 {
+   background-image: url(../../images/avatar_underlay_blue.svg);
+}
+#charbrowser .PositionInventory  .CB_Avatar_Layer3 {
+   background-image: url(../../images/avatar_overlay.svg);
+}
+#charbrowser .PositionInventory  DIV.CB_CalcBox  TABLE.CB_Table THEAD TR TH:nth-child(1),
+#charbrowser .PositionInventory  DIV.CB_CalcBox  TABLE.CB_Table TBODY TR TD:nth-child(1),
+#charbrowser .PositionInventory  DIV.CB_CalcBox  TABLE.CB_Table TFOOT TR TD:nth-child(1) {
+   text-align: left;
+   width: 60%;
+}
+#charbrowser .PositionInventory  DIV.CB_CalcBox  TABLE.CB_Table TFOOT TR TD:nth-child(1) {
+   font-size: 8pt;
+   font-variant-caps: all-small-caps;
+}
+#charbrowser .PositionInventory  DIV.CB_CalcBox  TABLE.CB_Table THEAD TR TH:nth-child(2),
+#charbrowser .PositionInventory  DIV.CB_CalcBox  TABLE.CB_Table TBODY TR TD:nth-child(2),
+#charbrowser .PositionInventory  DIV.CB_CalcBox  TABLE.CB_Table TFOOT TR TD:nth-child(2) {
+   text-align: right;
+   width: 20%;
+}
+#charbrowser .PositionInventory  DIV.CB_CalcBox  TABLE.CB_Table TBODY TR TD:nth-child(3),
+#charbrowser .PositionInventory  DIV.CB_CalcBox  TABLE.CB_Table TFOOT TR TD:nth-child(3) {
+   text-align: right;
+   width: 20%;
+}
+#charbrowser .PositionInventory  DIV.CB_CalcBox  TABLE.CB_Table TFOOT TR TD:nth-child(3) {
+   font-weight: 700;
+   background-color: rgba(255, 255, 255, 0.2);
+   color: #44da00;
+}
+#charbrowser .PositionInventory  DIV.CB_CalcBox  TABLE.CB_Table TFOOT TR {
+   border: 1px solid white;
+}
+#charbrowser .PositionInventory  DIV.CB_CalcBox  TABLE {
+   margin: 15px auto;
+   width: 350px;
+   white-space: nowrap;
+}
+
+
+#charbrowser .PositionBank {
+   position: absolute;
+   width: 265px;
+   height: 305px;
+   top: 100px;
+   left: 650px;
+}
+#charbrowser .BankContents {
+   position: absolute;
+   top: 5px;
+   left: 12px;
+   width: 280px;
+   overflow-y: auto;
+   overflow-x: hidden;
+   height: 320px;
+}
+#charbrowser .PositionBag {
+   position: relative; 
+   width: 84px;
+   margin: 0 auto;
+   padding-left: 6px;
+   padding-right: 6px;
+   font-size: 0px;
+}
+#charbrowser .PositionCharacter {
+   width: 900px;
+   margin: 0 auto;
+   position: relative;
+}
+
+#charbrowser .PositionCorpse  DIV.CB_Char_Monogram,
+#charbrowser .PositionBot  DIV.CB_Char_Monogram,
+#charbrowser .PositionInventory  DIV.CB_Char_Monogram {
+  background-image: url(../../images/dark.gif);
+  border: 1px #444444 solid;
+  position: absolute;
+  text-align: center;
+  top: 57px;
+  left: 215px;
+  width: 82px;
+  height: 168px;
+  max-height: 146px;
+  max-width: 80px;
+  padding: 20px 0px 0px 0px;
+  font-family:		arial;
+  font-size: 9pt ;
+  color: #FFFFFF ;
+}
+
+#charbrowser .PositionCorpse DIV.CB_Inv_Header,
+#charbrowser .PositionBot DIV.CB_Inv_Header,
+#charbrowser .PositionInventory DIV.CB_Inv_Header {
+   position: absolute;
+   left: 130px;
+   top: 15px;
+}   
+#charbrowser .PositionCorpse DIV.CB_Inv_Header P:nth-child(1),
+#charbrowser .PositionBot DIV.CB_Inv_Header P:nth-child(1),
+#charbrowser .PositionInventory DIV.CB_Inv_Header P:nth-child(1) {
+   font-size: 16px;
+   line-height: 18px;
+   color: #EEBE16;
+   margin: 0px;
+   padding: 2px;
+} 
+#charbrowser .PositionCorpse DIV.CB_Inv_Header P:nth-child(2),
+#charbrowser .PositionCorpse DIV.CB_Inv_Header P:nth-child(3), 
+#charbrowser .PositionBot DIV.CB_Inv_Header P:nth-child(2),
+#charbrowser .PositionBot DIV.CB_Inv_Header P:nth-child(3), 
+#charbrowser .PositionInventory DIV.CB_Inv_Header P:nth-child(2),
+#charbrowser .PositionInventory DIV.CB_Inv_Header P:nth-child(3) {
+   font-size: 13px;
+   line-height: 15px;
+   color: #FFFFFF;
+   margin: 0px;
+   padding: 2px;
+}
+#charbrowser .PositionInventory NAV.CB_Tab_Box {
+   position: absolute;
+   top: 80px;
+   width: 432px;
+}
+
+#charbrowser .PositionCorpse  DIV.CB_Char_Stats {
+   display: flex;
+   flex-direction: column;
+}
+#charbrowser .PositionCorpse  DIV.CB_Char_Stats > DIV:not(:last-child) {
+   flex: 1;
+}
+#charbrowser .PositionCorpse  DIV.CB_Char_Stats > DIV:not(:last-child) > P:first-child {
+   color: #f5dc7d;
+   text-align: left;
+   padding-bottom: 0px;
+   border-bottom: 2px solid #f5dc7d;
+   padding-top: 7px;
+   font-variant: all-small-caps;
+   font-size: 12px;
+   margin-bottom: 5px;
+   padding-left: 2px;
+}
+#charbrowser .PositionCorpse  DIV.CB_Char_Stats > DIV:last-child {
+   flex: 0;
+}
+#charbrowser .PositionCorpse  DIV.CB_Char_Stats,
+#charbrowser .PositionBot  TABLE.CB_Char_Stats,
+#charbrowser .PositionInventory  TABLE.CB_Char_Stats {
+   height: 370px;
+   width: 150px;
+   margin: 0px;
+   padding: 0px;
+   position: absolute;
+   top: 14px;
+   left: 10px;
+}
+#charbrowser .PositionBot  TABLE.CB_Char_Stats TBODY TR TD,
+#charbrowser .PositionInventory  TABLE.CB_Char_Stats TBODY TR TD {
+   text-align: left;
+   padding: 1px;
+}
+#charbrowser .PositionBot  TABLE.CB_Char_Stats TBODY TR TD.CB_Char_Stats_Divider,
+#charbrowser .PositionInventory  TABLE.CB_Char_Stats TBODY TR TD.CB_Char_Stats_Divider {
+   background-color: #7b714a ;
+   width: 100%;
+   height: 2px;
+   margin: 0px;
+   padding: 0px;
+   border-collapse: collapse; 
+}
+#charbrowser .PositionBot  TABLE.CB_Char_Stats TBODY TR TD.CB_Char_Stats_Spacer,
+#charbrowser .PositionInventory  TABLE.CB_Char_Stats TBODY TR TD.CB_Char_Stats_Spacer {
+   width: 100%;
+   height: 4px;
+   margin: 0px;
+   padding: 0px;
+   border-collapse: collapse; 
+}
+#charbrowser .PositionCorpse  TABLE.CB_Char_Stats2,
+#charbrowser .PositionBot  TABLE.CB_Char_Stats2,
+#charbrowser .PositionInventory  TABLE.CB_Char_Stats2 {
+   height: 57px;
+   width: 100px;
+   margin: 0px;
+   padding: 0px;
+   position: absolute;
+   top: 10px;
+   left: 334px;
+}
+#charbrowser .PositionCorpse  TABLE.CB_Char_Stats2 TBODY TR TD,
+#charbrowser .PositionBot  TABLE.CB_Char_Stats2 TBODY TR TD,
+#charbrowser .PositionInventory  TABLE.CB_Char_Stats2 TBODY TR TD {
+   text-align: left;
+}
+
+#charbrowser .PositionItem {
+   position: relative; 
+   margin: 0 auto;
+   width: 350px;
+}
+#charbrowser .PositionItem DIV.Stats {
+   text-align:left;
+   overflow-x: auto;
+   position: relative;
+}
+#charbrowser .PositionHeaderSimple {
+   width: 850px;
+   margin: 40px auto 0;
+   position: relative;
+   min-height: 80px;
+}
+
+
+
+#charbrowser .PositionLeadership {
+   width: 625px;
+   margin: 0 auto;
+   position: relative;
+}
+#charbrowser .PositionLeadershipLeft {
+   display: inline-block;
+   width: 420px;
+}
+#charbrowser .PositionLeaderships DIV.PositionAALeft TABLE {  
+   display: none;   
+}
+#charbrowser .PositionLeadershipLeft TABLE.CB_Table TBODY TR TD:nth-child(1),
+#charbrowser .PositionLeadershipLeft TABLE.CB_Table THEAD TR TH:nth-child(1) {
+   text-align: left;
+}
+#charbrowser .PositionLeadershipRight {
+   display: inline-block;
+   width: 195px;
+   vertical-align: top;
+}
+#charbrowser .PositionLeadershipRight DIV {
+   text-align: center;
+}
+
+
+
+#charbrowser .PositionAAs {
+   width: 625px;
+   margin: 0 auto;
+   position: relative;
+}
+#charbrowser .PositionAALeft {
+   display: inline-block;
+   width: 420px;
+}
+#charbrowser .PositionAAs DIV.PositionAALeft TABLE {  
+   display: none;   
+}
+#charbrowser .PositionAALeft TABLE.CB_Table TBODY TR TD:nth-child(1),
+#charbrowser .PositionAALeft TABLE.CB_Table THEAD TR TH:nth-child(1) {
+   text-align: left;
+}
+#charbrowser .PositionAARight {
+   display: inline-block;
+   width: 195px;
+   vertical-align: top;
+}
+#charbrowser .PositionAARight TABLE.CB_Table TBODY TR TD:nth-child(1) {
+   text-align: left;
+}
+
+#charbrowser .PositionAARight TABLE.CB_Table TBODY TR TD:nth-child(2) {
+   text-align: right;
+}
+
+
+
+
+#charbrowser .PositionBarter {
+   width: 850px;
+   height: 500px;
+   margin: 0 auto;
+   position: relative;
+   display: flex;
+   flex-direction: column;
+}
+#charbrowser .PositionBarterTop {
+   display: flex;
+   flex-direction: row;
+   overflow: hidden; 
+   flex: 1;
+}
+#charbrowser .PositionBarterTop .PositionBarterLeft {
+   flex: 1;
+   vertical-align: top;
+   display: flex;
+   flex-direction: column;
+}
+#charbrowser .PositionBarterTop .PositionBarterLeft LABEL {
+   display: block;
+   margin-top: 7px;
+   margin-bottom: 4px;
+   margin-left: 5px;
+   margin-right: 0px;
+   font-weight: 600;
+}
+#charbrowser .PositionBarterTop .PositionBarterLeft > DIV:nth-child(1) {
+    margin-top: 22px;
+    flex: 0;
+}
+#charbrowser .PositionBarterTop .PositionBarterLeft > DIV:nth-child(2) {
+   flex: 0;
+}
+#charbrowser .PositionBarterTop .PositionBarterLeft > DIV:nth-child(3) {
+   flex: 1;
+   overflow-y: auto;
+}
+#charbrowser .PositionBarterTop .PositionBarterLeft > DIV:nth-child(3) TABLE.CB_Table TBODY TR TD:nth-child(1),
+#charbrowser .PositionBarterTop .PositionBarterLeft > DIV:nth-child(3) TABLE.CB_Table THEAD TR TH:nth-child(1) {
+   text-align: left;
+}
+#charbrowser .PositionBarterTop .PositionBarterLeft > DIV:nth-child(3) TABLE.CB_Table TBODY TR TD:nth-child(2),
+#charbrowser .PositionBarterTop .PositionBarterLeft > DIV:nth-child(3) TABLE.CB_Table THEAD TR TH:nth-child(2) {
+   text-align: right;
+}
+#charbrowser .PositionBarterTop .PositionBarterLeft INPUT[type=text],
+#charbrowser .PositionBarterTop .PositionBarterLeft SELECT {
+   width: 240px;
+   margin-bottom: 10px;
+   margin-top: 0px;
+   margin-left: 0px;
+   margin-right: 0px;
+}
+#charbrowser .PositionBarterRight TABLE.CB_Table TBODY TR TD:nth-child(1),
+#charbrowser .PositionBarterRight TABLE.CB_Table THEAD TR TH:nth-child(1) {
+   text-align: left;
+}
+#charbrowser .PositionBarterRight TABLE.CB_Table TBODY TR TD:nth-child(2),
+#charbrowser .PositionBarterRight TABLE.CB_Table THEAD TR TH:nth-child(2) {
+   text-align: right;
+}
+#charbrowser .PositionBarterRight {
+   flex: 2;
+   display: flex;
+   flex-direction: column;
+   margin-left: 13px;
+}
+#charbrowser .PositionBarterRight > DIV:nth-child(1) {
+   flex: 0;
+}
+#charbrowser .PositionBarterRight > DIV:nth-child(2) {
+   flex: 1;
+   overflow-y: auto;
+}
+#charbrowser .PositionBarterRight > DIV:nth-child(3) {
+   flex: 0;
+}
+#charbrowser .PositionBarterBottom {
+   flex: 0;
+}
+
+
+
+#charbrowser .PositionBazaar {
+   width: 825px;
+   height: 565px;
+   margin: 0 auto;
+   position: relative;
+   display: flex;
+   flex-direction: column;
+}
+#charbrowser .PositionBazaarTop {
+   display: flex;
+   flex-direction: row;
+   overflow: hidden; 
+   flex: 1;
+}
+#charbrowser .PositionBazaarLeft {
+   flex: 0;
+   vertical-align: top;
+}
+#charbrowser .PositionBazaarLeft LABEL {
+   display: block;
+   margin-top: 7px;
+   margin-bottom: 4px;
+   margin-left: 5px;
+   margin-right: 0px;
+   font-weight: 600;
+}
+#charbrowser .PositionBazaarLeft INPUT[type=text],
+#charbrowser .PositionBazaarLeft SELECT {
+   width: 150px;
+   margin-bottom: 10px;
+   margin-top: 0px;
+   margin-left: 0px;
+   margin-right: 0px;
+}
+#charbrowser .PositionBazaarRight TABLE.CB_Table TBODY TR TD:nth-child(1),
+#charbrowser .PositionBazaarRight TABLE.CB_Table THEAD TR TH:nth-child(1) {
+   text-align: left;
+}
+#charbrowser .PositionBazaarRight {
+   flex: 1;
+   display: flex;
+   flex-direction: column;
+   margin-left: 13px;
+}
+#charbrowser .PositionBazaarRight > DIV:nth-child(1) {
+   overflow-y: auto;
+   flex: 1;
+}
+#charbrowser .PositionBazaarBottom {
+   flex: 0;
+}
+
+
+#charbrowser .PositionCharMove {
+   width: 625px;
+   margin: 0 auto;
+   position: relative;
+}
+#charbrowser .CB_Charmove_addrow {
+   text-align: right;
+}
+#charbrowser .CB_Charmove_addrow A:link,
+#charbrowser .CB_Charmove_addrow A:visited,
+#charbrowser .CB_Charmove_addrow A:active,
+#charbrowser .CB_Charmove_addrow A:hover {
+    color: #8aa3ff;
+    border: 1px dotted #8aa3ff;
+    padding: 3px;
+    margin: 5px;
+    display: inline-block;
+    text-decoration: none;
+    background-color: none;
+}
+#charbrowser .CB_Charmove_addrow A:hover {
+    color: #b9c8ff;
+    border: 1px dotted #b9c8ff;
+    background-color: rgba(255, 255, 255, 0.2);
+}
+#charbrowser .CB_Charmove_row {
+   position: relative;
+   margin: 0 auto;
+   width: 550px;
+}
+#charbrowser .CB_Charmove_row LABEL {
+   display: inline-block;
+   margin-top: 5px;
+   margin-bottom: 5px;
+   margin-left: 15px;
+   margin-right: 0px;
+   font-weight: 600;
+   vertical-align: bottom;
+}
+#charbrowser .CB_Charmove_row INPUT[type=text],
+#charbrowser .CB_Charmove_row SELECT {
+   width: 100px;
+   margin-bottom: 5px;
+   margin-top: 5px;
+   margin-left: 0px;
+   margin-right: 15px;
+   vertical-align: bottom;
+}
+#charbrowser .CB_CharmoveBookmark {
+   display: block;
+   text-align: right;
+   padding: 10px;
+   font-weight: 600;
+}
+
+#charbrowser .PositionCharMove TABLE.CB_Table TBODY TR TD,
+#charbrowser .PositionCharMove TABLE.CB_Table THEAD TR TH:nth-child(1),
+#charbrowser .PositionCharMove TABLE.CB_Table THEAD TR TH:nth-child(2),
+#charbrowser .PositionCharMove TABLE.CB_Table THEAD TR TH:nth-child(3) {
+   text-align: left;
+}
+#charbrowser .PositionCharMove .WindowNestedBlue {
+   min-height: 250px;
+}
+
+
+#charbrowser .PositionCharMove TABLE.CB_Table THEAD TR TH:nth-child(1),
+#charbrowser .PositionCharMove TABLE.CB_Table THEAD TR TH:nth-child(2),
+#charbrowser .PositionCharMove TABLE.CB_Table THEAD TR TH:nth-child(3){
+   text-align: left;
+}
+
+#charbrowser .PositionCorpses {
+   width: 700px;
+   margin: 0 auto;
+   position: relative;
+}
+
+#charbrowser .PositionGuild{
+   width: 700px;
+   margin: 0 auto;
+   position: relative;
+}
+#charbrowser .PositionGuild DIV.CB_GuildTabBoxes {  
+   display: none;   
+}
+#charbrowser .PositionGuild #tabbox1 THEAD TR TH:nth-child(1), 
+#charbrowser .PositionGuild #tabbox1 TBODY TR TD:nth-child(1),
+#charbrowser .PositionGuild #tabbox2 THEAD TR TH:nth-child(1), 
+#charbrowser .PositionGuild #tabbox2 TBODY TR TD:nth-child(1),
+#charbrowser .PositionGuild #tabbox2 THEAD TR TH:nth-child(2), 
+#charbrowser .PositionGuild #tabbox2 TBODY TR TD:nth-child(2),
+#charbrowser .PositionGuild #tabbox2 THEAD TR TH:nth-child(3), 
+#charbrowser .PositionGuild #tabbox2 TBODY TR TD:nth-child(3),
+#charbrowser .PositionGuild #tabbox2 THEAD TR TH:nth-child(4), 
+#charbrowser .PositionGuild #tabbox2 TBODY TR TD:nth-child(4) {
+   text-align: left;
+}
+
+#charbrowser .PositionServer{
+   width: 700px;
+   margin: 0 auto;
+   position: relative;
+}
+#charbrowser .PositionServer TABLE.CB_TopTable,
+#charbrowser .PositionServer DIV.CB_ServerTabBoxes {  
+   display: none;   
+}
+#charbrowser .PositionServer #tabbox1 THEAD TR TH:nth-child(1), 
+#charbrowser .PositionServer #tabbox1 TBODY TR TD:nth-child(1),
+#charbrowser .PositionServer #tabbox2 THEAD TR TH:nth-child(1), 
+#charbrowser .PositionServer #tabbox2 TBODY TR TD:nth-child(1),
+#charbrowser .PositionServer #tabbox2 THEAD TR TH:nth-child(2), 
+#charbrowser .PositionServer #tabbox2 TBODY TR TD:nth-child(2),
+#charbrowser .PositionServer #tabbox2 THEAD TR TH:nth-child(3), 
+#charbrowser .PositionServer #tabbox2 TBODY TR TD:nth-child(3),
+#charbrowser .PositionServer #tabbox2 THEAD TR TH:nth-child(4), 
+#charbrowser .PositionServer #tabbox2 TBODY TR TD:nth-child(4) {
+   text-align: left;
+}
+
+#charbrowser .PositionHome {
+   width: 600px;
+   margin: 0 auto;
+   position: relative;
+}
+#charbrowser .PositionHome IMG {
+   transform: scale(0.75);
+   max-width: 600px;
+   vertical-align: middle;
+   margin: 0 auto;
+   position: relative;
+   display: block;
+}
+
+
+
+#charbrowser .CB_Has_Items {
+   width: 28px;
+   height: 28px;
+   top: 58px;
+   right: 44px;
+   position: absolute;
+   border-radius: 17px;
+   border: 1px solid #fffefa;
+   background-image:  url(../../images/loot.png), url(../../images/light.gif);
+   background-repeat: no-repeat, no-repeat;
+   background-size: 20px 20px, 100% 100%;
+   background-position: 4px 4px, 0px 0px;
+   box-shadow: -2px -2px 4px black;
+}
+#charbrowser .CB_No_Items {
+   display: none;
+   width: 0px;
+   height: 0px;
+   padding: 0px;
+   margin: 0px;
+   border-radius: 0px;
+   border: 0px;
+   background: transparent;
+}
+#charbrowser .PositionCorpses,
+#charbrowser .PositionBots {
+   width: 610px;
+   margin: 0 auto;
+   position: relative;
+}
+#charbrowser .PositionCorpses  .CB_Bot_Avatar_Window,
+#charbrowser .PositionBots  .CB_Bot_Avatar_Window {
+   display: inline-block;
+   position: relative;
+   margin: 10px;
+   width: 180px;
+   height: 151px;
+}
+#charbrowser .PositionCorpses  .CB_Bot_Avatar_Window:hover,
+#charbrowser .PositionBots  .CB_Bot_Avatar_Window:hover {
+   border: 2px #40434e solid;
+   border-radius: 15px;
+   background-image: url(../../images/light.gif);
+   margin: 8px;
+}
+
+#charbrowser .PositionCorpse  .CB_Avatar_Rezzed,
+#charbrowser .PositionCorpses  .CB_Bot_Avatar_Window .CB_Avatar_Rezzed {
+   filter: grayscale(100%);
+}
+#charbrowser .PositionCorpses  .CB_Bot_Avatar_Window .CB_Avatar_Layer1,
+#charbrowser .PositionCorpses  .CB_Bot_Avatar_Window .CB_Avatar_Layer2,
+#charbrowser .PositionCorpses  .CB_Bot_Avatar_Window .CB_Avatar_Layer3,
+#charbrowser .PositionBots  .CB_Bot_Avatar_Window .CB_Avatar_Layer1,
+#charbrowser .PositionBots  .CB_Bot_Avatar_Window .CB_Avatar_Layer2,
+#charbrowser .PositionBots  .CB_Bot_Avatar_Window .CB_Avatar_Layer3 {
+   display: block;
+   position: absolute;
+   width: 70px;
+   height: 70px;
+   top: 10px;
+   left: 55px;
+   border-radius: 70px;
+   background-size: 100%;
+}
+#charbrowser .PositionCorpses  .CB_Bot_Avatar_Window .CB_Avatar_Layer1 {
+   background-image: url(../../images/avatar_underlay_gold.svg);
+}
+#charbrowser .PositionBots  .CB_Bot_Avatar_Window .CB_Avatar_Layer1 {
+   background-image: url(../../images/avatar_underlay_bot.svg);
+}
+#charbrowser .PositionCorpses  .CB_Bot_Avatar_Window .CB_Avatar_Layer3,
+#charbrowser .PositionBots  .CB_Bot_Avatar_Window .CB_Avatar_Layer3 {
+   background-image: url(../../images/avatar_overlay.svg);
+}
+#charbrowser .PositionCorpses .CB_Bot_Avatar_Window .CB_Bot_Caption,
+#charbrowser .PositionBots .CB_Bot_Avatar_Window .CB_Bot_Caption {
+   position: absolute;
+   width: 180px;
+   height: 60px;
+   top: 90px;
+   text-align: center;
+}
+#charbrowser .PositionCorpses .CB_Bot_Avatar_Window .CB_Bot_Caption P:nth-child(1),
+#charbrowser .PositionBots .CB_Bot_Avatar_Window .CB_Bot_Caption P:nth-child(1) {
+   font-size: 16px;
+   line-height: 18px;
+   color: #EEBE16;
+   margin: 0px;
+   padding: 2px;
+} 
+#charbrowser .PositionCorpses .CB_Bot_Avatar_Window .CB_Bot_Caption P:nth-child(2),
+#charbrowser .PositionCorpses .CB_Bot_Avatar_Window .CB_Bot_Caption  P:nth-child(3),
+#charbrowser .PositionBots .CB_Bot_Avatar_Window .CB_Bot_Caption P:nth-child(2),
+#charbrowser .PositionBots .CB_Bot_Avatar_Window .CB_Bot_Caption  P:nth-child(3) {
+   font-size: 13px;
+   line-height: 15px;
+   color: #FFFFFF;
+   margin: 0px;
+   padding: 2px;
+}
+
+#charbrowser .WindowSuperFancy HR{
+    position: absolute;
+    display: block;
+    background-image: url(../../images/cb_hr_r.png), url(../../images/cb_hr_l.png), url(../../images/cb_hr_m.png);
+    background-repeat: no-repeat, no-repeat, repeat-x;
+    background-position-x: right, left, left;
+    background-position-y: top, top, bottom;
+    background-clip: padding-box, padding-box, content-box;
+    padding: 0px 9px;
+    top: 86px;
+    height: 10px;
+    left: 2px;
+    right: 2px;
+}
+
+#charbrowser .PositionFactionBasic {
+   width: 400px;
+   margin: 0 auto;
+   position: relative;
+}
+#charbrowser .PositionFactionBasic TABLE.CB_Table TBODY TR TD,
+#charbrowser .PositionFactionBasic TABLE.CB_Table THEAD TR TH {
+   text-align: left;
+}
+
+
+#charbrowser .PositionFactionAdvanced {
+   width: 700px;
+   margin: 0 auto;
+   position: relative;
+}
+#charbrowser .PositionFactionAdvanced TABLE.CB_Table TBODY TR TD:nth-child(1),
+#charbrowser .PositionFactionAdvanced TABLE.CB_Table TBODY TR TD:nth-child(2),
+#charbrowser .PositionFactionAdvanced TABLE.CB_Table THEAD TR TH:nth-child(1),
+#charbrowser .PositionFactionAdvanced TABLE.CB_Table THEAD TR TH:nth-child(2) {
+   text-align: left;
+}
+
+#charbrowser .PositionFlagsParent {
+   width: 400px;
+   margin: 0 auto;
+   position: relative;
+}
+#charbrowser .PositionFlagsChild {
+   width: 700px;
+   margin: 0 auto;
+   position: relative;
+}
+#charbrowser .PositionKeys {
+   width: 400px;
+   margin: 0 auto;
+   position: relative;
+}
+#charbrowser .PositionMessage {
+   width: 400px;
+   margin: 0 auto;
+   position: relative;
+}
+
+#charbrowser .PositionHelp,
+#charbrowser .PositionIndex {
+   width: 600px;
+   margin: 0 auto;
+   position: relative;
+}
+#charbrowser .PositionHelp IMG,
+#charbrowser .PositionIndex IMG {
+   transform: scale(0.75);
+   max-width: 600px;
+   vertical-align: middle;
+   margin: 0 auto;
+   position: relative;
+   display: block;
+}
+
+#charbrowser .PositionSearch {
+   width: 600px;
+   margin: 0 auto;
+   position: relative;
+}
+#charbrowser .PositionSearch TABLE.CB_Table TBODY TR TD:nth-child(1),
+#charbrowser .PositionSearch TABLE.CB_Table THEAD TR TH:nth-child(1),
+#charbrowser .PositionSearch TABLE.CB_Table TBODY TR TD:nth-child(2),
+#charbrowser .PositionSearch TABLE.CB_Table THEAD TR TH:nth-child(2) {
+   text-align: left;
+}
+
+#charbrowser .PositionSettings {
+   width: 600px;
+   margin: 0 auto;
+   position: relative;
+}
+#charbrowser .PositionSettings  TD.cb_setting_val_0,
+#charbrowser .PositionSettings  TD.cb_setting_val_1 {
+   position: relative;
+   left: -7px;
+}
+#charbrowser .PositionSettings  TD.cb_setting_val_1 {
+   background-image: url(../../images/cb_checkmark.png);
+   background-repeat: no-repeat;
+   background-position: center;
+}
+#charbrowser .PositionSettings  TD.cb_setting_val_0 {
+   background-color: transparent;
+}
+
+#charbrowser .PositionSignatureBuilder {
+   width: 600px;
+   margin: 0 auto;
+   position: relative;
+}
+#charbrowser .PositionSignatureBuilder LABEL {
+   display: block;
+   margin-top: 7px;
+   margin-bottom: 4px;
+   margin-left: 5px;
+   margin-right: 0px;
+   font-weight: 600;
+}
+#charbrowser .PositionSignatureBuilder INPUT[type=text],
+#charbrowser .PositionSignatureBuilder SELECT {
+   width: 150px;
+   margin-bottom: 10px;
+   margin-top: 0px;
+   margin-left: 0px;
+   margin-right: 0px;
+}
+#charbrowser .PositionSignatureBuilder DIV.WindowNestedBlue {   
+   min-height: 300px;
+   padding: 30px;
+}
+#charbrowser .PositionSignatureBuilder DIV.CB_SigTabBoxes {  
+   display: none;   
+}
+#charbrowser .PositionSignatureBuilder DIV.WindowNestedBlue #tabbox1 DIV {  
+   display: inline-block;
+   width: 130px;  
+   padding-bottom: 30px; 
+}
+#charbrowser .PositionSignatureBuilder DIV.WindowNestedBlue #tabbox1 DIV INPUT,
+#charbrowser .PositionSignatureBuilder DIV.WindowNestedBlue #tabbox1 DIV SELECT {  
+   width: 110px;   
+}
+#charbrowser .PositionSignatureBuilder DIV.WindowNestedBlue #tabbox1 DIV:nth-child(1) {
+   display: block;
+   width: initial;
+}
+#charbrowser .PositionSignatureBuilder DIV.WindowNestedBlue #tabbox1 DIV:nth-child(1) INPUT {  
+   width: 200px;   
+}
+#charbrowser .PositionSignatureBuilder DIV.WindowNestedBlue #tabbox2 DIV {  
+   display: inline-block;
+   width: 170px;  
+   padding-bottom: 30px; 
+}
+#charbrowser .PositionSignatureBuilder DIV.WindowNestedBlue #tabbox2 DIV INPUT,
+#charbrowser .PositionSignatureBuilder DIV.WindowNestedBlue #tabbox2 DIV SELECT {  
+   width: 150px;   
+}
+#charbrowser .PositionSignatureBuilder DIV.WindowNestedBlue #tabbox3 DIV {  
+   display: inline-block;
+   width: 100px;  
+   padding-bottom: 30px; 
+}
+#charbrowser .PositionSignatureBuilder DIV.WindowNestedBlue #tabbox3 DIV INPUT,
+#charbrowser .PositionSignatureBuilder DIV.WindowNestedBlue #tabbox3 DIV SELECT {  
+   width: 80px;   
+}
+#charbrowser .PositionSignatureBuilder DIV.WindowNestedBlue #tabbox4 TEXTAREA {  
+   border: 1px #555555 solid;
+   background-color: #0b0b10;
+   height: 40px;
+   width: 500px;
+   color: #FFFFFF;
+   padding: 1px 5px 1px 5px;
+   font-family:arial;
+   font-size: 8pt;  
+   margin-bottom: 10px;
+}
+#charbrowser .PositionSignatureBuilder #nameerror {
+   color: red;
+   padding-left: 20px;
+}
+
+#charbrowser .PositionSkills {
+   width: 300px;
+   margin: 0 auto;
+   position: relative;
+}
+#charbrowser .PositionSkills TABLE.CB_Table {
+   display: none;
+}
+
+#charbrowser .PositionSkills TABLE.CB_Table TBODY TR TD:nth-child(1) {
+   text-align: left;
+}
+#charbrowser .PositionSkills TABLE.CB_Table TBODY TR TD:nth-child(2) {
+   text-align: right;
+}
+
+
+
+#charbrowser .PositionAdventure {
+   width: 500px;
+   height: 498px;
+   margin: 0 auto;
+   position: relative;
+   display: flex;
+   flex-direction: column;
+}
+#charbrowser .PositionAdventure > DIV:nth-child(2) {
+   padding: 20px;
+   flex: 0;
+}
+#charbrowser .PositionAdventure > DIV:nth-child(3) {
+   overflow: auto;
+   padding-top: 0px;
+   flex: 1;
+}
+#charbrowser .PositionAdventure > DIV:nth-child(3) TH{
+}
+#charbrowser .PositionAdventure > DIV:nth-child(4) {
+   flex: 0;
+}
+#charbrowser .PositionAdventure > DIV:nth-child(5) {
+   flex: 0;
+}
+#charbrowser .PositionAdventure TABLE.CB_Table TBODY TR TD:nth-child(1),
+#charbrowser .PositionAdventure TABLE.CB_Table TBODY TR TD:nth-child(3),
+#charbrowser .PositionAdventure TABLE.CB_Table TBODY TR TD:nth-child(4) {
+   text-align: center;
+}
+#charbrowser .PositionAdventure TABLE.CB_Table TBODY TR TD:nth-child(2) {
+   text-align: left;
+}
+#charbrowser .PositionAdventure TABLE.CB_Table TBODY TR TD:nth-child(5) {
+   text-align: right;
+}
+
+
+/* ----------------------------------------------
+                HOVER AND DRAG
+       Override classes for hover and drag
+       these have to come AFTER the general
+       window styles
+       The JS also keys off of these names
+       best not fiddle with them
+------------------------------------------------- */
+#charbrowser .CB_HoverParent {
+   cursor: pointer;
+}
+
+#charbrowser .CB_HoverChild {
+   position: absolute; 
+   margin: 0;
+   display: none;
+}
+
+#charbrowser .CB_Can_Drag .WindowTitleBar {
+   cursor: move;
+}
+
+
+
+/* ----------------------------------------------
+        Inventory slot/components stylesheets
+------------------------------------------------- */
+
+/* for item icons in tables */
+#charbrowser .TableSlot {
+    height: 10px;
+    width: 10px;
+    border: 0px;
+    margin: 0;
+    padding: 0;
+    display: inline-block;
+    vertical-align: middle;
+}
+
+/* for item icons in inventory */
+#charbrowser .Slot {
+   height: 40px;
+   width: 40px;
+   border: 0px ;
+   margin: 0;
+   padding: 0;
+   position: absolute;
+}
+
+/* relative icons in bags */
+#charbrowser .BagSlot {
+   height: 40px;
+   width: 40px;
+   border: 0px ;
+   margin: 1px;
+   padding: 0;
+   position: relative;
+   display: inline-block;
+}
+
+#charbrowser .InspectAugSlot {
+   height: 30px; 
+   width: 30px; 
+   border: 0px; 
+   margin: 0; 
+   padding: 0; 
+   position: absolute; 
+   top: 4px; 
+   right: 4px; 
+}
+
+/* for item count in inventory */
+#charbrowser .BagSlot SPAN,
+#charbrowser .Slot SPAN {
+   position: absolute;
+   right: 1px;
+   bottom: 1px;
+   font-size: 8px;
+   background-color: #404040;
+   padding: 0px;
+   margin: 0px;
+}
+
+
+/* button to open bags in inventory */
+#charbrowser .BagOpenSlot {
+  height: 10px;
+  width: 10px;
+  border: 0px ;
+  cursor: pointer;
+  background-image: url(../../images/cb_bag_icon.png);
+  margin: 0;
+  padding: 0;
+  position: absolute;
+}
+
+
+
+/* coin boxes in bank and innventory */
+#charbrowser .Coin {
+   height: 25px;
+   width: 62px;
+   border: 0px ;
+   text-align: center;
+   background-repeat: no-repeat;
+   background-image: url(../../images/coin.gif);
+   margin: 0;
+   padding-left: 21px;
+   padding-right: 0px;
+   padding-top: 5px;
+   padding-bottom: 0px;
+   position: absolute;
+}
+#charbrowser .CoinPP:before,
+#charbrowser .CoinGP:before,
+#charbrowser .CoinSP:before,
+#charbrowser .CoinCP:before {
+   content: " ";
+   position: absolute;
+   z-index: 0;
+   background-repeat: no-repeat;
+   top: 2px;
+   left: 1px;
+   right: 0px;
+   bottom: 0px;
+}
+#charbrowser .CoinPP:before {
+   background-image: url(../../images/pp.gif);
+}
+#charbrowser .CoinGP:before {
+   background-image: url(../../images/gp.gif);
+}
+#charbrowser .CoinSP:before {
+   background-image: url(../../images/sp.gif);
+}
+#charbrowser .CoinCP:before {
+   background-image: url(../../images/cp.gif);
+}
+
+#charbrowser .coinlocinvpp {
+   top: 73px;
+   left: 352px;
+}
+#charbrowser .coinlocinvgp {
+   top: 101px;
+   left: 352px;
+}
+#charbrowser .coinlocinvsp {
+   top: 129px;
+   left: 352px;
+}
+#charbrowser .coinlocinvcp {
+   top: 157px;
+   left: 352px;
+}
+
+
+#charbrowser .sharedbankheaderloc {
+   position: absolute;
+   top: 220px;
+   left: 6px;
+}
+#charbrowser .coinlocsharedbankpp {
+   top: 284px;
+   left: 6px;
+}
+#charbrowser .coinlocbankpp {
+   top: 200px;
+   left: 97px;
+}
+#charbrowser .coinlocbankgp {
+   top: 228px;
+   left: 97px;
+}
+#charbrowser .coinlocbanksp {
+   top: 256px;
+   left: 97px;
+}
+#charbrowser .coinlocbankcp {
+   top: 284px;
+   left: 97px;
+}
+
+
+
+/* ----------------------------------------------
+         locations for inventory slots
+------------------------------------------------- */
+
+#charbrowser .slotlocinspect {
+  top: 1px;
+  right: 3px;
+}
+#charbrowser .slotloc1 {
+  top: 14px;
+  left: 172px;
+}
+#charbrowser .slotloc2 {
+  top: 14px;
+  left: 215px;
+}
+#charbrowser .slotloc3 {
+  top: 14px;
+  left: 258px;
+}
+#charbrowser .slotloc4 {
+  top: 14px;
+  left: 302px;
+}
+#charbrowser .slotloc17 {
+  top: 57px;
+  left: 172px;
+}
+#charbrowser .slotloc5 {
+  top: 57px;
+  left: 302px;
+}
+#charbrowser .slotloc7 {
+  top: 100px;
+  left: 172px;
+}
+#charbrowser .slotloc8 {
+  top: 100px;
+  left: 302px;
+}
+#charbrowser .slotloc20 {
+  top: 143px;
+  left: 172px;
+}
+#charbrowser .slotloc6 {
+  top: 143px;
+  left: 302px;
+}
+#charbrowser .slotloc9 {
+  top: 186px;
+  left: 172px;
+}
+#charbrowser .slotloc10 {
+  top: 186px;
+  left: 302px;
+}
+#charbrowser .slotloc18 {
+  top: 229px;
+  left: 172px;
+}
+#charbrowser .slotloc12 {
+  top: 229px;
+  left: 215px;
+}
+#charbrowser .slotloc0 {
+  top: 229px;
+  left: 258px;
+}
+#charbrowser .slotloc19 {
+  top: 229px;
+  left: 302px;
+}
+#charbrowser .slotloc15 {
+  top: 272px;
+  left: 215px;
+}
+#charbrowser .slotloc16 {
+  top: 272px;
+  left: 258px;
+}
+#charbrowser .slotloc13 {
+  top: 315px;
+  left: 172px;
+}
+#charbrowser .slotloc14 {
+  top: 315px;
+  left: 215px;
+}
+#charbrowser .slotloc11 {
+  top: 315px;
+  left: 258px;
+}
+
+#charbrowser .slotloc21 { 
+  top: 272px; 
+  left: 302px; 
+} 
+#charbrowser .slotloc22 {
+  top: 315px;
+  left: 302px;
+}
+#charbrowser .slotloc23 {
+  top: 186px;
+  left: 352px;
+}
+#charbrowser .slotloc24 {
+  top: 186px;
+  left: 395px;
+}
+#charbrowser .slotloc25 {
+  top: 229px;
+  left: 352px;
+}
+#charbrowser .slotloc26 {
+  top: 229px;
+  left: 395px;
+}
+#charbrowser .slotloc27 {
+  top: 272px;
+  left: 352px;
+}
+#charbrowser .slotloc28 {
+  top: 272px;
+  left: 395px;
+}
+#charbrowser .slotloc29 {
+  top: 315px;
+  left: 352px;
+}
+#charbrowser .slotloc30 {
+  top: 315px;
+  left: 395px;
+}
+#charbrowser .slotloc31 {
+  top: 358px;
+  left: 352px;
+}
+#charbrowser .slotloc32 {
+  top: 358px;
+  left: 395px;
+}
+#charbrowser .slotloc2000 {
+  top: 20px;
+  left: 6px;
+}
+#charbrowser .slotloc2001 {
+  top: 63px;
+  left: 6px;
+}
+#charbrowser .slotloc2002 {
+  top: 106px;
+  left: 6px;
+}
+#charbrowser .slotloc2003 {
+  top: 148px;
+  left: 6px;
+}
+#charbrowser .slotloc2004 {
+  top: 20px;
+  left: 50px;
+}
+#charbrowser .slotloc2005 {
+  top: 63px;
+  left: 50px;
+}
+#charbrowser .slotloc2006 {
+  top: 106px;
+  left: 50px;
+}
+#charbrowser .slotloc2007 {
+  top: 148px;
+  left: 50px;
+}
+#charbrowser .slotloc2008 {
+  top: 20px;
+  left: 97px;
+}
+#charbrowser .slotloc2009 {
+  top: 63px;
+  left: 97px;
+}
+#charbrowser .slotloc2010 {
+  top: 106px;
+  left: 97px;
+}
+#charbrowser .slotloc2011 {
+  top: 148px;
+  left: 97px;
+}
+#charbrowser .slotloc2012 {
+  top: 20px;
+  left: 141px;
+}
+#charbrowser .slotloc2013 {
+  top: 63px;
+  left: 141px;
+}
+#charbrowser .slotloc2014 {
+  top: 106px;
+  left: 141px;
+}
+#charbrowser .slotloc2015 {
+  top: 148px;
+  left: 141px;
+}
+#charbrowser .slotloc2016 {
+  top: 20px;
+  left: 188px;
+}
+#charbrowser .slotloc2017 {
+  top: 63px;
+  left: 188px;
+}
+#charbrowser .slotloc2018 {
+  top: 106px;
+  left: 188px;
+}
+#charbrowser .slotloc2019 {
+  top: 148px;
+  left: 188px;
+}
+#charbrowser .slotloc2020 {
+  top: 20px;
+  left: 232px;
+}
+#charbrowser .slotloc2021 {
+  top: 63px;
+  left: 232px;
+}
+#charbrowser .slotloc2022 {
+  top: 106px;
+  left: 232px;
+}
+#charbrowser .slotloc2023 {
+  top: 148px;
+  left: 232px;
+}
+#charbrowser .slotloc2500 {
+  top: 240px;
+  left: 6px;
+}
+#charbrowser .slotloc2501 {
+  top: 240px;
+  left: 50px;
+}
+
+/* ----------------------------------------------
+         inventory slot images
+------------------------------------------------- */
+#charbrowser .slotimage0 {
+  background-image: url(../../images/slots/slot_0.gif);
+}
+#charbrowser .slotimage1 {
+  background-image: url(../../images/slots/slot_1.gif);
+}
+#charbrowser .slotimage2 {
+  background-image: url(../../images/slots/slot_2.gif);
+}
+#charbrowser .slotimage3 {
+  background-image: url(../../images/slots/slot_3.gif);
+}
+#charbrowser .slotimage4 {
+  background-image: url(../../images/slots/slot_4.gif);
+}
+#charbrowser .slotimage5 {
+  background-image: url(../../images/slots/slot_5.gif);
+}
+#charbrowser .slotimage6 {
+  background-image: url(../../images/slots/slot_6.gif);
+}
+#charbrowser .slotimage7 {
+  background-image: url(../../images/slots/slot_7.gif);
+}
+#charbrowser .slotimage8 {
+  background-image: url(../../images/slots/slot_8.gif);
+}
+#charbrowser .slotimage9 {
+  background-image: url(../../images/slots/slot_9.gif);
+}
+#charbrowser .slotimage10 {
+  background-image: url(../../images/slots/slot_10.gif);
+}
+#charbrowser .slotimage11 {
+  background-image: url(../../images/slots/slot_11.gif);
+}
+#charbrowser .slotimage12 {
+  background-image: url(../../images/slots/slot_12.gif);
+}
+#charbrowser .slotimage13 {
+  background-image: url(../../images/slots/slot_13.gif);
+}
+#charbrowser .slotimage14 {
+  background-image: url(../../images/slots/slot_14.gif);
+}
+#charbrowser .slotimage15 {
+  background-image: url(../../images/slots/slot_15.gif);
+}
+#charbrowser .slotimage16 {
+  background-image: url(../../images/slots/slot_16.gif);
+}
+#charbrowser .slotimage17 {
+  background-image: url(../../images/slots/slot_17.gif);
+}
+#charbrowser .slotimage18 {
+  background-image: url(../../images/slots/slot_18.gif);
+}
+#charbrowser .slotimage19 {
+  background-image: url(../../images/slots/slot_19.gif);
+}
+#charbrowser .slotimage20 {
+  background-image: url(../../images/slots/slot_20.gif);
+}
+#charbrowser .slotimage21 {
+  background-image: url(../../images/slots/slot_21.gif);
+}
+#charbrowser .slotimage22 {
+  background-image: url(../../images/slots/slot_22.gif);
+}
+#charbrowser .slotimage {
+  background-image: url(../../images/slots/slot_.gif);
+}

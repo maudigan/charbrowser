@@ -18,6 +18,9 @@
  *   September 16, 2017 - added an optional simple header.
  *   April 2, 2020 - made the index url a var so subsequent scripts can
  *                   use it too.
+ *   October 24, 2022 - make this only run one time (maudigan)
+ *                      added the no header option for ingame browser
+ *   October 27, 2022 - Added barter link (maudigan)
  *
  ***************************************************************************/
  
@@ -28,43 +31,63 @@ if ( !defined('INCHARBROWSER') )
 {
 	die("Hacking attempt");
 }
-include_once(__DIR__ . "/config.php");
-include_once(__DIR__ . "/version.php");
 
-if ($charbrowser_simple_header)
+//this script only needs to run once
+if ( !defined('CB_HEADER_RUN') )
 {
-   $cb_template->set_filenames(array(
-     'header' => 'header_simple_body.tpl')
+   include_once(__DIR__ . "/config.php");
+   include_once(__DIR__ . "/version.php");
+
+   //header for embeded
+   if ($charbrowser_simple_header)
+   {
+      $cb_template->set_filenames(array(
+        'header' => 'header_simple_body.tpl')
+      );
+   }
+   //header for ingame browser
+   elseif (isset($_GET['nohead']))
+   {
+      $cb_template->set_filenames(array(
+        'header' => 'header_none_body.tpl')
+      );
+   }
+   //normal header
+   else
+   {
+      $cb_template->set_filenames(array(
+        'header' => 'header_body.tpl')
+      );
+   }
+
+   $cb_template->assign_vars(array(  
+     'TITLE' => $mytitle,
+     'SUBTITLE' => $d_title,
+     'VERSION' => $version,
+     'ADVERTISEMENT' => $adscript,
+     'ROOT_URL' => $charbrowser_root_url,
+     'INDEX_URL' => $cb_index_url,
+     'L_GUILD' => $language['HEADER_GUILD'],
+     'L_NAME' => $language ['HEADER_NAME'],
+     'L_SETTINGS' => $language['HEADER_SETTINGS'],
+     'L_BAZAAR' => $language['HEADER_BAZAAR'],
+     'L_BARTER' => $language['HEADER_BARTER'],
+     'L_LEADERBOARD' => $language['HEADER_LEADERBOARD'],
+     'L_HOME' => $language['HEADER_HOME'],
+     'L_SERVER' => $language['HEADER_SERVER'],
+     'L_CHARMOVE' => $language['HEADER_CHARMOVE'],
+     'L_SIGBUILD' => $language['HEADER_SIGBUILD'],
+     'L_REPORT_ERRORS' => $language['HEADER_REPORT_ERRORS'],
+     'L_HELP' => $language ['HEADER_HELP'],
+     'L_NAVIGATE' => $language ['HEADER_NAVIGATE'])
    );
+
+   $cb_template->pparse('header');
+
+   $cb_template->destroy;   
+   
+   //LIMIT ME
+   //this script only needs to run once
+   define('CB_HEADER_RUN', true);
 }
-else
-{
-   $cb_template->set_filenames(array(
-     'header' => 'header_body.tpl')
-   );
-}
-
-$cb_template->assign_vars(array(  
-  'TITLE' => $mytitle,
-  'SUBTITLE' => $d_title,
-  'VERSION' => $version,
-  'ADVERTISEMENT' => $adscript,
-  'ROOT_URL' => $charbrowser_root_url,
-  'INDEX_URL' => $cb_index_url,
-  'L_GUILD' => $language['HEADER_GUILD'],
-  'L_NAME' => $language ['HEADER_NAME'],
-  'L_SETTINGS' => $language['HEADER_SETTINGS'],
-  'L_BAZAAR' => $language['HEADER_BAZAAR'],
-  'L_HOME' => $language['HEADER_HOME'],
-  'L_SERVER' => $language['HEADER_SERVER'],
-  'L_CHARMOVE' => $language['HEADER_CHARMOVE'],
-  'L_SIGBUILD' => $language['HEADER_SIGBUILD'],
-  'L_REPORT_ERRORS' => $language['HEADER_REPORT_ERRORS'],
-  'L_HELP' => $language ['HEADER_HELP'],
-  'L_NAVIGATE' => $language ['HEADER_NAVIGATE'])
-);
-
-$cb_template->pparse('header');
-
-$cb_template->destroy;
 ?>

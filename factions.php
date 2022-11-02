@@ -39,6 +39,8 @@
  *     implement multi-tenancy
  *   May 4, 2020 - Maudigan
  *     clean up of the content/character data join
+ *   November 1, 2022 - prevent people from snooping the advanced factions
+ *     by using the api option
  *
  ***************************************************************************/
 
@@ -180,23 +182,38 @@ $cb_template->assign_vars(array(
    'L_DONE'      => $language['BUTTON_DONE'])
 );
 
-foreach($joined_factions as $faction) {
-   $charmod = intval($faction['current_value']);
-   $total = $faction['base'] + $charmod + $faction['classmod'] + $faction['racemod'] + $faction['deitymod'];
-   $cb_template->assign_both_block_vars("factions", array(
-      'ID'      => $faction['id'],
-      'LINK' => QuickTemplate($link_faction, array('FACTION_ID' => $faction['id'])),
-      'NAME'    => $faction['name'],
-      'FACTION' => FactionToString($total),
-      'BASE'    => $faction['base'],
-      'CHAR'    => $charmod,
-      'CLASS'   => $faction['classmod'],
-      'RACE'    => $faction['racemod'],
-      'DEITY'   => $faction['deitymod'],
-      'TOTAL'   => $total)
-   );
+//advanced factions
+if (!$mypermission['advfactions']) {
+   foreach($joined_factions as $faction) {
+      $charmod = intval($faction['current_value']);
+      $total = $faction['base'] + $charmod + $faction['classmod'] + $faction['racemod'] + $faction['deitymod'];
+      $cb_template->assign_both_block_vars("factions", array(
+         'ID'      => $faction['id'],
+         'LINK' => QuickTemplate($link_faction, array('FACTION_ID' => $faction['id'])),
+         'NAME'    => $faction['name'],
+         'FACTION' => FactionToString($total),
+         'BASE'    => $faction['base'],
+         'CHAR'    => $charmod,
+         'CLASS'   => $faction['classmod'],
+         'RACE'    => $faction['racemod'],
+         'DEITY'   => $faction['deitymod'],
+         'TOTAL'   => $total)
+      );
+   }
 }
-
+//simple factions
+else {
+   foreach($joined_factions as $faction) {
+      $charmod = intval($faction['current_value']);
+      $total = $faction['base'] + $charmod + $faction['classmod'] + $faction['racemod'] + $faction['deitymod'];
+      $cb_template->assign_both_block_vars("factions", array(
+         'ID'      => $faction['id'],
+         'LINK' => QuickTemplate($link_faction, array('FACTION_ID' => $faction['id'])),
+         'NAME'    => $faction['name'],
+         'FACTION' => FactionToString($total))
+      );
+   }
+}
 
 /*********************************************
            OUTPUT BODY AND FOOTER

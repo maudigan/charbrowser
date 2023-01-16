@@ -1,3 +1,4 @@
+
 <?php
 /***************************************************************************
  *
@@ -38,6 +39,8 @@
  *     impemented common.php
  *   April 25, 2020 - Maudigan
  *     implement multi-tenancy
+ *   January 11, 2023 - Maudigan
+ *     moved embeded english to the language file
  *  
  ***************************************************************************/
   
@@ -45,7 +48,11 @@
 /*********************************************
                  INCLUDES
 *********************************************/ 
-define('INCHARBROWSER', true);
+//define this as an entry point to unlock includes
+if ( !defined('INCHARBROWSER') ) 
+{
+   define('INCHARBROWSER', true);
+}
 include_once(__DIR__ . "/include/common.php");
 include_once(__DIR__ . "/include/db.php");
  
@@ -54,21 +61,22 @@ include_once(__DIR__ . "/include/db.php");
 //we don't want to make it easier for people to brute
 //force guess a login
 //dont make a header if there is an API request 
-if (isset($_GET['api']))  cb_message_die($language['MESSAGE_ERROR'],$language['MESSAGE_NOAPI']);
+if (checkParm('api'))  $cb_error->message_die($language['MESSAGE_ERROR'],$language['MESSAGE_NOAPI']);
  
 /*********************************************
              SUPPORT FUNCTIONS
 *********************************************/
 //TRYMOVE - attempts to move a character
-function trymove($name, $login, $zone) {
+function trymove($name, $login, $zone) 
+{
    global $language, $charmovezones;
    global $cbsql, $cbsql_content;
 
-   if (!$login || !$zone || !$name) return "One or more fields were left blank";
-   if (!preg_match("/^[a-zA-Z]*\z/", $name)) return "The character name contains illegal characters";
-   //if (!preg_match("/^[a-zA-Z]*\z/", $login)) return "login contains illegal characters";
-   if (!preg_match("/^[a-zA-Z]*\z/", $zone)) return "That zone contains illegal characters";
-   if (!$charmovezones[$zone]) return "That zone is not a legal selection";  
+   if (!$login || !$zone || !$name) return $language['CHARMOVE_BLANKFIELDS'];
+   if (!preg_match("/^[a-zA-Z]*\z/", $name)) return $language['CHARMOVE_NAME_ILLEGAL'];
+   //if (!preg_match("/^[a-zA-Z]*\z/", $login)) return $language['CHARMOVE_LOGIN_ILLEGAL'];
+   if (!preg_match("/^[a-zA-Z]*\z/", $zone)) return $language['CHARMOVE_ZONE_ILLEGAL'];
+   if (!$charmovezones[$zone]) return $language['CHARMOVE_BAD_ZONE'];  
   
    //get zone id, and verify shortname from db
    $tpl = <<<TPL
@@ -79,7 +87,7 @@ LIMIT 1
 TPL;
    $query = sprintf($tpl, $cbsql_content->escape_string($zone));
    $result = $cbsql_content->query($query);  
-   if (!$cbsql_content->rows($result))  return "Unknown database error";  
+   if (!$cbsql_content->rows($result))  return $language['CHARMOVE_UNKNOWN_DB'];  
   
    $row = $cbsql_content->nextrow($result);
    $zonesn = $row['short_name'];
@@ -102,7 +110,7 @@ TPL;
 
    if (!$cbsql->rows($result))  { 
       sleep(2);
-      return "Login or character name was not correct";  
+      return $language['CHARMOVE_BAD_NAMES'];  
    }
 
    $row = $cbsql->nextrow($result);
@@ -124,8 +132,7 @@ TPL;
                           $cbsql->escape_string($charid));
    $result = $cbsql->query($query);
 
-
-   return $name." - moved to ".$zoneln;
+   return sprintf($language['CHARMOVE_MOVED'], $name, $zoneln);
 }
 
 
@@ -133,15 +140,23 @@ TPL;
         GATHER RELEVANT PAGE DATA
 *********************************************/
 //dont display if blocked in config.php 
-if ($blockcharmove) cb_message_die($language['MESSAGE_ERROR'],$language['MESSAGE_ITEM_NO_VIEW']);
+if ($blockcharmove) $cb_error->message_die($language['MESSAGE_NOTICE'],$language['MESSAGE_ITEM_NO_VIEW']);
 
 //prepopulate name if its provided
-$name = $_GET['char'];
-if (!IsAlphaSpace($name)) $name = "";
+$charName = preg_Get_Post('char', '/^[a-zA-Z]+$/', false);
 
-$names = $_GET['name'];
-$zones = $_GET['zone'];
-$logins = $_GET['login'];
+//these are fetching arrays, so we dont
+//use the normal function to fetch
+$names = isset($_GET['name']) ? $_GET['name'] : array();
+$zones = isset($_GET['zone']) ? $_GET['zone'] : array();
+$logins = isset($_GET['login']) ? $_GET['login'] : array();
+
+if (cb_count($names)  != cb_count($logins) ||
+    cb_count($logins) != cb_count($zones)  ||
+    cb_count($zones)  != cb_count($names)  )
+{
+   $cb_error->message_die($language['MESSAGE_ERROR'],$language['MESSAGE_MOVE_ARRAY_MISMATCH']);
+}
  
  
 /*********************************************
@@ -155,8 +170,8 @@ include(__DIR__ . "/include/header.php");
             DROP PROFILE MENU
 *********************************************/
 //only drop this header if we came in with a character name
-if ($name) {
-   output_profile_menu($name, 'charmove');
+if ($charName) {
+   output_profile_menu($charName, 'charmove');
 }
  
  
@@ -192,7 +207,7 @@ else {
    );
    
    $cb_template->assign_vars(array( 
-      'CHARNAME' => $name, 
+      'CHARNAME' => $charName, 
       'L_ADD_CHARACTER' => $language['CHARMOVE_ADD_CHARACTER'],
       'L_MOVE' => $language['BUTTON_CHARMOVE'])
    );
@@ -218,7 +233,7 @@ $cb_template->assign_vars(array(
 *********************************************/
 $cb_template->pparse('mover');
 
-$cb_template->destroy;
+$cb_template->destroy();
 
 include(__DIR__ . "/include/footer.php");
 ?>

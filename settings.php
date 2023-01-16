@@ -38,7 +38,11 @@
 /*********************************************
                  INCLUDES
 *********************************************/ 
-define('INCHARBROWSER', true);
+//define this as an entry point to unlock includes
+if ( !defined('INCHARBROWSER') ) 
+{
+   define('INCHARBROWSER', true);
+}
 include_once(__DIR__ . "/include/common.php");
 
 /*********************************************
@@ -193,7 +197,7 @@ $cb_template->assign_vars(array(
 *********************************************/
 $cb_template->pparse('settings');
 
-$cb_template->destroy;
+$cb_template->destroy();
 
 include(__DIR__ . "/include/footer.php");
 ?>

@@ -44,20 +44,26 @@
  *     dont show anon guild members names
  *   April 25, 2020 - Maudigan
  *     implement multi-tenancy
+ *   January 16, 2023 - maudigan
+ *     reworked how file paths ae fetched/validated
  ***************************************************************************/
 
+
+//define this as an entry point to unlock includes
+if ( !defined('INCHARBROWSER') ) 
+{
+   define('INCHARBROWSER', true);
+}
 
 
 /*********************************************
                  INCLUDES
 *********************************************/
-define('INCHARBROWSER', true);
-$charbrowser_image_script = true;
+define('IS_IMAGE_SCRIPT', true);
 include_once(__DIR__ . "/include/common.php");
 include_once(__DIR__ . "/include/profile.php");
 include_once(__DIR__ . "/include/itemclass.php");
 include_once(__DIR__ . "/include/db.php");
-
 
 
 /*********************************************
@@ -67,12 +73,17 @@ include_once(__DIR__ . "/include/db.php");
 function HexToRGB($hex) {
    $hex = str_replace("#", "", $hex);
    $color = array();
-   if(strlen($hex) == 3) {
-      $color['r'] = hexdec(substr($hex, 0, 1) . $r);
-      $color['g'] = hexdec(substr($hex, 1, 1) . $g);
-      $color['b'] = hexdec(substr($hex, 2, 1) . $b);
+   if(strlen($hex) == 3) 
+   {
+      $r = substr($hex, 0, 1);
+      $g = substr($hex, 1, 1);
+      $b = substr($hex, 2, 1);
+      $color['r'] = hexdec($r . $r);
+      $color['g'] = hexdec($g . $g);
+      $color['b'] = hexdec($b . $b);
    }
-   else if(strlen($hex) == 6) {
+   else if(strlen($hex) == 6) 
+   {
       $color['r'] = hexdec(substr($hex, 0, 2));
       $color['g'] = hexdec(substr($hex, 2, 2));
       $color['b'] = hexdec(substr($hex, 4, 2));
@@ -80,63 +91,139 @@ function HexToRGB($hex) {
    return $color;
 }
 
-
+//get a filepath from the filename (or a default) 
+function make_path($filetype, $name)
+{
+   global $language;
+   
+   //mask for searching for files
+   $pathmasks = array(
+      'BACKGROUND'   => 'images/signatures/backgrounds/%s.png',
+      'BORDER'       => 'images/signatures/borders/%s.png',
+      'SCREEN'       => 'images/signatures/screens/%s.png',
+      'STATBORDER'   => 'images/signatures/statborders/%s.png',
+      'EPICBORDER'   => 'images/signatures/epicborders/%s.png',
+      'EPIC'         => 'images/items/item_%s.png',
+      'FONT'         => (SERVER_HAS_FREETYPE) ? 'fonts/%s.ttf' : 'fontsold/%s.gdf'
+   );
+   
+   $pathmask = $pathmasks[$filetype];
+   
+   $filepath = sprintf($pathmask, $name);
+   
+   if (file_exists($filepath)) 
+   {  
+      return $filepath;
+   }
+   
+   //if the requested file doesn't exist, give them
+   //the first one we can find
+   $files = glob(sprintf($pathmask, '*'));
+   
+   if (!array_key_exists(0, $files)) 
+   {
+      $cb_error->message_die($language['MESSAGE_ERROR'], sprintf($language['SIGNATURE_NO_FILE'], strtolower($filetype), $name));
+   }  
+   
+   //return the path
+   return $files[0];
+}
 
 /*********************************************
           GATHER IMAGE PARAMETERS
 *********************************************/
 //exit now and post message if server doesnt have GD installed
 if (!SERVER_HAS_GD) {
-  print $language['MESSAGE_NO_GD'];
-  exit();
+  $cb_error->message_die($language['MESSAGE_ERROR'], $language['MESSAGE_NO_GD']);
 }
 
-//paths where files are saved
-$path = array(
-   'BACKGROUND'   => 'images/signatures/backgrounds/%s.png',
-   'BORDER'       => 'images/signatures/borders/%s.png',
-   'SCREEN'       => 'images/signatures/screens/%s.png',
-   'STATBORDER'   => 'images/signatures/statborders/%s.png',
-   'EPICBORDER'   => 'images/signatures/epicborders/%s.png',
-   'EPIC'         => 'images/items/item_%s.png',
-   'FONT'         => (SERVER_HAS_FREETYPE) ? 'fonts/%s.ttf' : 'fontsold/%s.gdf'
-);
+//defaults
+$signaturewidth = 500;
+$signatureheight = 100;
 
-//get our starting values from _GET or presets
+//get our starting values from _GET, _POST or preset defaults
 // several parameters are '-' delimited since mod_rewrite can only handle 9 parameters
-$defaultcolor = array( 'r'=>255, 'g'=>255, 'b'=>255 );
-$getone = explode("-", $_GET['one']);
-$gettwo = explode("-", $_GET['two']);
-$getstat = explode("-", $_GET['stat']);
-$getbackground = explode("-", $_GET['background']);
+$getone         = preg_Get_Post('one', '/^[a-zA-Z0-9]*\-[a-zA-Z0-9]*\-[a-zA-Z0-9]*\-[a-zA-Z0-9]*$/', '---'); //<font>-<size>-<color>-<shadow>
+$gettwo         = preg_Get_Post('two', '/^[a-zA-Z0-9]*\-[a-zA-Z0-9]*\-[a-zA-Z0-9]*\-[a-zA-Z0-9]*$/', '---'); //<font>-<size>-<color>-<shadow>
+$epicbg         = preg_Get_Post('epic', '/^[a-zA-Z]+$/', false);
+$getstat        = preg_Get_Post('stat', '/^[a-zA-Z0-9]*\-[a-zA-Z0-9]*\-[a-zA-Z0-9]*\-[a-zA-Z0-9]*\-[a-zA-Z0-9]*\-[a-zA-Z0-9]*\-[a-zA-Z0-9]*$/', '------');//<background>-<color>-<stat>-<stat>-<stat>-<stat>-<stat>
+$border         = preg_Get_Post('border', '/^[a-zA-Z]+$/', false);
+$getbackground  = preg_Get_Post('background', '/^[a-zA-Z0-9]*\-[a-zA-Z0-9]*\-[a-zA-Z0-9]*$/', '--'); //<color>-<background image>-<screen image>
 
-$fontone    = ($getone[0]) ? sprintf($path['FONT'], $getone[0]) : sprintf($path['FONT'], "roman") ;
-$sizeone    = ($getone[1]) ? $getone[1] : 20;
-$colorone   = ($getone[2]) ? HexToRGB($getone[2]) : $defaultcolor;
-$shadowone  = ($getone[3]) ? 1 : 0;
+//explode and more strictly validate elements of getone
+$getone = explode("-", $getone);
+$fontone   = preg_validate($getone[0], '/^[a-zA-Z]*$/', 'missing');
+$sizeone   = preg_validate($getone[1], '/^([5-9]|[1-3][0-9]|40)$/', '20');//5-40
+$colorone  = preg_validate($getone[2], '/^#?([0-9a-fA-F]{3}){1,2}$/', 'FFF');
+$shadowone = preg_validate($getone[3], '/^[0-1]+$/', '1');
 
-$fonttwo    = ($gettwo[0]) ? sprintf($path['FONT'], $gettwo[0]) : sprintf($path['FONT'], "roman") ;
-$sizetwo    = ($gettwo[1]) ? $gettwo[1] : 10;
-$colortwo   = ($gettwo[2]) ? HexToRGB($gettwo[2]) : $defaultcolor;
-$shadowtwo  = ($gettwo[3]) ? 1 : 0;
+//process getone vars
+$fontone =  make_path('FONT', $fontone);
+$sizeone = intval($sizeone);
+$colorone = HexToRGB($colorone);
+$shadowone = intval($shadowone);
 
-$epicbg     = ($_GET['epic']) ? sprintf($path['EPICBORDER'], $_GET['epic']) : false ;
+//explode and more strictly validate elements of gettwo
+$gettwo = explode("-", $gettwo);
+$fonttwo   = preg_validate($gettwo[0], '/^[a-zA-Z]+$/', 'missing');
+$sizetwo   = preg_validate($gettwo[1], '/^([5-9]|[1-3][0-9]|40)$/', '10'); //5-40
+$colortwo  = preg_validate($gettwo[2], '/^#?([0-9a-fA-F]{3}){1,2}$/', 'FFF');
+$shadowtwo = preg_validate($gettwo[3], '/^[0-1]+$/', '1');
 
+//process gettwo vars
+$fonttwo =  make_path('FONT', $fonttwo);
+$sizetwo = intval($sizetwo);
+$colortwo = HexToRGB($colortwo);
+$shadowtwo = intval($shadowtwo);
+
+
+//explode and validate getstat
+$getstat = explode('-', $getstat);
 $statdisplay    = array();
-$statdisplay[0] = ($getstat[2]) ? $getstat[2] : false ;
-$statdisplay[1] = ($getstat[3]) ? $getstat[3] : false ;
-$statdisplay[2] = ($getstat[4]) ? $getstat[4] : false ;
-$statdisplay[3] = ($getstat[5]) ? $getstat[5] : false ;
-$statdisplay[4] = ($getstat[6]) ? $getstat[6] : false ;
-$statcolor      = ($getstat[1]) ? HexToRGB($getstat[1]) : $defaultcolor;
-$statbg         = ($getstat[0]) ? sprintf($path['STATBORDER'], $getstat[0]) : false ;
+$statbg         = preg_validate($getstat[0], '/^[a-zA-Z]+$/', false);
+$statcolor      = preg_validate($getstat[1], '/^#?([0-9a-fA-F]{3}){1,2}$/', 'FFF');
+$statdisplay[0] = preg_validate($getstat[2], '/^[a-zA-Z]+$/', false);
+$statdisplay[1] = preg_validate($getstat[3], '/^[a-zA-Z]+$/', false);
+$statdisplay[2] = preg_validate($getstat[4], '/^[a-zA-Z]+$/', false);
+$statdisplay[3] = preg_validate($getstat[5], '/^[a-zA-Z]+$/', false);
+$statdisplay[4] = preg_validate($getstat[6], '/^[a-zA-Z]+$/', false);
 
-$background     = ($getbackground[1]) ? sprintf($path['BACKGROUND'], $getbackground[1]) : false;
-$bgcolor        = ($getbackground[0]) ? HexToRGB($getbackground[0]) : $defaultcolor;
-$screen         = ($getbackground[2]) ? sprintf($path['SCREEN'], $getbackground[2]) : false;
+//process getstat vars
+if ($statbg)
+{
+   $statbg    = make_path('STATBORDER', $statbg);
+   $statcolor = HexToRGB($statcolor);
+}
 
-$border         = ($_GET['border']) ? sprintf($path['BORDER'], $_GET['border']) : false;
+//process epicbg
+if ($epicbg)
+{
+   $epicbg    = make_path('EPICBORDER', $epicbg);
+   $epicicon  = 0;
+}
 
+//process border
+if ($border)
+{
+   $border    = make_path('BORDER', $border);
+}
+
+//explode and validate getbackground
+$getbackground = explode('-', $getbackground);
+$bgcolor       = preg_validate($getbackground[0], '/^#?([0-9a-fA-F]{3}){1,2}$/', '112');
+$background    = preg_validate($getbackground[1], '/^[a-zA-Z]+$/', false);
+$screen        = preg_validate($getbackground[2], '/^[a-zA-Z]+$/', false);
+
+//process getbackground vars
+$bgcolor = HexToRGB($bgcolor);
+if ($background)
+{
+   $background =  make_path('BACKGROUND', $background);
+}
+if ($screen)
+{
+   $screen =  make_path('SCREEN', $screen);
+}
 
 //starting points of text
 $line_start_x = 15;
@@ -158,24 +245,20 @@ $epic_icon_offset = 0;
 $epic_width_height = 40;
 $epic_icon_width_height = 40;
 
-$signaturewidth = 500;
-$signatureheight = 100;
 
 
 /*********************************************
-         SETUP PROFILE/PERMISSIONS
+       SETUP CHARACTER CLASS & PERMISSIONS
 *********************************************/
-if(!$_GET['char']) cb_message_die($language['MESSAGE_ERROR'],$language['MESSAGE_NO_CHAR']);
-else $charName = $_GET['char'];
+$charName = preg_Get_Post('char', '/^[a-zA-Z]+$/', false, $language['MESSAGE_ERROR'], $language['MESSAGE_NO_CHAR'], true);
 
 //character initializations
-$char = new profile($charName, $cbsql, $cbsql_content, $language, $showsoftdelete, $charbrowser_is_admin_page); //the profile class will sanitize the character name
+$char = new Charbrowser_Character($charName, $showsoftdelete, $charbrowser_is_admin_page); //the Charbrowser_Character class will sanitize the character name
 $charID = $char->char_id();
 $name = $char->GetValue('name');
-$mypermission = GetPermissions($char->GetValue('gm'), $char->GetValue('anon'), $char->char_id());
 
 //block view if user level doesnt have permission
-if ($mypermission['signatures']) cb_message_die($language['MESSAGE_ERROR'],$language['MESSAGE_ITEM_NO_VIEW']);
+if ($char->Permission('signatures')) $cb_error->message_die($language['MESSAGE_ERROR'],$language['MESSAGE_ITEM_NO_VIEW']);
 
 
 /*********************************************
@@ -276,9 +359,6 @@ $stats = array(
               BUILD THE IMAGE
 *********************************************/
 
-/**************************************************
-**  DO NOT USE png_cb_message_die past this point   **
-**************************************************/
 
 //create image
 $image = imagecreatetruecolor($signaturewidth, $signatureheight);
@@ -361,7 +441,7 @@ if ($statbg) {
    $i = 0;
    $statcolor = imagecolorallocate($image, $statcolor['r'], $statcolor['g'], $statcolor['b']);
    foreach ($statdisplay as $key => $value) {
-      if ($value > "")
+      if ($value)
          if (array_key_exists($value, $stats)) {
             $stattext = $value." ".$stats[$value];
             $tempimage = imagecreatefrompng($statbg);
@@ -379,11 +459,10 @@ if ($border) {
    imagedestroy($tempimage);
 }
 
-
 /*********************************************
                OUTPUT IMAGE
 *********************************************/
-ob_clean(); //make sure we haven't sent a text header
+if (ob_get_contents()) ob_clean(); //make sure we haven't sent a text header
 header("Content-Type: image/png");
 imagepng($image);
 ImageDestroy($image);

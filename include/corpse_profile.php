@@ -15,6 +15,11 @@
  *
  *   October 30, 2022 - Maudigan
  *       Initial revision
+ *   January 16, 2023 - Maudigan
+ *       renamed class with Charbrowser_ prefix
+ *       added _ prefix to private properties
+ *       changed constructor to fetch local referenecs to global objects
+ *
  *  
  ***************************************************************************/
  
@@ -30,34 +35,78 @@ include_once(__DIR__ . "/statsclass.php");
 include_once(__DIR__ . "/spellcache.php");
 include_once(__DIR__ . "/itemcache.php");
 
-class corpse_profile {
-
+class Charbrowser_Corpse 
+{
+   
    // Variables
-   private $cached_corpse;
-   private $char_id;
-   private $corpse_id;
-   private $items_populated;
-   private $itemstats;
-   private $allitems;
-   private $db;
-   private $db_content;
-   private $language;
+   private $_cached_corpse;
+   private $_char_id;
+   private $_corpse_id;
+   private $_items_populated;
+   private $_itemstats;
+   private $_allitems;
+   
+   //local references to external classes
+   //imported using "global" in the constructor
+   private $_error;
+   private $_language;
+   private $_sql;
+   private $_sql_content;
    
    /********************************************
    **              CONSTRUCTOR                **
    ********************************************/   
    // get the basic data, like corpse id.
-   function __construct($id, &$db, &$db_content, &$language, $charbrowser_is_admin_page = false)
-   {      
-      //dont load characters items until we need to
-      $this->items_populated = false;
+   function __construct($id)
+   {
+      global $cb_error;
+      global $language;
+      global $cbsql;
+      global $cbsql_content;
       
-      $this->db = $db;
-      $this->db_content = $db_content;
-      $this->language = $language;
+      //make sure the error class exists, store pointer
+      if (!isset($cb_error)) 
+      {
+         die("The Charbrowser_Corpse class can't be initialized prior to the error class (error.php) being created.");
+      }
+      else
+      {
+         $this->_error = $cb_error;
+      }
+      
+      //make sure the language class exists, store pointer
+      if (!isset($language)) 
+      {
+         $this->_error->message_die("Error", "The Charbrowser_Corpse class can't be initialized prior to the language array (language.php) language.php.");
+      }
+      else
+      {
+         $this->_language = $language;
+      }
+      
+      //make sure the database classes exist, store pointers
+      if (!isset($cbsql)) 
+      {
+         $this->_error->message_die($this->_language['MESSAGE_ERROR'], sprintf($this->_language['MESSAGE_LOAD_ORDER'], 'Charbrowser_Corpse', 'db.php'));
+      }
+      else
+      {
+         $this->_sql = $cbsql;
+      }
+      if (!isset($cbsql_content)) 
+      {
+         $this->_error->message_die($this->_language['MESSAGE_ERROR'], sprintf($this->_language['MESSAGE_LOAD_ORDER'], 'Charbrowser_Corpse', 'db.php'));
+      }
+      else
+      {
+         $this->_sql_content = $cbsql_content;
+      }
+      
+      //dont load characters items until we need to
+      $this->_items_populated = false;
       
       //don't go sticking just anything in the database
-      if (!is_numeric($id)) cb_message_die($this->language['MESSAGE_ERROR'],$this->language['MESSAGE_CORPSE_NON_NUMERIC']);
+      if (!is_numeric($id)) $this->_error->message_die($this->_language['MESSAGE_ERROR'],$this->_language['MESSAGE_CORPSE_NON_NUMERIC']);
       
       //build the query
       $tpl = <<<TPL
@@ -68,19 +117,19 @@ TPL;
       $query = sprintf($tpl, $id);
       
       //get the result/error
-      $result = $this->db->query($query);
+      $result = $this->_sql->query($query);
       
       //collect the data from returned row
-      if($this->db->rows($result))
+      if($this->_sql->rows($result))
       { 
          //fetch the row
-         $row = $this->db->nextrow($result);
+         $row = $this->_sql->nextrow($result);
          //save it
-         $this->cached_corpse = $row;
-         $this->char_id = $row['charid'];
-         $this->corpse_id = $row['id'];
+         $this->_cached_corpse = $row;
+         $this->_char_id = $row['charid'];
+         $this->_corpse_id = $row['id'];
       }   
-      else cb_message_die($this->language['MESSAGE_ERROR'],$this->language['MESSAGE_NO_FIND']);
+      else $this->_error->message_die($this->_language['MESSAGE_ERROR'],$this->_language['MESSAGE_NO_FIND']);
 
 
    }
@@ -90,8 +139,8 @@ TPL;
    ********************************************/  
    function __destruct()
    {
-      unset($this->db);
-      unset($this->language); 
+      unset($this->_sql);
+      unset($this->_language); 
    }
    
    
@@ -102,19 +151,19 @@ TPL;
    // Return char ID
    public function char_id()
    {
-      return $this->char_id;
+      return $this->_char_id;
    }   
    
    // Return corpse ID
    public function corpse_id()
    {
-      return $this->corpse_id;
+      return $this->_corpse_id;
    }
    
    //gets the corpse record
    public function GetRecord()
    {
-      return $this->cached_corpse;
+      return $this->_cached_corpse;
    }   
    
    //uses the locator data to find the requested setting
@@ -128,14 +177,14 @@ TPL;
    public function GetAllItems()
    {
       $this->_populateItems();
-      return $this->allitems;
+      return $this->_allitems;
    }
    
    ///weight of items on corpse
    public function getWT()
    {
       $this->_populateItems();
-      return $this->itemstats->WT();
+      return $this->_itemstats->WT();
    }
    
 /********************************************
@@ -150,14 +199,14 @@ TPL;
       global $cbitemcache;
       
       //only run it once
-      if ($this->items_populated) return;
-      $this->items_populated = true;
+      if ($this->_items_populated) return;
+      $this->_items_populated = true;
       
       //place where all the items stats are added up
-      $this->itemstats = new stats();
+      $this->_itemstats = new Charbrowser_Stats();
 
       //holds all of the items and info about them
-      $this->allitems = array();
+      $this->_allitems = array();
 
       //FETCH INVENTORY ROWS
       // pull bots inventory slotid is loaded as
@@ -175,9 +224,9 @@ TPL;
       FROM character_corpse_items
       WHERE corpse_id = '%s'  
 TPL;
-      $query = sprintf($tpl, $this->corpse_id);
-      $result = $this->db->query($query);
-      $inventory_results = $this->db->fetch_all($result);
+      $query = sprintf($tpl, $this->_corpse_id);
+      $result = $this->_sql->query($query);
+      $inventory_results = $this->_sql->fetch_all($result);
       
       //CACHE ITEMS
       //preload all the items on the inventory using the item set
@@ -196,7 +245,7 @@ TPL;
          $itemrow = $cbitemcache->get_item($row['itemid']);
          //merge the inventory and item row
          $row = array_merge($itemrow, $row);
-         $tempitem = new item($row);
+         $tempitem = new Charbrowser_Item($row);
          for ($i = 1; $i <= 6; $i++) {
             if ($row["augslot".$i]) {
                $aug_item_id = $row["augslot" . $i];
@@ -204,18 +253,18 @@ TPL;
                $tempitem->addaug($augrow);
                //add stats only if it's equiped
                if ($tempitem->type() == EQUIPMENT) {
-                  $this->itemstats->additem($augrow);
+                  $this->_itemstats->additem($augrow);
                }
             }
          }
 
          if ($tempitem->type() == EQUIPMENT)
-            $this->itemstats->additem($row);
+            $this->_itemstats->additem($row);
         
          if ($tempitem->type() == EQUIPMENT || $tempitem->type() == INVENTORY)
-            $this->itemstats->addWT($row['weight']);
+            $this->_itemstats->addWT($row['weight']);
          
-         $this->allitems[$tempitem->slot()] = &$tempitem;
+         $this->_allitems[$tempitem->slot()] = &$tempitem;
          unset($tempitem);
       }
       
@@ -225,13 +274,13 @@ TPL;
    private function _getValue($column_name, $default)
    {           
       //make sure our column exists in the record
-      if (!array_key_exists($column_name, $this->cached_corpse))
+      if (!array_key_exists($column_name, $this->_cached_corpse))
       {
-            cb_message_die('corpse_profile.php', sprintf($this->language['MESSAGE_PROF_NOCACHE'], $data_key, $table_name, $column_name),$this->language['MESSAGE_ERROR']);
+            $this->_error->message_die($this->_language['MESSAGE_ERROR'], sprintf($this->_language['MESSAGE_PROF_NOCACHE'], $data_key, $table_name, $column_name));
       }
       
       //return the value
-      return $this->cached_corpse[$column_name];
+      return $this->_cached_corpse[$column_name];
    }
    
 }

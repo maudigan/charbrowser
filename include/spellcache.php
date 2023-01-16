@@ -16,6 +16,9 @@
  *
  *   October 24, 2022 - Maudigan
  *      Initial revision: Store queried spells
+ *   January 16, 2023 - Maudigan
+ *      added _ prefix to private properties
+ *      modified contructor to fetch global vars on its own
  ***************************************************************************/
 
 
@@ -41,20 +44,54 @@ include_once(__DIR__ . "/language.php");
 *********************************************/
 class Charbrowser_SpellCache
 {
-   private $cached_records = array();
-   private $db_content;
-   private $language;
+   private $_cached_records = array();
    
-
-
+   //local references to external classes
+   //imported using "global" in the constructor
+   private $_error;
+   private $_language;
+   private $_sql_content;
+   
 
    //-------------------------------------
    //            CONSTRUCTOR
    //-------------------------------------
-   function __construct(&$db_content, &$language)
+   function __construct()
    {
-      $this->db_content = $db_content;
-      $this->language = $language;
+      global $cb_error;
+      global $language;
+      global $cbsql_content;
+      
+      
+      //make sure the error class exists, store pointer
+      if (!isset($cb_error)) 
+      {
+         die("The Charbrowser_SpellCache class can't be initialized prior to the error class (error.php) being created.");
+      }
+      else
+      {
+         $this->_error = $cb_error;
+      }
+      
+      //make sure the language class exists, store pointer
+      if (!isset($language)) 
+      {
+         $this->_error->message_die("Error", "The Charbrowser_SpellCache class can't be initialized prior to the language array (language.php) language.php.");
+      }
+      else
+      {
+         $this->_language = $language;
+      }
+      
+      //make sure the database classes exist, store pointers
+      if (!isset($cbsql_content)) 
+      {
+         $this->_error->message_die($this->_language['MESSAGE_ERROR'], sprintf($this->_language['MESSAGE_LOAD_ORDER'], 'Charbrowser_SpellCache', 'db.php'));
+      }
+      else
+      {
+         $this->_sql_content = $cbsql_content;
+      }
    }
 
 
@@ -101,7 +138,7 @@ class Charbrowser_SpellCache
       }
       
       //exit if we have no rows
-      if (count($temp_spell_ids) < 1) return false;
+      if (cb_count($temp_spell_ids) < 1) return false;
       
       //build the IN clause for the query using the spell id list
       $in_clause = implode(", ", $temp_spell_ids);
@@ -115,18 +152,18 @@ TPL;
       $query = sprintf($tpl, $in_clause);
 
       //get the result/error
-      $result = $this->db_content->query($query);
+      $result = $this->_sql_content->query($query);
 
       //load the result into the cache
-      if($this->db_content->rows($result))
+      if($this->_sql_content->rows($result))
       {
-         while ($row = $this->db_content->nextrow($result))
+         while ($row = $this->_sql_content->nextrow($result))
          {
             //queried by PK, so only 1 row in the result set
-            $this->cached_records[$row['id']] = $row;
+            $this->_cached_records[$row['id']] = $row;
          }
       }
-      else cb_message_die('spellcache.php', sprintf($this->language['MESSAGE_SPELL_NOROWS'], $spell_id),$this->language['MESSAGE_ERROR']);
+      else $this->_error->message_die($this->_language['MESSAGE_ERROR'], sprintf($this->_language['MESSAGE_SPELL_NOROWS'], $spell_id));
       
       return true;
    }
@@ -140,7 +177,7 @@ TPL;
    function get_spell($spell_id)
    {
       //check if we have this spell cached
-      if (!array_key_exists($spell_id, $this->cached_records))
+      if (!array_key_exists($spell_id, $this->_cached_records))
       {
          //we don't have it cached, so we'll load it
          $tpl = <<<TPL
@@ -148,22 +185,22 @@ TPL;
          FROM `spells_new` 
          WHERE `id` = '%d'
 TPL;
-         $query = sprintf($tpl, $this->db_content->escape_string($spell_id));
+         $query = sprintf($tpl, $this->_sql_content->escape_string($spell_id));
 
          //get the result/error
-         $result = $this->db_content->query($query);
+         $result = $this->_sql_content->query($query);
 
          //store the result in the cache
-         if($this->db_content->rows($result))
+         if($this->_sql_content->rows($result))
          {
             //queried by PK, so only 1 row in the result set
-            $this->cached_records[$spell_id] = $this->db_content->nextrow($result);
+            $this->_cached_records[$spell_id] = $this->_sql_content->nextrow($result);
          }
-         else cb_message_die('spellcache.php', sprintf($this->language['MESSAGE_SPELL_NOROWS'], $spell_id),$this->language['MESSAGE_ERROR']);
+         else $this->_error->message_die($this->_language['MESSAGE_ERROR'], sprintf($this->_language['MESSAGE_SPELL_NOROWS'], $spell_id));
       }
 
       //hand the record over
-      return $this->cached_records[$spell_id];
+      return $this->_cached_records[$spell_id];
       
    }
 
@@ -174,6 +211,6 @@ TPL;
 /*********************************************
       CREATE OUR CLASS INSTANCE(S)
 *********************************************/
-$cbspellcache = new Charbrowser_SpellCache($cbsql_content, $language);
+$cbspellcache = new Charbrowser_SpellCache();
 
 ?>

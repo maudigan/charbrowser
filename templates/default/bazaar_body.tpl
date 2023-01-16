@@ -6,7 +6,7 @@
             <input type='hidden' name='page' value='bazaar'>
             
             <label for='item'>{L_SEARCH_NAME}</label>
-            <input name='item' id='item' type='text' value='{ITEM}' autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">
+            <input name='item' id='item' type='text' value="{ITEM}" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">
             
             <label for='seller'>{L_NAME}</label>
             <input name='char' id='seller' type='text' value='{SELLER}' autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">

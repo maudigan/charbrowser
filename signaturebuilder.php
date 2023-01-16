@@ -33,7 +33,11 @@
 /*********************************************
                  INCLUDES
 *********************************************/ 
-define('INCHARBROWSER', true);
+//define this as an entry point to unlock includes
+if ( !defined('INCHARBROWSER') ) 
+{
+   define('INCHARBROWSER', true);
+}
 include_once(__DIR__ . "/include/common.php");
  
  
@@ -42,8 +46,9 @@ include_once(__DIR__ . "/include/common.php");
 *********************************************/
 //for getting server locations for bbcode
 function GetFileDir($php_self){ 
+   $filename2 = "";
    $filename = explode("/", $php_self); // THIS WILL BREAK DOWN THE PATH INTO AN ARRAY 
-   for( $i = 0; $i < (count($filename) - 1); ++$i ) { 
+   for( $i = 0; $i < (cb_count($filename) - 1); ++$i ) { 
       $filename2 .= $filename[$i].'/'; 
    } 
    return $filename2; 
@@ -70,12 +75,11 @@ function DirectoryToOptions($directory) {
 //don't bother letting them build a signature
 //if the server doesnt have GD installed
 if (!SERVER_HAS_GD) {
-   cb_message_die($language['MESSAGE_ERROR'], $language['MESSAGE_NO_GD']);
+   $cb_error->message_die($language['MESSAGE_ERROR'], $language['MESSAGE_NO_GD']);
 }
 
 //prepopulate name if its provided
-$name = $_GET['char'];
-if (!IsAlphaSpace($name)) $name = "";
+$charName = preg_Get_Post('char', '/^[a-zA-Z]+$/', false);
 
 //build all the option lists for the dropdown boxes
 //most are based off the files present in a directory
@@ -108,8 +112,8 @@ include(__DIR__ . "/include/header.php");
             DROP PROFILE MENU
 *********************************************/
 //only drop this header if we came in with a character name
-if ($name) {
-   output_profile_menu($name, 'signaturebuilder');
+if ($charName) {
+   output_profile_menu($charName, 'signaturebuilder');
 }
  
  
@@ -125,7 +129,7 @@ $cb_template->set_filenames(array(
 );
 
 $cb_template->assign_vars(array( 
-   'CHARNAME' => $name,
+   'CHARNAME' => $charName,
    'SIGNATURE_ROOT_URL' => ($charbrowser_root_url) ? $charbrowser_root_url : "http://".$_SERVER['HTTP_HOST'].GetFileDir($_SERVER['PHP_SELF']),
    'SIGNATURE_INDEX_URL' => "http://".$_SERVER['HTTP_HOST'].GetFileDir($_SERVER['PHP_SELF']) . (($charbrowser_wrapped) ? $_SERVER['SCRIPT_NAME'] : "index.php"),
    'CAN_CHANGE_FONT_SIZE' => (SERVER_HAS_FREETYPE) ? "" : "Disabled",
@@ -249,7 +253,7 @@ for ($i = 5; $i <= 40; $i++ ) {
 *********************************************/
 $cb_template->pparse('sigbuild');
 
-$cb_template->destroy;
+$cb_template->destroy();
 
 include(__DIR__ . "/include/footer.php");
 ?>

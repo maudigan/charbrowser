@@ -19,6 +19,15 @@
  *      added a new parse type that returns the parsing as a string
  *   April 14, 2020
  *      added a way to have an override template directory
+ *   Devember 1, 2022
+ *      in assign_api_block_vars, make sure an array key exists before
+ *      trying to count the elements inside of it
+ *   January 16, 2023 - Maudigan
+ *      added _ prefix to private properties
+ *      modified contructor to fetch global vars on its own
+ *      renamed class with Charbrowser_ prefix
+ *      swap "var" for "private"
+ *      renamed constructor
  *
  ***************************************************************************/
  
@@ -30,8 +39,8 @@
    die("Hacking attempt");
 }
 
-class CB_Template {
-   var $classname = "CB_Template";
+class Charbrowser_Template 
+{
 
    // variable that holds all the data we'll be substituting into
    // the compiled templates.
@@ -40,32 +49,32 @@ class CB_Template {
    // $this->_tpldata[block.][iteration#][child.][iteration#][child2.][iteration#][variablename] == value
    // if it's a root-level variable, it'll be like this:
    // $this->_tpldata[.][0][varname] == value
-   var $_tpldata = array();
+   private $_tpldata = array();
    
    //holds the data that goes into the api 9/30/2014
-   var $_apidata = array();
+   private $_apidata = array();
    
    //holds the last index used for an api array
-   var $_lastindex = array();
+   private $_lastindex = array();
 
    // Hash of filenames for each template handle.
-   var $files = array();
+   private $_filenames = array();
 
    // Root template directories.
-   var $primary_root = "";
-   var $secondary_root = "";
+   private $_primary_root = "";
+   private $_secondary_root = "";
 
    // this will hash handle names to the compiled code for that handle.
-   var $compiled_code = array();
+   private $_compiled_code = array();
 
    // This will hold the uncompiled code for that handle.
-   var $uncompiled_code = array();
+   private $_uncompiled_code = array();
 
    /**
     * Constructor. Simply sets the root dir.
     *
     */
-   function CB_Template($primary_dir = ".", $secondary_dir = ".")
+   function __construct($primary_dir = ".", $secondary_dir = ".")
    {
       $this->set_rootdir($primary_dir, $secondary_dir);
    }
@@ -89,8 +98,8 @@ class CB_Template {
          return false;
       }
 
-      $this->primary_root = $primary_dir;
-      $this->secondary_root = $secondary_dir;
+      $this->_primary_root = $primary_dir;
+      $this->_secondary_root = $secondary_dir;
       return true;
    }
 
@@ -105,10 +114,9 @@ class CB_Template {
          return false;
       }
 
-      reset($filename_array);
-      while(list($handle, $filename) = each($filename_array))
+      foreach($filename_array as $handle => $filename)
       {
-         $this->files[$handle] = $this->make_filename($filename);
+         $this->_filenames[$handle] = $this->make_filename($filename);
       }
 
       return true;
@@ -129,7 +137,7 @@ class CB_Template {
       //print "\r\n\r\n";  
 
       //output the data as json if the api flag is on
-      if (isset($_GET['api']))
+      if (checkParm('api'))
       {
          echo json_encode($this->_apidata);
          return true;
@@ -137,18 +145,18 @@ class CB_Template {
       
       if (!$this->loadfile($handle))
       {
-         die("CB_Template->pparse(): Couldn't load template file for handle $handle");
+         die("Charbrowser_Template->pparse(): Couldn't load template file for handle $handle");
       }
 
       // actually compile the template now.
-      if (!isset($this->compiled_code[$handle]) || empty($this->compiled_code[$handle]))
+      if (!isset($this->_compiled_code[$handle]) || empty($this->_compiled_code[$handle]))
       {
          // Actually compile the code now.
-         $this->compiled_code[$handle] = $this->compile($this->uncompiled_code[$handle]);
+         $this->_compiled_code[$handle] = $this->compile($this->_uncompiled_code[$handle]);
       }
 
       // Run the compiled code.
-      eval($this->compiled_code[$handle]);
+      eval($this->_compiled_code[$handle]);
       return true;
    }
    
@@ -160,19 +168,19 @@ class CB_Template {
    function pparse_str($handle)
    {    
       //output the data as json if the api flag is set
-      if (isset($_GET['api']))
+      if (checkParm('api'))
       {
          return json_encode($this->_apidata);
       }
       
       if (!$this->loadfile($handle))
       {
-         die("CB_Template->pparse_str(): Couldn't load template file for handle $handle");
+         die("Charbrowser_Template->pparse_str(): Couldn't load template file for handle $handle");
       }
 
       // Compile it, with the "no echo statements" option on.
       $_str = "";
-      $code = $this->compile($this->uncompiled_code[$handle], true, '_str');
+      $code = $this->compile($this->_uncompiled_code[$handle], true, '_str');
 
       // evaluate the variable assignment.
       eval($code);
@@ -202,12 +210,12 @@ class CB_Template {
    {
       if (!$this->loadfile($handle))
       {
-         die("CB_Template->assign_var_from_handle(): Couldn't load template file for handle $handle");
+         die("Charbrowser_Template->assign_var_from_handle(): Couldn't load template file for handle $handle");
       }
 
       // Compile it, with the "no echo statements" option on.
       $_str = "";
-      $code = $this->compile($this->uncompiled_code[$handle], true, '_str');
+      $code = $this->compile($this->_uncompiled_code[$handle], true, '_str');
 
       // evaluate the variable assignment.
       eval($code);
@@ -262,8 +270,7 @@ class CB_Template {
     */
    function assign_vars($vararray)
    {
-      reset ($vararray);
-      while (list($key, $val) = each($vararray))
+      foreach($vararray as $key => $val)
       {
          $this->_tpldata['.'][0][$key] = $val;
       }
@@ -307,7 +314,7 @@ class CB_Template {
    function assign_api_block_vars($blockname, $vararray)
    {
       $blocks = explode('.', $blockname);
-      $blockcount = count($blocks);
+      $blockcount = cb_count($blocks);
       $curblock = "";
       $divider = "";
       $str = '$this->_apidata';
@@ -318,16 +325,23 @@ class CB_Template {
          
          $str .= '[\''.$curblock.'\']';
          
-         //get the index for this level
-         eval('$index = count('.$str.', 0);');
+         //for each template variable name, check how many elements with that name already exist
+         //save the value as $index.
+         //this used to not have array_key_exists, which means, for the first element you add
+         //it would try to get the count of elements within an element that didn't yet exist
+         //which posts a notice. Added the array_key_exists to stop that spam
+         //eval('$index = count('.$str.', 0);');
+         eval('$index = (array_key_exists(\''.$curblock.'\', $this->_apidata)) ? cb_count('.$str.', 0) : 0;');
          
          //only incriment the index on the last element
          if ($curblock != $blockname)
             $index--;
          
+         //apply that index which is 1 higher than already exists
          $str .= '['.$index.']';
       }
       
+      //add the new value
       $str .= ' = $vararray;';
       eval($str);       
 
@@ -340,8 +354,7 @@ class CB_Template {
     */
    function assign_api_vars($vararray)
    {
-      reset ($vararray);
-      while (list($key, $val) = each($vararray))
+      foreach($vararray as $key => $val)
       {
          $this->_apidata[$key] = $val;
       }
@@ -406,7 +419,7 @@ class CB_Template {
             //check if the primary file exists
             if (!file_exists($filename))
             {
-               die("CB_Template->make_filename(): Error - file $filename does not exist");
+               die("Charbrowser_Template->make_filename(): Error - file $filename does not exist");
             }
 
             return $filename;
@@ -414,7 +427,7 @@ class CB_Template {
       else
       {
             //default to primary file
-            $temp_filename = ($rp_filename = $this->primary_root . '/' . $filename) ? $rp_filename : $filename;
+            $temp_filename = ($rp_filename = $this->_primary_root . '/' . $filename) ? $rp_filename : $filename;
             
             if (file_exists($temp_filename)) 
             {
@@ -422,7 +435,7 @@ class CB_Template {
             }
             
             //if it doesnt exist revert to secondary/default directory
-            $temp_filename = ($rp_filename = $this->secondary_root . '/' . $filename) ? $rp_filename : $filename;
+            $temp_filename = ($rp_filename = $this->_secondary_root . '/' . $filename) ? $rp_filename : $filename;
             
             if (file_exists($temp_filename)) 
             {
@@ -430,7 +443,7 @@ class CB_Template {
             }
             
             //else we error
-            die("CB_Template->make_filename(): Error - file $filename does not exist in the primary or secondary directory");
+            die("Charbrowser_Template->make_filename(): Error - file $filename does not exist in the primary or secondary directory");
       }
 
       return $filename;
@@ -439,31 +452,31 @@ class CB_Template {
 
    /**
     * If not already done, load the file for the given handle and populate
-    * the uncompiled_code[] hash with its code. Do not compile.
+    * the _uncompiled_code[] hash with its code. Do not compile.
     */
    function loadfile($handle)
    {
       // If the file for this handle is already loaded and compiled, do nothing.
-      if (isset($this->uncompiled_code[$handle]) && !empty($this->uncompiled_code[$handle]))
+      if (isset($this->_uncompiled_code[$handle]) && !empty($this->_uncompiled_code[$handle]))
       {
          return true;
       }
 
       // If we don't have a file assigned to this handle, die.
-      if (!isset($this->files[$handle]))
+      if (!isset($this->_filenames[$handle]))
       {
-         die("CB_Template->loadfile(): No file specified for handle $handle");
+         die("Charbrowser_Template->loadfile(): No file specified for handle $handle");
       }
 
-      $filename = $this->files[$handle];
+      $filename = $this->_filenames[$handle];
 
       $str = implode("", @file($filename));
       if (empty($str))
       {
-         die("CB_Template->loadfile(): File $filename for handle $handle is empty");
+         die("Charbrowser_Template->loadfile(): File $filename for handle $handle is empty");
       }
 
-      $this->uncompiled_code[$handle] = $str;
+      $this->_uncompiled_code[$handle] = $str;
 
       return true;
    }

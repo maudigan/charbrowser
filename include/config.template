@@ -247,6 +247,8 @@ $permissions = array(
     'sharedbank'        => 0,
     'corpses'           => 0,
     'corpse'            => 0,
+    'bots'              => 0,
+    'bot'               => 0,
     'flags'             => 0,
     'AAs'               => 0,
     'leadership'        => 0,
@@ -266,6 +268,8 @@ $permissions = array(
     'sharedbank'        => 0,
     'corpses'           => 0,
     'corpse'            => 0,
+    'bots'              => 0,
+    'bot'               => 0,
     'flags'             => 0,
     'AAs'               => 0,
     'leadership'        => 0,
@@ -285,6 +289,8 @@ $permissions = array(
     'sharedbank'        => 0,
     'corpses'           => 1,
     'corpse'            => 1,
+    'bots'              => 1,
+    'bot'               => 1,
     'flags'             => 1,
     'AAs'               => 1,
     'leadership'        => 1,
@@ -304,6 +310,8 @@ $permissions = array(
     'sharedbank'        => 0,
     'corpses'           => 0,
     'corpse'            => 0,
+    'bots'              => 0,
+    'bot'               => 0,
     'flags'             => 0,
     'AAs'               => 0,
     'leadership'        => 0,
@@ -323,6 +331,8 @@ $permissions = array(
     'sharedbank'        => 0,
     'corpses'           => 0,
     'corpse'            => 0,
+    'bots'              => 0,
+    'bot'               => 0,
     'flags'             => 0,
     'AAs'               => 0,
     'leadership'        => 0,
@@ -342,6 +352,8 @@ $permissions = array(
     'sharedbank'        => 0,
     'corpses'           => 1,
     'corpse'            => 1,
+    'bots'              => 1,
+    'bot'               => 1,
     'flags'             => 1,
     'AAs'               => 1,
     'leadership'        => 1,
@@ -530,13 +542,16 @@ $link_faction = "http://mqemulator.net/faction.php?id={FACTION_ID}";
 
 
 /****************************************************
-**                 DATABASE STATS                  **
+**                 DEVELOPER MODE                  **
 **  uncommenting this will dump database           **
 **  statistics at the bottom of each page          **
+**  as well as page execution time                 **
+**  Warning and Notices will also be posted        **
+**  When commented out only errors will post       **
 **                                                 **
 **  WARNING: this will be publicly viewable        **
 ****************************************************/
-//define('DB_PERFORMANCE',true);
+//define('DEVELOPER_MODE',true);
 /****************************************************/
 
 

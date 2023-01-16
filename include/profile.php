@@ -49,6 +49,13 @@
  *     allow construction with id or name
  *   October 20, 2022 - Maudigan
  *     added leadership table locator data
+ *   January 11, 2023 - Maudigan
+ *     renamed this class to Charbrowser_Character the match the bot/corpse
+ *     classes
+ *     moved character permissions into this class
+ *   January 16, 2023 - Maudigan
+ *      added _ prefix to private properties
+ *      modified contructor to fetch global vars on its own
  *
  ***************************************************************************/
 
@@ -62,708 +69,757 @@ include_once(__DIR__ . "/statsclass.php");
 include_once(__DIR__ . "/spellcache.php");
 include_once(__DIR__ . "/itemcache.php");
 
-define('PROF_NOROWS', false);
+if (!defined('PROF_NOROWS')) define('PROF_NOROWS', false);
 
 
 //constants to reference indexes in the locator array
-define('LOCATOR_TABLE',  0);
-define('LOCATOR_COLUMN', 1);
-define('LOCATOR_INDEX',  2);
+if (!defined('LOCATOR_TABLE')) define('LOCATOR_TABLE',  0);
+if (!defined('LOCATOR_COLUMN')) define('LOCATOR_COLUMN', 1);
+if (!defined('LOCATOR_INDEX')) define('LOCATOR_INDEX',  2);
 
 
-class profile {
+class Charbrowser_Character 
+{
 
    // Variables
-   private $cached_tables = array();
-   private $cached_records = array();
-   private $account_id;
-   private $char_id;
-   private $race;
-   private $class;
-   private $level;
-   private $items_populated;
-   private $itemstats;
-   private $allitems;
-   private $base_data;
-   private $db;
-   private $db_content;
-   private $language;
-   private $aa_effects = array();
+   private $_cached_tables = array();
+   private $_cached_records = array();
+   private $_account_id;
+   private $_char_id;
+   private $_race;
+   private $_class;
+   private $_level;
+   private $_items_populated;
+   private $_itemstats;
+   private $_allitems;
+   private $_base_data;
+   private $_aa_effects = array();
+   private $_permissions = false;
+   
+   //local references to external classes
+   //imported using "global" in the constructor
+   private $_error;
+   private $_language;
+   private $_sql;
+   private $_sql_content;
 
-/********************************************
-**           DATA LOCATOR ARRAYS           **
-** these describe where different types    **
-** of character data are found             **
-********************************************/
+   /********************************************
+   **           DATA LOCATOR ARRAYS           **
+   ** these describe where different types    **
+   ** of character data are found             **
+   ********************************************/
 
-// the name of the second pk of a table
-// --------------------------------------------------------------
-// SYNTAX:   "<TABLE>" => "<COLUMN>",
-// --------------------------------------------------------------
-// <TABLE>  = the name of the table
-// <COLUMN> = the name of the tables secondary pk
-private $locator_pk = array (
-   "character_alternate_abilities" => "aa_id",
-   "character_skills" => "skill_id",
-   "character_languages" => "lang_id",
-   "character_leadership_abilities" => "slot",
-);
+   // the name of the second pk of a table
+   // --------------------------------------------------------------
+   // SYNTAX:   "<TABLE>" => "<COLUMN>",
+   // --------------------------------------------------------------
+   // <TABLE>  = the name of the table
+   // <COLUMN> = the name of the tables secondary pk
+   private $_locator_pk = array (
+      "character_alternate_abilities" => "aa_id",
+      "character_skills" => "skill_id",
+      "character_languages" => "lang_id",
+      "character_leadership_abilities" => "slot",
+   );
 
 
-// the table, column, and index of where to find a value
-// --------------------------------------------------------------
-// SYNTAX:  "<DATA>" => array("<TABLE>", "<COLUMN>", "<INDEX>"),
-// --------------------------------------------------------------
-// <DATA>   = The shortname reference for the value,
-//            it usually matches the column name.
-// <TABLE>  = the name of the table the data comes from
-// <COLUMN> = the column the data appears in
-// <INDEX>  = if there are multiple rows for the character
-//            because of a second PK, then this is the
-//            value of that second PK, otherwise its false.
-private $locator = array (
-   "id" => array("character_data", "id", false),
-   "account_id" => array("character_data", "account_id", false),
-   "name" => array("character_data", "name", false),
-   "last_name" => array("character_data", "last_name", false),
-   "title" => array("character_data", "title", false),
-   "suffix" => array("character_data", "suffix", false),
-   "zone_id" => array("character_data", "zone_id", false),
-   "zone_instance" => array("character_data", "zone_instance", false),
-   "y" => array("character_data", "y", false),
-   "x" => array("character_data", "x", false),
-   "z" => array("character_data", "z", false),
-   "heading" => array("character_data", "heading", false),
-   "gender" => array("character_data", "gender", false),
-   "race" => array("character_data", "race", false),
-   "class" => array("character_data", "class", false),
-   "level" => array("character_data", "level", false),
-   "deity" => array("character_data", "deity", false),
-   "birthday" => array("character_data", "birthday", false),
-   "last_login" => array("character_data", "last_login", false),
-   "time_played" => array("character_data", "time_played", false),
-   "level2" => array("character_data", "level2", false),
-   "anon" => array("character_data", "anon", false),
-   "gm" => array("character_data", "gm", false),
-   "face" => array("character_data", "face", false),
-   "hair_color" => array("character_data", "hair_color", false),
-   "hair_style" => array("character_data", "hair_style", false),
-   "beard" => array("character_data", "beard", false),
-   "beard_color" => array("character_data", "beard_color", false),
-   "eye_color_1" => array("character_data", "eye_color_1", false),
-   "eye_color_2" => array("character_data", "eye_color_2", false),
-   "drakkin_heritage" => array("character_data", "drakkin_heritage", false),
-   "drakkin_tattoo" => array("character_data", "drakkin_tattoo", false),
-   "drakkin_details" => array("character_data", "drakkin_details", false),
-   "ability_time_seconds" => array("character_data", "ability_time_seconds", false),
-   "ability_number" => array("character_data", "ability_number", false),
-   "ability_time_minutes" => array("character_data", "ability_time_minutes", false),
-   "ability_time_hours" => array("character_data", "ability_time_hours", false),
-   "exp" => array("character_data", "exp", false),
-   "aa_points_spent" => array("character_data", "aa_points_spent", false),
-   "aa_points_spent_old" => array("character_data", "aa_points_spent_old", false),
-   "aa_exp" => array("character_data", "aa_exp", false),
-   "aa_exp_old" => array("character_data", "aa_exp_old", false),
-   "aa_points" => array("character_data", "aa_points", false),
-   "group_leadership_exp" => array("character_data", "group_leadership_exp", false),
-   "raid_leadership_exp" => array("character_data", "raid_leadership_exp", false),
-   "group_leadership_points" => array("character_data", "group_leadership_points", false),
-   "raid_leadership_points" => array("character_data", "raid_leadership_points", false),
-   "points" => array("character_data", "points", false),
-   "cur_hp" => array("character_data", "cur_hp", false),
-   "mana" => array("character_data", "mana", false),
-   "endurance" => array("character_data", "endurance", false),
-   "intoxication" => array("character_data", "intoxication", false),
-   "str" => array("character_data", "str", false),
-   "sta" => array("character_data", "sta", false),
-   "cha" => array("character_data", "cha", false),
-   "dex" => array("character_data", "dex", false),
-   "int" => array("character_data", "int", false),
-   "agi" => array("character_data", "agi", false),
-   "wis" => array("character_data", "wis", false),
-   "zone_change_count" => array("character_data", "zone_change_count", false),
-   "toxicity" => array("character_data", "toxicity", false),
-   "hunger_level" => array("character_data", "hunger_level", false),
-   "thirst_level" => array("character_data", "thirst_level", false),
-   "ability_up" => array("character_data", "ability_up", false),
-   "ldon_points_guk" => array("character_data", "ldon_points_guk", false),
-   "ldon_points_mir" => array("character_data", "ldon_points_mir", false),
-   "ldon_points_mmc" => array("character_data", "ldon_points_mmc", false),
-   "ldon_points_ruj" => array("character_data", "ldon_points_ruj", false),
-   "ldon_points_tak" => array("character_data", "ldon_points_tak", false),
-   "ldon_points_available" => array("character_data", "ldon_points_available", false),
-   "tribute_time_remaining" => array("character_data", "tribute_time_remaining", false),
-   "career_tribute_points" => array("character_data", "career_tribute_points", false),
-   "tribute_points" => array("character_data", "tribute_points", false),
-   "tribute_active" => array("character_data", "tribute_active", false),
-   "pvp_status" => array("character_data", "pvp_status", false),
-   "pvp_kills" => array("character_data", "pvp_kills", false),
-   "pvp_deaths" => array("character_data", "pvp_deaths", false),
-   "pvp_current_points" => array("character_data", "pvp_current_points", false),
-   "pvp_career_points" => array("character_data", "pvp_career_points", false),
-   "pvp_best_kill_streak" => array("character_data", "pvp_best_kill_streak", false),
-   "pvp_worst_death_streak" => array("character_data", "pvp_worst_death_streak", false),
-   "pvp_current_kill_streak" => array("character_data", "pvp_current_kill_streak", false),
-   "pvp2" => array("character_data", "pvp2", false),
-   "pvp_type" => array("character_data", "pvp_type", false),
-   "show_helm" => array("character_data", "show_helm", false),
-   "group_auto_consent" => array("character_data", "group_auto_consent", false),
-   "raid_auto_consent" => array("character_data", "raid_auto_consent", false),
-   "guild_auto_consent" => array("character_data", "guild_auto_consent", false),
-   "leadership_exp_on" => array("character_data", "leadership_exp_on", false),
-   "RestTimer" => array("character_data", "RestTimer", false),
-   "air_remaining" => array("character_data", "air_remaining", false),
-   "autosplit_enabled" => array("character_data", "autosplit_enabled", false),
-   "lfp" => array("character_data", "lfp", false),
-   "lfg" => array("character_data", "lfg", false),
-   "mailkey" => array("character_data", "mailkey", false),
-   "xtargets" => array("character_data", "xtargets", false),
-   "firstlogon" => array("character_data", "firstlogon", false),
-   "e_aa_effects" => array("character_data", "e_aa_effects", false),
-   "e_percent_to_aa" => array("character_data", "e_percent_to_aa", false),
-   "e_expended_aa_spent" => array("character_data", "e_expended_aa_spent", false),
-   "deleted_at" => array("character_data", "deleted_at", false),
-   "id" => array("character_currency", "id", false),
-   "platinum" => array("character_currency", "platinum", false),
-   "gold" => array("character_currency", "gold", false),
-   "silver" => array("character_currency", "silver", false),
-   "copper" => array("character_currency", "copper", false),
-   "platinum_bank" => array("character_currency", "platinum_bank", false),
-   "gold_bank" => array("character_currency", "gold_bank", false),
-   "silver_bank" => array("character_currency", "silver_bank", false),
-   "copper_bank" => array("character_currency", "copper_bank", false),
-   "platinum_cursor" => array("character_currency", "platinum_cursor", false),
-   "gold_cursor" => array("character_currency", "gold_cursor", false),
-   "silver_cursor" => array("character_currency", "silver_cursor", false),
-   "copper_cursor" => array("character_currency", "copper_cursor", false),
-   "radiant_crystals" => array("character_currency", "radiant_crystals", false),
-   "career_radiant_crystals" => array("character_currency", "career_radiant_crystals", false),
-   "ebon_crystals" => array("character_currency", "ebon_crystals", false),
-   "career_ebon_crystals" => array("character_currency", "career_ebon_crystals", false),
-   "1h_blunt" => array("character_skills", "value", 0),
-   "1h_slashing" => array("character_skills", "value", 1),
-   "2h_blunt" => array("character_skills", "value", 2),
-   "2h_slashing" => array("character_skills", "value", 3),
-   "abjuration" => array("character_skills", "value", 4),
-   "alteration" => array("character_skills", "value", 5),
-   "apply_poison" => array("character_skills", "value", 6),
-   "archery" => array("character_skills", "value", 7),
-   "backstab" => array("character_skills", "value", 8),
-   "bind_wound" => array("character_skills", "value", 9),
-   "bash" => array("character_skills", "value", 10),
-   "block" => array("character_skills", "value", 11),
-   "brass_instruments" => array("character_skills", "value", 12),
-   "channeling" => array("character_skills", "value", 13),
-   "conjuration" => array("character_skills", "value", 14),
-   "defense" => array("character_skills", "value", 15),
-   "disarm" => array("character_skills", "value", 16),
-   "disarm_traps" => array("character_skills", "value", 17),
-   "divination" => array("character_skills", "value", 18),
-   "dodge" => array("character_skills", "value", 19),
-   "double_attack" => array("character_skills", "value", 20),
-   "dragon_punch" => array("character_skills", "value", 21),
-   "dual_wield" => array("character_skills", "value", 22),
-   "eagle_strike" => array("character_skills", "value", 23),
-   "evocation" => array("character_skills", "value", 24),
-   "feign_death" => array("character_skills", "value", 25),
-   "flying_kick" => array("character_skills", "value", 26),
-   "forage" => array("character_skills", "value", 27),
-   "hand_to_hand" => array("character_skills", "value", 28),
-   "hide" => array("character_skills", "value", 29),
-   "kick" => array("character_skills", "value", 30),
-   "meditate" => array("character_skills", "value", 31),
-   "mend" => array("character_skills", "value", 32),
-   "offense" => array("character_skills", "value", 33),
-   "parry" => array("character_skills", "value", 34),
-   "pick_lock" => array("character_skills", "value", 35),
-   "piercing" => array("character_skills", "value", 36),
-   "riposte" => array("character_skills", "value", 37),
-   "round_kick" => array("character_skills", "value", 38),
-   "safe_fall" => array("character_skills", "value", 39),
-   "sense_heading" => array("character_skills", "value", 40),
-   "sing" => array("character_skills", "value", 41),
-   "sneak" => array("character_skills", "value", 42),
-   "specialize_abjure" => array("character_skills", "value", 43),
-   "specialize_alteration" => array("character_skills", "value", 44),
-   "specialize_conjuration" => array("character_skills", "value", 45),
-   "specialize_divinatation" => array("character_skills", "value", 46),
-   "specialize_evocation" => array("character_skills", "value", 47),
-   "pick_pockets" => array("character_skills", "value", 48),
-   "stringed_instruments" => array("character_skills", "value", 49),
-   "swimming" => array("character_skills", "value", 50),
-   "throwing" => array("character_skills", "value", 51),
-   "tiger_claw" => array("character_skills", "value", 52),
-   "tracking" => array("character_skills", "value", 53),
-   "wind_instruments" => array("character_skills", "value", 54),
-   "fishing" => array("character_skills", "value", 55),
-   "make_poison" => array("character_skills", "value", 56),
-   "tinkering" => array("character_skills", "value", 57),
-   "research" => array("character_skills", "value", 58),
-   "alchemy" => array("character_skills", "value", 59),
-   "baking" => array("character_skills", "value", 60),
-   "tailoring" => array("character_skills", "value", 61),
-   "sense_traps" => array("character_skills", "value", 62),
-   "blacksmithing" => array("character_skills", "value", 63),
-   "fletching" => array("character_skills", "value", 64),
-   "brewing" => array("character_skills", "value", 65),
-   "alcohol_tolerance" => array("character_skills", "value", 66),
-   "begging" => array("character_skills", "value", 67),
-   "jewelry_making" => array("character_skills", "value", 68),
-   "pottery" => array("character_skills", "value", 69),
-   "percussion_instruments" => array("character_skills", "value", 70),
-   "intimidation" => array("character_skills", "value", 71),
-   "berserking" => array("character_skills", "value", 72),
-   "taunt" => array("character_skills", "value", 73),
-   "frenzy" => array("character_skills", "value", 74),
-   "remove_traps" => array("character_skills", "value", 75),
-   "triple_attack" => array("character_skills", "value", 76),
-   "2h_piercing" => array("character_skills", "value", 77),
-   "common_tongue" => array("character_languages", "value", 0),
-   "barbarian" => array("character_languages", "value", 1),
-   "erudian" => array("character_languages", "value", 2),
-   "elvish" => array("character_languages", "value", 3),
-   "dark_elvish" => array("character_languages", "value", 4),
-   "dwarvish" => array("character_languages", "value", 5),
-   "troll" => array("character_languages", "value", 6),
-   "ogre" => array("character_languages", "value", 7),
-   "gnomish" => array("character_languages", "value", 8),
-   "halfling" => array("character_languages", "value", 9),
-   "thieves_cant" => array("character_languages", "value", 10),
-   "old_erudian" => array("character_languages", "value", 11),
-   "elder_elvish" => array("character_languages", "value", 12),
-   "froglok" => array("character_languages", "value", 13),
-   "goblin" => array("character_languages", "value", 14),
-   "gnoll" => array("character_languages", "value", 15),
-   "combine_tongue" => array("character_languages", "value", 16),
-   "elder_teirdal" => array("character_languages", "value", 17),
-   "lizardman" => array("character_languages", "value", 18),
-   "orcish" => array("character_languages", "value", 19),
-   "faerie" => array("character_languages", "value", 20),
-   "dragon" => array("character_languages", "value", 21),
-   "elder_dragon" => array("character_languages", "value", 22),
-   "dark_speech" => array("character_languages", "value", 23),
-   "vah_shir" => array("character_languages", "value", 24),
-   "aa_id_0" => array("character_alternate_abilities", "aa_id", 0),
-   "aa_id_1" => array("character_alternate_abilities", "aa_id", 1),
-   "aa_id_2" => array("character_alternate_abilities", "aa_id", 2),
-   "aa_id_3" => array("character_alternate_abilities", "aa_id", 3),
-   "aa_id_4" => array("character_alternate_abilities", "aa_id", 4),
-   "aa_id_5" => array("character_alternate_abilities", "aa_id", 5),
-   "aa_id_6" => array("character_alternate_abilities", "aa_id", 6),
-   "aa_id_7" => array("character_alternate_abilities", "aa_id", 7),
-   "aa_id_8" => array("character_alternate_abilities", "aa_id", 8),
-   "aa_id_9" => array("character_alternate_abilities", "aa_id", 9),
-   "aa_id_10" => array("character_alternate_abilities", "aa_id", 10),
-   "aa_id_11" => array("character_alternate_abilities", "aa_id", 11),
-   "aa_id_12" => array("character_alternate_abilities", "aa_id", 12),
-   "aa_id_13" => array("character_alternate_abilities", "aa_id", 13),
-   "aa_id_14" => array("character_alternate_abilities", "aa_id", 14),
-   "aa_id_15" => array("character_alternate_abilities", "aa_id", 15),
-   "aa_id_16" => array("character_alternate_abilities", "aa_id", 16),
-   "aa_id_17" => array("character_alternate_abilities", "aa_id", 17),
-   "aa_id_18" => array("character_alternate_abilities", "aa_id", 18),
-   "aa_id_19" => array("character_alternate_abilities", "aa_id", 19),
-   "aa_id_20" => array("character_alternate_abilities", "aa_id", 20),
-   "aa_id_21" => array("character_alternate_abilities", "aa_id", 21),
-   "aa_id_22" => array("character_alternate_abilities", "aa_id", 22),
-   "aa_id_23" => array("character_alternate_abilities", "aa_id", 23),
-   "aa_id_24" => array("character_alternate_abilities", "aa_id", 24),
-   "aa_id_25" => array("character_alternate_abilities", "aa_id", 25),
-   "aa_id_26" => array("character_alternate_abilities", "aa_id", 26),
-   "aa_id_27" => array("character_alternate_abilities", "aa_id", 27),
-   "aa_id_28" => array("character_alternate_abilities", "aa_id", 28),
-   "aa_id_29" => array("character_alternate_abilities", "aa_id", 29),
-   "aa_id_30" => array("character_alternate_abilities", "aa_id", 30),
-   "aa_id_31" => array("character_alternate_abilities", "aa_id", 31),
-   "aa_id_32" => array("character_alternate_abilities", "aa_id", 32),
-   "aa_id_33" => array("character_alternate_abilities", "aa_id", 33),
-   "aa_id_34" => array("character_alternate_abilities", "aa_id", 34),
-   "aa_id_35" => array("character_alternate_abilities", "aa_id", 35),
-   "aa_id_36" => array("character_alternate_abilities", "aa_id", 36),
-   "aa_id_37" => array("character_alternate_abilities", "aa_id", 37),
-   "aa_id_38" => array("character_alternate_abilities", "aa_id", 38),
-   "aa_id_39" => array("character_alternate_abilities", "aa_id", 39),
-   "aa_id_40" => array("character_alternate_abilities", "aa_id", 40),
-   "aa_id_41" => array("character_alternate_abilities", "aa_id", 41),
-   "aa_id_42" => array("character_alternate_abilities", "aa_id", 42),
-   "aa_id_43" => array("character_alternate_abilities", "aa_id", 43),
-   "aa_id_44" => array("character_alternate_abilities", "aa_id", 44),
-   "aa_id_45" => array("character_alternate_abilities", "aa_id", 45),
-   "aa_id_46" => array("character_alternate_abilities", "aa_id", 46),
-   "aa_id_47" => array("character_alternate_abilities", "aa_id", 47),
-   "aa_id_48" => array("character_alternate_abilities", "aa_id", 48),
-   "aa_id_49" => array("character_alternate_abilities", "aa_id", 49),
-   "aa_id_50" => array("character_alternate_abilities", "aa_id", 50),
-   "aa_id_51" => array("character_alternate_abilities", "aa_id", 51),
-   "aa_id_52" => array("character_alternate_abilities", "aa_id", 52),
-   "aa_id_53" => array("character_alternate_abilities", "aa_id", 53),
-   "aa_id_54" => array("character_alternate_abilities", "aa_id", 54),
-   "aa_id_55" => array("character_alternate_abilities", "aa_id", 55),
-   "aa_id_56" => array("character_alternate_abilities", "aa_id", 56),
-   "aa_id_57" => array("character_alternate_abilities", "aa_id", 57),
-   "aa_id_58" => array("character_alternate_abilities", "aa_id", 58),
-   "aa_id_59" => array("character_alternate_abilities", "aa_id", 59),
-   "aa_id_60" => array("character_alternate_abilities", "aa_id", 60),
-   "aa_id_61" => array("character_alternate_abilities", "aa_id", 61),
-   "aa_id_62" => array("character_alternate_abilities", "aa_id", 62),
-   "aa_id_63" => array("character_alternate_abilities", "aa_id", 63),
-   "aa_id_64" => array("character_alternate_abilities", "aa_id", 64),
-   "aa_id_65" => array("character_alternate_abilities", "aa_id", 65),
-   "aa_id_66" => array("character_alternate_abilities", "aa_id", 66),
-   "aa_id_67" => array("character_alternate_abilities", "aa_id", 67),
-   "aa_id_68" => array("character_alternate_abilities", "aa_id", 68),
-   "aa_id_69" => array("character_alternate_abilities", "aa_id", 69),
-   "aa_id_70" => array("character_alternate_abilities", "aa_id", 70),
-   "aa_id_71" => array("character_alternate_abilities", "aa_id", 71),
-   "aa_id_72" => array("character_alternate_abilities", "aa_id", 72),
-   "aa_id_73" => array("character_alternate_abilities", "aa_id", 73),
-   "aa_id_74" => array("character_alternate_abilities", "aa_id", 74),
-   "aa_id_75" => array("character_alternate_abilities", "aa_id", 75),
-   "aa_id_76" => array("character_alternate_abilities", "aa_id", 76),
-   "aa_id_77" => array("character_alternate_abilities", "aa_id", 77),
-   "aa_id_78" => array("character_alternate_abilities", "aa_id", 78),
-   "aa_id_79" => array("character_alternate_abilities", "aa_id", 79),
-   "aa_id_80" => array("character_alternate_abilities", "aa_id", 80),
-   "aa_id_81" => array("character_alternate_abilities", "aa_id", 81),
-   "aa_id_82" => array("character_alternate_abilities", "aa_id", 82),
-   "aa_id_83" => array("character_alternate_abilities", "aa_id", 83),
-   "aa_id_84" => array("character_alternate_abilities", "aa_id", 84),
-   "aa_id_85" => array("character_alternate_abilities", "aa_id", 85),
-   "aa_id_86" => array("character_alternate_abilities", "aa_id", 86),
-   "aa_id_87" => array("character_alternate_abilities", "aa_id", 87),
-   "aa_id_88" => array("character_alternate_abilities", "aa_id", 88),
-   "aa_id_89" => array("character_alternate_abilities", "aa_id", 89),
-   "aa_id_90" => array("character_alternate_abilities", "aa_id", 90),
-   "aa_id_91" => array("character_alternate_abilities", "aa_id", 91),
-   "aa_id_92" => array("character_alternate_abilities", "aa_id", 92),
-   "aa_id_93" => array("character_alternate_abilities", "aa_id", 93),
-   "aa_id_94" => array("character_alternate_abilities", "aa_id", 94),
-   "aa_id_95" => array("character_alternate_abilities", "aa_id", 95),
-   "aa_id_96" => array("character_alternate_abilities", "aa_id", 96),
-   "aa_id_97" => array("character_alternate_abilities", "aa_id", 97),
-   "aa_id_98" => array("character_alternate_abilities", "aa_id", 98),
-   "aa_id_99" => array("character_alternate_abilities", "aa_id", 99),
-   "aa_id_100" => array("character_alternate_abilities", "aa_id", 100),
-   "aa_id_101" => array("character_alternate_abilities", "aa_id", 101),
-   "aa_id_102" => array("character_alternate_abilities", "aa_id", 102),
-   "aa_id_103" => array("character_alternate_abilities", "aa_id", 103),
-   "aa_id_104" => array("character_alternate_abilities", "aa_id", 104),
-   "aa_id_105" => array("character_alternate_abilities", "aa_id", 105),
-   "aa_id_106" => array("character_alternate_abilities", "aa_id", 106),
-   "aa_id_107" => array("character_alternate_abilities", "aa_id", 107),
-   "aa_id_108" => array("character_alternate_abilities", "aa_id", 108),
-   "aa_id_109" => array("character_alternate_abilities", "aa_id", 109),
-   "aa_id_110" => array("character_alternate_abilities", "aa_id", 110),
-   "aa_id_111" => array("character_alternate_abilities", "aa_id", 111),
-   "aa_id_112" => array("character_alternate_abilities", "aa_id", 112),
-   "aa_id_113" => array("character_alternate_abilities", "aa_id", 113),
-   "aa_id_114" => array("character_alternate_abilities", "aa_id", 114),
-   "aa_id_115" => array("character_alternate_abilities", "aa_id", 115),
-   "aa_id_116" => array("character_alternate_abilities", "aa_id", 116),
-   "aa_id_117" => array("character_alternate_abilities", "aa_id", 117),
-   "aa_id_118" => array("character_alternate_abilities", "aa_id", 118),
-   "aa_id_119" => array("character_alternate_abilities", "aa_id", 119),
-   "aa_id_120" => array("character_alternate_abilities", "aa_id", 120),
-   "aa_id_121" => array("character_alternate_abilities", "aa_id", 121),
-   "aa_id_122" => array("character_alternate_abilities", "aa_id", 122),
-   "aa_id_123" => array("character_alternate_abilities", "aa_id", 123),
-   "aa_id_124" => array("character_alternate_abilities", "aa_id", 124),
-   "aa_id_125" => array("character_alternate_abilities", "aa_id", 125),
-   "aa_id_126" => array("character_alternate_abilities", "aa_id", 126),
-   "aa_id_127" => array("character_alternate_abilities", "aa_id", 127),
-   "aa_id_128" => array("character_alternate_abilities", "aa_id", 128),
-   "aa_id_129" => array("character_alternate_abilities", "aa_id", 129),
-   "aa_id_130" => array("character_alternate_abilities", "aa_id", 130),
-   "aa_id_131" => array("character_alternate_abilities", "aa_id", 131),
-   "aa_id_132" => array("character_alternate_abilities", "aa_id", 132),
-   "aa_id_133" => array("character_alternate_abilities", "aa_id", 133),
-   "aa_id_134" => array("character_alternate_abilities", "aa_id", 134),
-   "aa_id_135" => array("character_alternate_abilities", "aa_id", 135),
-   "aa_id_136" => array("character_alternate_abilities", "aa_id", 136),
-   "aa_id_137" => array("character_alternate_abilities", "aa_id", 137),
-   "aa_id_138" => array("character_alternate_abilities", "aa_id", 138),
-   "aa_id_139" => array("character_alternate_abilities", "aa_id", 139),
-   "aa_id_140" => array("character_alternate_abilities", "aa_id", 140),
-   "aa_id_141" => array("character_alternate_abilities", "aa_id", 141),
-   "aa_id_142" => array("character_alternate_abilities", "aa_id", 142),
-   "aa_id_143" => array("character_alternate_abilities", "aa_id", 143),
-   "aa_id_144" => array("character_alternate_abilities", "aa_id", 144),
-   "aa_id_145" => array("character_alternate_abilities", "aa_id", 145),
-   "aa_id_146" => array("character_alternate_abilities", "aa_id", 146),
-   "aa_id_147" => array("character_alternate_abilities", "aa_id", 147),
-   "aa_id_148" => array("character_alternate_abilities", "aa_id", 148),
-   "aa_id_149" => array("character_alternate_abilities", "aa_id", 149),
-   "aa_id_150" => array("character_alternate_abilities", "aa_id", 150),
-   "aa_id_151" => array("character_alternate_abilities", "aa_id", 151),
-   "aa_id_152" => array("character_alternate_abilities", "aa_id", 152),
-   "aa_id_153" => array("character_alternate_abilities", "aa_id", 153),
-   "aa_id_154" => array("character_alternate_abilities", "aa_id", 154),
-   "aa_id_155" => array("character_alternate_abilities", "aa_id", 155),
-   "aa_id_156" => array("character_alternate_abilities", "aa_id", 156),
-   "aa_id_157" => array("character_alternate_abilities", "aa_id", 157),
-   "aa_id_158" => array("character_alternate_abilities", "aa_id", 158),
-   "aa_id_159" => array("character_alternate_abilities", "aa_id", 159),
-   "aa_id_160" => array("character_alternate_abilities", "aa_id", 160),
-   "aa_id_161" => array("character_alternate_abilities", "aa_id", 161),
-   "aa_id_162" => array("character_alternate_abilities", "aa_id", 162),
-   "aa_id_163" => array("character_alternate_abilities", "aa_id", 163),
-   "aa_id_164" => array("character_alternate_abilities", "aa_id", 164),
-   "aa_id_165" => array("character_alternate_abilities", "aa_id", 165),
-   "aa_id_166" => array("character_alternate_abilities", "aa_id", 166),
-   "aa_id_167" => array("character_alternate_abilities", "aa_id", 167),
-   "aa_id_168" => array("character_alternate_abilities", "aa_id", 168),
-   "aa_id_169" => array("character_alternate_abilities", "aa_id", 169),
-   "aa_id_170" => array("character_alternate_abilities", "aa_id", 170),
-   "aa_id_171" => array("character_alternate_abilities", "aa_id", 171),
-   "aa_id_172" => array("character_alternate_abilities", "aa_id", 172),
-   "aa_id_173" => array("character_alternate_abilities", "aa_id", 173),
-   "aa_id_174" => array("character_alternate_abilities", "aa_id", 174),
-   "aa_id_175" => array("character_alternate_abilities", "aa_id", 175),
-   "aa_id_176" => array("character_alternate_abilities", "aa_id", 176),
-   "aa_id_177" => array("character_alternate_abilities", "aa_id", 177),
-   "aa_id_178" => array("character_alternate_abilities", "aa_id", 178),
-   "aa_id_179" => array("character_alternate_abilities", "aa_id", 179),
-   "aa_id_180" => array("character_alternate_abilities", "aa_id", 180),
-   "aa_id_181" => array("character_alternate_abilities", "aa_id", 181),
-   "aa_id_182" => array("character_alternate_abilities", "aa_id", 182),
-   "aa_id_183" => array("character_alternate_abilities", "aa_id", 183),
-   "aa_id_184" => array("character_alternate_abilities", "aa_id", 184),
-   "aa_id_185" => array("character_alternate_abilities", "aa_id", 185),
-   "aa_id_186" => array("character_alternate_abilities", "aa_id", 186),
-   "aa_id_187" => array("character_alternate_abilities", "aa_id", 187),
-   "aa_id_188" => array("character_alternate_abilities", "aa_id", 188),
-   "aa_id_189" => array("character_alternate_abilities", "aa_id", 189),
-   "aa_id_190" => array("character_alternate_abilities", "aa_id", 190),
-   "aa_id_191" => array("character_alternate_abilities", "aa_id", 191),
-   "aa_id_192" => array("character_alternate_abilities", "aa_id", 192),
-   "aa_id_193" => array("character_alternate_abilities", "aa_id", 193),
-   "aa_id_194" => array("character_alternate_abilities", "aa_id", 194),
-   "aa_id_195" => array("character_alternate_abilities", "aa_id", 195),
-   "aa_id_196" => array("character_alternate_abilities", "aa_id", 196),
-   "aa_id_197" => array("character_alternate_abilities", "aa_id", 197),
-   "aa_id_198" => array("character_alternate_abilities", "aa_id", 198),
-   "aa_id_199" => array("character_alternate_abilities", "aa_id", 199),
-   "aa_value_0" => array("character_alternate_abilities", "aa_value", 0),
-   "aa_value_1" => array("character_alternate_abilities", "aa_value", 1),
-   "aa_value_2" => array("character_alternate_abilities", "aa_value", 2),
-   "aa_value_3" => array("character_alternate_abilities", "aa_value", 3),
-   "aa_value_4" => array("character_alternate_abilities", "aa_value", 4),
-   "aa_value_5" => array("character_alternate_abilities", "aa_value", 5),
-   "aa_value_6" => array("character_alternate_abilities", "aa_value", 6),
-   "aa_value_7" => array("character_alternate_abilities", "aa_value", 7),
-   "aa_value_8" => array("character_alternate_abilities", "aa_value", 8),
-   "aa_value_9" => array("character_alternate_abilities", "aa_value", 9),
-   "aa_value_10" => array("character_alternate_abilities", "aa_value", 10),
-   "aa_value_11" => array("character_alternate_abilities", "aa_value", 11),
-   "aa_value_12" => array("character_alternate_abilities", "aa_value", 12),
-   "aa_value_13" => array("character_alternate_abilities", "aa_value", 13),
-   "aa_value_14" => array("character_alternate_abilities", "aa_value", 14),
-   "aa_value_15" => array("character_alternate_abilities", "aa_value", 15),
-   "aa_value_16" => array("character_alternate_abilities", "aa_value", 16),
-   "aa_value_17" => array("character_alternate_abilities", "aa_value", 17),
-   "aa_value_18" => array("character_alternate_abilities", "aa_value", 18),
-   "aa_value_19" => array("character_alternate_abilities", "aa_value", 19),
-   "aa_value_20" => array("character_alternate_abilities", "aa_value", 20),
-   "aa_value_21" => array("character_alternate_abilities", "aa_value", 21),
-   "aa_value_22" => array("character_alternate_abilities", "aa_value", 22),
-   "aa_value_23" => array("character_alternate_abilities", "aa_value", 23),
-   "aa_value_24" => array("character_alternate_abilities", "aa_value", 24),
-   "aa_value_25" => array("character_alternate_abilities", "aa_value", 25),
-   "aa_value_26" => array("character_alternate_abilities", "aa_value", 26),
-   "aa_value_27" => array("character_alternate_abilities", "aa_value", 27),
-   "aa_value_28" => array("character_alternate_abilities", "aa_value", 28),
-   "aa_value_29" => array("character_alternate_abilities", "aa_value", 29),
-   "aa_value_30" => array("character_alternate_abilities", "aa_value", 30),
-   "aa_value_31" => array("character_alternate_abilities", "aa_value", 31),
-   "aa_value_32" => array("character_alternate_abilities", "aa_value", 32),
-   "aa_value_33" => array("character_alternate_abilities", "aa_value", 33),
-   "aa_value_34" => array("character_alternate_abilities", "aa_value", 34),
-   "aa_value_35" => array("character_alternate_abilities", "aa_value", 35),
-   "aa_value_36" => array("character_alternate_abilities", "aa_value", 36),
-   "aa_value_37" => array("character_alternate_abilities", "aa_value", 37),
-   "aa_value_38" => array("character_alternate_abilities", "aa_value", 38),
-   "aa_value_39" => array("character_alternate_abilities", "aa_value", 39),
-   "aa_value_40" => array("character_alternate_abilities", "aa_value", 40),
-   "aa_value_41" => array("character_alternate_abilities", "aa_value", 41),
-   "aa_value_42" => array("character_alternate_abilities", "aa_value", 42),
-   "aa_value_43" => array("character_alternate_abilities", "aa_value", 43),
-   "aa_value_44" => array("character_alternate_abilities", "aa_value", 44),
-   "aa_value_45" => array("character_alternate_abilities", "aa_value", 45),
-   "aa_value_46" => array("character_alternate_abilities", "aa_value", 46),
-   "aa_value_47" => array("character_alternate_abilities", "aa_value", 47),
-   "aa_value_48" => array("character_alternate_abilities", "aa_value", 48),
-   "aa_value_49" => array("character_alternate_abilities", "aa_value", 49),
-   "aa_value_50" => array("character_alternate_abilities", "aa_value", 50),
-   "aa_value_51" => array("character_alternate_abilities", "aa_value", 51),
-   "aa_value_52" => array("character_alternate_abilities", "aa_value", 52),
-   "aa_value_53" => array("character_alternate_abilities", "aa_value", 53),
-   "aa_value_54" => array("character_alternate_abilities", "aa_value", 54),
-   "aa_value_55" => array("character_alternate_abilities", "aa_value", 55),
-   "aa_value_56" => array("character_alternate_abilities", "aa_value", 56),
-   "aa_value_57" => array("character_alternate_abilities", "aa_value", 57),
-   "aa_value_58" => array("character_alternate_abilities", "aa_value", 58),
-   "aa_value_59" => array("character_alternate_abilities", "aa_value", 59),
-   "aa_value_60" => array("character_alternate_abilities", "aa_value", 60),
-   "aa_value_61" => array("character_alternate_abilities", "aa_value", 61),
-   "aa_value_62" => array("character_alternate_abilities", "aa_value", 62),
-   "aa_value_63" => array("character_alternate_abilities", "aa_value", 63),
-   "aa_value_64" => array("character_alternate_abilities", "aa_value", 64),
-   "aa_value_65" => array("character_alternate_abilities", "aa_value", 65),
-   "aa_value_66" => array("character_alternate_abilities", "aa_value", 66),
-   "aa_value_67" => array("character_alternate_abilities", "aa_value", 67),
-   "aa_value_68" => array("character_alternate_abilities", "aa_value", 68),
-   "aa_value_69" => array("character_alternate_abilities", "aa_value", 69),
-   "aa_value_70" => array("character_alternate_abilities", "aa_value", 70),
-   "aa_value_71" => array("character_alternate_abilities", "aa_value", 71),
-   "aa_value_72" => array("character_alternate_abilities", "aa_value", 72),
-   "aa_value_73" => array("character_alternate_abilities", "aa_value", 73),
-   "aa_value_74" => array("character_alternate_abilities", "aa_value", 74),
-   "aa_value_75" => array("character_alternate_abilities", "aa_value", 75),
-   "aa_value_76" => array("character_alternate_abilities", "aa_value", 76),
-   "aa_value_77" => array("character_alternate_abilities", "aa_value", 77),
-   "aa_value_78" => array("character_alternate_abilities", "aa_value", 78),
-   "aa_value_79" => array("character_alternate_abilities", "aa_value", 79),
-   "aa_value_80" => array("character_alternate_abilities", "aa_value", 80),
-   "aa_value_81" => array("character_alternate_abilities", "aa_value", 81),
-   "aa_value_82" => array("character_alternate_abilities", "aa_value", 82),
-   "aa_value_83" => array("character_alternate_abilities", "aa_value", 83),
-   "aa_value_84" => array("character_alternate_abilities", "aa_value", 84),
-   "aa_value_85" => array("character_alternate_abilities", "aa_value", 85),
-   "aa_value_86" => array("character_alternate_abilities", "aa_value", 86),
-   "aa_value_87" => array("character_alternate_abilities", "aa_value", 87),
-   "aa_value_88" => array("character_alternate_abilities", "aa_value", 88),
-   "aa_value_89" => array("character_alternate_abilities", "aa_value", 89),
-   "aa_value_90" => array("character_alternate_abilities", "aa_value", 90),
-   "aa_value_91" => array("character_alternate_abilities", "aa_value", 91),
-   "aa_value_92" => array("character_alternate_abilities", "aa_value", 92),
-   "aa_value_93" => array("character_alternate_abilities", "aa_value", 93),
-   "aa_value_94" => array("character_alternate_abilities", "aa_value", 94),
-   "aa_value_95" => array("character_alternate_abilities", "aa_value", 95),
-   "aa_value_96" => array("character_alternate_abilities", "aa_value", 96),
-   "aa_value_97" => array("character_alternate_abilities", "aa_value", 97),
-   "aa_value_98" => array("character_alternate_abilities", "aa_value", 98),
-   "aa_value_99" => array("character_alternate_abilities", "aa_value", 99),
-   "aa_value_100" => array("character_alternate_abilities", "aa_value", 100),
-   "aa_value_101" => array("character_alternate_abilities", "aa_value", 101),
-   "aa_value_102" => array("character_alternate_abilities", "aa_value", 102),
-   "aa_value_103" => array("character_alternate_abilities", "aa_value", 103),
-   "aa_value_104" => array("character_alternate_abilities", "aa_value", 104),
-   "aa_value_105" => array("character_alternate_abilities", "aa_value", 105),
-   "aa_value_106" => array("character_alternate_abilities", "aa_value", 106),
-   "aa_value_107" => array("character_alternate_abilities", "aa_value", 107),
-   "aa_value_108" => array("character_alternate_abilities", "aa_value", 108),
-   "aa_value_109" => array("character_alternate_abilities", "aa_value", 109),
-   "aa_value_110" => array("character_alternate_abilities", "aa_value", 110),
-   "aa_value_111" => array("character_alternate_abilities", "aa_value", 111),
-   "aa_value_112" => array("character_alternate_abilities", "aa_value", 112),
-   "aa_value_113" => array("character_alternate_abilities", "aa_value", 113),
-   "aa_value_114" => array("character_alternate_abilities", "aa_value", 114),
-   "aa_value_115" => array("character_alternate_abilities", "aa_value", 115),
-   "aa_value_116" => array("character_alternate_abilities", "aa_value", 116),
-   "aa_value_117" => array("character_alternate_abilities", "aa_value", 117),
-   "aa_value_118" => array("character_alternate_abilities", "aa_value", 118),
-   "aa_value_119" => array("character_alternate_abilities", "aa_value", 119),
-   "aa_value_120" => array("character_alternate_abilities", "aa_value", 120),
-   "aa_value_121" => array("character_alternate_abilities", "aa_value", 121),
-   "aa_value_122" => array("character_alternate_abilities", "aa_value", 122),
-   "aa_value_123" => array("character_alternate_abilities", "aa_value", 123),
-   "aa_value_124" => array("character_alternate_abilities", "aa_value", 124),
-   "aa_value_125" => array("character_alternate_abilities", "aa_value", 125),
-   "aa_value_126" => array("character_alternate_abilities", "aa_value", 126),
-   "aa_value_127" => array("character_alternate_abilities", "aa_value", 127),
-   "aa_value_128" => array("character_alternate_abilities", "aa_value", 128),
-   "aa_value_129" => array("character_alternate_abilities", "aa_value", 129),
-   "aa_value_130" => array("character_alternate_abilities", "aa_value", 130),
-   "aa_value_131" => array("character_alternate_abilities", "aa_value", 131),
-   "aa_value_132" => array("character_alternate_abilities", "aa_value", 132),
-   "aa_value_133" => array("character_alternate_abilities", "aa_value", 133),
-   "aa_value_134" => array("character_alternate_abilities", "aa_value", 134),
-   "aa_value_135" => array("character_alternate_abilities", "aa_value", 135),
-   "aa_value_136" => array("character_alternate_abilities", "aa_value", 136),
-   "aa_value_137" => array("character_alternate_abilities", "aa_value", 137),
-   "aa_value_138" => array("character_alternate_abilities", "aa_value", 138),
-   "aa_value_139" => array("character_alternate_abilities", "aa_value", 139),
-   "aa_value_140" => array("character_alternate_abilities", "aa_value", 140),
-   "aa_value_141" => array("character_alternate_abilities", "aa_value", 141),
-   "aa_value_142" => array("character_alternate_abilities", "aa_value", 142),
-   "aa_value_143" => array("character_alternate_abilities", "aa_value", 143),
-   "aa_value_144" => array("character_alternate_abilities", "aa_value", 144),
-   "aa_value_145" => array("character_alternate_abilities", "aa_value", 145),
-   "aa_value_146" => array("character_alternate_abilities", "aa_value", 146),
-   "aa_value_147" => array("character_alternate_abilities", "aa_value", 147),
-   "aa_value_148" => array("character_alternate_abilities", "aa_value", 148),
-   "aa_value_149" => array("character_alternate_abilities", "aa_value", 149),
-   "aa_value_150" => array("character_alternate_abilities", "aa_value", 150),
-   "aa_value_151" => array("character_alternate_abilities", "aa_value", 151),
-   "aa_value_152" => array("character_alternate_abilities", "aa_value", 152),
-   "aa_value_153" => array("character_alternate_abilities", "aa_value", 153),
-   "aa_value_154" => array("character_alternate_abilities", "aa_value", 154),
-   "aa_value_155" => array("character_alternate_abilities", "aa_value", 155),
-   "aa_value_156" => array("character_alternate_abilities", "aa_value", 156),
-   "aa_value_157" => array("character_alternate_abilities", "aa_value", 157),
-   "aa_value_158" => array("character_alternate_abilities", "aa_value", 158),
-   "aa_value_159" => array("character_alternate_abilities", "aa_value", 159),
-   "aa_value_160" => array("character_alternate_abilities", "aa_value", 160),
-   "aa_value_161" => array("character_alternate_abilities", "aa_value", 161),
-   "aa_value_162" => array("character_alternate_abilities", "aa_value", 162),
-   "aa_value_163" => array("character_alternate_abilities", "aa_value", 163),
-   "aa_value_164" => array("character_alternate_abilities", "aa_value", 164),
-   "aa_value_165" => array("character_alternate_abilities", "aa_value", 165),
-   "aa_value_166" => array("character_alternate_abilities", "aa_value", 166),
-   "aa_value_167" => array("character_alternate_abilities", "aa_value", 167),
-   "aa_value_168" => array("character_alternate_abilities", "aa_value", 168),
-   "aa_value_169" => array("character_alternate_abilities", "aa_value", 169),
-   "aa_value_170" => array("character_alternate_abilities", "aa_value", 170),
-   "aa_value_171" => array("character_alternate_abilities", "aa_value", 171),
-   "aa_value_172" => array("character_alternate_abilities", "aa_value", 172),
-   "aa_value_173" => array("character_alternate_abilities", "aa_value", 173),
-   "aa_value_174" => array("character_alternate_abilities", "aa_value", 174),
-   "aa_value_175" => array("character_alternate_abilities", "aa_value", 175),
-   "aa_value_176" => array("character_alternate_abilities", "aa_value", 176),
-   "aa_value_177" => array("character_alternate_abilities", "aa_value", 177),
-   "aa_value_178" => array("character_alternate_abilities", "aa_value", 178),
-   "aa_value_179" => array("character_alternate_abilities", "aa_value", 179),
-   "aa_value_180" => array("character_alternate_abilities", "aa_value", 180),
-   "aa_value_181" => array("character_alternate_abilities", "aa_value", 181),
-   "aa_value_182" => array("character_alternate_abilities", "aa_value", 182),
-   "aa_value_183" => array("character_alternate_abilities", "aa_value", 183),
-   "aa_value_184" => array("character_alternate_abilities", "aa_value", 184),
-   "aa_value_185" => array("character_alternate_abilities", "aa_value", 185),
-   "aa_value_186" => array("character_alternate_abilities", "aa_value", 186),
-   "aa_value_187" => array("character_alternate_abilities", "aa_value", 187),
-   "aa_value_188" => array("character_alternate_abilities", "aa_value", 188),
-   "aa_value_189" => array("character_alternate_abilities", "aa_value", 189),
-   "aa_value_190" => array("character_alternate_abilities", "aa_value", 190),
-   "aa_value_191" => array("character_alternate_abilities", "aa_value", 191),
-   "aa_value_192" => array("character_alternate_abilities", "aa_value", 192),
-   "aa_value_193" => array("character_alternate_abilities", "aa_value", 193),
-   "aa_value_194" => array("character_alternate_abilities", "aa_value", 194),
-   "aa_value_195" => array("character_alternate_abilities", "aa_value", 195),
-   "aa_value_196" => array("character_alternate_abilities", "aa_value", 196),
-   "aa_value_197" => array("character_alternate_abilities", "aa_value", 197),
-   "aa_value_198" => array("character_alternate_abilities", "aa_value", 198),
-   "aa_value_199" => array("character_alternate_abilities", "aa_value", 199),
-);
+   // the table, column, and index of where to find a value
+   // --------------------------------------------------------------
+   // SYNTAX:  "<DATA>" => array("<TABLE>", "<COLUMN>", "<INDEX>"),
+   // --------------------------------------------------------------
+   // <DATA>   = The shortname reference for the value,
+   //            it usually matches the column name.
+   // <TABLE>  = the name of the table the data comes from
+   // <COLUMN> = the column the data appears in
+   // <INDEX>  = if there are multiple rows for the character
+   //            because of a second PK, then this is the
+   //            value of that second PK, otherwise its false.
+   private $_locator = array (
+      "id" => array("character_data", "id", false),
+      "account_id" => array("character_data", "account_id", false),
+      "name" => array("character_data", "name", false),
+      "last_name" => array("character_data", "last_name", false),
+      "title" => array("character_data", "title", false),
+      "suffix" => array("character_data", "suffix", false),
+      "zone_id" => array("character_data", "zone_id", false),
+      "zone_instance" => array("character_data", "zone_instance", false),
+      "y" => array("character_data", "y", false),
+      "x" => array("character_data", "x", false),
+      "z" => array("character_data", "z", false),
+      "heading" => array("character_data", "heading", false),
+      "gender" => array("character_data", "gender", false),
+      "race" => array("character_data", "race", false),
+      "class" => array("character_data", "class", false),
+      "level" => array("character_data", "level", false),
+      "deity" => array("character_data", "deity", false),
+      "birthday" => array("character_data", "birthday", false),
+      "last_login" => array("character_data", "last_login", false),
+      "time_played" => array("character_data", "time_played", false),
+      "level2" => array("character_data", "level2", false),
+      "anon" => array("character_data", "anon", false),
+      "gm" => array("character_data", "gm", false),
+      "face" => array("character_data", "face", false),
+      "hair_color" => array("character_data", "hair_color", false),
+      "hair_style" => array("character_data", "hair_style", false),
+      "beard" => array("character_data", "beard", false),
+      "beard_color" => array("character_data", "beard_color", false),
+      "eye_color_1" => array("character_data", "eye_color_1", false),
+      "eye_color_2" => array("character_data", "eye_color_2", false),
+      "drakkin_heritage" => array("character_data", "drakkin_heritage", false),
+      "drakkin_tattoo" => array("character_data", "drakkin_tattoo", false),
+      "drakkin_details" => array("character_data", "drakkin_details", false),
+      "ability_time_seconds" => array("character_data", "ability_time_seconds", false),
+      "ability_number" => array("character_data", "ability_number", false),
+      "ability_time_minutes" => array("character_data", "ability_time_minutes", false),
+      "ability_time_hours" => array("character_data", "ability_time_hours", false),
+      "exp" => array("character_data", "exp", false),
+      "aa_points_spent" => array("character_data", "aa_points_spent", false),
+      "aa_points_spent_old" => array("character_data", "aa_points_spent_old", false),
+      "aa_exp" => array("character_data", "aa_exp", false),
+      "aa_exp_old" => array("character_data", "aa_exp_old", false),
+      "aa_points" => array("character_data", "aa_points", false),
+      "group_leadership_exp" => array("character_data", "group_leadership_exp", false),
+      "raid_leadership_exp" => array("character_data", "raid_leadership_exp", false),
+      "group_leadership_points" => array("character_data", "group_leadership_points", false),
+      "raid_leadership_points" => array("character_data", "raid_leadership_points", false),
+      "points" => array("character_data", "points", false),
+      "cur_hp" => array("character_data", "cur_hp", false),
+      "mana" => array("character_data", "mana", false),
+      "endurance" => array("character_data", "endurance", false),
+      "intoxication" => array("character_data", "intoxication", false),
+      "str" => array("character_data", "str", false),
+      "sta" => array("character_data", "sta", false),
+      "cha" => array("character_data", "cha", false),
+      "dex" => array("character_data", "dex", false),
+      "int" => array("character_data", "int", false),
+      "agi" => array("character_data", "agi", false),
+      "wis" => array("character_data", "wis", false),
+      "zone_change_count" => array("character_data", "zone_change_count", false),
+      "toxicity" => array("character_data", "toxicity", false),
+      "hunger_level" => array("character_data", "hunger_level", false),
+      "thirst_level" => array("character_data", "thirst_level", false),
+      "ability_up" => array("character_data", "ability_up", false),
+      "ldon_points_guk" => array("character_data", "ldon_points_guk", false),
+      "ldon_points_mir" => array("character_data", "ldon_points_mir", false),
+      "ldon_points_mmc" => array("character_data", "ldon_points_mmc", false),
+      "ldon_points_ruj" => array("character_data", "ldon_points_ruj", false),
+      "ldon_points_tak" => array("character_data", "ldon_points_tak", false),
+      "ldon_points_available" => array("character_data", "ldon_points_available", false),
+      "tribute_time_remaining" => array("character_data", "tribute_time_remaining", false),
+      "career_tribute_points" => array("character_data", "career_tribute_points", false),
+      "tribute_points" => array("character_data", "tribute_points", false),
+      "tribute_active" => array("character_data", "tribute_active", false),
+      "pvp_status" => array("character_data", "pvp_status", false),
+      "pvp_kills" => array("character_data", "pvp_kills", false),
+      "pvp_deaths" => array("character_data", "pvp_deaths", false),
+      "pvp_current_points" => array("character_data", "pvp_current_points", false),
+      "pvp_career_points" => array("character_data", "pvp_career_points", false),
+      "pvp_best_kill_streak" => array("character_data", "pvp_best_kill_streak", false),
+      "pvp_worst_death_streak" => array("character_data", "pvp_worst_death_streak", false),
+      "pvp_current_kill_streak" => array("character_data", "pvp_current_kill_streak", false),
+      "pvp2" => array("character_data", "pvp2", false),
+      "pvp_type" => array("character_data", "pvp_type", false),
+      "show_helm" => array("character_data", "show_helm", false),
+      "group_auto_consent" => array("character_data", "group_auto_consent", false),
+      "raid_auto_consent" => array("character_data", "raid_auto_consent", false),
+      "guild_auto_consent" => array("character_data", "guild_auto_consent", false),
+      "leadership_exp_on" => array("character_data", "leadership_exp_on", false),
+      "RestTimer" => array("character_data", "RestTimer", false),
+      "air_remaining" => array("character_data", "air_remaining", false),
+      "autosplit_enabled" => array("character_data", "autosplit_enabled", false),
+      "lfp" => array("character_data", "lfp", false),
+      "lfg" => array("character_data", "lfg", false),
+      "mailkey" => array("character_data", "mailkey", false),
+      "xtargets" => array("character_data", "xtargets", false),
+      "firstlogon" => array("character_data", "firstlogon", false),
+      "e_aa_effects" => array("character_data", "e_aa_effects", false),
+      "e_percent_to_aa" => array("character_data", "e_percent_to_aa", false),
+      "e_expended_aa_spent" => array("character_data", "e_expended_aa_spent", false),
+      "deleted_at" => array("character_data", "deleted_at", false),
+      "id" => array("character_currency", "id", false),
+      "platinum" => array("character_currency", "platinum", false),
+      "gold" => array("character_currency", "gold", false),
+      "silver" => array("character_currency", "silver", false),
+      "copper" => array("character_currency", "copper", false),
+      "platinum_bank" => array("character_currency", "platinum_bank", false),
+      "gold_bank" => array("character_currency", "gold_bank", false),
+      "silver_bank" => array("character_currency", "silver_bank", false),
+      "copper_bank" => array("character_currency", "copper_bank", false),
+      "platinum_cursor" => array("character_currency", "platinum_cursor", false),
+      "gold_cursor" => array("character_currency", "gold_cursor", false),
+      "silver_cursor" => array("character_currency", "silver_cursor", false),
+      "copper_cursor" => array("character_currency", "copper_cursor", false),
+      "radiant_crystals" => array("character_currency", "radiant_crystals", false),
+      "career_radiant_crystals" => array("character_currency", "career_radiant_crystals", false),
+      "ebon_crystals" => array("character_currency", "ebon_crystals", false),
+      "career_ebon_crystals" => array("character_currency", "career_ebon_crystals", false),
+      "1h_blunt" => array("character_skills", "value", 0),
+      "1h_slashing" => array("character_skills", "value", 1),
+      "2h_blunt" => array("character_skills", "value", 2),
+      "2h_slashing" => array("character_skills", "value", 3),
+      "abjuration" => array("character_skills", "value", 4),
+      "alteration" => array("character_skills", "value", 5),
+      "apply_poison" => array("character_skills", "value", 6),
+      "archery" => array("character_skills", "value", 7),
+      "backstab" => array("character_skills", "value", 8),
+      "bind_wound" => array("character_skills", "value", 9),
+      "bash" => array("character_skills", "value", 10),
+      "block" => array("character_skills", "value", 11),
+      "brass_instruments" => array("character_skills", "value", 12),
+      "channeling" => array("character_skills", "value", 13),
+      "conjuration" => array("character_skills", "value", 14),
+      "defense" => array("character_skills", "value", 15),
+      "disarm" => array("character_skills", "value", 16),
+      "disarm_traps" => array("character_skills", "value", 17),
+      "divination" => array("character_skills", "value", 18),
+      "dodge" => array("character_skills", "value", 19),
+      "double_attack" => array("character_skills", "value", 20),
+      "dragon_punch" => array("character_skills", "value", 21),
+      "dual_wield" => array("character_skills", "value", 22),
+      "eagle_strike" => array("character_skills", "value", 23),
+      "evocation" => array("character_skills", "value", 24),
+      "feign_death" => array("character_skills", "value", 25),
+      "flying_kick" => array("character_skills", "value", 26),
+      "forage" => array("character_skills", "value", 27),
+      "hand_to_hand" => array("character_skills", "value", 28),
+      "hide" => array("character_skills", "value", 29),
+      "kick" => array("character_skills", "value", 30),
+      "meditate" => array("character_skills", "value", 31),
+      "mend" => array("character_skills", "value", 32),
+      "offense" => array("character_skills", "value", 33),
+      "parry" => array("character_skills", "value", 34),
+      "pick_lock" => array("character_skills", "value", 35),
+      "piercing" => array("character_skills", "value", 36),
+      "riposte" => array("character_skills", "value", 37),
+      "round_kick" => array("character_skills", "value", 38),
+      "safe_fall" => array("character_skills", "value", 39),
+      "sense_heading" => array("character_skills", "value", 40),
+      "sing" => array("character_skills", "value", 41),
+      "sneak" => array("character_skills", "value", 42),
+      "specialize_abjure" => array("character_skills", "value", 43),
+      "specialize_alteration" => array("character_skills", "value", 44),
+      "specialize_conjuration" => array("character_skills", "value", 45),
+      "specialize_divinatation" => array("character_skills", "value", 46),
+      "specialize_evocation" => array("character_skills", "value", 47),
+      "pick_pockets" => array("character_skills", "value", 48),
+      "stringed_instruments" => array("character_skills", "value", 49),
+      "swimming" => array("character_skills", "value", 50),
+      "throwing" => array("character_skills", "value", 51),
+      "tiger_claw" => array("character_skills", "value", 52),
+      "tracking" => array("character_skills", "value", 53),
+      "wind_instruments" => array("character_skills", "value", 54),
+      "fishing" => array("character_skills", "value", 55),
+      "make_poison" => array("character_skills", "value", 56),
+      "tinkering" => array("character_skills", "value", 57),
+      "research" => array("character_skills", "value", 58),
+      "alchemy" => array("character_skills", "value", 59),
+      "baking" => array("character_skills", "value", 60),
+      "tailoring" => array("character_skills", "value", 61),
+      "sense_traps" => array("character_skills", "value", 62),
+      "blacksmithing" => array("character_skills", "value", 63),
+      "fletching" => array("character_skills", "value", 64),
+      "brewing" => array("character_skills", "value", 65),
+      "alcohol_tolerance" => array("character_skills", "value", 66),
+      "begging" => array("character_skills", "value", 67),
+      "jewelry_making" => array("character_skills", "value", 68),
+      "pottery" => array("character_skills", "value", 69),
+      "percussion_instruments" => array("character_skills", "value", 70),
+      "intimidation" => array("character_skills", "value", 71),
+      "berserking" => array("character_skills", "value", 72),
+      "taunt" => array("character_skills", "value", 73),
+      "frenzy" => array("character_skills", "value", 74),
+      "remove_traps" => array("character_skills", "value", 75),
+      "triple_attack" => array("character_skills", "value", 76),
+      "2h_piercing" => array("character_skills", "value", 77),
+      "common_tongue" => array("character_languages", "value", 0),
+      "barbarian" => array("character_languages", "value", 1),
+      "erudian" => array("character_languages", "value", 2),
+      "elvish" => array("character_languages", "value", 3),
+      "dark_elvish" => array("character_languages", "value", 4),
+      "dwarvish" => array("character_languages", "value", 5),
+      "troll" => array("character_languages", "value", 6),
+      "ogre" => array("character_languages", "value", 7),
+      "gnomish" => array("character_languages", "value", 8),
+      "halfling" => array("character_languages", "value", 9),
+      "thieves_cant" => array("character_languages", "value", 10),
+      "old_erudian" => array("character_languages", "value", 11),
+      "elder_elvish" => array("character_languages", "value", 12),
+      "froglok" => array("character_languages", "value", 13),
+      "goblin" => array("character_languages", "value", 14),
+      "gnoll" => array("character_languages", "value", 15),
+      "combine_tongue" => array("character_languages", "value", 16),
+      "elder_teirdal" => array("character_languages", "value", 17),
+      "lizardman" => array("character_languages", "value", 18),
+      "orcish" => array("character_languages", "value", 19),
+      "faerie" => array("character_languages", "value", 20),
+      "dragon" => array("character_languages", "value", 21),
+      "elder_dragon" => array("character_languages", "value", 22),
+      "dark_speech" => array("character_languages", "value", 23),
+      "vah_shir" => array("character_languages", "value", 24),
+      "aa_id_0" => array("character_alternate_abilities", "aa_id", 0),
+      "aa_id_1" => array("character_alternate_abilities", "aa_id", 1),
+      "aa_id_2" => array("character_alternate_abilities", "aa_id", 2),
+      "aa_id_3" => array("character_alternate_abilities", "aa_id", 3),
+      "aa_id_4" => array("character_alternate_abilities", "aa_id", 4),
+      "aa_id_5" => array("character_alternate_abilities", "aa_id", 5),
+      "aa_id_6" => array("character_alternate_abilities", "aa_id", 6),
+      "aa_id_7" => array("character_alternate_abilities", "aa_id", 7),
+      "aa_id_8" => array("character_alternate_abilities", "aa_id", 8),
+      "aa_id_9" => array("character_alternate_abilities", "aa_id", 9),
+      "aa_id_10" => array("character_alternate_abilities", "aa_id", 10),
+      "aa_id_11" => array("character_alternate_abilities", "aa_id", 11),
+      "aa_id_12" => array("character_alternate_abilities", "aa_id", 12),
+      "aa_id_13" => array("character_alternate_abilities", "aa_id", 13),
+      "aa_id_14" => array("character_alternate_abilities", "aa_id", 14),
+      "aa_id_15" => array("character_alternate_abilities", "aa_id", 15),
+      "aa_id_16" => array("character_alternate_abilities", "aa_id", 16),
+      "aa_id_17" => array("character_alternate_abilities", "aa_id", 17),
+      "aa_id_18" => array("character_alternate_abilities", "aa_id", 18),
+      "aa_id_19" => array("character_alternate_abilities", "aa_id", 19),
+      "aa_id_20" => array("character_alternate_abilities", "aa_id", 20),
+      "aa_id_21" => array("character_alternate_abilities", "aa_id", 21),
+      "aa_id_22" => array("character_alternate_abilities", "aa_id", 22),
+      "aa_id_23" => array("character_alternate_abilities", "aa_id", 23),
+      "aa_id_24" => array("character_alternate_abilities", "aa_id", 24),
+      "aa_id_25" => array("character_alternate_abilities", "aa_id", 25),
+      "aa_id_26" => array("character_alternate_abilities", "aa_id", 26),
+      "aa_id_27" => array("character_alternate_abilities", "aa_id", 27),
+      "aa_id_28" => array("character_alternate_abilities", "aa_id", 28),
+      "aa_id_29" => array("character_alternate_abilities", "aa_id", 29),
+      "aa_id_30" => array("character_alternate_abilities", "aa_id", 30),
+      "aa_id_31" => array("character_alternate_abilities", "aa_id", 31),
+      "aa_id_32" => array("character_alternate_abilities", "aa_id", 32),
+      "aa_id_33" => array("character_alternate_abilities", "aa_id", 33),
+      "aa_id_34" => array("character_alternate_abilities", "aa_id", 34),
+      "aa_id_35" => array("character_alternate_abilities", "aa_id", 35),
+      "aa_id_36" => array("character_alternate_abilities", "aa_id", 36),
+      "aa_id_37" => array("character_alternate_abilities", "aa_id", 37),
+      "aa_id_38" => array("character_alternate_abilities", "aa_id", 38),
+      "aa_id_39" => array("character_alternate_abilities", "aa_id", 39),
+      "aa_id_40" => array("character_alternate_abilities", "aa_id", 40),
+      "aa_id_41" => array("character_alternate_abilities", "aa_id", 41),
+      "aa_id_42" => array("character_alternate_abilities", "aa_id", 42),
+      "aa_id_43" => array("character_alternate_abilities", "aa_id", 43),
+      "aa_id_44" => array("character_alternate_abilities", "aa_id", 44),
+      "aa_id_45" => array("character_alternate_abilities", "aa_id", 45),
+      "aa_id_46" => array("character_alternate_abilities", "aa_id", 46),
+      "aa_id_47" => array("character_alternate_abilities", "aa_id", 47),
+      "aa_id_48" => array("character_alternate_abilities", "aa_id", 48),
+      "aa_id_49" => array("character_alternate_abilities", "aa_id", 49),
+      "aa_id_50" => array("character_alternate_abilities", "aa_id", 50),
+      "aa_id_51" => array("character_alternate_abilities", "aa_id", 51),
+      "aa_id_52" => array("character_alternate_abilities", "aa_id", 52),
+      "aa_id_53" => array("character_alternate_abilities", "aa_id", 53),
+      "aa_id_54" => array("character_alternate_abilities", "aa_id", 54),
+      "aa_id_55" => array("character_alternate_abilities", "aa_id", 55),
+      "aa_id_56" => array("character_alternate_abilities", "aa_id", 56),
+      "aa_id_57" => array("character_alternate_abilities", "aa_id", 57),
+      "aa_id_58" => array("character_alternate_abilities", "aa_id", 58),
+      "aa_id_59" => array("character_alternate_abilities", "aa_id", 59),
+      "aa_id_60" => array("character_alternate_abilities", "aa_id", 60),
+      "aa_id_61" => array("character_alternate_abilities", "aa_id", 61),
+      "aa_id_62" => array("character_alternate_abilities", "aa_id", 62),
+      "aa_id_63" => array("character_alternate_abilities", "aa_id", 63),
+      "aa_id_64" => array("character_alternate_abilities", "aa_id", 64),
+      "aa_id_65" => array("character_alternate_abilities", "aa_id", 65),
+      "aa_id_66" => array("character_alternate_abilities", "aa_id", 66),
+      "aa_id_67" => array("character_alternate_abilities", "aa_id", 67),
+      "aa_id_68" => array("character_alternate_abilities", "aa_id", 68),
+      "aa_id_69" => array("character_alternate_abilities", "aa_id", 69),
+      "aa_id_70" => array("character_alternate_abilities", "aa_id", 70),
+      "aa_id_71" => array("character_alternate_abilities", "aa_id", 71),
+      "aa_id_72" => array("character_alternate_abilities", "aa_id", 72),
+      "aa_id_73" => array("character_alternate_abilities", "aa_id", 73),
+      "aa_id_74" => array("character_alternate_abilities", "aa_id", 74),
+      "aa_id_75" => array("character_alternate_abilities", "aa_id", 75),
+      "aa_id_76" => array("character_alternate_abilities", "aa_id", 76),
+      "aa_id_77" => array("character_alternate_abilities", "aa_id", 77),
+      "aa_id_78" => array("character_alternate_abilities", "aa_id", 78),
+      "aa_id_79" => array("character_alternate_abilities", "aa_id", 79),
+      "aa_id_80" => array("character_alternate_abilities", "aa_id", 80),
+      "aa_id_81" => array("character_alternate_abilities", "aa_id", 81),
+      "aa_id_82" => array("character_alternate_abilities", "aa_id", 82),
+      "aa_id_83" => array("character_alternate_abilities", "aa_id", 83),
+      "aa_id_84" => array("character_alternate_abilities", "aa_id", 84),
+      "aa_id_85" => array("character_alternate_abilities", "aa_id", 85),
+      "aa_id_86" => array("character_alternate_abilities", "aa_id", 86),
+      "aa_id_87" => array("character_alternate_abilities", "aa_id", 87),
+      "aa_id_88" => array("character_alternate_abilities", "aa_id", 88),
+      "aa_id_89" => array("character_alternate_abilities", "aa_id", 89),
+      "aa_id_90" => array("character_alternate_abilities", "aa_id", 90),
+      "aa_id_91" => array("character_alternate_abilities", "aa_id", 91),
+      "aa_id_92" => array("character_alternate_abilities", "aa_id", 92),
+      "aa_id_93" => array("character_alternate_abilities", "aa_id", 93),
+      "aa_id_94" => array("character_alternate_abilities", "aa_id", 94),
+      "aa_id_95" => array("character_alternate_abilities", "aa_id", 95),
+      "aa_id_96" => array("character_alternate_abilities", "aa_id", 96),
+      "aa_id_97" => array("character_alternate_abilities", "aa_id", 97),
+      "aa_id_98" => array("character_alternate_abilities", "aa_id", 98),
+      "aa_id_99" => array("character_alternate_abilities", "aa_id", 99),
+      "aa_id_100" => array("character_alternate_abilities", "aa_id", 100),
+      "aa_id_101" => array("character_alternate_abilities", "aa_id", 101),
+      "aa_id_102" => array("character_alternate_abilities", "aa_id", 102),
+      "aa_id_103" => array("character_alternate_abilities", "aa_id", 103),
+      "aa_id_104" => array("character_alternate_abilities", "aa_id", 104),
+      "aa_id_105" => array("character_alternate_abilities", "aa_id", 105),
+      "aa_id_106" => array("character_alternate_abilities", "aa_id", 106),
+      "aa_id_107" => array("character_alternate_abilities", "aa_id", 107),
+      "aa_id_108" => array("character_alternate_abilities", "aa_id", 108),
+      "aa_id_109" => array("character_alternate_abilities", "aa_id", 109),
+      "aa_id_110" => array("character_alternate_abilities", "aa_id", 110),
+      "aa_id_111" => array("character_alternate_abilities", "aa_id", 111),
+      "aa_id_112" => array("character_alternate_abilities", "aa_id", 112),
+      "aa_id_113" => array("character_alternate_abilities", "aa_id", 113),
+      "aa_id_114" => array("character_alternate_abilities", "aa_id", 114),
+      "aa_id_115" => array("character_alternate_abilities", "aa_id", 115),
+      "aa_id_116" => array("character_alternate_abilities", "aa_id", 116),
+      "aa_id_117" => array("character_alternate_abilities", "aa_id", 117),
+      "aa_id_118" => array("character_alternate_abilities", "aa_id", 118),
+      "aa_id_119" => array("character_alternate_abilities", "aa_id", 119),
+      "aa_id_120" => array("character_alternate_abilities", "aa_id", 120),
+      "aa_id_121" => array("character_alternate_abilities", "aa_id", 121),
+      "aa_id_122" => array("character_alternate_abilities", "aa_id", 122),
+      "aa_id_123" => array("character_alternate_abilities", "aa_id", 123),
+      "aa_id_124" => array("character_alternate_abilities", "aa_id", 124),
+      "aa_id_125" => array("character_alternate_abilities", "aa_id", 125),
+      "aa_id_126" => array("character_alternate_abilities", "aa_id", 126),
+      "aa_id_127" => array("character_alternate_abilities", "aa_id", 127),
+      "aa_id_128" => array("character_alternate_abilities", "aa_id", 128),
+      "aa_id_129" => array("character_alternate_abilities", "aa_id", 129),
+      "aa_id_130" => array("character_alternate_abilities", "aa_id", 130),
+      "aa_id_131" => array("character_alternate_abilities", "aa_id", 131),
+      "aa_id_132" => array("character_alternate_abilities", "aa_id", 132),
+      "aa_id_133" => array("character_alternate_abilities", "aa_id", 133),
+      "aa_id_134" => array("character_alternate_abilities", "aa_id", 134),
+      "aa_id_135" => array("character_alternate_abilities", "aa_id", 135),
+      "aa_id_136" => array("character_alternate_abilities", "aa_id", 136),
+      "aa_id_137" => array("character_alternate_abilities", "aa_id", 137),
+      "aa_id_138" => array("character_alternate_abilities", "aa_id", 138),
+      "aa_id_139" => array("character_alternate_abilities", "aa_id", 139),
+      "aa_id_140" => array("character_alternate_abilities", "aa_id", 140),
+      "aa_id_141" => array("character_alternate_abilities", "aa_id", 141),
+      "aa_id_142" => array("character_alternate_abilities", "aa_id", 142),
+      "aa_id_143" => array("character_alternate_abilities", "aa_id", 143),
+      "aa_id_144" => array("character_alternate_abilities", "aa_id", 144),
+      "aa_id_145" => array("character_alternate_abilities", "aa_id", 145),
+      "aa_id_146" => array("character_alternate_abilities", "aa_id", 146),
+      "aa_id_147" => array("character_alternate_abilities", "aa_id", 147),
+      "aa_id_148" => array("character_alternate_abilities", "aa_id", 148),
+      "aa_id_149" => array("character_alternate_abilities", "aa_id", 149),
+      "aa_id_150" => array("character_alternate_abilities", "aa_id", 150),
+      "aa_id_151" => array("character_alternate_abilities", "aa_id", 151),
+      "aa_id_152" => array("character_alternate_abilities", "aa_id", 152),
+      "aa_id_153" => array("character_alternate_abilities", "aa_id", 153),
+      "aa_id_154" => array("character_alternate_abilities", "aa_id", 154),
+      "aa_id_155" => array("character_alternate_abilities", "aa_id", 155),
+      "aa_id_156" => array("character_alternate_abilities", "aa_id", 156),
+      "aa_id_157" => array("character_alternate_abilities", "aa_id", 157),
+      "aa_id_158" => array("character_alternate_abilities", "aa_id", 158),
+      "aa_id_159" => array("character_alternate_abilities", "aa_id", 159),
+      "aa_id_160" => array("character_alternate_abilities", "aa_id", 160),
+      "aa_id_161" => array("character_alternate_abilities", "aa_id", 161),
+      "aa_id_162" => array("character_alternate_abilities", "aa_id", 162),
+      "aa_id_163" => array("character_alternate_abilities", "aa_id", 163),
+      "aa_id_164" => array("character_alternate_abilities", "aa_id", 164),
+      "aa_id_165" => array("character_alternate_abilities", "aa_id", 165),
+      "aa_id_166" => array("character_alternate_abilities", "aa_id", 166),
+      "aa_id_167" => array("character_alternate_abilities", "aa_id", 167),
+      "aa_id_168" => array("character_alternate_abilities", "aa_id", 168),
+      "aa_id_169" => array("character_alternate_abilities", "aa_id", 169),
+      "aa_id_170" => array("character_alternate_abilities", "aa_id", 170),
+      "aa_id_171" => array("character_alternate_abilities", "aa_id", 171),
+      "aa_id_172" => array("character_alternate_abilities", "aa_id", 172),
+      "aa_id_173" => array("character_alternate_abilities", "aa_id", 173),
+      "aa_id_174" => array("character_alternate_abilities", "aa_id", 174),
+      "aa_id_175" => array("character_alternate_abilities", "aa_id", 175),
+      "aa_id_176" => array("character_alternate_abilities", "aa_id", 176),
+      "aa_id_177" => array("character_alternate_abilities", "aa_id", 177),
+      "aa_id_178" => array("character_alternate_abilities", "aa_id", 178),
+      "aa_id_179" => array("character_alternate_abilities", "aa_id", 179),
+      "aa_id_180" => array("character_alternate_abilities", "aa_id", 180),
+      "aa_id_181" => array("character_alternate_abilities", "aa_id", 181),
+      "aa_id_182" => array("character_alternate_abilities", "aa_id", 182),
+      "aa_id_183" => array("character_alternate_abilities", "aa_id", 183),
+      "aa_id_184" => array("character_alternate_abilities", "aa_id", 184),
+      "aa_id_185" => array("character_alternate_abilities", "aa_id", 185),
+      "aa_id_186" => array("character_alternate_abilities", "aa_id", 186),
+      "aa_id_187" => array("character_alternate_abilities", "aa_id", 187),
+      "aa_id_188" => array("character_alternate_abilities", "aa_id", 188),
+      "aa_id_189" => array("character_alternate_abilities", "aa_id", 189),
+      "aa_id_190" => array("character_alternate_abilities", "aa_id", 190),
+      "aa_id_191" => array("character_alternate_abilities", "aa_id", 191),
+      "aa_id_192" => array("character_alternate_abilities", "aa_id", 192),
+      "aa_id_193" => array("character_alternate_abilities", "aa_id", 193),
+      "aa_id_194" => array("character_alternate_abilities", "aa_id", 194),
+      "aa_id_195" => array("character_alternate_abilities", "aa_id", 195),
+      "aa_id_196" => array("character_alternate_abilities", "aa_id", 196),
+      "aa_id_197" => array("character_alternate_abilities", "aa_id", 197),
+      "aa_id_198" => array("character_alternate_abilities", "aa_id", 198),
+      "aa_id_199" => array("character_alternate_abilities", "aa_id", 199),
+      "aa_value_0" => array("character_alternate_abilities", "aa_value", 0),
+      "aa_value_1" => array("character_alternate_abilities", "aa_value", 1),
+      "aa_value_2" => array("character_alternate_abilities", "aa_value", 2),
+      "aa_value_3" => array("character_alternate_abilities", "aa_value", 3),
+      "aa_value_4" => array("character_alternate_abilities", "aa_value", 4),
+      "aa_value_5" => array("character_alternate_abilities", "aa_value", 5),
+      "aa_value_6" => array("character_alternate_abilities", "aa_value", 6),
+      "aa_value_7" => array("character_alternate_abilities", "aa_value", 7),
+      "aa_value_8" => array("character_alternate_abilities", "aa_value", 8),
+      "aa_value_9" => array("character_alternate_abilities", "aa_value", 9),
+      "aa_value_10" => array("character_alternate_abilities", "aa_value", 10),
+      "aa_value_11" => array("character_alternate_abilities", "aa_value", 11),
+      "aa_value_12" => array("character_alternate_abilities", "aa_value", 12),
+      "aa_value_13" => array("character_alternate_abilities", "aa_value", 13),
+      "aa_value_14" => array("character_alternate_abilities", "aa_value", 14),
+      "aa_value_15" => array("character_alternate_abilities", "aa_value", 15),
+      "aa_value_16" => array("character_alternate_abilities", "aa_value", 16),
+      "aa_value_17" => array("character_alternate_abilities", "aa_value", 17),
+      "aa_value_18" => array("character_alternate_abilities", "aa_value", 18),
+      "aa_value_19" => array("character_alternate_abilities", "aa_value", 19),
+      "aa_value_20" => array("character_alternate_abilities", "aa_value", 20),
+      "aa_value_21" => array("character_alternate_abilities", "aa_value", 21),
+      "aa_value_22" => array("character_alternate_abilities", "aa_value", 22),
+      "aa_value_23" => array("character_alternate_abilities", "aa_value", 23),
+      "aa_value_24" => array("character_alternate_abilities", "aa_value", 24),
+      "aa_value_25" => array("character_alternate_abilities", "aa_value", 25),
+      "aa_value_26" => array("character_alternate_abilities", "aa_value", 26),
+      "aa_value_27" => array("character_alternate_abilities", "aa_value", 27),
+      "aa_value_28" => array("character_alternate_abilities", "aa_value", 28),
+      "aa_value_29" => array("character_alternate_abilities", "aa_value", 29),
+      "aa_value_30" => array("character_alternate_abilities", "aa_value", 30),
+      "aa_value_31" => array("character_alternate_abilities", "aa_value", 31),
+      "aa_value_32" => array("character_alternate_abilities", "aa_value", 32),
+      "aa_value_33" => array("character_alternate_abilities", "aa_value", 33),
+      "aa_value_34" => array("character_alternate_abilities", "aa_value", 34),
+      "aa_value_35" => array("character_alternate_abilities", "aa_value", 35),
+      "aa_value_36" => array("character_alternate_abilities", "aa_value", 36),
+      "aa_value_37" => array("character_alternate_abilities", "aa_value", 37),
+      "aa_value_38" => array("character_alternate_abilities", "aa_value", 38),
+      "aa_value_39" => array("character_alternate_abilities", "aa_value", 39),
+      "aa_value_40" => array("character_alternate_abilities", "aa_value", 40),
+      "aa_value_41" => array("character_alternate_abilities", "aa_value", 41),
+      "aa_value_42" => array("character_alternate_abilities", "aa_value", 42),
+      "aa_value_43" => array("character_alternate_abilities", "aa_value", 43),
+      "aa_value_44" => array("character_alternate_abilities", "aa_value", 44),
+      "aa_value_45" => array("character_alternate_abilities", "aa_value", 45),
+      "aa_value_46" => array("character_alternate_abilities", "aa_value", 46),
+      "aa_value_47" => array("character_alternate_abilities", "aa_value", 47),
+      "aa_value_48" => array("character_alternate_abilities", "aa_value", 48),
+      "aa_value_49" => array("character_alternate_abilities", "aa_value", 49),
+      "aa_value_50" => array("character_alternate_abilities", "aa_value", 50),
+      "aa_value_51" => array("character_alternate_abilities", "aa_value", 51),
+      "aa_value_52" => array("character_alternate_abilities", "aa_value", 52),
+      "aa_value_53" => array("character_alternate_abilities", "aa_value", 53),
+      "aa_value_54" => array("character_alternate_abilities", "aa_value", 54),
+      "aa_value_55" => array("character_alternate_abilities", "aa_value", 55),
+      "aa_value_56" => array("character_alternate_abilities", "aa_value", 56),
+      "aa_value_57" => array("character_alternate_abilities", "aa_value", 57),
+      "aa_value_58" => array("character_alternate_abilities", "aa_value", 58),
+      "aa_value_59" => array("character_alternate_abilities", "aa_value", 59),
+      "aa_value_60" => array("character_alternate_abilities", "aa_value", 60),
+      "aa_value_61" => array("character_alternate_abilities", "aa_value", 61),
+      "aa_value_62" => array("character_alternate_abilities", "aa_value", 62),
+      "aa_value_63" => array("character_alternate_abilities", "aa_value", 63),
+      "aa_value_64" => array("character_alternate_abilities", "aa_value", 64),
+      "aa_value_65" => array("character_alternate_abilities", "aa_value", 65),
+      "aa_value_66" => array("character_alternate_abilities", "aa_value", 66),
+      "aa_value_67" => array("character_alternate_abilities", "aa_value", 67),
+      "aa_value_68" => array("character_alternate_abilities", "aa_value", 68),
+      "aa_value_69" => array("character_alternate_abilities", "aa_value", 69),
+      "aa_value_70" => array("character_alternate_abilities", "aa_value", 70),
+      "aa_value_71" => array("character_alternate_abilities", "aa_value", 71),
+      "aa_value_72" => array("character_alternate_abilities", "aa_value", 72),
+      "aa_value_73" => array("character_alternate_abilities", "aa_value", 73),
+      "aa_value_74" => array("character_alternate_abilities", "aa_value", 74),
+      "aa_value_75" => array("character_alternate_abilities", "aa_value", 75),
+      "aa_value_76" => array("character_alternate_abilities", "aa_value", 76),
+      "aa_value_77" => array("character_alternate_abilities", "aa_value", 77),
+      "aa_value_78" => array("character_alternate_abilities", "aa_value", 78),
+      "aa_value_79" => array("character_alternate_abilities", "aa_value", 79),
+      "aa_value_80" => array("character_alternate_abilities", "aa_value", 80),
+      "aa_value_81" => array("character_alternate_abilities", "aa_value", 81),
+      "aa_value_82" => array("character_alternate_abilities", "aa_value", 82),
+      "aa_value_83" => array("character_alternate_abilities", "aa_value", 83),
+      "aa_value_84" => array("character_alternate_abilities", "aa_value", 84),
+      "aa_value_85" => array("character_alternate_abilities", "aa_value", 85),
+      "aa_value_86" => array("character_alternate_abilities", "aa_value", 86),
+      "aa_value_87" => array("character_alternate_abilities", "aa_value", 87),
+      "aa_value_88" => array("character_alternate_abilities", "aa_value", 88),
+      "aa_value_89" => array("character_alternate_abilities", "aa_value", 89),
+      "aa_value_90" => array("character_alternate_abilities", "aa_value", 90),
+      "aa_value_91" => array("character_alternate_abilities", "aa_value", 91),
+      "aa_value_92" => array("character_alternate_abilities", "aa_value", 92),
+      "aa_value_93" => array("character_alternate_abilities", "aa_value", 93),
+      "aa_value_94" => array("character_alternate_abilities", "aa_value", 94),
+      "aa_value_95" => array("character_alternate_abilities", "aa_value", 95),
+      "aa_value_96" => array("character_alternate_abilities", "aa_value", 96),
+      "aa_value_97" => array("character_alternate_abilities", "aa_value", 97),
+      "aa_value_98" => array("character_alternate_abilities", "aa_value", 98),
+      "aa_value_99" => array("character_alternate_abilities", "aa_value", 99),
+      "aa_value_100" => array("character_alternate_abilities", "aa_value", 100),
+      "aa_value_101" => array("character_alternate_abilities", "aa_value", 101),
+      "aa_value_102" => array("character_alternate_abilities", "aa_value", 102),
+      "aa_value_103" => array("character_alternate_abilities", "aa_value", 103),
+      "aa_value_104" => array("character_alternate_abilities", "aa_value", 104),
+      "aa_value_105" => array("character_alternate_abilities", "aa_value", 105),
+      "aa_value_106" => array("character_alternate_abilities", "aa_value", 106),
+      "aa_value_107" => array("character_alternate_abilities", "aa_value", 107),
+      "aa_value_108" => array("character_alternate_abilities", "aa_value", 108),
+      "aa_value_109" => array("character_alternate_abilities", "aa_value", 109),
+      "aa_value_110" => array("character_alternate_abilities", "aa_value", 110),
+      "aa_value_111" => array("character_alternate_abilities", "aa_value", 111),
+      "aa_value_112" => array("character_alternate_abilities", "aa_value", 112),
+      "aa_value_113" => array("character_alternate_abilities", "aa_value", 113),
+      "aa_value_114" => array("character_alternate_abilities", "aa_value", 114),
+      "aa_value_115" => array("character_alternate_abilities", "aa_value", 115),
+      "aa_value_116" => array("character_alternate_abilities", "aa_value", 116),
+      "aa_value_117" => array("character_alternate_abilities", "aa_value", 117),
+      "aa_value_118" => array("character_alternate_abilities", "aa_value", 118),
+      "aa_value_119" => array("character_alternate_abilities", "aa_value", 119),
+      "aa_value_120" => array("character_alternate_abilities", "aa_value", 120),
+      "aa_value_121" => array("character_alternate_abilities", "aa_value", 121),
+      "aa_value_122" => array("character_alternate_abilities", "aa_value", 122),
+      "aa_value_123" => array("character_alternate_abilities", "aa_value", 123),
+      "aa_value_124" => array("character_alternate_abilities", "aa_value", 124),
+      "aa_value_125" => array("character_alternate_abilities", "aa_value", 125),
+      "aa_value_126" => array("character_alternate_abilities", "aa_value", 126),
+      "aa_value_127" => array("character_alternate_abilities", "aa_value", 127),
+      "aa_value_128" => array("character_alternate_abilities", "aa_value", 128),
+      "aa_value_129" => array("character_alternate_abilities", "aa_value", 129),
+      "aa_value_130" => array("character_alternate_abilities", "aa_value", 130),
+      "aa_value_131" => array("character_alternate_abilities", "aa_value", 131),
+      "aa_value_132" => array("character_alternate_abilities", "aa_value", 132),
+      "aa_value_133" => array("character_alternate_abilities", "aa_value", 133),
+      "aa_value_134" => array("character_alternate_abilities", "aa_value", 134),
+      "aa_value_135" => array("character_alternate_abilities", "aa_value", 135),
+      "aa_value_136" => array("character_alternate_abilities", "aa_value", 136),
+      "aa_value_137" => array("character_alternate_abilities", "aa_value", 137),
+      "aa_value_138" => array("character_alternate_abilities", "aa_value", 138),
+      "aa_value_139" => array("character_alternate_abilities", "aa_value", 139),
+      "aa_value_140" => array("character_alternate_abilities", "aa_value", 140),
+      "aa_value_141" => array("character_alternate_abilities", "aa_value", 141),
+      "aa_value_142" => array("character_alternate_abilities", "aa_value", 142),
+      "aa_value_143" => array("character_alternate_abilities", "aa_value", 143),
+      "aa_value_144" => array("character_alternate_abilities", "aa_value", 144),
+      "aa_value_145" => array("character_alternate_abilities", "aa_value", 145),
+      "aa_value_146" => array("character_alternate_abilities", "aa_value", 146),
+      "aa_value_147" => array("character_alternate_abilities", "aa_value", 147),
+      "aa_value_148" => array("character_alternate_abilities", "aa_value", 148),
+      "aa_value_149" => array("character_alternate_abilities", "aa_value", 149),
+      "aa_value_150" => array("character_alternate_abilities", "aa_value", 150),
+      "aa_value_151" => array("character_alternate_abilities", "aa_value", 151),
+      "aa_value_152" => array("character_alternate_abilities", "aa_value", 152),
+      "aa_value_153" => array("character_alternate_abilities", "aa_value", 153),
+      "aa_value_154" => array("character_alternate_abilities", "aa_value", 154),
+      "aa_value_155" => array("character_alternate_abilities", "aa_value", 155),
+      "aa_value_156" => array("character_alternate_abilities", "aa_value", 156),
+      "aa_value_157" => array("character_alternate_abilities", "aa_value", 157),
+      "aa_value_158" => array("character_alternate_abilities", "aa_value", 158),
+      "aa_value_159" => array("character_alternate_abilities", "aa_value", 159),
+      "aa_value_160" => array("character_alternate_abilities", "aa_value", 160),
+      "aa_value_161" => array("character_alternate_abilities", "aa_value", 161),
+      "aa_value_162" => array("character_alternate_abilities", "aa_value", 162),
+      "aa_value_163" => array("character_alternate_abilities", "aa_value", 163),
+      "aa_value_164" => array("character_alternate_abilities", "aa_value", 164),
+      "aa_value_165" => array("character_alternate_abilities", "aa_value", 165),
+      "aa_value_166" => array("character_alternate_abilities", "aa_value", 166),
+      "aa_value_167" => array("character_alternate_abilities", "aa_value", 167),
+      "aa_value_168" => array("character_alternate_abilities", "aa_value", 168),
+      "aa_value_169" => array("character_alternate_abilities", "aa_value", 169),
+      "aa_value_170" => array("character_alternate_abilities", "aa_value", 170),
+      "aa_value_171" => array("character_alternate_abilities", "aa_value", 171),
+      "aa_value_172" => array("character_alternate_abilities", "aa_value", 172),
+      "aa_value_173" => array("character_alternate_abilities", "aa_value", 173),
+      "aa_value_174" => array("character_alternate_abilities", "aa_value", 174),
+      "aa_value_175" => array("character_alternate_abilities", "aa_value", 175),
+      "aa_value_176" => array("character_alternate_abilities", "aa_value", 176),
+      "aa_value_177" => array("character_alternate_abilities", "aa_value", 177),
+      "aa_value_178" => array("character_alternate_abilities", "aa_value", 178),
+      "aa_value_179" => array("character_alternate_abilities", "aa_value", 179),
+      "aa_value_180" => array("character_alternate_abilities", "aa_value", 180),
+      "aa_value_181" => array("character_alternate_abilities", "aa_value", 181),
+      "aa_value_182" => array("character_alternate_abilities", "aa_value", 182),
+      "aa_value_183" => array("character_alternate_abilities", "aa_value", 183),
+      "aa_value_184" => array("character_alternate_abilities", "aa_value", 184),
+      "aa_value_185" => array("character_alternate_abilities", "aa_value", 185),
+      "aa_value_186" => array("character_alternate_abilities", "aa_value", 186),
+      "aa_value_187" => array("character_alternate_abilities", "aa_value", 187),
+      "aa_value_188" => array("character_alternate_abilities", "aa_value", 188),
+      "aa_value_189" => array("character_alternate_abilities", "aa_value", 189),
+      "aa_value_190" => array("character_alternate_abilities", "aa_value", 190),
+      "aa_value_191" => array("character_alternate_abilities", "aa_value", 191),
+      "aa_value_192" => array("character_alternate_abilities", "aa_value", 192),
+      "aa_value_193" => array("character_alternate_abilities", "aa_value", 193),
+      "aa_value_194" => array("character_alternate_abilities", "aa_value", 194),
+      "aa_value_195" => array("character_alternate_abilities", "aa_value", 195),
+      "aa_value_196" => array("character_alternate_abilities", "aa_value", 196),
+      "aa_value_197" => array("character_alternate_abilities", "aa_value", 197),
+      "aa_value_198" => array("character_alternate_abilities", "aa_value", 198),
+      "aa_value_199" => array("character_alternate_abilities", "aa_value", 199),
+   );
 
    /********************************************
    **              CONSTRUCTOR                **
    ********************************************/
    // get the basic data, like char id.
-   function __construct($name, &$db, &$db_content, &$language, $showsoftdelete = false, $charbrowser_is_admin_page = false)
-   {
-      //dont load characters items until we need to
-      $this->items_populated = false;
+   function __construct($name, $showsoftdelete = false, $charbrowser_is_admin_page = false)
+   {      
+      global $permissions;
+      global $charbrowser_is_admin_page;
 
-      $this->db = $db;
-      $this->db_content = $db_content;
-      $this->language = $language;
+      global $cb_error;
+      global $language;
+      global $cbsql;
+      global $cbsql_content;
+      
+      //make sure the error class exists, store pointer
+      if (!isset($cb_error)) 
+      {
+         die("The Charbrowser_Character class can't be initialized prior to the error class (error.php) being created.");
+      }
+      else
+      {
+         $this->_error = $cb_error;
+      }
+      
+      //make sure the language class exists, store pointer
+      if (!isset($language)) 
+      {
+         $this->_error->message_die("Error", "The Charbrowser_Character class can't be initialized prior to the language array (language.php) language.php.");
+      }
+      else
+      {
+         $this->_language = $language;
+      }
+      
+      //make sure the database classes exist, store pointers
+      if (!isset($cbsql)) 
+      {
+         $this->_error->message_die($this->_language['MESSAGE_ERROR'], sprintf($this->_language['MESSAGE_LOAD_ORDER'], 'Charbrowser_Character', 'db.php'));
+      }
+      else
+      {
+         $this->_sql = $cbsql;
+      }
+      if (!isset($cbsql_content)) 
+      {
+         $this->_error->message_die($this->_language['MESSAGE_ERROR'], sprintf($this->_language['MESSAGE_LOAD_ORDER'], 'Charbrowser_Character', 'db.php'));
+      }
+      else
+      {
+         $this->_sql_content = $cbsql_content;
+      }
+      
+      //dont load characters items until we need to
+      $this->_items_populated = false;
 
       //we can't call the local query method as it assumes the character id
       //which we need to get in the first place
       $table_name = "character_data";
 
-      //don't go sticking just anything in the database
-      if (!IsAlphaNumericSpace($name)) cb_message_die($this->language['MESSAGE_ERROR'],$this->language['MESSAGE_NAME_ALPHA']);
+      //don't go sticking just anything in the database, check for alpha or numeric since we may get an id or name
+      $name = preg_validate($name, '/^[a-zA-Z0-9]*$/', false);
+      if (!$name) $this->_error->message_die($this->_language['MESSAGE_ERROR'],$this->_language['MESSAGE_NAME_ALPHA']);
 
       //initializing with name or id?
       if (is_numeric($name)) {
@@ -782,35 +838,124 @@ TPL;
       $query = sprintf($tpl, $table_name, $column_name, $name);
 
       //get the result/error
-      $result = $this->db->query($query);
+      $result = $this->_sql->query($query);
 
       //collect the data from returned row
-      if($this->db->rows($result))
+      if($this->_sql->rows($result))
       {
          //fetch the row
-         $row = $this->db->nextrow($result);
+         $row = $this->_sql->nextrow($result);
          //save it
-         $this->cached_records[$table_name] = $row;
-         $this->account_id = $row['account_id'];
-         $this->char_id = $row['id'];
-         $this->race = $row['race'];
-         $this->class = $row['class'];
-         $this->level = $row['level'];
+         $this->_cached_records[$table_name] = $row;
+         $this->_account_id = $row['account_id'];
+         $this->_char_id = $row['id'];
+         $this->_race = $row['race'];
+         $this->_class = $row['class'];
+         $this->_level = $row['level'];
       }
-      else cb_message_die($this->language['MESSAGE_ERROR'],$this->language['MESSAGE_NO_FIND']);
+      else $this->_error->message_die($this->_language['MESSAGE_ERROR'],$this->_language['MESSAGE_NO_FIND']);
 
       //dont display deleted characters
-      if (!$showsoftdelete && !$charbrowser_is_admin_page && $row['deleted_at']) cb_message_die($this->language['MESSAGE_ERROR'],$this->language['MESSAGE_NO_FIND']);
+      if (!$showsoftdelete && !$charbrowser_is_admin_page && $row['deleted_at']) 
+      {
+         $this->_error->message_die($this->_language['MESSAGE_ERROR'],$this->_language['MESSAGE_NO_FIND']);
+      }
 
+      //INITIALIZE THE PERMISSIONS FOR THIS CHARACTER
+      //if your wrap charbrowser in your own sites header
+      //and footer. You can have your site override the
+      //default permissions to always be enabled by setting 
+      //$charbrowser_is_admin_page = true;
+      //the intent of this is for charbrowser to inherit
+      //your sites admin privileges
+      //if it's set, return a permission array with 
+      //everything enabled
+      if ($charbrowser_is_admin_page) {
+         $this->_permissions = array(
+            'inventory'         => 0,
+            'coininventory'     => 0,
+            'coinbank'          => 0,
+            'coinsharedbank'    => 0,
+            'bags'              => 0,
+            'bank'              => 0,
+            'sharedbank'        => 0,
+            'corpses'           => 0,
+            'corpse'            => 0,
+            'bots'              => 0,
+            'bot'               => 0,
+            'flags'             => 0,
+            'AAs'               => 0,
+            'leadership'        => 0,
+            'factions'          => 0,
+            'advfactions'       => 0,
+            'skills'            => 0,
+            'languageskills'    => 0,
+            'keys'              => 0,
+            'signatures'        => 0);
+      }
+      
+      //if not admin, determine it based on their account state
+      else
+      {
+         
+         $tpl = <<<TPL
+SELECT `value`
+FROM `quest_globals` 
+WHERE `charid` = %d 
+AND `name` = 'charbrowser_profile';
+TPL;
+         $query = sprintf($tpl, $this->_char_id);
+         $result = $this->_sql->query($query);
+         
+         //first try to set their permissions based on their
+         //settings from the charbrowser quest NPC--which may
+         //or may not exist
+         if($this->_sql->rows($result))
+         { 
+            $questrow = $this->_sql->nextrow($result);
+            if ($questrow['value'] == 1) 
+            {
+               $this->_permissions = $permissions['PUBLIC'];
+            }
+            elseif ($questrow['value'] == 2) 
+            {
+               $this->_permissions = $permissions['PRIVATE'];
+            }
+         }
+         
+         //if that didn't set their permissions default to using
+         //GM/ROLEPLAY/ANON as a guide
+         if ($this->_permissions === false)
+         {
+            if ($this->GetValue('gm')) 
+            {
+               $this->_permissions = $permissions['GM'];
+            }
+            elseif ($this->GetValue('anon') == 2)  
+            {
+               $this->_permissions = $permissions['ROLEPLAY'];
+            }
+            elseif ($this->GetValue('anon') == 1)  
+            {
+               $this->_permissions = $permissions['ANON'];
+            }
+            else
+            {
+               $this->_permissions = $permissions['ALL'];
+            }
+         }
+      }
    }
+   
+
 
    /********************************************
    **              DESTRUCTOR                 **
    ********************************************/
    function __destruct()
    {
-      unset($this->db);
-      unset($this->language);
+      unset($this->_sql);
+      unset($this->_language);
    }
 
 
@@ -818,17 +963,31 @@ TPL;
    **            PUBLIC FUNCTIONS             **
    ********************************************/
 
+   //returns if anyone is allowed to view a named aspect
+   //of this characters profile, blocked = 1, allowed = 0
+   //these correlate to the permission arrays in the config
+   function Permission($key)
+   {
+      //default to blocked
+      if (!is_array($this->_permissions)) return 1;
+
+      //if a bogus value is requested, block it
+      if (!array_key_exists($key, $this->_permissions)) return 1;
+      
+      return $this->_permissions[$key];
+   }
+   
    // Return Account ID
    public function accountid()
    {
-      return $this->account_id;
+      return $this->_account_id;
    }
 
 
    // Return char ID
    public function char_id()
    {
-      return $this->char_id;
+      return $this->_char_id;
    }
 
    //gets all the records for a double pk character from a table
@@ -845,7 +1004,7 @@ TPL;
    {
       //table name goes straight into a query
       // so we need to escape it
-      $table_name = $this->db->escape_string($table_name);
+      $table_name = $this->_sql->escape_string($table_name);
 
       return $this->_getRecordCache($table_name);
    }
@@ -907,7 +1066,7 @@ TPL;
    public function GetAllItems()
    {
       $this->_populateItems();
-      return $this->allitems;
+      return $this->_allitems;
    }
 
 
@@ -915,8 +1074,8 @@ TPL;
    public function GetAAModsByEffect($effectid)
    {
       //see if we already cached this effect id
-      if (array_key_exists($effectid, $this->aa_effects)) {
-         return $this->aa_effects[$effectid];
+      if (array_key_exists($effectid, $this->_aa_effects)) {
+         return $this->_aa_effects[$effectid];
       }
 
       //this will load every rank of every aa with the $effect id.
@@ -933,10 +1092,10 @@ TPL;
          WHERE effect_id = '%s'
 TPL;
       $query = sprintf($tpl, $effectid);
-      $result = $this->db_content->query($query);
+      $result = $this->_sql_content->query($query);
 
       //no aa with this effect
-      if(!$this->db_content->rows($result)) return array();
+      if(!$this->_sql_content->rows($result)) return array();
 
       //first pass is to load all the AA with this effect into a linked array
       //a secondary conditional will capture if the character has the aa and their rank
@@ -946,7 +1105,11 @@ TPL;
       //grab the cached character aas
       $character_aas = $this->_getTableCache('character_alternate_abilities');
 
-      while ($row = $this->db_content->nextrow($result)) {
+      //return an empty result set if the char has no records
+      if (!is_array($character_aas)) return array();
+      
+      $char_rank = array();
+      while ($row = $this->_sql_content->nextrow($result)) {
          //'linked' list of rank modifiers
 
          $aa_rank = array(
@@ -956,11 +1119,14 @@ TPL;
 
          $aa_ranks[intval($row['rank_id'])] = $aa_rank;
 
+         //if the character has this aa
+         if (!array_key_exists('rank_id', $character_aas)) continue;
+         
          //get characters rank for this aa
          $aa = $character_aas[$row['rank_id']];
 
          //this chars rank
-         if ($aa['aa_value'] > 0) {
+         if (is_array($aa) && $aa['aa_value'] > 0) {
             $char_rank[intval($row['rank_id'])] = array(
                 'RELATIVE_RANK' => $aa['aa_value'],
                 'NAME'          => $row['name'],
@@ -968,7 +1134,7 @@ TPL;
          }
       }
 
-      if (count($char_rank) < 1) return array();
+      if (cb_count($char_rank) < 1) return array();
 
 
       //calculate this char's modifier
@@ -996,7 +1162,7 @@ TPL;
          }
       }
 
-      $this->aa_effects[$effectid] = $output;
+      $this->_aa_effects[$effectid] = $output;
       return $output;
    }
 
@@ -1018,7 +1184,7 @@ TPL;
    //function copied/converted from EQEMU sourcecode may 2, 2009
    //gets I/W/N for the type of int/wis casting this char does
    public function GetCasterClass(){
-      switch($this->class)
+      switch($this->_class)
       {
       case CB_CLASS_CLERIC:
       case CB_CLASS_PALADIN:
@@ -1071,7 +1237,7 @@ TPL;
 
 
          $calculation_description[] = array('TYPE' => 'mana', 'TYPE_HEAD' => "AA Modifiers", 'VALUE_HEAD' => "Value");
-         if (count($aa_mods) > 0) {
+         if (cb_count($aa_mods) > 0) {
             foreach($aa_mods as $value) {
                $aa_total_mod += $value['MODIFIER'];
                $calculation_description[] = array('TYPE' => 'mana.row', 'DESCRIPTION' => $value['NAME']." ".$value['RELATIVE_RANK'], 'VALUE' => $value['MODIFIER']);
@@ -1170,7 +1336,7 @@ TPL;
 
 
          $calculation_description[] = array('TYPE' => 'endurance', 'TYPE_HEAD' => "AA Modifiers", 'VALUE_HEAD' => "Value");
-         if (count($aa_mods) > 0) {
+         if (cb_count($aa_mods) > 0) {
             foreach($aa_mods as $value) {
                $aa_total_mod += $value['MODIFIER'];
                $calculation_description[] = array('TYPE' => 'endurance.row', 'DESCRIPTION' => $value['NAME']." ".$value['RELATIVE_RANK'], 'VALUE' => $value['MODIFIER']);
@@ -1252,7 +1418,7 @@ TPL;
 
          //aa mods
          $calculation_description[] = array('TYPE' => 'hp', 'TYPE_HEAD' => "AA Modifiers", 'VALUE_HEAD' => "Value");
-         if (count($aa_mods) > 0) {
+         if (cb_count($aa_mods) > 0) {
             foreach($aa_mods as $value) {
                $aa_total_mod += $value['MODIFIER'];
                $calculation_description[] = array('TYPE' => 'hp.row', 'DESCRIPTION' => $value['NAME']." ".$value['RELATIVE_RANK'], 'VALUE' => $value['MODIFIER']);
@@ -1349,7 +1515,7 @@ TPL;
          $calculation_description[] = array('TYPE' => 'attack.footer', 'DESCRIPTION' => 'Equiped Subtotal', 'SUBTOTAL' => number_format($atksubtotal), 'ROLLTOTAL' => number_format($atksubtotal));
 
          $calculation_description[] = array('TYPE' => 'attack', 'TYPE_HEAD' => "AA Modifiers", 'VALUE_HEAD' => "Value");
-         if (count($aa_mods) > 0) {
+         if (cb_count($aa_mods) > 0) {
             foreach($aa_mods as $value) {
                $aa_total_mod += $value['MODIFIER'];
                $calculation_description[] = array('TYPE' => 'attack.row', 'DESCRIPTION' => $value['NAME']." ".$value['RELATIVE_RANK'], 'VALUE' => $value['MODIFIER']);
@@ -1427,9 +1593,9 @@ TPL;
       );
 
       //max level and zero index fix
-      $level = min(105, $this->level) - 1;
+      $level = min(105, $this->_level) - 1;
 
-      switch ($this->class) {
+      switch ($this->_class) {
          case CB_CLASS_WARRIOR:
             return $war_softcaps[$level];
          case CB_CLASS_CLERIC:
@@ -1465,7 +1631,7 @@ TPL;
    {
       // These are based on the dev post, they seem to be correct for every level
       // AKA no more hard caps
-      switch ($this->class) {
+      switch ($this->_class) {
          case CB_CLASS_WARRIOR:
             return 0.35;
          case CB_CLASS_CLERIC:
@@ -1500,76 +1666,76 @@ TPL;
    public function GetClassRaceACBonus()
    {
       $ac_bonus = 0;
-      if ($this->class == CB_CLASS_MONK) {
+      if ($this->_class == CB_CLASS_MONK) {
          $hardcap = 30;
          $softcap = 14;
-         if ($this->level > 99) {
+         if ($this->_level > 99) {
             $hardcap = 58;
             $softcap = 35;
          }
-         else if ($this->level > 94) {
+         else if ($this->_level > 94) {
             $hardcap = 57;
             $softcap = 34;
          }
-         else if ($this->level > 89) {
+         else if ($this->_level > 89) {
             $hardcap = 56;
             $softcap = 33;
          }
-         else if ($this->level > 84) {
+         else if ($this->_level > 84) {
             $hardcap = 55;
             $softcap = 32;
          }
-         else if ($this->level > 79) {
+         else if ($this->_level > 79) {
             $hardcap = 54;
             $softcap = 31;
          }
-         else if ($this->level > 74) {
+         else if ($this->_level > 74) {
             $hardcap = 53;
             $softcap = 30;
          }
-         else if ($this->level > 69) {
+         else if ($this->_level > 69) {
             $hardcap = 53;
             $softcap = 28;
          }
-         else if ($this->level > 64) {
+         else if ($this->_level > 64) {
             $hardcap = 53;
             $softcap = 26;
          }
-         else if ($this->level > 63) {
+         else if ($this->_level > 63) {
             $hardcap = 50;
             $softcap = 24;
          }
-         else if ($this->level > 61) {
+         else if ($this->_level > 61) {
             $hardcap = 47;
             $softcap = 24;
          }
-         else if ($this->level > 59) {
+         else if ($this->_level > 59) {
             $hardcap = 45;
             $softcap = 24;
          }
-         else if ($this->level > 54) {
+         else if ($this->_level > 54) {
             $hardcap = 40;
             $softcap = 20;
          }
-         else if ($this->level > 50) {
+         else if ($this->_level > 50) {
             $hardcap = 38;
             $softcap = 18;
          }
-         else if ($this->level > 44) {
+         else if ($this->_level > 44) {
             $hardcap = 36;
             $softcap = 17;
          }
-         else if ($this->level > 29) {
+         else if ($this->_level > 29) {
             $hardcap = 34;
             $softcap = 16;
          }
-         else if ($this->level > 14) {
+         else if ($this->_level > 14) {
             $hardcap = 32;
             $softcap = 15;
          }
          $weight = $this->_cppCastInt($this->getWT()/10);
          if ($weight < $hardcap - 1) {
-            $temp = $this->level + 5;
+            $temp = $this->_level + 5;
             if ($weight > $softcap) {
                $redux = ($weight - $softcap) * 6.66667;
                $redux = (100.0 - min(100.0, $redux)) * 0.01;
@@ -1578,16 +1744,16 @@ TPL;
             $ac_bonus = $this->_cppCastInt((4.0 * $temp) / 3.0);
          }
          else if ($weight > $hardcap + 1) {
-            $temp = $this->level + 5;
+            $temp = $this->_level + 5;
             $multiplier = min(1.0, ($weight - ($hardcap - 10.0)) / 100.0);
             $temp = (4.0 * $temp) / 3.0;
             $ac_bonus -= $this->_cppCastInt($temp * $multiplier);
          }
       }
 
-      if ($this->class == CB_CLASS_ROGUE) {
+      if ($this->_class == CB_CLASS_ROGUE) {
          $AGI = $this->getAGI();
-         $level_scaler = $this->level - 26;
+         $level_scaler = $this->_level - 26;
          if ($AGI < 80)
             $ac_bonus = $this->_cppCastInt($level_scaler / 4);
          else if ($AGI < 85)
@@ -1602,8 +1768,9 @@ TPL;
             $ac_bonus = 12;
       }
 
-      if ($this->class == CB_CLASS_BEASTLORD) {
-         $level_scaler = $this->level - 6;
+      if ($this->_class == CB_CLASS_BEASTLORD) {
+         $level_scaler = $this->_level - 6;
+         $AGI = $this->getAGI();
          if ($AGI < 80)
             $ac_bonus = $this->_cppCastInt($level_scaler / 5);
          else if ($AGI < 85)
@@ -1618,8 +1785,8 @@ TPL;
             $ac_bonus = 16;
       }
 
-      if ($this->race == CB_RACE_IKSAR) {
-         $ac_bonus += max(10, min($this->level, 35));
+      if ($this->_race == CB_RACE_IKSAR) {
+         $ac_bonus += max(10, min($this->_level, 35));
       }
 
       return $this->_cppCastInt($ac_bonus);
@@ -1673,14 +1840,14 @@ TPL;
       $ac = $this->_cppCastInt(($ac * 4) / 3);
 
       // anti-twink,
-      if (!$skip_caps && $this->level < 50) {
-         $ac = $this->_cppCastInt(min($ac, 25 + 6 * $this->level));
+      if (!$skip_caps && $this->_level < 50) {
+         $ac = $this->_cppCastInt(min($ac, 25 + 6 * $this->_level));
       }
 
       $ac = $this->_cppCastInt(max(0, $ac + $this->GetClassRaceACBonus()));
 
       $spell_aa_ac = $this->GetAAModTotalByEffect(1) + $this->GetAAModTotalByEffect(416); //aa AC bonuses effect 1 a& 416
-      if ($this->class >= CB_CLASS_NECROMANCER && $this->class <= CB_CLASS_ENCHANTER) {
+      if ($this->_class >= CB_CLASS_NECROMANCER && $this->_class <= CB_CLASS_ENCHANTER) {
          $ac += $this->_cppCastInt($this->_getValue('defense', 0) / 2 + $spell_aa_ac / 3);
       }
       else {
@@ -1717,12 +1884,14 @@ TPL;
    //AKA mitigation AC, this is the value used for combat, not the one displayed (which isnt used)
    public function ACSum($skip_caps = false, &$calculation_description = 'unset')
    {
+      $shield_ac = 0;
       if (!is_array($calculation_description)) $calculation_description = array();
 
       $aa_mods1 = $this->GetAAModsByEffect(SE_ARMORCLASS); //effect 1
       $aa_mods2 = $this->GetAAModsByEffect(SE_ACV2); //effect 416
+      $aa_total_mod1 = 0;
       $calculation_description[] = array('TYPE' => 'mit_ac', 'TYPE_HEAD' => "AC Alt Abilities", 'VALUE_HEAD' => "Value");
-      if (count($aa_mods1) + count($aa_mods2) < 1) {
+      if (cb_count($aa_mods1) + cb_count($aa_mods2) < 1) {
          $calculation_description[] = array('TYPE' => 'mit_ac.row', 'DESCRIPTION' => 'None', 'VALUE' => '0');
       }
       else {
@@ -1739,8 +1908,9 @@ TPL;
 
 
       $aa_mods3 = $this->GetAAModsByEffect(SE_COMBATSTABILITY); //effect 259
+      $aa_total_mod2 = 0;
       $calculation_description[] = array('TYPE' => 'mit_ac', 'TYPE_HEAD' => "Stability Alt Abilities", 'VALUE_HEAD' => "Value");
-      if (count($aa_mods3) < 1) {
+      if (cb_count($aa_mods3) < 1) {
          $calculation_description[] = array('TYPE' => 'mit_ac.row', 'DESCRIPTION' => 'None', 'VALUE' => '0');
       }
       else {
@@ -1768,7 +1938,6 @@ TPL;
 
       $totalAC = 0; // this should be base AC whenever shrouds come around
 
-      $shield_ac = 0;
       /* need to implement shield modifier TODO
       if (HasShieldEquiped()) {
          auto client = CastToClient();
@@ -1792,8 +1961,8 @@ TPL;
 
       // anti-twink,
       $level_cap_mod = 0;
-      if (!$skip_caps && $this->level < 50) {
-         $levelcap_ac = 25 + 6 * $this->level;
+      if (!$skip_caps && $this->_level < 50) {
+         $levelcap_ac = 25 + 6 * $this->_level;
          if ($levelcap_ac  < $item_mod ) {
             $level_cap_mod = $item_mod - $levelcap_ac;
             $calculation_description[] = array('TYPE' => 'mit_ac.row', 'DESCRIPTION' => "Level Cap Mod", 'VALUE' => number_format($level_cap_mod));
@@ -1813,7 +1982,7 @@ TPL;
 
 
       //int caster mod
-      if ($this->class >= CB_CLASS_NECROMANCER && $this->class <= CB_CLASS_ENCHANTER) {
+      if ($this->_class >= CB_CLASS_NECROMANCER && $this->_class <= CB_CLASS_ENCHANTER) {
          $int_caster_mod = $this->_cppCastInt($this->_getValue('defense', 0) / 2 + $aa_total_mod1 / 3);
          $calculation_description[] = array('TYPE' => 'mit_ac.row', 'DESCRIPTION' => "Defense Skill / 2", 'VALUE' => number_format($this->_cppCastInt($this->_getValue('defense', 0) / 2)));
          $calculation_description[] = array('TYPE' => 'mit_ac.row', 'DESCRIPTION' => "AC AA / 3", 'VALUE' => number_format($this->_cppCastInt($aa_total_mod1 / 3)));
@@ -1842,8 +2011,10 @@ TPL;
       }
 
 
-      if (!$skip_caps) { //pulled from https://gist.github.com/fe1c0e77a5f9c40d6ce037c8efe2cf9a
-
+      if (!$skip_caps) 
+      { //pulled from https://gist.github.com/fe1c0e77a5f9c40d6ce037c8efe2cf9a
+         $softcap_mod = 0;
+         
          if ($totalAC > $softcap) {
             $tempTotalAC = $totalAC;
             $over_cap = $totalAC - $softcap;
@@ -1865,8 +2036,8 @@ TPL;
    {
       $mainhandslot = 13;
       $handtohand = 45;
-      if (array_key_exists($mainhandslot, $this->allitems)) {
-         return $this->allitems[$mainhandslot]->skill();
+      if (array_key_exists($mainhandslot, $this->_allitems)) {
+         return $this->_allitems[$mainhandslot]->skill();
       }
       else {
          return $handtohand;
@@ -1878,85 +2049,85 @@ TPL;
    public function getSTR()
    {
       $this->_populateItems();
-      return $this->_getValue('str', 0) + $this->itemstats->STR();
+      return $this->_getValue('str', 0) + $this->_itemstats->STR();
    }
 
    public function getSTA()
    {
       $this->_populateItems();
-      return $this->_getValue('sta', 0) + $this->itemstats->STA();
+      return $this->_getValue('sta', 0) + $this->_itemstats->STA();
    }
 
    public function getDEX()
    {
       $this->_populateItems();
-      return $this->_getValue('dex', 0) + $this->itemstats->DEX();
+      return $this->_getValue('dex', 0) + $this->_itemstats->DEX();
    }
 
    public function getAGI()
    {
       $this->_populateItems();
-      return $this->_getValue('agi', 0) + $this->itemstats->AGI();
+      return $this->_getValue('agi', 0) + $this->_itemstats->AGI();
    }
 
    public function getINT()
    {
       $this->_populateItems();
-      return $this->_getValue('int', 0) + $this->itemstats->INT();
+      return $this->_getValue('int', 0) + $this->_itemstats->INT();
    }
 
    public function getWIS()
    {
       $this->_populateItems();
-      return $this->_getValue('wis', 0) + $this->itemstats->WIS();
+      return $this->_getValue('wis', 0) + $this->_itemstats->WIS();
    }
 
    public function getCHA()
    {
       $this->_populateItems();
-      return $this->_getValue('cha', 0) + $this->itemstats->CHA();
+      return $this->_getValue('cha', 0) + $this->_itemstats->CHA();
    }
 
    public function getHSTR()
    {
       $this->_populateItems();
-      return $this->itemstats->HSTR();
+      return $this->_itemstats->HSTR();
    }
 
    public function getHSTA()
    {
       $this->_populateItems();
-      return $this->itemstats->HSTA();
+      return $this->_itemstats->HSTA();
    }
 
    public function getHDEX()
    {
       $this->_populateItems();
-      return $this->itemstats->HDEX();
+      return $this->_itemstats->HDEX();
    }
 
    public function getHAGI()
    {
       $this->_populateItems();
-      return $this->itemstats->HAGI();
+      return $this->_itemstats->HAGI();
    }
 
    public function getHINT()
    {
       $this->_populateItems();
-      return $this->itemstats->HINT();
+      return $this->_itemstats->HINT();
    }
 
    public function getHWIS()
    {
       $this->_populateItems();
-      return $this->itemstats->HWIS();
+      return $this->_itemstats->HWIS();
    }
 
    public function getHCHA()
    {
       $this->_populateItems();
-      return $this->itemstats->HCHA();
+      return $this->_itemstats->HCHA();
    }
 
    public function getPR()
@@ -1965,13 +2136,13 @@ TPL;
 
       $byClass = array(0,0,0,0,4,0,0,0,8,0,0,0,0,0,0,0);
 
-      if($this->race == 8) $retval =  20;
-      else if($this->race == 330) $retval = 30;
-      else if($this->race == 74) $retval =  30;
-      else if($this->race == 11) $retval =  20;
+      if($this->_race == 8) $retval =  20;
+      else if($this->_race == 330) $retval = 30;
+      else if($this->_race == 74) $retval =  30;
+      else if($this->_race == 11) $retval =  20;
       else $retval =  15;
 
-      $retval += $byClass[$this->class] + $this->itemstats->PR();
+      $retval += $byClass[$this->_class] + $this->_itemstats->PR();
 
       return $retval;
    }
@@ -1982,13 +2153,13 @@ TPL;
 
       $byClass = array(0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
 
-      if($this->race == 8) $retval = 30;
-      else if($this->race == 3) $retval = 30;
-      else if($this->race == 330) $retval = 30;
-      else if($this->race == 74) $retval = 30;
+      if($this->_race == 8) $retval = 30;
+      else if($this->_race == 3) $retval = 30;
+      else if($this->_race == 330) $retval = 30;
+      else if($this->_race == 74) $retval = 30;
       else $retval = 25;
 
-      $retval += $byClass[$this->class] + $this->itemstats->MR();
+      $retval += $byClass[$this->_class] + $this->_itemstats->MR();
 
       return $retval;
    }
@@ -1999,11 +2170,11 @@ TPL;
 
       $byClass = array(0,0,8,0,4,0,0,0,0,0,0,0,0,0,4,0);
 
-      if($this->race == 3) $retval = 10;
-      else if($this->race == 11) $retval = 20;
+      if($this->_race == 3) $retval = 10;
+      else if($this->_race == 11) $retval = 20;
       else $retval = 15;
 
-      $retval += $byClass[$this->class] + $this->itemstats->DR();
+      $retval += $byClass[$this->_class] + $this->_itemstats->DR();
 
       return $retval;
    }
@@ -2014,11 +2185,11 @@ TPL;
 
       $byClass = array(0,0,0,4,0,0,8,0,0,0,0,0,0,0,0,0);
 
-      if($this->race == 128) $retval = 30;
-      else if($this->race == 9) $retval = 5;
+      if($this->_race == 128) $retval = 30;
+      else if($this->_race == 9) $retval = 5;
       else $retval = 25;
 
-      $retval += $byClass[$this->class] + $this->itemstats->FR();
+      $retval += $byClass[$this->_class] + $this->_itemstats->FR();
 
       return $retval;
    }
@@ -2029,11 +2200,11 @@ TPL;
 
       $byClass = array(0,0,0,4,0,0,0,0,0,0,0,0,0,0,4,0);
 
-      if($this->race == 2) $retval = 35;
-      else if($this->race == 128) $retval = 15;
+      if($this->_race == 2) $retval = 35;
+      else if($this->_race == 128) $retval = 15;
       else $retval = 25;
 
-      $retval += $byClass[$this->class] + $this->itemstats->CR();
+      $retval += $byClass[$this->_class] + $this->_itemstats->CR();
 
       return $retval;
    }
@@ -2041,103 +2212,103 @@ TPL;
    public function getCOR()
    {
       $this->_populateItems();
-      return $this->itemstats->COR();
+      return $this->_itemstats->COR();
    }
 
    public function getHPR()
    {
       $this->_populateItems();
-      return $this->itemstats->HPR();
+      return $this->_itemstats->HPR();
    }
 
    public function getHFR()
    {
       $this->_populateItems();
-      return $this->itemstats->HFR();
+      return $this->_itemstats->HFR();
    }
 
    public function getHMR()
    {
       $this->_populateItems();
-      return $this->itemstats->HMR();
+      return $this->_itemstats->HMR();
    }
 
    public function getHDR()
    {
       $this->_populateItems();
-      return $this->itemstats->HDR();
+      return $this->_itemstats->HDR();
    }
 
    public function getHCR()
    {
       $this->_populateItems();
-      return $this->itemstats->HCR();
+      return $this->_itemstats->HCR();
    }
 
    public function getHCOR()
    {
       $this->_populateItems();
-      return $this->itemstats->HCOR();
+      return $this->_itemstats->HCOR();
    }
 
    public function getWT()
    {
       $this->_populateItems();
-      return $this->itemstats->WT();
+      return $this->_itemstats->WT();
    }
 
    public function getFT()
    {
       $this->_populateItems();
-      return $this->itemstats->FT();
+      return $this->_itemstats->FT();
    }
 
    public function getDS()
    {
       $this->_populateItems();
-      return $this->itemstats->DS();
+      return $this->_itemstats->DS();
    }
 
    public function getHaste()
    {
       $this->_populateItems();
-      return $this->itemstats->haste();
+      return $this->_itemstats->haste();
    }
 
    public function getRegen()
    {
       $this->_populateItems();
-      return $this->itemstats->regen();
+      return $this->_itemstats->regen();
    }
 
    public function getItemAC()
    {
       $this->_populateItems();
-      return $this->itemstats->AC();
+      return $this->_itemstats->AC();
    }
 
    public function getItemHP()
    {
       $this->_populateItems();
-      return $this->itemstats->hp();
+      return $this->_itemstats->hp();
    }
 
    public function getItemATK()
    {
       $this->_populateItems();
-      return $this->itemstats->attack();
+      return $this->_itemstats->attack();
    }
 
    public function getItemEndurance()
    {
       $this->_populateItems();
-      return $this->itemstats->endurance();
+      return $this->_itemstats->endurance();
    }
 
    public function getItemMana()
    {
       $this->_populateItems();
-      return $this->itemstats->mana();
+      return $this->_itemstats->mana();
    }
 
 
@@ -2158,7 +2329,7 @@ TPL;
    //fetches base data for this character
    private function _getBaseData()
    {
-      if (is_array($this->base_data)) return $this->base_data;
+      if (is_array($this->_base_data)) return $this->_base_data;
 
       //load and cache the base data for this race/class
       $tpl = <<<TPL
@@ -2168,33 +2339,33 @@ TPL;
       AND class= '%s'
       LIMIT 1
 TPL;
-      $query = sprintf($tpl, $this->level, $this->class);
-      $result = $this->db_content->query($query);
+      $query = sprintf($tpl, $this->_level, $this->_class);
+      $result = $this->_sql_content->query($query);
 
-      if(!$this->db_content->rows($result)) {
-         cb_message_die('profile.php', $this->language['MESSAGE_NO_BASE_DATA'], $this->language['MESSAGE_ERROR']);
+      if(!$this->_sql_content->rows($result)) {
+         $this->_error->message_die($this->_language['MESSAGE_ERROR'], $this->_language['MESSAGE_NO_BASE_DATA']);
       }
 
-      $this->base_data = $this->db_content->nextrow($result);
-      return $this->base_data;
+      $this->_base_data = $this->_sql_content->nextrow($result);
+      return $this->_base_data;
    }
 
 
-   //query this profiles items and add up all the stats
+   //query this character's items and add up all the stats
    private function _populateItems()
    {  
       global $cbspellcache;
       global $cbitemcache;
    
       //only run it once
-      if ($this->items_populated) return;
-      $this->items_populated = true;
+      if ($this->_items_populated) return;
+      $this->_items_populated = true;
 
       //place where all the items stats are added up
-      $this->itemstats = new stats();
+      $this->_itemstats = new Charbrowser_Stats();
 
       //holds all of the items and info about them
-      $this->allitems = array();
+      $this->_allitems = array();
 
       //FETCH INVENTORY ROWS
       // pull characters inventory slotid is loaded as
@@ -2212,9 +2383,9 @@ TPL;
       FROM inventory
       WHERE charid = '%s'  
 TPL;
-      $query = sprintf($tpl, $this->char_id);
-      $result = $this->db->query($query);
-      $inventory_results = $this->db->fetch_all($result);
+      $query = sprintf($tpl, $this->_char_id);
+      $result = $this->_sql->query($query);
+      $inventory_results = $this->_sql->fetch_all($result);
       
       
       //FETCH SHARED BANK ROWS
@@ -2233,9 +2404,9 @@ TPL;
       FROM sharedbank
       WHERE acctid = '%s'  
 TPL;
-      $query = sprintf($tpl, $this->_getValue('account_id', $default));
-      $result = $this->db->query($query);
-      $bank_results = $this->db->fetch_all($result);
+      $query = sprintf($tpl, $this->_getValue('account_id', 0));
+      $result = $this->_sql->query($query);
+      $bank_results = $this->_sql->fetch_all($result);
       
       
       //CACHE ITEMS
@@ -2258,7 +2429,7 @@ TPL;
          $itemrow = $cbitemcache->get_item($row['itemid']);
          //merge the inventory and item row
          $row = array_merge($itemrow, $row);
-         $tempitem = new item($row);
+         $tempitem = new Charbrowser_Item($row);
          for ($i = 1; $i <= 5; $i++) {
             if ($row["augslot" . $i]) {
                $aug_item_id = $row["augslot" . $i];
@@ -2266,18 +2437,18 @@ TPL;
                $tempitem->addaug($augrow);
                //add stats only if it's equiped
                if ($tempitem->type() == EQUIPMENT) {
-                  $this->itemstats->additem($augrow);
+                  $this->_itemstats->additem($augrow);
                }
             }
          }
 
          if ($tempitem->type() == EQUIPMENT)
-            $this->itemstats->additem($row);
+            $this->_itemstats->additem($row);
 
          if ($tempitem->type() == EQUIPMENT || $tempitem->type() == INVENTORY)
-            $this->itemstats->addWT($row['weight']);
+            $this->_itemstats->addWT($row['weight']);
 
-         $this->allitems[$tempitem->slot()] = &$tempitem;
+         $this->_allitems[$tempitem->slot()] = &$tempitem;
          unset($tempitem);
       }
 
@@ -2289,7 +2460,7 @@ TPL;
          $itemrow = $cbitemcache->get_item($row['itemid']);
          //merge the inventory and item row
          $row      = array_merge($itemrow, $row);
-         $tempitem = new item($row);
+         $tempitem = new Charbrowser_Item($row);
          for ($i = 1; $i <= 5; $i++) {
             if ($row["augslot" . $i]) {
                $aug_item_id = $row["augslot" . $i];
@@ -2298,7 +2469,7 @@ TPL;
             }
          }
 
-         $this->allitems[$tempitem->slot()] = $tempitem;
+         $this->_allitems[$tempitem->slot()] = $tempitem;
       }
    }
 
@@ -2306,15 +2477,15 @@ TPL;
    private function _getValue($data_key, $default)
    {
       // Pull Profile Info
-      if (!array_key_exists($data_key, $this->locator))
+      if (!array_key_exists($data_key, $this->_locator))
       {
-         cb_message_die('profile.php', sprintf($this->language['MESSAGE_PROF_NOKEY'], $data_key),$this->language['MESSAGE_ERROR']);
+         $this->_error->message_die($this->_language['MESSAGE_ERROR'], sprintf($this->_language['MESSAGE_PROF_NOKEY'], $data_key));
       }
 
       //get the locator data for this setting so we can find it
-      $table_name  = $this->locator[$data_key][LOCATOR_TABLE];
-      $column_name = $this->locator[$data_key][LOCATOR_COLUMN];
-      $index       = $this->locator[$data_key][LOCATOR_INDEX];
+      $table_name  = $this->_locator[$data_key][LOCATOR_TABLE];
+      $column_name = $this->_locator[$data_key][LOCATOR_COLUMN];
+      $index       = $this->_locator[$data_key][LOCATOR_INDEX];
 
       //if the locator lists a strict index of false then there
       //will only be 1 record
@@ -2351,7 +2522,7 @@ TPL;
       //make sure our column exists in the record
       if (!array_key_exists($column_name, $cached_record))
       {
-            cb_message_die('profile.php', sprintf($this->language['MESSAGE_PROF_NOCACHE'], $data_key, $table_name, $column_name),$this->language['MESSAGE_ERROR']);
+            $this->_error->message_die($this->_language['MESSAGE_ERROR'], sprintf($this->_language['MESSAGE_PROF_NOCACHE'], $data_key, $table_name, $column_name));
       }
 
       //return the value
@@ -2366,31 +2537,31 @@ TPL;
    private function _getTableCache($table_name)
    {
       //get the name of the second pk on the table
-      if (!array_key_exists($table_name, $this->locator_pk))
+      if (!array_key_exists($table_name, $this->_locator_pk))
       {
-         cb_message_die('profile.php', sprintf($this->language['MESSAGE_PROF_NOTABKEY'], $table_name),$this->language['MESSAGE_ERROR']);
+         $this->_error->message_die($this->_language['MESSAGE_ERROR'], sprintf($this->_language['MESSAGE_PROF_NOTABKEY'], $table_name));
       }
-      $second_column_name = $this->locator_pk[$table_name];
+      $second_column_name = $this->_locator_pk[$table_name];
 
       //if we haven't already loaded data from this table then load it
-      if (!array_key_exists($table_name, $this->cached_tables))
+      if (!array_key_exists($table_name, $this->_cached_tables))
       {
          //since we are accessing the database, we'll go ahead and
          //load every column for the character and store it for later use
          $result = $this->_doCharacterQuery($table_name);
 
          //parse the result
-         if($this->db->rows($result))
+         if($this->_sql->rows($result))
          {
             //this is a table with two primary keys, we need to load it
             //into a supporting array, indexed by it's second pk
             $temp_array = array();
-            while($row = $this->db->nextrow($result))
+            while($row = $this->_sql->nextrow($result))
             {
                $temp_array[$row[$second_column_name]] = $row;
             }
 
-            $this->cached_tables[$table_name] = $temp_array;
+            $this->_cached_tables[$table_name] = $temp_array;
          }
          else
          {
@@ -2399,7 +2570,7 @@ TPL;
       }
 
       //hand the table/record over
-      return $this->cached_tables[$table_name];
+      return $this->_cached_tables[$table_name];
    }
 
 
@@ -2410,24 +2581,24 @@ TPL;
    {
 
       //if we haven't already loaded data from this table then load it
-      if (!array_key_exists($table_name, $this->cached_records))
+      if (!array_key_exists($table_name, $this->_cached_records))
       {
          //since we are accessing the database, we'll go ahead and
          //load every column for the character and store it for later use
          $result = $this->_doCharacterQuery($table_name);
 
          //parse the result
-         if($this->db->rows($result))
+         if($this->_sql->rows($result))
          {
             //this is a simple table with only 1 row per character
             //we just store it in the root structure
-            $this->cached_records[$table_name] = $this->db->nextrow($result);
+            $this->_cached_records[$table_name] = $this->_sql->nextrow($result);
          }
-         else cb_message_die('profile.php', sprintf($this->language['MESSAGE_PROF_NOROWS'], $table_name),$this->language['MESSAGE_ERROR']);
+         else $this->_error->message_die($this->_language['MESSAGE_ERROR'], sprintf($this->_language['MESSAGE_PROF_NOROWS'], $table_name));
       }
 
       //hand the table/record over
-      return $this->cached_records[$table_name];
+      return $this->_cached_records[$table_name];
    }
 
    //gets all the records from a table for this character instance
@@ -2440,16 +2611,15 @@ TPL;
       FROM `%s` 
       WHERE `id` = '%d'
 TPL;
-      $query = sprintf($tpl, $table_name, $this->char_id);
+      $query = sprintf($tpl, $table_name, $this->_char_id);
 
       //get the result/error
-      $result = $this->db->query($query);
+      $result = $this->_sql->query($query);
 
       //serve em up
       return $result;
    }
 
 }
-
 
 ?>

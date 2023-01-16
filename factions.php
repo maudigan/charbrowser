@@ -48,7 +48,11 @@
 /*********************************************
                  INCLUDES
 *********************************************/
-define('INCHARBROWSER', true);
+//define this as an entry point to unlock includes
+if ( !defined('INCHARBROWSER') ) 
+{
+   define('INCHARBROWSER', true);
+}
 include_once(__DIR__ . "/include/common.php");
 include_once(__DIR__ . "/include/profile.php");
 include_once(__DIR__ . "/include/db.php");
@@ -74,19 +78,17 @@ function FactionToString($character_value) {
 
 
 /*********************************************
-         SETUP PROFILE/PERMISSIONS
+       SETUP CHARACTER CLASS & PERMISSIONS
 *********************************************/
-if(!$_GET['char']) cb_message_die($language['MESSAGE_ERROR'],$language['MESSAGE_NO_CHAR']);
-else $charName = $_GET['char'];
+$charName = preg_Get_Post('char', '/^[a-zA-Z]+$/', false, $language['MESSAGE_ERROR'],$language['MESSAGE_NO_CHAR'], true);
 
 //character initializations
-$char = new profile($charName, $cbsql, $cbsql_content, $language, $showsoftdelete, $charbrowser_is_admin_page); //the profile class will sanitize the character name
+$char = new Charbrowser_Character($charName, $showsoftdelete, $charbrowser_is_admin_page); //the Charbrowser_Character class will sanitize the character name
 $charID = $char->char_id();
 $name = $char->GetValue('name');
-$mypermission = GetPermissions($char->GetValue('gm'), $char->GetValue('anon'), $char->char_id());
 
 //block view if user level doesnt have permission
-if ($mypermission['factions']) cb_message_die($language['MESSAGE_ERROR'],$language['MESSAGE_ITEM_NO_VIEW']);
+if ($char->Permission('factions')) $cb_error->message_die($language['MESSAGE_NOTICE'],$language['MESSAGE_ITEM_NO_VIEW']);
 
 
 /*********************************************
@@ -155,7 +157,7 @@ output_profile_menu($name, 'factions');
 /*********************************************
               POPULATE BODY
 *********************************************/
-if (!$mypermission['advfactions']) {
+if (!$char->Permission('advfactions')) {
    $cb_template->set_filenames(array(
       'factions' => 'factions_advanced_body.tpl')
    );
@@ -183,9 +185,16 @@ $cb_template->assign_vars(array(
 );
 
 //advanced factions
-if (!$mypermission['advfactions']) {
+if (!$char->Permission('advfactions')) {
    foreach($joined_factions as $faction) {
-      $charmod = intval($faction['current_value']);
+      if (array_key_exists('current_value',$faction))
+      {
+         $charmod = intval($faction['current_value']);
+      }
+      else
+      {
+         $charmod = 0;
+      }
       $total = $faction['base'] + $charmod + $faction['classmod'] + $faction['racemod'] + $faction['deitymod'];
       $cb_template->assign_both_block_vars("factions", array(
          'ID'      => $faction['id'],
@@ -204,7 +213,14 @@ if (!$mypermission['advfactions']) {
 //simple factions
 else {
    foreach($joined_factions as $faction) {
-      $charmod = intval($faction['current_value']);
+      if (array_key_exists('current_value',$faction))
+      {
+         $charmod = intval($faction['current_value']);
+      }
+      else
+      {
+         $charmod = 0;
+      }
       $total = $faction['base'] + $charmod + $faction['classmod'] + $faction['racemod'] + $faction['deitymod'];
       $cb_template->assign_both_block_vars("factions", array(
          'ID'      => $faction['id'],
@@ -220,7 +236,7 @@ else {
 *********************************************/
 $cb_template->pparse('factions');
 
-$cb_template->destroy;
+$cb_template->destroy();
 
 include(__DIR__ . "/include/footer.php");
 ?>

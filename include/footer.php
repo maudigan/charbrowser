@@ -23,11 +23,13 @@
  *   October 25, 2022 - Maudigan
  *     added script execution time display
  *     added the no-header option for in game browser
+ *   January 16, 2023 - Maudigan
+ *     make sure the $dbp vars are declared before use
  *
  ***************************************************************************/
  
-//dont make a header if there is an API request 
-if (isset($_GET['api'])) return;
+//dont make a footer if there is an API request 
+if (checkParm('api')) return;
  
 if ( !defined('INCHARBROWSER') )
 {
@@ -35,19 +37,24 @@ if ( !defined('INCHARBROWSER') )
 }
 
 
-//do we have a seperate content DB?
 //if db performance is turned on fetch the output
-if (defined('DB_PERFORMANCE')) 
+if (defined('DEVELOPER_MODE')) 
 {
+   //initialize developer output vars
+   $dbp_table_output = '';
+   $dbp_table_output_content = '';
+   $dbp_output = '';
+   $dbp_output_content = '';
+
    //TABLES USED
    //if we have a content connection dump 2 segments
    if ($cb_use_content_db) 
    {     
-      if ($cbsql)
+      if (isset($cbsql) && $cbsql)
       {
          $dbp_table_output = $cbsql->dbp_table_fetch_parsed("Player Tables Queried");
       }      
-      if ($cbsql_content)
+      if (isset($cbsql_content) && $cbsql_content)
       {
          $dbp_table_output_content = $cbsql_content->dbp_table_fetch_parsed("Content Tables Queried");
       }
@@ -66,11 +73,11 @@ if (defined('DB_PERFORMANCE'))
    //if we have a content connection dump 2 segments
    if ($cb_use_content_db) 
    {     
-      if ($cbsql)
+      if (isset($cbsql) && $cbsql)
       {
          $dbp_output = $cbsql->dbp_fetch_parsed("Player Queries");
       }      
-      if ($cbsql_content)
+      if (isset($cbsql_content) && $cbsql_content)
       {
          $dbp_output_content = $cbsql_content->dbp_fetch_parsed("Content Queries");
       }
@@ -101,7 +108,7 @@ if ($charbrowser_simple_header)
    );
 }
 //footer for ingame browser
-elseif (isset($_GET['nohead']))
+elseif (checkParm('nohead'))
 {
    $cb_template->set_filenames(array(
      'footer' => 'footer_none_body.tpl')
@@ -116,19 +123,28 @@ else
 }
 
 //plug the page execution template in
-if (defined('DB_PERFORMANCE')) $cb_template->assign_var_from_handle('PAGE_EXECUTION', 'page_execution');
+if (defined('DEVELOPER_MODE')) $cb_template->assign_var_from_handle('PAGE_EXECUTION', 'page_execution');
 
 $cb_template->assign_vars(array(  
   'TITLE' => $mytitle,
   'VERSION' => $version,
-  'DATABASE_TABLE_PERFORMANCE' => $dbp_table_output,
-  'DATABASE_TABLE_PERFORMANCE_CONTENT' => $dbp_table_output_content,
-  'DATABASE_PERFORMANCE' => $dbp_output,
-  'DATABASE_PERFORMANCE_CONTENT' => $dbp_output_content,
   'ADVERTISEMENT' => $adscript)
 );
 
+$cb_template->assign_vars(array(  
+  'DATABASE_TABLE_PERFORMANCE' => $dbp_table_output,
+  'DATABASE_TABLE_PERFORMANCE_CONTENT' => $dbp_table_output_content,
+  'DATABASE_PERFORMANCE' => $dbp_output,
+  'DATABASE_PERFORMANCE_CONTENT' => $dbp_output_content)
+);
+
+//output any unprinted messages immediately before printing the footer
+$cb_error->output_messages();
+
 $cb_template->pparse('footer');
 
-$cb_template->destroy;
+$cb_template->destroy();
+
+//print messages again in case they happened while parsing the footer
+$cb_error->output_messages();
 ?>

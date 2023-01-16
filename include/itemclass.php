@@ -35,358 +35,373 @@
  *   July 28, 2020 - Maudigan
  *     cached the items db row in constructor
  *     added a function to get a column value from the db row
+ *   January 16, 2023 - Maudigan
+ *      added _ prefix to private properties
  *
  ***************************************************************************/ 
   
   
   
   
- if ( !defined('INCHARBROWSER') ) 
+if ( !defined('INCHARBROWSER') ) 
 { 
         die("Hacking attempt"); 
 } 
+
 Include_once(__DIR__ . "/item.php"); 
+
+
 // holds all the items 
-class item { 
-  
-        // Variables 
-        var $mytype; 
-        //1: Equipment 
-        //2: the 8 inventory slots 
-        //3: the 16 bank slots 
-        //4: the 2 shared bank slots 
-        //other: bag contents, i.e. 22 would be an item in bag 22 
-  
-        var $myicon; 
-        //item icon for this item 
-  
-        var $myslot; 
-        //actual slot in the inventory table 
-  
-        var $mystack; 
-        //how many items in the stack
-        
-        var $myid; 
-        //id of the item for linking 
-  
-        var $myhtml; 
-        //html text for displaying the item 
-  
-        var $myname; 
-        //name to use for display later 
-  
-        var $myskill; 
-        //the weapon skill for this item
-  
-        var $myslotcount; 
-        //0 for items, 1-10 for bags 
-  
-        var $myvslot; 
-        //if it goes in a bag, this is 1-10 for which bag slot 
-        
-        var $myrow;
-        //cache the items db row
-        
-        var $myaugshtml = array(); 
-        var $myaugsname = array(); 
-        var $myaugsid = array(); 
-        var $myaugsicon = array(); 
-        var $myaugcount = 0; 
-        //augment arrays 
+class Charbrowser_Item 
+{ 
+   //1: Equipment 
+   //2: the 8 inventory slots 
+   //3: the 16 bank slots 
+   //4: the 2 shared bank slots 
+   //other: bag contents, i.e. 22 would be an item in bag 22
+   private $_mytype;  
+
+   //item icon for this item 
+   private $_myicon; 
+
+   //actual slot in the inventory table 
+   private $_myslot; 
+
+   //how many items in the stack
+   private $_mystack; 
+
+   //id of the item for linking 
+   private $_myid; 
+
+   //html text for displaying the item 
+   private $_myhtml; 
+
+   //name to use for display later 
+   private $_myname; 
+
+   //the weapon skill for this item
+   private $_myskill; 
+
+   //0 for items, 1-10 for bags 
+   private $_myslotcount; 
+
+   //if it goes in a bag, this is 1-10 for which bag slot 
+   private $_myvslot; 
+
+   //cache the items db row
+   private $_myrow;
+
+   //augment arrays 
+   private $_myaugshtml = array(); 
+   private $_myaugsname = array(); 
+   private $_myaugsid = array(); 
+   private $_myaugsicon = array(); 
+   private $_myaugcount = 0; 
 
 
-         public function addaug($row){ 
-           $this->myaugshtml[] = GetItem($row); 
-           $this->myaugsname[] = $row['Name']; 
-           $this->myaugsid[] = $row['id']; 
-           $this->myaugsicon[] = $row['icon']; 
-           $this->myaugcount++;          
-         } 
+   public function addaug($row){ 
+      $this->_myaugshtml[] = GetItem($row); 
+      $this->_myaugsname[] = $row['Name']; 
+      $this->_myaugsid[] = $row['id']; 
+      $this->_myaugsicon[] = $row['icon']; 
+      $this->_myaugcount++;          
+   } 
 
-         public function item($row) { 
-           $this->myrow = $row;
-           $this->myslot = $row['myslot']; 
-           $this->myhtml = GetItem($row); 
-           $this->myslotcount = $row['bagslots']; 
-           $this->myicon=$row['icon']; 
-           $this->myname=$row['Name']; 
-           $this->myid=$row['id']; 
-           $this->myskill=$row["itemtype"];
-           //stackable?
-           if ($row['stackable']) {
-               $this->mystack = $row['charges'];
-           }
-           else {
-               $this->mystack = "";
-           }
-           
-           
-           switch (true){ 
-                case ($this->myslot >= 0 && $this->myslot <= 22):
-                     $this->mytype = 1; 
-                     $this->myvslot = $this->myslot; 
-                     break; 
-                case ($this->myslot >= 23 && $this->myslot <= 32): 
-                     $this->mytype = 2; 
-                     $this->myvslot = $this->myslot; 
-                     break; 
-                case ($this->myslot >= 251 && $this->myslot <= 260): 
-                     $this->mytype = 23; 
-                     $this->myvslot = $this->myslot - 250; 
-                     break; 
-                case ($this->myslot >= 261 && $this->myslot <= 270): 
-                     $this->mytype = 24; 
-                     $this->myvslot = $this->myslot - 260; 
-                     break; 
-                case ($this->myslot >= 271 && $this->myslot <= 280): 
-                     $this->mytype = 25; 
-                     $this->myvslot = $this->myslot - 270; 
-                     break; 
-                case ($this->myslot >= 281 && $this->myslot <= 290): 
-                     $this->mytype = 26; 
-                     $this->myvslot = $this->myslot - 280; 
-                     break; 
-                case ($this->myslot >= 291 && $this->myslot <= 300): 
-                     $this->mytype = 27; 
-                     $this->myvslot = $this->myslot - 290; 
-                     break; 
-                case ($this->myslot >= 301 && $this->myslot <= 310): 
-                     $this->mytype = 28; 
-                     $this->myvslot = $this->myslot - 300; 
-                     break; 
-                case ($this->myslot >= 311 && $this->myslot <= 320): 
-                     $this->mytype = 29; 
-                     $this->myvslot = $this->myslot - 310; 
-                     break; 
-                case ($this->myslot >= 321 && $this->myslot <= 330): 
-                     $this->mytype = 30; 
-                     $this->myvslot = $this->myslot - 320; 
-                     break; 
-                case ($this->myslot >= 331 && $this->myslot <= 340): 
-                     $this->mytype = 31; 
-                     $this->myvslot = $this->myslot - 330; 
-                     break; 
-                case ($this->myslot >= 341 && $this->myslot <= 350): 
-                     $this->mytype = 32; 
-                     $this->myvslot = $this->myslot - 340; 
-                     break; 
-                case ($this->myslot >= 2000 && $this->myslot <= 2023): 
-                     $this->mytype = 3; 
-                     $this->myvslot = $this->myslot; 
-                     break; 
-                case ($this->myslot >= 2031 && $this->myslot <= 2040): 
-                     $this->mytype = 2000; 
-                     $this->myvslot = $this->myslot - 2030; 
-                     break; 
-                case ($this->myslot >= 2041 && $this->myslot <= 2050): 
-                     $this->mytype = 2001; 
-                     $this->myvslot = $this->myslot - 2040; 
-                     break; 
-                case ($this->myslot >= 2051 && $this->myslot <= 2060): 
-                     $this->mytype = 2002; 
-                     $this->myvslot = $this->myslot - 2050; 
-                     break; 
-                case ($this->myslot >= 2061 && $this->myslot <= 2070): 
-                     $this->mytype = 2003; 
-                     $this->myvslot = $this->myslot - 2060; 
-                     break; 
-                case ($this->myslot >= 2071 && $this->myslot <= 2080): 
-                     $this->mytype = 2004; 
-                     $this->myvslot = $this->myslot - 2070; 
-                     break; 
-                case ($this->myslot >= 2081 && $this->myslot <= 2090): 
-                     $this->mytype = 2005; 
-                     $this->myvslot = $this->myslot - 2080; 
-                     break; 
-                case ($this->myslot >= 2091 && $this->myslot <= 2100): 
-                     $this->mytype = 2006; 
-                     $this->myvslot = $this->myslot - 2090; 
-                     break; 
-                case ($this->myslot >= 2101 && $this->myslot <= 2110): 
-                     $this->mytype = 2007; 
-                     $this->myvslot = $this->myslot - 2100; 
-                     break; 
-                case ($this->myslot >= 2111 && $this->myslot <= 2120): 
-                     $this->mytype = 2008; 
-                     $this->myvslot = $this->myslot - 2110; 
-                     break; 
-                case ($this->myslot >= 2121 && $this->myslot <= 2130): 
-                     $this->mytype = 2009; 
-                     $this->myvslot = $this->myslot - 2120; 
-                     break; 
-                case ($this->myslot >= 2131 && $this->myslot <= 2140): 
-                     $this->mytype = 2010; 
-                     $this->myvslot = $this->myslot - 2130; 
-                     break; 
-                case ($this->myslot >= 2141 && $this->myslot <= 2150): 
-                     $this->mytype = 2011; 
-                     $this->myvslot = $this->myslot - 2140; 
-                     break; 
-                case ($this->myslot >= 2151 && $this->myslot <= 2160): 
-                     $this->mytype = 2012; 
-                     $this->myvslot = $this->myslot - 2150; 
-                     break; 
-                case ($this->myslot >= 2161 && $this->myslot <= 2170): 
-                     $this->mytype = 2013; 
-                     $this->myvslot = $this->myslot - 2160; 
-                     break; 
-                case ($this->myslot >= 2171 && $this->myslot <= 2180): 
-                     $this->mytype = 2014; 
-                     $this->myvslot = $this->myslot - 2170; 
-                     break; 
-                case ($this->myslot >= 2181 && $this->myslot <= 2190): 
-                     $this->mytype = 2015; 
-                     $this->myvslot = $this->myslot - 2180; 
-                     break; 
-                case ($this->myslot >= 2191 && $this->myslot <= 2200): 
-                     $this->mytype = 2016; 
-                     $this->myvslot = $this->myslot - 2190; 
-                     break; 
-                case ($this->myslot >= 2201 && $this->myslot <= 2210): 
-                     $this->mytype = 2017; 
-                     $this->myvslot = $this->myslot - 2200; 
-                     break; 
-                case ($this->myslot >= 2211 && $this->myslot <= 2220): 
-                     $this->mytype = 2018; 
-                     $this->myvslot = $this->myslot - 2210; 
-                     break; 
-                case ($this->myslot >= 2221 && $this->myslot <= 2230): 
-                     $this->mytype = 2019; 
-                     $this->myvslot = $this->myslot - 2220; 
-                     break; 
-                case ($this->myslot >= 2231 && $this->myslot <= 2240): 
-                     $this->mytype = 2020; 
-                     $this->myvslot = $this->myslot - 2230; 
-                     break; 
-                case ($this->myslot >= 2241 && $this->myslot <= 2250): 
-                     $this->mytype = 2021; 
-                     $this->myvslot = $this->myslot - 2240; 
-                     break; 
-                case ($this->myslot >= 2251 && $this->myslot <= 2260): 
-                     $this->mytype = 2022; 
-                     $this->myvslot = $this->myslot - 2250; 
-                     break; 
-                case ($this->myslot >= 2261 && $this->myslot <= 2270): 
-                     $this->mytype = 2023; 
-                     $this->myvslot = $this->myslot - 2260; 
-                     break; 
-                case ($this->myslot >= 2500 && $this->myslot <= 2501): 
-                     $this->mytype = 4; 
-                     $this->myvslot = $this->myslot; 
-                     break; 
-                case ($this->myslot >= 2531 && $this->myslot <= 2540): 
-                     $this->mytype = 2500; 
-                     $this->myvslot = $this->myslot - 2530; 
-                     break; 
-                case ($this->myslot >= 2541 && $this->myslot <= 2550): 
-                     $this->mytype = 2501; 
-                     $this->myvslot = $this->myslot - 2540; 
-                     break; 
-                default: 
-                     $this->mytype = 0; 
-                     $this->myvslot = 0; 
-                     break; 
-           } 
-         } 
+   public function __construct($row) { 
+      $this->_myrow = $row;
+      $this->_myhtml = GetItem($row); 
+      $this->_myslotcount = $row['bagslots']; 
+      $this->_myicon=$row['icon']; 
+      $this->_myname=$row['Name']; 
+      $this->_myid=$row['id']; 
+      $this->_myskill=$row["itemtype"];
 
-        
-        function fetchColumn($col) { 
-          return $this->myrow[$col]; 
-        } 
-        
-        function aughtml($key) { 
-          return $this->myaugshtml[$key]; 
-        } 
-        
-        function augname($key) { 
-          return $this->myaugsname[$key]; 
-        } 
-        
-        function augid($key) { 
-          return $this->myaugsid[$key]; 
-        } 
-        
-        function augicon($key) { 
-          return $this->myaugsicon[$key]; 
-        } 
-        
-        function augcount() { 
-          return $this->myaugcount; 
-        } 
-        
-        function icon() { 
-         return $this->myicon; 
-        } 
-        
-        function id() { 
-         return $this->myid; 
-        } 
-  
-        function slot() { 
-         return $this->myslot; 
-        } 
-  
-        function stack() { 
-         return $this->mystack; 
-        } 
-         
-        function html() { 
-         return $this->myhtml; 
-        } 
-  
-        function name() { 
-         return $this->myname; 
-        } 
-  
-        function skill() { 
-         return $this->myskill; 
-        } 
-  
-        function slotcount() { 
-         //cap the bag at whatever the max slot count is
-         return min(MAX_BAG_SLOTS, $this->myslotcount); 
-        } 
-  
-        function type() { 
-         return $this->mytype; 
-        } 
-  
-        function vslot() { 
-         return $this->myvslot; 
-        } 
-  
-        function setvslot($setval) { 
-         $this->myvslot = $setval; 
-        } 
-  
-        function seticon($setval) { 
-         $this->myicon = $setval; 
-        } 
-  
-        function setslot($setval) { 
-         $this->myslot = $setval; 
-        } 
-  
-        //pass item id, pulls html from getitem function 
-        function sethtml($setval) { 
-         $this->myhtml = GetItem($setval); 
-        } 
-  
-        function setname($setval) { 
-         $this->myname = $setval; 
-        } 
-  
-        function setslotcount($setval) { 
-         $this->myslotcount = $setval; 
-        } 
+      //equiped in a slot?
+      if (array_key_exists('myslot', $row))
+      {
+         $this->_myslot = $row['myslot']; 
+      }
+      else
+      {
+         $this->_myslot = false;
+      }
 
-        function settype($setval) { 
-         $this->mytype = $setval; 
-        } 
-  
-        function setid($setval) { 
-         $this->myid = $setval; 
-        } 
-  
-} 
+      //stackable?
+      if ($row['stackable'] && array_key_exists('charges', $row)) {
+         $this->_mystack = $row['charges'];
+      }
+      else {
+         $this->_mystack = "";
+      }
 
+
+      switch (true)
+      { 
+         case ($this->_myslot >= 0 && $this->_myslot <= 22):
+            $this->_mytype = 1; 
+            $this->_myvslot = $this->_myslot; 
+            break; 
+         case ($this->_myslot >= 23 && $this->_myslot <= 32): 
+            $this->_mytype = 2; 
+            $this->_myvslot = $this->_myslot; 
+            break; 
+         case ($this->_myslot >= 251 && $this->_myslot <= 260): 
+            $this->_mytype = 23; 
+            $this->_myvslot = $this->_myslot - 250; 
+            break; 
+         case ($this->_myslot >= 261 && $this->_myslot <= 270): 
+            $this->_mytype = 24; 
+            $this->_myvslot = $this->_myslot - 260; 
+            break; 
+         case ($this->_myslot >= 271 && $this->_myslot <= 280): 
+            $this->_mytype = 25; 
+            $this->_myvslot = $this->_myslot - 270; 
+            break; 
+         case ($this->_myslot >= 281 && $this->_myslot <= 290): 
+            $this->_mytype = 26; 
+            $this->_myvslot = $this->_myslot - 280; 
+            break; 
+         case ($this->_myslot >= 291 && $this->_myslot <= 300): 
+            $this->_mytype = 27; 
+            $this->_myvslot = $this->_myslot - 290; 
+            break; 
+         case ($this->_myslot >= 301 && $this->_myslot <= 310): 
+            $this->_mytype = 28; 
+            $this->_myvslot = $this->_myslot - 300; 
+            break; 
+         case ($this->_myslot >= 311 && $this->_myslot <= 320): 
+            $this->_mytype = 29; 
+            $this->_myvslot = $this->_myslot - 310; 
+            break; 
+         case ($this->_myslot >= 321 && $this->_myslot <= 330): 
+            $this->_mytype = 30; 
+            $this->_myvslot = $this->_myslot - 320; 
+            break; 
+         case ($this->_myslot >= 331 && $this->_myslot <= 340): 
+            $this->_mytype = 31; 
+            $this->_myvslot = $this->_myslot - 330; 
+            break; 
+         case ($this->_myslot >= 341 && $this->_myslot <= 350): 
+            $this->_mytype = 32; 
+            $this->_myvslot = $this->_myslot - 340; 
+            break; 
+         case ($this->_myslot >= 2000 && $this->_myslot <= 2023): 
+            $this->_mytype = 3; 
+            $this->_myvslot = $this->_myslot; 
+            break; 
+         case ($this->_myslot >= 2031 && $this->_myslot <= 2040): 
+            $this->_mytype = 2000; 
+            $this->_myvslot = $this->_myslot - 2030; 
+            break; 
+         case ($this->_myslot >= 2041 && $this->_myslot <= 2050): 
+            $this->_mytype = 2001; 
+            $this->_myvslot = $this->_myslot - 2040; 
+            break; 
+         case ($this->_myslot >= 2051 && $this->_myslot <= 2060): 
+            $this->_mytype = 2002; 
+            $this->_myvslot = $this->_myslot - 2050; 
+            break; 
+         case ($this->_myslot >= 2061 && $this->_myslot <= 2070): 
+            $this->_mytype = 2003; 
+            $this->_myvslot = $this->_myslot - 2060; 
+            break; 
+         case ($this->_myslot >= 2071 && $this->_myslot <= 2080): 
+            $this->_mytype = 2004; 
+            $this->_myvslot = $this->_myslot - 2070; 
+            break; 
+         case ($this->_myslot >= 2081 && $this->_myslot <= 2090): 
+            $this->_mytype = 2005; 
+            $this->_myvslot = $this->_myslot - 2080; 
+            break; 
+         case ($this->_myslot >= 2091 && $this->_myslot <= 2100): 
+            $this->_mytype = 2006; 
+            $this->_myvslot = $this->_myslot - 2090; 
+            break; 
+         case ($this->_myslot >= 2101 && $this->_myslot <= 2110): 
+            $this->_mytype = 2007; 
+            $this->_myvslot = $this->_myslot - 2100; 
+            break; 
+         case ($this->_myslot >= 2111 && $this->_myslot <= 2120): 
+            $this->_mytype = 2008; 
+            $this->_myvslot = $this->_myslot - 2110; 
+            break; 
+         case ($this->_myslot >= 2121 && $this->_myslot <= 2130): 
+            $this->_mytype = 2009; 
+            $this->_myvslot = $this->_myslot - 2120; 
+            break; 
+         case ($this->_myslot >= 2131 && $this->_myslot <= 2140): 
+            $this->_mytype = 2010; 
+            $this->_myvslot = $this->_myslot - 2130; 
+            break; 
+         case ($this->_myslot >= 2141 && $this->_myslot <= 2150): 
+            $this->_mytype = 2011; 
+            $this->_myvslot = $this->_myslot - 2140; 
+            break; 
+         case ($this->_myslot >= 2151 && $this->_myslot <= 2160): 
+            $this->_mytype = 2012; 
+            $this->_myvslot = $this->_myslot - 2150; 
+            break; 
+         case ($this->_myslot >= 2161 && $this->_myslot <= 2170): 
+            $this->_mytype = 2013; 
+            $this->_myvslot = $this->_myslot - 2160; 
+            break; 
+         case ($this->_myslot >= 2171 && $this->_myslot <= 2180): 
+            $this->_mytype = 2014; 
+            $this->_myvslot = $this->_myslot - 2170; 
+            break; 
+         case ($this->_myslot >= 2181 && $this->_myslot <= 2190): 
+            $this->_mytype = 2015; 
+            $this->_myvslot = $this->_myslot - 2180; 
+            break; 
+         case ($this->_myslot >= 2191 && $this->_myslot <= 2200): 
+            $this->_mytype = 2016; 
+            $this->_myvslot = $this->_myslot - 2190; 
+            break; 
+         case ($this->_myslot >= 2201 && $this->_myslot <= 2210): 
+            $this->_mytype = 2017; 
+            $this->_myvslot = $this->_myslot - 2200; 
+            break; 
+         case ($this->_myslot >= 2211 && $this->_myslot <= 2220): 
+            $this->_mytype = 2018; 
+            $this->_myvslot = $this->_myslot - 2210; 
+            break; 
+         case ($this->_myslot >= 2221 && $this->_myslot <= 2230): 
+            $this->_mytype = 2019; 
+            $this->_myvslot = $this->_myslot - 2220; 
+            break; 
+         case ($this->_myslot >= 2231 && $this->_myslot <= 2240): 
+            $this->_mytype = 2020; 
+            $this->_myvslot = $this->_myslot - 2230; 
+            break; 
+         case ($this->_myslot >= 2241 && $this->_myslot <= 2250): 
+            $this->_mytype = 2021; 
+            $this->_myvslot = $this->_myslot - 2240; 
+            break; 
+         case ($this->_myslot >= 2251 && $this->_myslot <= 2260): 
+            $this->_mytype = 2022; 
+            $this->_myvslot = $this->_myslot - 2250; 
+            break; 
+         case ($this->_myslot >= 2261 && $this->_myslot <= 2270): 
+            $this->_mytype = 2023; 
+            $this->_myvslot = $this->_myslot - 2260; 
+            break; 
+         case ($this->_myslot >= 2500 && $this->_myslot <= 2501): 
+            $this->_mytype = 4; 
+            $this->_myvslot = $this->_myslot; 
+            break; 
+         case ($this->_myslot >= 2531 && $this->_myslot <= 2540): 
+            $this->_mytype = 2500; 
+            $this->_myvslot = $this->_myslot - 2530; 
+            break; 
+         case ($this->_myslot >= 2541 && $this->_myslot <= 2550): 
+            $this->_mytype = 2501; 
+            $this->_myvslot = $this->_myslot - 2540; 
+            break; 
+         default: 
+            $this->_mytype = 0; 
+            $this->_myvslot = 0; 
+            break; 
+      } 
+   } 
+
+
+   function fetchColumn($col) { 
+      return $this->_myrow[$col]; 
+   } 
+
+   function aughtml($key) { 
+      return $this->_myaugshtml[$key]; 
+   } 
+
+   function augname($key) { 
+      return $this->_myaugsname[$key]; 
+   } 
+
+   function augid($key) { 
+      return $this->_myaugsid[$key]; 
+   } 
+
+   function augicon($key) { 
+      return $this->_myaugsicon[$key]; 
+   } 
+
+   function augcount() { 
+      return $this->_myaugcount; 
+   } 
+
+   function icon() { 
+      return $this->_myicon; 
+   } 
+
+   function id() { 
+      return $this->_myid; 
+   } 
+
+   function slot() { 
+      return $this->_myslot; 
+   } 
+
+   function stack() { 
+      return $this->_mystack; 
+   } 
+
+   function html() { 
+      return $this->_myhtml; 
+   } 
+
+   function name() { 
+      return $this->_myname; 
+   } 
+
+   function skill() { 
+      return $this->_myskill; 
+   } 
+
+   function slotcount() { 
+   //cap the bag at whatever the max slot count is
+      return min(MAX_BAG_SLOTS, $this->_myslotcount); 
+   } 
+
+   function type() { 
+      return $this->_mytype; 
+   } 
+
+   function vslot() { 
+      return $this->_myvslot; 
+   } 
+
+   function setvslot($setval) { 
+      $this->_myvslot = $setval; 
+   } 
+
+   function seticon($setval) { 
+      $this->_myicon = $setval; 
+   } 
+
+   function setslot($setval) { 
+      $this->_myslot = $setval; 
+   } 
+
+   //pass item id, pulls html from getitem function 
+   function sethtml($setval) { 
+      $this->_myhtml = GetItem($setval); 
+   } 
+
+   function setname($setval) { 
+      $this->_myname = $setval; 
+   } 
+
+   function setslotcount($setval) { 
+      $this->_myslotcount = $setval; 
+   } 
+
+   function settype($setval) { 
+      $this->_mytype = $setval; 
+   } 
+
+   function setid($setval) { 
+      $this->_myid = $setval; 
+   } 
+  
+}
+?>

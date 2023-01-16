@@ -31,20 +31,25 @@
 /*********************************************
                  INCLUDES
 *********************************************/ 
-define('INCHARBROWSER', true);
+//define this as an entry point to unlock includes
+if ( !defined('INCHARBROWSER') ) 
+{
+   define('INCHARBROWSER', true);
+}
 include_once(__DIR__ . "/include/common.php");
 include_once(__DIR__ . "/include/db.php");
   
  
 /*********************************************
-         SETUP PROFILE/PERMISSIONS
+         SETUP GUILD PERMISSIONS
 *********************************************/
-if(!$_GET['guild']) cb_message_die($language['MESSAGE_ERROR'],$language['MESSAGE_NO_GUILD']);
-else $guild = $_GET['guild'];
+$guild = preg_Get_Post('guild', '/^.*?$/', false, $language['MESSAGE_ERROR'],$language['MESSAGE_NO_GUILD'], true);
 
+//this is a very permissive search, lets escape it immediately for safety
+$guild = $cbsql->escape_string($guild);
 
 //dont display guilds if blocked in config.php 
-if ($blockguilddata) cb_message_die($language['MESSAGE_ERROR'],$language['MESSAGE_ITEM_NO_VIEW']);
+if ($blockguilddata) $cb_error->message_die($language['MESSAGE_NOTICE'],$language['MESSAGE_ITEM_NO_VIEW']);
 
 
 /*********************************************
@@ -62,12 +67,12 @@ WHERE guilds.name = '%s'
 AND character_data.deleted_at IS NULL
 TPL;
  
-$query = sprintf($tpl, $cbsql->escape_string($guild));
+$query = sprintf($tpl, $guild);
 $result = $cbsql->query($query);
 
 //does the guild exist?
 if (!($row = $cbsql->nextrow($result))) {
-   cb_message_die($language['MESSAGE_ERROR'],$language['MESSAGE_NO_RESULTS_GUILD']);
+   $cb_error->message_die($language['MESSAGE_NOTICE'],$language['MESSAGE_NO_RESULTS_GUILD']);
 }
 
 //get leader/guild data
@@ -80,7 +85,7 @@ $guildleaderid = $row['id'];
 $myguildpermission = GetGuildPermissions($guildleaderid);
 
 //block the view of this guild if the leader has it disabled
-if ($myguildpermission['mainpage']) cb_message_die($language['MESSAGE_ERROR'],$language['MESSAGE_ITEM_NO_VIEW']);
+if ($myguildpermission['mainpage']) $cb_error->message_die($language['MESSAGE_NOTICE'],$language['MESSAGE_ITEM_NO_VIEW']);
 
 /* this will get implemented in the server code soon, uncomment and remove the code below
 //get guild member data with dynamic ranks
@@ -297,7 +302,7 @@ foreach ($guildlevelcounts as $levelcount) {
 *********************************************/
 $cb_template->pparse('body');
 
-$cb_template->destroy;
+$cb_template->destroy();
  
 include(__DIR__ . "/include/footer.php");
 ?>

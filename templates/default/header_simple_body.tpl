@@ -2,7 +2,7 @@
 <script language='JavaScript' type='text/javascript' src='https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js'></script>
 <script language='JavaScript' type='text/javascript' src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>  
 <div id='charbrowser'>
-   <link rel='stylesheet' href='{ROOT_URL}templates/default/style-1.6.css' type='text/css'/>
+   <link rel='stylesheet' href='{ROOT_URL}templates/default/style-1.7.css' type='text/css'/>
    <link rel='stylesheet' href='{ROOT_URL}templates/default/style-item-icons-1.0.css' type='text/css'/>
 
    <div class='WindowComplex PositionHeaderSimple CB_Can_Drag'>
@@ -11,8 +11,8 @@
       <a href='{INDEX_URL}'><img src="{ROOT_URL}title.php"></a>
       <form method='GET' action='{INDEX_URL}'>
          <input type='hidden' name='page' value='search'>
-         <label for='name'>{L_NAME}:</label><input id='name' type='text' name='name' autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">
-         <label for='guild'>{L_GUILD}:</label><input id='guild' type='text' name='guild' autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">
+         <label for='name'>{L_NAME}:</label><input id='name' type='text' name='name' autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" value="{SEARCH_NAME}">
+         <label for='guild'>{L_GUILD}:</label><input id='guild' type='text' name='guild' autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" value="{SEARCH_GUILD}">
          <input type='submit' value='Go'>
       </form>
       <nav>

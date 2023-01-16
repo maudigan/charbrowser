@@ -21,6 +21,8 @@
  *                    global.php
  *                    Added a subdirectory to the template folder (Maudigan)
  *   October 24, 2022 - add page execution time (Maudigan)
+ *   January 16, 2023 - make sure variables are declared before use
+ *                      implemented the new error class
  *
  ***************************************************************************/
 
@@ -35,10 +37,35 @@ if ( !defined('CB_COMMON_RUN') )
    ///marktime for when we start running
    $cb_start_time = microtime(true);
    
+   //make sure variables set in the wrapped page are set,
+   //even when charbrowser is not wrapped
+   $charbrowser_wrapped =       isset($charbrowser_wrapped) ? $charbrowser_wrapped : false;
+   $charbrowser_is_admin_page = isset($charbrowser_is_admin_page) ? $charbrowser_is_admin_page : false;
+   $charbrowser_simple_header = isset($charbrowser_simple_header) ? $charbrowser_simple_header : false;
+   $charbrowser_root_url =      isset($charbrowser_root_url) ? $charbrowser_root_url : false;
+
+   
+   /*********************************************
+                 LOAD CONFIGURATION
+   *********************************************/
+   include_once(__DIR__ . "/config.php");
+   
+   
+   //if developer mode is turned on, enable strict error reporting
+   //otherwise hide notices and warnings, this changes once
+   //the error handler in error.php is loaded
+   if (defined('DEVELOPER_MODE'))
+   {
+      error_reporting (E_ALL);
+   }
+   else
+   {
+      error_reporting (0);
+   }
+      
    /*********************************************
                     INCLUDES
    *********************************************/
-   include_once(__DIR__ . "/config.php");
    include_once(__DIR__ . "/version.php");
    include_once(__DIR__ . "/language.php");
    include_once(__DIR__ . "/functions.php");
@@ -50,7 +77,12 @@ if ( !defined('CB_COMMON_RUN') )
 
    //CREATE TEMPLATE CLASS
    if (!isset($cb_override_template_dir)) $cb_override_template_dir = "custom";
-   $cb_template = new CB_Template(__DIR__ . "/../templates/" . $cb_override_template_dir, __DIR__ . "/../templates/default");
+   $cb_template = new Charbrowser_Template(__DIR__ . "/../templates/" . $cb_override_template_dir, __DIR__ . "/../templates/default");
+   
+   /*********************************************
+                  INCLUDES CONT'D
+   *********************************************/
+   include_once(__DIR__ . "/error.php");
 
    //self reg timestamp file
    $cb_reg_file = '.register';
@@ -60,10 +92,10 @@ if ( !defined('CB_COMMON_RUN') )
    //the template class will allow data to be output as json
    //if this is an API request and API is not enabled kill the api
    //request and then show an error saying api is unavailable
-   if (isset($_GET['api']) && !$api_enabled)
+   if (checkParm('api') && !$api_enabled)
    {
-      unset($_GET['api']);
-      cb_message_die($language['MESSAGE_ERROR'],$language['MESSAGE_NOAPI']);
+      checkParm('api', false);
+      $cb_error->message_die($language['MESSAGE_ERROR'],$language['MESSAGE_NOAPI']);
    }
 
 
@@ -73,7 +105,7 @@ if ( !defined('CB_COMMON_RUN') )
    //you need to regenerate your config file from
    //config.template
    if ($cb_config_version != $cb_expected_config_version) {
-      cb_message_die($language['MESSAGE_ERROR'],$language['MESSAGE_BAD_CONFIG']);
+      $cb_error->message_die($language['MESSAGE_ERROR'],$language['MESSAGE_BAD_CONFIG']);
    }
 
 
@@ -86,7 +118,9 @@ if ( !defined('CB_COMMON_RUN') )
    //this wont automatically verify the registration, it's only to
    //filter out obviously bogus registrations. All "genuine" registrations
    //are manually confirmed.
-   if ($cb_allow_self_register && isset($_POST['confirmserver'])) {
+   
+   $confirmserver = preg_Get_Post('confirmserver', '/^[0-9a-fA-F]{64}$/', false);
+   if ($cb_allow_self_register && $confirmserver) {
       //make sure we have a good timestamp
       clearstatcache(true, $cb_reg_file);
 
@@ -96,7 +130,7 @@ if ( !defined('CB_COMMON_RUN') )
       //a good request is one with a matching key, a matching timestamp of when
       //we generated our registration, and it had to have happened within the last
       //minute
-      if ($_POST['confirmserver'] == $cb_confirmationhash && time() < $cb_reg_time + 60) {
+      if ($confirmserver == $cb_confirmationhash && time() < $cb_reg_time + 60) {
          die(json_encode(array('response' => 1))); //GOOD
       }
       else {
@@ -110,7 +144,7 @@ if ( !defined('CB_COMMON_RUN') )
    //build and send the registration packet
    //(skip if it's an image request, dont want to risk breaking
    //the image)
-   if ($cb_allow_self_register && !$charbrowser_image_script) {
+   if ($cb_allow_self_register && !defined('IS_IMAGE_SCRIPT')) {
 
       //how many seconds to wait between self registrations
       //default is once an hour max

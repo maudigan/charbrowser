@@ -65,6 +65,20 @@
  *        and simplified the functions logic
  *   November 1, 2022 - Added thea bility to have a gravestone as an
  *      an avatar image
+ *   Novemter 3, 2022 - Reimplement the old-style of count() for php 7.4
+ *      compatibility 
+ *   November 23, 2022 - Added a funciton that checks your databse version
+ *   December 3, 2022 - Allow guild/name search criteria to be echoed back
+ *      in the header search fields
+ *   January 11, 2023 - renamed count_ez function to cb_count to be more
+ *      inline with other names (and cause I had a name collision on my 
+ *         server). - Maudigan
+ *      Removed IsAlphaSpae and IsAlphaNumericSpace and instead 
+ *         use preg_validate and regex to check values
+ *      added checkParm() to quicky check if get/post variables are set 
+ *      added the breakout_bits() function which helps output the class, race
+ *         and deity lists on items.
+ *
  *
  ***************************************************************************/
  
@@ -81,6 +95,199 @@ include_once(__DIR__ . "/config.php");
 
 //holds timers
 $timers = array();
+
+//there's a few places that a GET/POST parameter is either
+//set or unset, this is used to check those parameters
+//and/or change their state.
+function checkParm($name, $value = -1)
+{
+   if ($value === false && $value === 0)
+   {
+      unset($_GET[$name]);
+      unset($_POST[$name]);
+   }
+   elseif ($value === true && $value === 1)
+   {
+      $_GET[$name] = true;
+      $_POST[$name] = true;
+   }
+   return isset($_GET[$name]) || isset($_POST[$name]);
+}
+
+//validates a value against a pattern, or returns a default value
+function preg_validate($value, $pattern, $default = '')
+{
+   //if the pattern doesnt match, return the default
+   if (!preg_match($pattern, $value)) 
+   {
+      return $default;
+   }   
+
+   return $value;
+}
+
+//Fetches GET/POST vars, validates it against a pattern,
+//and either errors on a mismatch or returns a default
+function preg_Get_Post($index, $pattern, $default = '', $error_title = false, $error_message = false, $require_value = false)
+{
+   global $cb_error;
+   
+   //initialize
+   $return = '';
+   
+   //fetch
+   if (isset($_GET[$index]))
+   {
+      $return = $_GET[$index];
+   }
+   elseif (isset($_POST[$index]))
+   {
+      $return = $_POST[$index];
+   }
+   else
+   {
+      if ($require_value) 
+      {
+         $cb_error->message_die($error_title, $error_message);
+      }
+      return $default;
+   }
+   
+   //if it's blank, treat it like it's not set
+   if ($return == '')
+   {
+      if ($require_value) 
+      {
+         $cb_error->message_die($error_title, $error_message);
+      }
+      return $default;
+   }
+
+   //check if pattern doesnt match
+   if (!preg_match($pattern, $return)) 
+   {
+      //if not, and we have an error message, post it and die
+      if ($error_title !== false && $error_message !== false)
+      {
+         $cb_error->message_die($error_title, $error_message);
+      }
+      
+      //if we don't have error messages, return the default value
+      return $default;
+   }   
+   
+   return $return;
+}
+
+
+//simple count function that acts
+// like the one prior to php 7.4
+function cb_count($target)
+{
+   //is_countable added in 7.4 to work with the new version
+   //of count. if it doesnt exist, we can safely use the
+   //old count.
+   if (!function_exists("is_countable")) return count($target);
+   
+   //otherwise we need to verify the $target can be counted
+   //before counting it
+   if (is_countable($target)) 
+   {
+      return count($target);
+   }
+   return 0;
+}
+
+//recieves an array of bitmasks, and their name
+//uses that ask a lookup table to breakout
+//a variable into a string of delimited
+//values
+function breakout_bits($value, $masks, $delimiter = " ", $none = "")
+{
+   if ($value == 0) return $none;
+   
+   $output = array();
+   foreach ($masks as $mask => $bitname)
+   {
+      //if the value has the bit set for this mask
+      if (($value & $mask) == $mask)
+      {
+         //then add the masks name to the output array
+         $output[] = $bitname;
+         
+         //we have to unset that bit now because
+         //it can actually be a combination of
+         //two later items, I.E. "EARS" is a combination
+         //of the left ear and right ear bit masks
+         //and we don't want all 3 values in the list
+         $value -= $mask; 
+      }
+   }
+   
+   //display NONE if there are no value bit masks
+   if (!cb_count($output)) return $none;
+   
+   //delimit and return the output string
+   return implode($delimiter, array_reverse($output));
+}
+
+//returns true if the database meets a minimum version number
+function db_is_version($db_handle, $maria_vers, $percona_vers, $mysql_vers)
+{
+   //get database info
+   $tpl = <<<TPL
+      SELECT 
+         @@VERSION AS VERSION,
+         @@VERSION_COMMENT AS VERSION_COMMENT
+      FROM DUAL;
+TPL;
+   
+   //prepare query
+   $query = $tpl;
+   
+   //get the results
+   $result = $db_handle->query($query);
+
+   if ($row = $db_handle->nextrow($result))
+   {
+      $target_vers = 0;
+      $version = $row['VERSION'];
+      $version_comment = $row['VERSION_COMMENT'];
+      
+      //user @@VERSION_COMMENT to determine if DB provider
+      //is MariaDB, Percona or MySQL
+      //Expected Values:
+      //   Percona: "Percona Server (GPL), Release '11', Revision 'c1y2gr1df4a'"
+      //   MariaDB: 'mariadb.org binary distribution'
+      //   MySQL: 'MySQL Community Server (GPL)'
+
+      //MariaDB
+      if (is_numeric(stripos($version_comment, 'mariadb')))
+      {
+         $target_vers = $maria_vers;
+      }
+      
+      //Percona
+      elseif (is_numeric(stripos($version_comment, 'percona')))
+      {
+         $target_vers = $percona_vers;
+      }
+      
+      //MySQL
+      elseif (is_numeric(stripos($version_comment, 'mysql')))
+      {
+         $target_vers = $mysql_vers;
+      }
+      
+      //is the real version greater than or equal to the target version
+      if (version_compare($version, $target_vers) != -1)
+      {
+         return true;
+      }
+   }
+   
+   return false;
+}
 
 //starts an indexed timer 
 function timer_start($index)
@@ -130,7 +337,7 @@ function generate_where($filters, $divider = "AND") {
    //if it's not an array 
    if (!is_array($filters)) return "";
    
-   if (!count($filters)) return "";
+   if (!cb_count($filters)) return "";
    
    //build where
    $where = "WHERE ".implode(" ".$divider." ", $filters);
@@ -349,7 +556,7 @@ function output_profile_menu($charname, $curpage) {
    
    foreach ($otherbuttons as $otherbutton) {
       $cb_template->assign_block_vars( "otherbuttons", array(     
-         'SWITCH_DIABLED' => ($otherbutton['PAGE'] == $curpage) ? "Disabled" : "",
+         'SWITCH_DIABLED' => (false) ? "Disabled" : "", //placeholder for if the button is disabled
          'ONCLICK' => $otherbutton['BUTTON_ONCLICK'],
          'BUTTON_INDEX' => $otherbutton['BUTTON_INDEX'],
          'L_BUTTON_FACE' => $otherbutton['BUTTON_NAME'],
@@ -359,7 +566,7 @@ function output_profile_menu($charname, $curpage) {
 
    $cb_template->assign_vars(array(     
       'CURPROFILE' => $charname,
-      'BUTTON_COUNT' => count($profilebuttons) + count($otherbuttons),
+      'BUTTON_COUNT' => cb_count($profilebuttons) + cb_count($otherbuttons),
       'L_PROFILE_MENU_TITLE' => $language['PROFILE_MENU_TITLE'])
    );
    
@@ -401,130 +608,6 @@ TPL;
    }
    
    return $guild_permissions['ALL'];
-}
-
-
-function GetPermissions($gm, $anonlevel, $char_id) {
-   global $permissions;
-   global $cbsql;
-   global $charbrowser_is_admin_page;
-  
-   //if your wrap charbrowser in your own sites header
-   //and footer. You can have your site override the
-   //default permissions to always be enabled by setting 
-   //$charbrowser_is_admin_page = true;
-   //the intent of this is for charbrowser to inherit
-   //your sites admin privileges
-   //if it's set, return a permission array with 
-   //everything enabled
-   if ($charbrowser_is_admin_page) {
-      return array(
-         'inventory'         => 0,
-         'coininventory'     => 0,
-         'coinbank'          => 0,
-         'coinsharedbank'    => 0,
-         'bags'              => 0,
-         'bank'              => 0,
-         'sharedbank'        => 0,
-         'corpses'           => 0,
-         'corpse'            => 0,
-         'flags'             => 0,
-         'AAs'               => 0,
-         'leadership'        => 0,
-         'factions'          => 0,
-         'advfactions'       => 0,
-         'skills'            => 0,
-         'languageskills'    => 0,
-         'keys'              => 0,
-         'signatures'        => 0);
-   }
- 
-   $tpl = <<<TPL
-SELECT `value`
-FROM `quest_globals` 
-WHERE `charid` = %d 
-AND `name` = 'charbrowser_profile';
-TPL;
-   $query = sprintf($tpl, $char_id);
-   $result = $cbsql->query($query);
-   if($cbsql->rows($result))
-   { 
-      $row = $cbsql->nextrow($result);
-      if ($row['value'] == 1) return $permissions['PUBLIC'];
-      if ($row['value'] == 2) return $permissions['PRIVATE'];
-   }
-
-   if ($gm) return $permissions['GM'];
-   if ($anonlevel == 2)  return $permissions['ROLEPLAY'];
-   if ($anonlevel == 1)  return $permissions['ANON'];
-   return $permissions['ALL'];
-}
-
-function cb_message_die($dietitle, $text) {
-   global $language;
-   global $cb_template;
-   //these have to be included to pass through to header.php
-   global $charbrowser_root_url;
-   global $charbrowser_wrapped;
-   global $charbrowser_simple_header;
-   global $charbrowser_image_script;
-   
-   //output error as an image
-   if ($charbrowser_image_script) {
-      $defaultcolor = array( 'r'=>255, 'g'=>255, 'b'=>255 );
-      $imgwidth = 500;
-      $imgheight = 100;
-      $error_image = imagecreatetruecolor($imgwidth, $imgheight);
-      $error_color = imagecolorallocate($error_image, $defaultcolor['r'], $defaultcolor['g'], $defaultcolor['b']);
-      imagestring($error_image, 5, 10, 30, $dietitle, $error_color);
-      imagestring($error_image, 2, 10, 50, $text, $error_color); 
-      ob_clean(); //make sure we haven't sent a text header
-      header("Content-Type: image/png"); 
-      imagepng($error_image); 
-      ImageDestroy($error_image);
-      exit();
-   }
-   
-   //drop page
-   $d_title = " - ".$dietitle;
-   include(__DIR__ . "/header.php");
-   
-   $cb_template->set_filenames(array(
-     'message' => 'message_body.tpl')
-   );
-   
-   $cb_template->assign_both_vars(array(  
-      'DIETITLE' => $dietitle,
-      'TEXT' => $text)
-   );
-   $cb_template->assign_vars(array(      
-      'L_BACK' => $language['BUTTON_BACK'])
-   );
-   
-   $cb_template->pparse('message');
-   
-   //dump footer
-   include(__DIR__ . "/footer.php");
-   exit();
-}
-
-function cb_message($title, $text) {
-   global $language;
-   global $cb_template;
-   $cb_template->set_filenames(array(
-      'message' => 'message_body.tpl')
-   );
-
-   $cb_template->assign_both_vars(array(  
-      'TITLE' => $title,
-      'TEXT' => $text)
-   );
-   $cb_template->assign_vars(array( 
-      'L_BACK' => $language['BUTTON_BACK'])
-   );
-
-   $cb_template->pparse('message');
-
 }
 
 
@@ -616,38 +699,10 @@ function cb_generate_pagination($base_url, $num_items, $per_page, $start_item, $
 
    }
 
-   $page_string = $lang['Goto_page'] . ' ' . $page_string;
+   $page_string = $language['GOTO_PAGE'] . ' ' . $page_string;
 
    return $page_string;
    
-}
-
-function IsAlphaSpace($str)
-{
-   $old = Array("a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z", "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z", " ");
-   $new = Array("", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "");
-   if (str_replace($old, $new, $str) == "")
-   {
-      return (true);
-   }
-   else
-   {
-      return (false);
-   }
-}
-
-function IsAlphaNumericSpace($str)
-{
-   $old = Array(" ", "a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z", "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z", "1", "2", "3", "4", "5", "6", "7", "8", "9", "0");
-   $new = Array("", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "");
-   if (str_replace($old, $new, $str) == "")
-   {
-      return (true);
-   }
-   else
-   {
-      return (false);
-   }
 }
 
 //This plugs values from an array into a template

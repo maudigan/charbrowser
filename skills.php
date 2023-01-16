@@ -34,6 +34,8 @@
  *     impemented common.php
  *   April 25, 2020 - Maudigan
  *     implement multi-tenancy
+ *   January 16, 2023 - maudigan
+ *     added missing quotes around the array index: barbarian
  *
  ***************************************************************************/
  
@@ -41,26 +43,28 @@
 /*********************************************
                  INCLUDES
 *********************************************/ 
-define('INCHARBROWSER', true);
+//define this as an entry point to unlock includes
+if ( !defined('INCHARBROWSER') ) 
+{
+   define('INCHARBROWSER', true);
+}
 include_once(__DIR__ . "/include/common.php");
 include_once(__DIR__ . "/include/profile.php");
 include_once(__DIR__ . "/include/db.php");
   
  
 /*********************************************
-         SETUP PROFILE/PERMISSIONS
+       SETUP CHARACTER CLASS & PERMISSIONS
 *********************************************/
-if(!$_GET['char']) cb_message_die($language['MESSAGE_ERROR'],$language['MESSAGE_NO_CHAR']);
-else $charName = $_GET['char'];
+$charName = preg_Get_Post('char', '/^[a-zA-Z]+$/', false, $language['MESSAGE_ERROR'],$language['MESSAGE_NO_CHAR'], true);
 
 //character initializations 
-$char = new profile($charName, $cbsql, $cbsql_content, $language, $showsoftdelete, $charbrowser_is_admin_page); //the profile class will sanitize the character name
+$char = new Charbrowser_Character($charName, $showsoftdelete, $charbrowser_is_admin_page); //the Charbrowser_Character class will sanitize the character name
 $charID = $char->char_id(); 
 $name = $char->GetValue('name');
-$mypermission = GetPermissions($char->GetValue('gm'), $char->GetValue('anon'), $char->char_id());
 
 //block view if user level doesnt have permission
-if ($mypermission['skills']) cb_message_die($language['MESSAGE_ERROR'],$language['MESSAGE_ITEM_NO_VIEW']);
+if ($char->Permission('skills')) $cb_error->message_die($language['MESSAGE_NOTICE'],$language['MESSAGE_ITEM_NO_VIEW']);
  
  
 /*********************************************
@@ -84,10 +88,10 @@ output_profile_menu($name, 'skills');
     
 $skillsections = array();
 
-if (!$mypermission['languageskills']) {
+if (!$char->Permission('languageskills')) {
    $skillsections[$language['SKILLS_LANGUAGE']] = array(
       array('NAME' => 'Common Tongue', 'VALUE' => $char->GetValue('common_tongue')), 
-      array('NAME' => 'Barbarian', 'VALUE' => $char->GetValue(barbarian)), 
+      array('NAME' => 'Barbarian', 'VALUE' => $char->GetValue('barbarian')), 
       array('NAME' => 'Erudian', 'VALUE' => $char->GetValue('erudian')), 
       array('NAME' => 'Elvish', 'VALUE' => $char->GetValue('elvish')), 
       array('NAME' => 'Dark Elvish', 'VALUE' => $char->GetValue('dark_elvish')), 
@@ -240,7 +244,7 @@ $cb_template->assign_vars(array(
 *********************************************/
 $cb_template->pparse('skills');
 
-$cb_template->destroy;
+$cb_template->destroy();
 
 include(__DIR__ . "/include/footer.php");
 ?>

@@ -49,26 +49,28 @@
 /*********************************************
                  INCLUDES
 *********************************************/ 
-define('INCHARBROWSER', true);
+//define this as an entry point to unlock includes
+if ( !defined('INCHARBROWSER') ) 
+{
+   define('INCHARBROWSER', true);
+}
 include_once(__DIR__ . "/include/common.php");
 include_once(__DIR__ . "/include/profile.php");
 include_once(__DIR__ . "/include/db.php");
   
  
 /*********************************************
-         SETUP PROFILE/PERMISSIONS
+       SETUP CHARACTER CLASS & PERMISSIONS
 *********************************************/
-if(!$_GET['char']) cb_message_die($language['MESSAGE_ERROR'],$language['MESSAGE_NO_CHAR']);
-else $charName = $_GET['char'];
+$charName = preg_Get_Post('char', '/^[a-zA-Z]+$/', false, $language['MESSAGE_ERROR'],$language['MESSAGE_NO_CHAR'], true);
 
 //character initializations
-$char = new profile($charName, $cbsql, $cbsql_content, $language, $showsoftdelete, $charbrowser_is_admin_page); //the profile class will sanitize the character name
+$char = new Charbrowser_Character($charName, $showsoftdelete, $charbrowser_is_admin_page); //the Charbrowser_Character class will sanitize the character name
 $charID = $char->char_id(); 
 $name = $char->GetValue('name');
-$mypermission = GetPermissions($char->GetValue('gm'), $char->GetValue('anon'), $char->char_id());
 
 //block view if user level doesnt have permission
-if ($mypermission['corpses']) cb_message_die($language['MESSAGE_ERROR'],$language['MESSAGE_ITEM_NO_VIEW']);
+if ($char->Permission('corpses')) $cb_error->message_die($language['MESSAGE_NOTICE'],$language['MESSAGE_ITEM_NO_VIEW']);
  
  
 /*********************************************
@@ -101,7 +103,7 @@ ORDER BY corpses.time_of_death DESC
 TPL;
 $query = sprintf($tpl, $charID);
 $result = $cbsql->query($query);
-if (!$cbsql->rows($result)) cb_message_die($language['CORPSES_CORPSES']." - ".$name,$language['MESSAGE_NO_CORPSES']);
+if (!$cbsql->rows($result)) $cb_error->message_die($language['CORPSES_CORPSES']." - ".$name,$language['MESSAGE_NO_CORPSES']);
 
 $corpses = $cbsql->fetch_all($result);  
 $zone_ids = get_id_list($corpses, 'zone_id');
@@ -239,7 +241,7 @@ foreach($corpse_zones as $corpse) {
 *********************************************/
 $cb_template->pparse('corpses');
 
-$cb_template->destroy;
+$cb_template->destroy();
  
 include(__DIR__ . "/include/footer.php");
 ?>

@@ -1,3 +1,4 @@
+
 <?php
 /***************************************************************************
  *
@@ -15,6 +16,13 @@
  * 
  *   October 28, 2022 - Maudigan 
  *      Initial revision
+ *   November 23, 2022 - Maudigan 
+ *      MariaiaDB 10.6 wasn't numbering the point rankings correctly. They'd
+ *      be sorted right, but the numbering was off (e.g. 10, 12, 99, 1...).
+ *      Trust suggested the RANK() MySql function instead of the variable
+ *      but that isn't supported on all version of MySql. So I added
+ *      a conditional behavior that uses the variables for old MySQL 
+ *      versions, and the RANK() function for newer ones. 
  *
  ***************************************************************************/
   
@@ -22,19 +30,23 @@
 /*********************************************
                  INCLUDES
 *********************************************/ 
-define('INCHARBROWSER', true);
+//define this as an entry point to unlock includes
+if ( !defined('INCHARBROWSER') ) 
+{
+   define('INCHARBROWSER', true);
+}
 include_once(__DIR__ . "/include/common.php");
 include_once(__DIR__ . "/include/profile.php");
 include_once(__DIR__ . "/include/db.php");
 
  
 /*********************************************
-         SETUP PROFILE/PERMISSIONS
+       SETUP CHARACTER CLASS & PERMISSIONS
 *********************************************/
 //dont display adventure stats if blocked in config.php 
-if ($blockadventurestats) cb_message_die($language['MESSAGE_ERROR'],$language['MESSAGE_ITEM_NO_VIEW']);
+if ($blockadventurestats) $cb_error->message_die($language['MESSAGE_NOTICE'],$language['MESSAGE_ITEM_NO_VIEW']);
 
-$charName = $_GET['char'];
+$charName = preg_Get_Post('char', '/^[a-zA-Z]+$/', false);
 
 //we dont always have a charname, just when someone is here
 //from having used a profile button. We customize the view
@@ -42,17 +54,18 @@ $charName = $_GET['char'];
 if ($charName)
 {
    //character initializations 
-   $char = new profile($charName, $cbsql, $cbsql_content, $language, $showsoftdelete, $charbrowser_is_admin_page); //the profile class will sanitize the character name
+   $char = new Charbrowser_Character($charName, $showsoftdelete, $charbrowser_is_admin_page); //the Charbrowser_Character class will sanitize the character name
    $name = $char->GetValue('name');
+}
+else
+{
+   $name = '';
 }
 /*********************************************
              GET/VALIDATE VARS
 *********************************************/
-//fetch
-$category      = (($_GET['category']!="") ? $_GET['category'] : "0");
-
-//validate
-if (!is_numeric($category) || $category < 0 || $category > 11) cb_message_die($language['MESSAGE_ERROR'],$language['MESSAGE_CATEGORY_INVALID']);
+//fetch category (0-11)
+$category = preg_Get_Post('category', '/^([0-9]|1[0-1])$/', "0", $language['MESSAGE_ERROR'],$language['MESSAGE_CATEGORY_INVALID']);
 
 //how many leaders to show in the board
 $number_of_rows=100;
@@ -71,38 +84,38 @@ $where = generate_where($filters, "OR");
 //build select category column criteria
 if ($category == 2  || $category == 3 ) //guk
 {
-   $success_columns = 'adv.guk_wins';
-   $failure_columns = 'adv.guk_losses';
+   $success_columns = 'guk_wins';
+   $failure_columns = 'guk_losses';
    $data = 'GUK';
 }
 elseif ($category == 4  || $category == 5 ) //miragul
 {
-   $success_columns = 'adv.mir_wins';
-   $failure_columns = 'adv.mir_losses';
+   $success_columns = 'mir_wins';
+   $failure_columns = 'mir_losses';
    $data = 'MIR';
 }
 elseif ($category == 6  || $category == 7 ) //mistmoore
 {
-   $success_columns = 'adv.mmc_wins';
-   $failure_columns = 'adv.mmc_losses';
+   $success_columns = 'mmc_wins';
+   $failure_columns = 'mmc_losses';
    $data = 'MMC';
 }
 elseif ($category == 8  || $category == 9 ) //rujarkian
 {
-   $success_columns = 'adv.ruj_wins';
-   $failure_columns = 'adv.ruj_losses';
+   $success_columns = 'ruj_wins';
+   $failure_columns = 'ruj_losses';
    $data = 'RUJ';
 }
 elseif ($category == 10 || $category == 11) //takish
 {
-   $success_columns = 'adv.tak_wins';
-   $failure_columns = 'adv.tak_losses';
+   $success_columns = 'tak_wins';
+   $failure_columns = 'tak_losses';
    $data = 'TAK';
 }
 else //else show totals (option 0 and 1)
 {
-   $success_columns = 'adv.guk_wins + adv.mir_wins + adv.mmc_wins + adv.ruj_wins + adv.tak_wins';
-   $failure_columns = 'adv.guk_losses + adv.mir_losses + adv.mmc_losses + adv.ruj_losses + adv.tak_losses';
+   $success_columns = 'guk_wins + mir_wins + mmc_wins + ruj_wins + tak_wins';
+   $failure_columns = 'guk_losses + mir_losses + mmc_losses + ruj_losses + tak_losses';
    $data = "ALL";
 }
 
@@ -110,7 +123,7 @@ else //else show totals (option 0 and 1)
 //evens are by wins, odds are by percent
 if ($category % 2 == 0)
 {
-   $orderby = 'success DESC'; 
+   $orderby = 'success DESC, percent DESC'; 
    $orderby_clean = 'wins';
 }
 else
@@ -118,30 +131,51 @@ else
    $orderby = 'percent DESC, success DESC'; 
    $orderby_clean = 'percent';
 }
-   
-//get adventure data
+
+//determine if the database is high enough version to have the
+// RANK() window function. It was added to mariadb in 10.2 and 
+// percona and mysql added it in 8.0
+$rank_function_exists = db_is_version($cbsql, '10.2', '8.0', '8.0');
+
+if ($rank_function_exists)
+{  
+   //use the RANK() window function
+   $rank_syntax = "RANK() OVER ( ORDER BY success DESC, percent DESC, failure ASC) rank,";
+}
+else
+{
+   //use variables to count the ranks
+   //initialize the variable and set the syntax
+   $result = $cbsql->query('SET @row_number = 0;'); 
+   $rank_syntax = "(@row_number:=@row_number + 1) AS rank,";
+}
+
 $tpl = <<<TPL
-   SELECT *
+   SELECT 
+      *
    FROM (
-      SELECT (@row_number:=@row_number + 1) AS rank,
-             success, 
-             failure, 
-             (success/(failure + success) * 100 ) AS percent,
-             name
+      SELECT 
+         %s
+         success, 
+         failure, 
+         IFNULL((success/(failure + success) * 100 ), 0) AS percent,
+         name
       FROM (
-         SELECT %s AS success,
-                %s AS failure,
-                cd.name
-         FROM adventure_stats adv
-         JOIN character_data cd
-           ON cd.id = adv.player_id) totaled
-      ORDER BY %s ) ranked
+         SELECT 
+            IFNULL(%s, 0) AS success,
+            IFNULL(%s, 0) AS failure,
+            name
+         FROM character_data
+         LEFT JOIN adventure_stats
+            ON id = player_id
+      ) totaled
+      ORDER BY %s 
+   ) ranked
    %s  
 TPL;
 
-$query = sprintf($tpl, $success_columns, $failure_columns, $orderby, $where);
-//set counter starting point for numbering the ranks
-$result = $cbsql->query('SET @row_number = 0;'); 
+$query = sprintf($tpl, $rank_syntax, $success_columns, $failure_columns, $orderby, $where);
+
 //get the results
 $result = $cbsql->query($query);
 
@@ -244,7 +278,7 @@ foreach ($language['ADVENTURE_SELECT_CATEGORY'] as $key => $value ) {
 *********************************************/
 $cb_template->pparse('body');
 
-$cb_template->destroy;
+$cb_template->destroy();
  
 include(__DIR__ . "/include/footer.php");
 ?>

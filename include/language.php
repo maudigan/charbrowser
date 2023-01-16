@@ -40,6 +40,7 @@
  *                      added language for barter page
  *   October 28, 2022 - added adventure board language (maudigan)
  *   November 1, 2022 - added language for corpses page update (Maudigan)
+ *   January 16, 2023 - added many missing and new messages
  ***************************************************************************/ 
   
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             
@@ -49,7 +50,11 @@ if ( !defined('INCHARBROWSER') )
 { 
         die("Hacking attempt"); 
 } 
-$language = array(); 
+$language = array();
+
+//pagination
+$language['GOTO_PAGE'] = "Goto Page"; 
+ 
 //header language 
 $language['HEADER_GUILD'] = "Guild"; 
 $language['HEADER_NAME'] = "Name"; 
@@ -90,6 +95,15 @@ $language['PAGE_TITLES_KEYS'] ="'s Keys";
 
 
 //charmove language 
+$language['CHARMOVE_BLANKFIELDS'] = "One or more fields were left blank"; 
+$language['CHARMOVE_NAME_ILLEGAL'] = "The character name contains illegal characters"; 
+$language['CHARMOVE_LOGIN_ILLEGAL'] = "Login contains illegal characters"; 
+$language['CHARMOVE_ZONE_ILLEGAL'] = "That zone contains illegal characters"; 
+$language['CHARMOVE_BAD_ZONE'] = "That zone is not a legal selection"; 
+$language['CHARMOVE_UNKNOWN_DB'] = "Unknown database error"; 
+$language['CHARMOVE_BAD_NAMES'] = "Login or character name was not correct"; 
+$language['CHARMOVE_MOVED'] = "%s - moved to %s"; 
+$language['MESSAGE_MOVE_ARRAY_MISMATCH'] = "The number of logins, character, and zones provided doesn't match."; 
 $language['CHARMOVE_CHARACTER_MOVER'] = "Character Mover"; 
 $language['CHARMOVE_LOGIN'] = "Login"; 
 $language['CHARMOVE_CHARNAME'] = "Name"; 
@@ -99,6 +113,7 @@ $language['CHARMOVE_ADD_CHARACTER'] = "add row";
 $language['CHARMOVE_BOOKMARK'] = "Click here to add a bookmark for this move!"; 
 
 //signature language 
+$language['SIGNATURE_NO_FILE'] = "There is no %s file named %s, and no default images could be located to replace it."; 
 $language['SIGNATURE_SIGNATURE_BUILDER'] = "Signature Builder"; 
 $language['SIGNATURE_NAME'] = "Name"; 
 $language['SIGNATURE_FONT_ONE'] = "Name Font"; 
@@ -726,6 +741,7 @@ $language['CHAR_OPEN_BAG'] = "Inspect this bag's contents";
 //buttons 
 $language['BUTTON_BACK'] = "Back"; 
 $language['BUTTON_DONE'] = "Done"; 
+$language['BUTTON_CLEAR'] = "Clear"; 
 $language['BUTTON_INVENTORY'] = "Profile"; 
 $language['BUTTON_AAS'] = "AAs"; 
 $language['BUTTON_LEADERSHIP'] = "Leader."; 
@@ -744,16 +760,26 @@ $language['BUTTON_KEYS'] = "Keys";
 
 //messages 
 $language['MESSAGE_ERROR'] = "Error"; 
+$language['MESSAGE_ERROR_TEMPLATE'] = "%s in %s on line %s."; 
+$language['MESSAGE_LOAD_ORDER'] = "The %s class can't be loaded prior to %s."; 
+$language['MESSAGE_WARNING'] = "Warning"; 
+$language['MESSAGE_NOTICE'] = "Notice"; 
+$language['MESSAGE_DEBUG'] = "Debug"; 
+$language['MESSAGE_FATAL_ERROR'] = "Fatal Error"; 
+$language['MESSAGE_PARSER_ERROR'] = "Parser Error"; 
 $language['MESSAGE_DISABLED'] = "Disabled"; 
-$language['MESSAGE_NO_CHAR'] = "You must specify a character."; 
+$language['MESSAGE_GENERIC'] = "A fatal error was encountered."; 
+$language['MESSAGE_NO_CHAR'] = "You must specify a valid character name using only letters."; 
+$language['MESSAGE_NO_BOT'] = "You must specify a valid bot name using only letters."; 
+$language['MESSAGE_NO_CORPSE'] = "You must specify a valid corpse id using only numbers."; 
 $language['MESSAGE_NO_GUILD'] = "You must specify a guild."; 
 $language['MESSAGE_NO_RESULTS_GUILD'] = "No guilds matched your search.";
 $language['MESSAGE_CORPSE_NON_NUMERIC'] = "A non numeric corpse id was provided."; 
 $language['MESSAGE_NAME_ALPHA'] = "A characters name can only contain alphabetic characters."; 
-$language['MESSAGE_ITEM_ALPHA'] = "An item search can only contain alphabetic characters for security."; 
+$language['MESSAGE_ITEM_ALPHA'] = "An item name search can only contain alphabetic, numeric, spaces, apostrophe and dashes for security."; 
 $language['MESSAGE_NO_RESULTS'] = "No characters matched your search."; 
 $language['MESSAGE_NO_RESULTS_ITEMS'] = "No items matched your search."; 
-$language['MESSAGE_GUILD_ALPHA'] = "A guild search can only contain alphabetic characters."; 
+$language['MESSAGE_GUILD_ALPHA'] = "A guild search can only contain alphabetic, spaces, apostrophe and dashes for security."; 
 $language['MESSAGE_ORDER_ALPHA'] = "A searches order by field can only contain alphabetic characters."; 
 $language['MESSAGE_START_NUMERIC'] = "A searches start field can only contain numeric characters."; 
 $language['MESSAGE_PRICE_NUMERIC'] = "A searches price field can only contain numeric characters."; 
@@ -778,5 +804,6 @@ $language['MESSAGE_DB_CONNECT'] = "The database host/user/password supplied were
 $language['MESSAGE_DB_NODB'] = "Could not find designated database.";
 $language['MESSAGE_NOAPI'] = "The API is unavailable on this page.";
 $language['MESSAGE_BAD_CONFIG'] = "<h2>Configuration Error</h2>The config version stamp in your config file does not match the stamp in your software. This likely means that you've installed a new version of the software but kept your old config file. This stamp only changes when important changes have beeen made to the config file that require generating a new config. Backup your old config.php and replace it with config.template. Then edit the new file and reset all your settings in it.";
-
+$language['MESSAGE_ILLEGAL_PAGE'] = "You've requested a page with ilelgal characters in the name. Not cool.";
+$language['MESSAGE_NO_PAGE'] = "You've requested a page that doesn't exist.";
 ?>

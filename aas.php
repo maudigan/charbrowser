@@ -52,7 +52,11 @@
 /*********************************************
                  INCLUDES
 *********************************************/ 
-define('INCHARBROWSER', true);
+//define this as an entry point to unlock includes
+if ( !defined('INCHARBROWSER') ) 
+{
+   define('INCHARBROWSER', true);
+}
 include_once(__DIR__ . "/include/common.php");
 include_once(__DIR__ . "/include/profile.php");
 include_once(__DIR__ . "/include/db.php");
@@ -108,19 +112,17 @@ function getRankCost($first_rank, $value)
   
  
 /*********************************************
-         SETUP PROFILE/PERMISSIONS
+       SETUP CHARACTER CLASS & PERMISSIONS
 *********************************************/
-if(!$_GET['char']) cb_message_die($language['MESSAGE_ERROR'],$language['MESSAGE_NO_CHAR']);
-else $charName = $_GET['char'];
+$charName = preg_Get_Post('char', '/^[a-zA-Z]+$/', false, $language['MESSAGE_ERROR'],$language['MESSAGE_NO_CHAR'], true);
 
 //character initializations 
-$char = new profile($charName, $cbsql, $cbsql_content, $language, $showsoftdelete, $charbrowser_is_admin_page); //the profile class will sanitize the character name
+$char = new Charbrowser_Character($charName, $showsoftdelete, $charbrowser_is_admin_page); //the Charbrowser_Character class will sanitize the character name
 $charID = $char->char_id(); 
 $name = $char->GetValue('name');
-$mypermission = GetPermissions($char->GetValue('gm'), $char->GetValue('anon'), $char->char_id());
 
 //block view if user level doesnt have permission
-if ($mypermission['AAs']) cb_message_die($language['MESSAGE_ERROR'],$language['MESSAGE_ITEM_NO_VIEW']);
+if ($char->Permission('AAs')) $cb_error->message_die($language['MESSAGE_NOTICE'],$language['MESSAGE_ITEM_NO_VIEW']);
  
  
 /*********************************************
@@ -177,7 +179,17 @@ while ($row = $cbsql_content->nextrow($result))
    $first_rank_id = $row['first_rank_id'];
    //skip this one if there is no first rank data
    if (!array_key_exists($first_rank_id, $aa_ranks)) continue;
-   $cur = intval($character_aas[$first_rank_id]['aa_value']);
+   
+   //if the char has this AA, get its value
+   if (is_array($character_aas) && array_key_exists($first_rank_id, $character_aas)) 
+   {
+      $cur = intval($character_aas[$first_rank_id]['aa_value']);
+   }
+   //else it's at 0
+   else
+   {
+      $cur = 0;
+   }
    $cost = getRankCost($first_rank_id, $cur);
    $max = getTotalRanks($first_rank_id);
    
@@ -265,7 +277,7 @@ foreach ($aa_abilities as $aa_ability)
 *********************************************/
 $cb_template->pparse('aas');
 
-$cb_template->destroy;
+$cb_template->destroy();
 
 include(__DIR__ . "/include/footer.php");
 ?>

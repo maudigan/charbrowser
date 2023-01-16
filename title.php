@@ -38,8 +38,12 @@
 /*********************************************
                  INCLUDES
 *********************************************/ 
-define('INCHARBROWSER', true);
-$charbrowser_image_script = true;
+//define this as an entry point to unlock includes
+if ( !defined('INCHARBROWSER') ) 
+{
+   define('INCHARBROWSER', true);
+}
+define('IS_IMAGE_SCRIPT', true);
 include_once(__DIR__ . "/include/common.php");
 
 
@@ -54,7 +58,7 @@ if (!SERVER_HAS_GD) {
 }
 
 //force a recache of the title image
-$recache = (isset($_REQUEST['recache'])) ? true : false;
+$recache = (checkParm('recache')) ? true : false;
 
 
 //CACHE CONTROL
@@ -143,7 +147,7 @@ else {
 /*********************************************
                OUTPUT IMAGE
 *********************************************/
-ob_clean(); //make sure we haven't sent a text header
+if (ob_get_contents()) ob_clean(); //make sure we haven't sent a text header, squelch or it'll post a notice when already empty
 header('Last-Modified: '.gmdate('D, d M Y H:i:s', $config_time).' GMT', true, 200);
 header("Content-Type: image/png"); 
 imagepng($image);

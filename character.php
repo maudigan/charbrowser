@@ -58,6 +58,8 @@
  *     implement multi-tenancy
  *   March 16, 2022 - Maudigan
  *     added item type to the API for each item
+ *   January 11, 2023 - Maudigan
+ *     removed language references to heroic stats as they aren't used
  *      
  ***************************************************************************/
   
@@ -65,7 +67,11 @@
 /*********************************************
                  INCLUDES
 *********************************************/ 
-define('INCHARBROWSER', true);
+//define this as an entry point to unlock includes
+if ( !defined('INCHARBROWSER') ) 
+{
+   define('INCHARBROWSER', true);
+}
 include_once(__DIR__ . "/include/common.php");
 include_once(__DIR__ . "/include/profile.php");
 include_once(__DIR__ . "/include/itemclass.php");
@@ -73,26 +79,26 @@ include_once(__DIR__ . "/include/db.php");
   
  
 /*********************************************
-         SETUP PROFILE/PERMISSIONS
+       SETUP CHARACTER CLASS & PERMISSIONS
 *********************************************/
-if(!$_GET['char']) cb_message_die($language['MESSAGE_ERROR'],$language['MESSAGE_NO_CHAR']);
-else $charName = $_GET['char'];
-     
+$charName = preg_Get_Post('char', '/^[a-zA-Z]+$/', false, $language['MESSAGE_ERROR'],$language['MESSAGE_NO_CHAR'], true);
+
 //character initializations 
-$char = new profile($charName, $cbsql, $cbsql_content, $language, $showsoftdelete, $charbrowser_is_admin_page); //the profile class will sanitize the character name
+$char = new Charbrowser_Character($charName, $showsoftdelete, $charbrowser_is_admin_page); //the Charbrowser_Character class will sanitize the character name
 $charID = $char->char_id(); 
 $name = $char->GetValue('name');
-$mypermission = GetPermissions($char->GetValue('gm'), $char->GetValue('anon'), $char->char_id());
 
 //block view if user level doesnt have permission
-if ($mypermission['inventory']) cb_message_die($language['MESSAGE_ERROR'],$language['MESSAGE_ITEM_NO_VIEW']);
- 
+if ($char->Permission('inventory')) $cb_error->message_die($language['MESSAGE_NOTICE'],$language['MESSAGE_ITEM_NO_VIEW']);
+
  
 /*********************************************
         GATHER RELEVANT PAGE DATA
 *********************************************/
 //get character info
 $class      = $char->GetValue('class');
+$guild_name = '';
+$guild_rank = '';
 
 if ($char->GetValue('anon') != 1 || $showguildwhenanon || $charbrowser_is_admin_page) {
    /* this will get implemented in the server code soon, uncomment and remove the code below
@@ -227,7 +233,7 @@ foreach ($calc_rows_atk as $row) {
 
 
 $cb_template->assign_both_vars(array(  
-   'HIGHLIGHT_GM' => (($highlightgm && $gm)? "GM":""),
+   'HIGHLIGHT_GM' => (($highlightgm && $char->GetValue('gm'))? "GM":""),
    'GUILD' => getGuildLink($guild_name, $guild_rank),
    'REGEN' => number_format($char->getRegen()),
    'FT' => number_format($char->getFT()),
@@ -280,15 +286,15 @@ $cb_template->assign_both_vars(array(
    'HCOLD' => $char->getHCR(), 
    'HCORRUPT' => $char->getHCOR(),
    'WEIGHT' => round($char->getWT()/10),
-   'PP' => (($mypermission['coininventory']) ? $language['MESSAGE_DISABLED'] : number_format($char->GetValue('platinum'))),
-   'GP' => (($mypermission['coininventory']) ? $language['MESSAGE_DISABLED'] : number_format($char->GetValue('gold'))),
-   'SP' => (($mypermission['coininventory']) ? $language['MESSAGE_DISABLED'] : number_format($char->GetValue('silver'))),
-   'CP' => (($mypermission['coininventory']) ? $language['MESSAGE_DISABLED'] : number_format($char->GetValue('copper'))),
-   'BPP' => (($mypermission['coinbank']) ? $language['MESSAGE_DISABLED'] : number_format($char->GetValue('platinum_bank'))),
-   'BGP' => (($mypermission['coinbank']) ? $language['MESSAGE_DISABLED'] : number_format($char->GetValue('gold_bank'))),
-   'BSP' => (($mypermission['coinbank']) ? $language['MESSAGE_DISABLED'] : number_format($char->GetValue('silver_bank'))),
-   'BCP' => (($mypermission['coinbank']) ? $language['MESSAGE_DISABLED'] : number_format($char->GetValue('copper_bank'))),
-   'SBPP' => (($mypermission['coinsharedbank']) ? $language['MESSAGE_DISABLED'] : number_format($sbpp)))
+   'PP' => (($char->Permission('coininventory')) ? $language['MESSAGE_DISABLED'] : number_format($char->GetValue('platinum'))),
+   'GP' => (($char->Permission('coininventory')) ? $language['MESSAGE_DISABLED'] : number_format($char->GetValue('gold'))),
+   'SP' => (($char->Permission('coininventory')) ? $language['MESSAGE_DISABLED'] : number_format($char->GetValue('silver'))),
+   'CP' => (($char->Permission('coininventory')) ? $language['MESSAGE_DISABLED'] : number_format($char->GetValue('copper'))),
+   'BPP' => (($char->Permission('coinbank')) ? $language['MESSAGE_DISABLED'] : number_format($char->GetValue('platinum_bank'))),
+   'BGP' => (($char->Permission('coinbank')) ? $language['MESSAGE_DISABLED'] : number_format($char->GetValue('gold_bank'))),
+   'BSP' => (($char->Permission('coinbank')) ? $language['MESSAGE_DISABLED'] : number_format($char->GetValue('silver_bank'))),
+   'BCP' => (($char->Permission('coinbank')) ? $language['MESSAGE_DISABLED'] : number_format($char->GetValue('copper_bank'))),
+   'SBPP' => (($char->Permission('coinsharedbank')) ? $language['MESSAGE_DISABLED'] : number_format($sbpp)))
 );
 
 $cb_template->assign_vars(array(  
@@ -312,25 +318,12 @@ $cb_template->assign_vars(array(
    'L_INT' => $language['CHAR_INT'],
    'L_WIS' => $language['CHAR_WIS'],
    'L_CHA' => $language['CHAR_CHA'],
-   'L_HSTR' => $language['CHAR_HSTR'],  
-   'L_HSTA' => $language['CHAR_HSTA'], 
-   'L_HDEX' => $language['CHAR_HDEX'], 
-   'L_HAGI' => $language['CHAR_HAGI'], 
-   'L_HINT' => $language['CHAR_HINT'], 
-   'L_HWIS' => $language['CHAR_HWIS'], 
-   'L_HCHA' => $language['CHAR_HCHA'], 
    'L_POISON' => $language['CHAR_POISON'],
    'L_MAGIC' => $language['CHAR_MAGIC'],
    'L_DISEASE' => $language['CHAR_DISEASE'],
    'L_FIRE' => $language['CHAR_FIRE'],
    'L_COLD' => $language['CHAR_COLD'],
    'L_CORRUPT' => $language['CHAR_CORRUPT'],
-   'L_HPOISON' => $language['CHAR_HPOISON'], 
-   'L_HMAGIC' => $language['CHAR_HMAGIC'], 
-   'L_HDISEASE' => $language['CHAR_HDISEASE'], 
-   'L_HFIRE' => $language['CHAR_HFIRE'], 
-   'L_HCOLD' => $language['CHAR_HCOLD'], 
-   'L_HCORRUPT' => $language['CHAR_HCORRUPT'],
    'L_WEIGHT' => $language['CHAR_WEIGHT'],
    'L_CONTAINER' => $language['CHAR_CONTAINER'], 
    'L_DONE' => $language['BUTTON_DONE'],
@@ -371,7 +364,7 @@ for ( $i = SLOT_SHAREDBANK_START; $i <= SLOT_SHAREDBANK_END; $i++ ) {
 $allitems = $char->getAllItems();
 
 //INVENTORY
-if (!$mypermission['bags']) {
+if (!$char->Permission('bags')) {
    foreach ($allitems as $value) {
       if ($value->type() != INVENTORY) continue; 
       $cb_template->assign_block_vars("invitem", array( 
@@ -394,7 +387,7 @@ foreach ($allitems as $value) {
    );
 }
 //BANK
-if (!$mypermission['bank']) {
+if (!$char->Permission('bank')) {
    foreach ($allitems as $value) {  
       if ($value->type() != BANK) continue;    
       $cb_template->assign_block_vars("bankitem", array( 
@@ -408,7 +401,7 @@ if (!$mypermission['bank']) {
    }
 }
 //SHARED BANK
-if (!$mypermission['sharedbank']) {
+if (!$char->Permission('sharedbank')) {
    foreach ($allitems as $value) {  
       if ($value->type() != SHAREDBANK) continue;    
       $cb_template->assign_block_vars("sharedbankitem", array( 
@@ -429,9 +422,9 @@ if (!$mypermission['sharedbank']) {
 //for bag contents, this does equipment,
 //inventory, bank and shared bank
 foreach ($allitems as $value) {
-   if ($value->type() == INVENTORY && $mypermission['bags']) continue; 
-   if ($value->type() == BANK && $mypermission['bank']) continue;
-   if ($value->type() == SHAREDBANK && $mypermission['sharedbank']) continue;
+   if ($value->type() == INVENTORY && $char->Permission('bags')) continue; 
+   if ($value->type() == BANK && $char->Permission('bank')) continue;
+   if ($value->type() == SHAREDBANK && $char->Permission('sharedbank')) continue;
    if ($value->slotcount() > 0)  {
        
       //stage the bag in a temporary array
@@ -487,9 +480,9 @@ foreach ($allitems as $value) {
 //the item stats. this does equipment,
 //inventory, bank and shared bank
 foreach ($allitems as $value) {
-   if ($value->type() == INVENTORY && $mypermission['bags']) continue; 
-   if ($value->type() == BANK && $mypermission['bank']) continue;
-   if ($value->type() == SHAREDBANK && $mypermission['sharedbank']) continue;
+   if ($value->type() == INVENTORY && $char->Permission('bags')) continue; 
+   if ($value->type() == BANK && $char->Permission('bank')) continue;
+   if ($value->type() == SHAREDBANK && $char->Permission('sharedbank')) continue;
    
    $cb_template->assign_both_block_vars("item", array(
       'SLOT' => $value->slot(),     
@@ -518,7 +511,7 @@ foreach ($allitems as $value) {
 *********************************************/
 $cb_template->pparse('character');
 
-$cb_template->destroy;
+$cb_template->destroy();
 
 include(__DIR__ . "/include/footer.php");
 ?>

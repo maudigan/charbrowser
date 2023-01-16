@@ -21,7 +21,11 @@
 /*********************************************
                  INCLUDES
 *********************************************/ 
-define('INCHARBROWSER', true);
+//define this as an entry point to unlock includes
+if ( !defined('INCHARBROWSER') ) 
+{
+   define('INCHARBROWSER', true);
+}
 include_once(__DIR__ . "/include/common.php");
 include_once(__DIR__ . "/include/corpse_profile.php");
 include_once(__DIR__ . "/include/profile.php");
@@ -30,24 +34,22 @@ include_once(__DIR__ . "/include/db.php");
   
  
 /*********************************************
-         SETUP PROFILE/PERMISSIONS
+       SETUP CHARACTER CLASS & PERMISSIONS
 *********************************************/
-if(!$_GET['corpse']) cb_message_die($language['MESSAGE_ERROR'],$language['MESSAGE_NO_CHAR']);
-else $CorpseID = $_GET['corpse'];
+$CorpseID = preg_Get_Post('corpse', '/^[0-9]+$/', false, $language['MESSAGE_ERROR'],$language['MESSAGE_NO_CORPSE'], true);
      
 //bot initializations 
-$corpse = new corpse_profile($CorpseID, $cbsql, $cbsql_content, $language, $charbrowser_is_admin_page); //the profile class will sanitize the char id
+$corpse = new Charbrowser_Corpse($CorpseID); //the profile class will sanitize the char id
 $charID = $corpse->char_id(); 
 $CorpseID = $corpse->corpse_id();
 $corpseName = $corpse->GetValue('charname');
 
 //char initialization      
-$char = new profile($charID, $cbsql, $cbsql_content, $language, $showsoftdelete, $charbrowser_is_admin_page);
+$char = new Charbrowser_Character($charID, $showsoftdelete, $charbrowser_is_admin_page);
 $charName = $char->GetValue('name');
-$mypermission = GetPermissions($char->GetValue('gm'), $char->GetValue('anon'), $char->char_id());
 
 //block view if user level doesnt have permission
-if ($mypermission['corpse']) cb_message_die($language['MESSAGE_ERROR'],$language['MESSAGE_ITEM_NO_VIEW']);
+if ($char->Permission('corpse')) $cb_error->message_die($language['MESSAGE_NOTICE'],$language['MESSAGE_ITEM_NO_VIEW']);
  
  
 /*********************************************
@@ -136,7 +138,6 @@ $cb_template->assign_both_vars(array(
    'TOD_TIME' =>  date('g:i A', $tod),
    'REZZED_TEXT' => ($corpse->GetValue('is_rezzed') ? $language['CORPSE_REZZED_YES']:$language['CORPSE_REZZED_NO']),  
    'REZZED_STYLE' => ($corpse->GetValue('is_rezzed') ? "CB_Avatar_Rezzed":""),  
-   'BURIED_TEXT' => ($corpse->GetValue('is_buried') ? $language['CORPSE_BURIED_YES']:$language['CORPSE_BURIED_NO']), 
    'DIED_ZONE_LONG_NAME' => $zone['long_name'],
    'DIED_ZONE_SHORT_NAME' => $zone['short_name'],
    'DIED_LOC' => "(".floor($corpse->GetValue('y')).", ".floor($corpse->GetValue('x')).")",
@@ -209,7 +210,7 @@ for ( $i = SLOT_EQUIPMENT_START; $i <= SLOT_EQUIPMENT_END; $i++ ) {
 $allitems = $corpse->getAllItems();
 
 //INVENTORY
-if (!$mypermission['bags']) {
+if (!$char->Permission('bags')) {
    foreach ($allitems as $value) {
       if ($value->type() != INVENTORY) continue; 
       $cb_template->assign_block_vars("invitem", array( 
@@ -241,7 +242,7 @@ foreach ($allitems as $value) {
 //for bag contents, this does equipment,
 //inventory, bank and shared bank
 foreach ($allitems as $value) {
-   if ($value->type() == INVENTORY && $mypermission['bags']) continue; 
+   if ($value->type() == INVENTORY && $char->Permission('bags')) continue; 
    
    if ($value->slotcount() > 0)  {
        
@@ -298,7 +299,7 @@ foreach ($allitems as $value) {
 //the item stats. this does equipment,
 //inventory
 foreach ($allitems as $value) {
-   if ($value->type() == INVENTORY && $mypermission['bags']) continue; 
+   if ($value->type() == INVENTORY && $char->Permission('bags')) continue; 
    
    $cb_template->assign_both_block_vars("item", array(
       'SLOT' => $value->slot(),     
@@ -327,7 +328,7 @@ foreach ($allitems as $value) {
 *********************************************/
 $cb_template->pparse('corpse');
 
-$cb_template->destroy;
+$cb_template->destroy();
 
 include(__DIR__ . "/include/footer.php");
 ?>

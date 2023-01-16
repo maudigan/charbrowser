@@ -1,4 +1,4 @@
-<?php
+<?php 
 /***************************************************************************
  *
  *   This program is free software; you can redistribute it and/or modify
@@ -38,21 +38,27 @@
 /*********************************************
                  INCLUDES
 *********************************************/
-define('INCHARBROWSER', true);
+//define this as an entry point to unlock includes
+if ( !defined('INCHARBROWSER') ) 
+{
+   define('INCHARBROWSER', true);
+}
 include_once(__DIR__ . "/include/common.php");
 
 
 //use the home page override if it's present
 //and no other page is set
-if (empty($_REQUEST['page']) && file_exists( __DIR__ . "/home.php")) {
-   $_REQUEST['page'] = 'home';
+$cb_page = preg_Get_Post('page', '/^[a-zA-Z]*$/', false, $language['MESSAGE_ERROR'], $language['MESSAGE_ILLEGAL_PAGE']);
+
+if (!$cb_page && file_exists( __DIR__ . "/home.php")) {
+   $cb_page = 'home';
 }
 
 
 /*********************************************
                INDEX REQUESTED
 *********************************************/
-if (empty($_REQUEST['page']))
+if (!$cb_page)
 {
    /*********************************************
                   DROP INDEX HEADER
@@ -84,7 +90,7 @@ if (empty($_REQUEST['page']))
    *********************************************/
    $cb_template->pparse('index');
 
-   $cb_template->destroy;
+   $cb_template->destroy();
 
    include(__DIR__ . "/include/footer.php");
 }
@@ -101,23 +107,16 @@ else
    //we use the page variable to redirect this script to one of the other php scripts
    //this permits us to use index.php to display every single page in the utility
 
-   // Make sure the request isn't escaping to another unintended directory
-   // this is risky, so we're super strict and only allow alpha characters
-   if (!preg_match('/^[a-zA-Z]+$/', $_REQUEST['page']))
-   {
-      cb_message_die($language['MESSAGE_ERROR'],$language['MESSAGE_NOPAGE']);
-   }
-
    //get the absolute path to the requested script
-   $page = __DIR__ . "/" . $_REQUEST['page'] . ".php";
+   $cb_page = __DIR__ . "/" . $cb_page . ".php";
 
    //make sure the script exists so the include doesn't error
-   if (!file_exists($page))
+   if (!file_exists($cb_page))
    {
-      cb_message_die($language['MESSAGE_ERROR'],$language['MESSAGE_NOPAGE']);
+      $cb_error->message_die($language['MESSAGE_ERROR'],$language['MESSAGE_NO_PAGE']);
    }
 
-   include($page);
+   include($cb_page);
 }
 
 ?>

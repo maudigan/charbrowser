@@ -1,3 +1,33 @@
+v3.6.0
+----------------------------------------------------------------------
+php/mysql version compatibility, cleanup warnings and notices, new
+error class, general cleanup, minor upgrades
+
+Nov 23, 2022 - Altered the adventure board to use RANK() for newer
+               versions of MySQL and variables for older versions
+
+Jan 11, 2023 - removed too many warnings and notices to cover here
+               gave classes a Charbrowser_ prefix for their name
+               gave all private elements a _ prefix
+               changed GetPermissions class to be a part of the
+                  characters class
+               make sure array and array keys exist prior to
+                  referencing them
+               repaired the leaderboard rankings. The query returned
+                  different results based on DB vendor/version. it now
+                  uses two different methods based on vender/version.
+               removed direct access to $_GET, $_POST and $_REQUEST
+                  and use a wrapper function preg_Get_Post() instead
+                  which is written to ensure array keys exist and to
+                  also use regex to validate all user input values
+               Tested/Updated the software to work on PHP 5.6 up
+                  to PHP 7.4
+               When theres no bazaar search results, we now show
+                  an empty bazaar window instead of a message box
+               
+               
+              (maudigan)
+              
 v3.5.0
 ----------------------------------------------------------------------
 LDON Leaderboard, Barter, Leadership AA, Corpse Detail, enhancements,

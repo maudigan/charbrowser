@@ -21,11 +21,14 @@
  *   October 24, 2022 - make this only run one time (maudigan)
  *                      added the no header option for ingame browser
  *   October 27, 2022 - Added barter link (maudigan)
+ *   January 16, 2023 - make sure header vars are initialized
+ *                      populate previous searches into the input fields so
+ *                       users don't have to retype them
  *
  ***************************************************************************/
  
 //dont make a header if there is an API request 
-if (isset($_GET['api'])) return;
+if (checkParm('api')) return;
  
 if ( !defined('INCHARBROWSER') )
 {
@@ -46,7 +49,7 @@ if ( !defined('CB_HEADER_RUN') )
       );
    }
    //header for ingame browser
-   elseif (isset($_GET['nohead']))
+   elseif (checkParm('nohead'))
    {
       $cb_template->set_filenames(array(
         'header' => 'header_none_body.tpl')
@@ -59,6 +62,10 @@ if ( !defined('CB_HEADER_RUN') )
         'header' => 'header_body.tpl')
       );
    }
+   
+   //make sure search params were initialized
+   if (!isset($header_name_search)) $header_name_search = '';
+   if (!isset($header_guild_search)) $header_guild_search = '';
 
    $cb_template->assign_vars(array(  
      'TITLE' => $mytitle,
@@ -67,6 +74,9 @@ if ( !defined('CB_HEADER_RUN') )
      'ADVERTISEMENT' => $adscript,
      'ROOT_URL' => $charbrowser_root_url,
      'INDEX_URL' => $cb_index_url,
+     'SEARCH_NAME' => $header_name_search,
+     'SEARCH_GUILD' => $header_guild_search,
+     
      'L_GUILD' => $language['HEADER_GUILD'],
      'L_NAME' => $language ['HEADER_NAME'],
      'L_SETTINGS' => $language['HEADER_SETTINGS'],
@@ -84,7 +94,7 @@ if ( !defined('CB_HEADER_RUN') )
 
    $cb_template->pparse('header');
 
-   $cb_template->destroy;   
+   $cb_template->destroy();
    
    //LIMIT ME
    //this script only needs to run once

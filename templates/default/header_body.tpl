@@ -2,7 +2,7 @@
 <html dir='ltr'>
    <head>
       <title>{TITLE} {SUBTITLE}</title>
-      <link rel='stylesheet' href='{ROOT_URL}templates/default/style-1.6.css' type='text/css'/>
+      <link rel='stylesheet' href='{ROOT_URL}templates/default/style-1.7.css' type='text/css'/>
       <link rel='stylesheet' href='{ROOT_URL}templates/default/style-item-icons-1.0.css' type='text/css'/>
       <meta http-equiv='Content-Type' content='text/html; charset=iso-8859-1'>
       <meta http-equiv='Content-Style-Type' content='text/css'>
@@ -38,8 +38,8 @@
             <a href='{INDEX_URL}'><img src="{ROOT_URL}title.php"></a>
             <form method='GET' action='{INDEX_URL}'>
                <input type='hidden' name='page' value='search'>
-               <label for='name'>{L_NAME}:</label><input id='name' type='text' name='name' autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">
-               <label for='guild'>{L_GUILD}:</label><input id='guild' type='text' name='guild' autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">
+               <label for='name'>{L_NAME}:</label><input id='name' type='text' name='name' autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" value="{SEARCH_NAME}">
+               <label for='guild'>{L_GUILD}:</label><input id='guild' type='text' name='guild' autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" value="{SEARCH_GUILD}">
                <input type='submit' value='Go'>
             </form>
             <nav>

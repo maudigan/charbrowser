@@ -20,6 +20,8 @@
  *     optimize character initialization
  *   March 16, 2022 - Maudigan
  *     added item type to the API for each item
+ *   January 11, 2023 - Maudigan
+ *     removed the heroic stats since they aren't used
  *      
  ***************************************************************************/
   
@@ -27,7 +29,11 @@
 /*********************************************
                  INCLUDES
 *********************************************/ 
-define('INCHARBROWSER', true);
+//define this as an entry point to unlock includes
+if ( !defined('INCHARBROWSER') ) 
+{
+   define('INCHARBROWSER', true);
+}
 include_once(__DIR__ . "/include/common.php");
 include_once(__DIR__ . "/include/bot_profile.php");
 include_once(__DIR__ . "/include/profile.php");
@@ -36,24 +42,22 @@ include_once(__DIR__ . "/include/db.php");
   
  
 /*********************************************
-         SETUP PROFILE/PERMISSIONS
+       SETUP CHARACTER CLASS & PERMISSIONS
 *********************************************/
-if(!$_GET['bot']) cb_message_die($language['MESSAGE_ERROR'],$language['MESSAGE_NO_CHAR']);
-else $botName = $_GET['bot'];
+$botName = preg_Get_Post('bot', '/^[a-zA-Z]+$/', false, $language['MESSAGE_ERROR'],$language['MESSAGE_NO_BOT'], true);
      
 //bot initializations 
-$bot = new bot_profile($botName, $cbsql, $cbsql_content, $language, $charbrowser_is_admin_page); //the profile class will sanitize the bot name
+$bot = new Charbrowser_Bot($botName); //the profile class will sanitize the bot name
 $charID = $bot->char_id(); 
 $botID = $bot->bot_id(); 
 $botName = $bot->GetValue('name');
 
 //char initialization      
-$char = new profile($charID, $cbsql, $cbsql_content, $language, $showsoftdelete, $charbrowser_is_admin_page);
+$char = new Charbrowser_Character($charID, $showsoftdelete, $charbrowser_is_admin_page);
 $charName = $char->GetValue('name');
-$mypermission = GetPermissions($char->GetValue('gm'), $char->GetValue('anon'), $char->char_id());
 
 //block view if user level doesnt have permission
-if ($mypermission['bots']) cb_message_die($language['MESSAGE_ERROR'],$language['MESSAGE_ITEM_NO_VIEW']);
+if ($char->Permission('bot')) $cb_error->message_die($language['MESSAGE_NOTICE'],$language['MESSAGE_ITEM_NO_VIEW']);
  
  
 /*********************************************
@@ -155,25 +159,12 @@ $cb_template->assign_vars(array(
    'L_INT' => $language['CHAR_INT'],
    'L_WIS' => $language['CHAR_WIS'],
    'L_CHA' => $language['CHAR_CHA'],
-   'L_HSTR' => $language['CHAR_HSTR'],  
-   'L_HSTA' => $language['CHAR_HSTA'], 
-   'L_HDEX' => $language['CHAR_HDEX'], 
-   'L_HAGI' => $language['CHAR_HAGI'], 
-   'L_HINT' => $language['CHAR_HINT'], 
-   'L_HWIS' => $language['CHAR_HWIS'], 
-   'L_HCHA' => $language['CHAR_HCHA'], 
    'L_POISON' => $language['CHAR_POISON'],
    'L_MAGIC' => $language['CHAR_MAGIC'],
    'L_DISEASE' => $language['CHAR_DISEASE'],
    'L_FIRE' => $language['CHAR_FIRE'],
    'L_COLD' => $language['CHAR_COLD'],
    'L_CORRUPT' => $language['CHAR_CORRUPT'],
-   'L_HPOISON' => $language['CHAR_HPOISON'], 
-   'L_HMAGIC' => $language['CHAR_HMAGIC'], 
-   'L_HDISEASE' => $language['CHAR_HDISEASE'], 
-   'L_HFIRE' => $language['CHAR_HFIRE'], 
-   'L_HCOLD' => $language['CHAR_HCOLD'], 
-   'L_HCORRUPT' => $language['CHAR_HCORRUPT'],
    'L_WEIGHT' => $language['CHAR_WEIGHT'],
    'L_DONE' => $language['BUTTON_DONE'])
 );
@@ -240,7 +231,7 @@ foreach ($allitems as $value) {
 *********************************************/
 $cb_template->pparse('bot');
 
-$cb_template->destroy;
+$cb_template->destroy();
 
 include(__DIR__ . "/include/footer.php");
 ?>

@@ -22,7 +22,11 @@
 /*********************************************
                  INCLUDES
 *********************************************/ 
-define('INCHARBROWSER', true);
+//define this as an entry point to unlock includes
+if ( !defined('INCHARBROWSER') ) 
+{
+   define('INCHARBROWSER', true);
+}
 include_once(__DIR__ . "/include/common.php");
 include_once(__DIR__ . "/include/db.php");
  
@@ -47,7 +51,7 @@ $result = $cbsql->query($query);
 //no rows?
 $rows = $cbsql->rows($result);
 if (!$rows) {
-   cb_message_die($language['MESSAGE_ERROR'],$language['MESSAGE_NO_RESULTS_ITEMS']);
+   $cb_error->message_die($language['MESSAGE_NOTICE'],$language['MESSAGE_NO_RESULTS_ITEMS']);
 }
 
 $output = array();
@@ -98,7 +102,7 @@ foreach ($output as $row) {
 *********************************************/
 $cb_template->pparse('body');
 
-$cb_template->destroy;
+$cb_template->destroy();
  
 include(__DIR__ . "/include/footer.php");
 ?>

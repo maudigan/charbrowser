@@ -522,6 +522,7 @@ $language['SERVER_CHAR_COUNT'] = "Character Count";
 $language['SERVER_NONE'] = "None";
 $language['SERVER_SERVER'] = "Server";
 $language['SERVER_CLASSES'] = "Classes";
+$language['SERVER_CLASSES_CUTOFF'] = "Classes (Last %s Days)"; 
 $language['SERVER_CLASS'] = "Class"; 
 $language['SERVER_PERCENT'] = "Percent";
 $language['SERVER_COUNT'] = "Count";   

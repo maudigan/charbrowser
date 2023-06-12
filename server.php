@@ -18,6 +18,9 @@
  *   April 3, 2020 - Maudigan 
  *      added data views with a day cutoff
  *      added number_format to counts
+ *   June 11, 2023 - Maudigan
+ *      added a class distribution with cutoff
+ *      fixed the "None" display when nobody meets the cutoff
  *
  ***************************************************************************/
   
@@ -33,7 +36,21 @@ if ( !defined('INCHARBROWSER') )
 include_once(__DIR__ . "/include/common.php");
 include_once(__DIR__ . "/include/db.php");
  
-
+ 
+ 
+/*********************************************
+                 FUNCTIONS
+*********************************************/ 
+function output_number($number) {
+   global $language;
+   
+   if ($number == 0) {
+      return $language['SERVER_NONE'];
+   }
+   
+   return number_format($number);
+}
+  
   
  
 /*********************************************
@@ -92,11 +109,11 @@ $result = $cbsql->query($query);
 
 //no characters in the last 30 days? 
 //thats possible so dont error
-if (!($row = $cbsql->nextrow($result))) {
-   $maxlevel = $language['SERVER_NONE'];
-   $minlevel = $language['SERVER_NONE'];
-   $avglevel = $language['SERVER_NONE'];
-   $charactercount = $language['SERVER_NONE'];
+if (!($row = $cbsql->nextrow($result)) || $row['count'] == 0) {
+   $maxlevel_cutoff = 0;
+   $minlevel_cutoff = 0;
+   $avglevel_cutoff = 0;
+   $charactercount_cutoff = 0;
 }
 else {
    $maxlevel_cutoff = $row['maxlevel'];
@@ -139,8 +156,58 @@ if ($cbsql->rows($result)) {
 foreach ($classes as $index => $value) {
    $classes[$index]['RELATIVE_CLEAN_PERCENT'] = round($classes[$index]['RAW_PERCENT']/$maxclasspercent * 100, 2);
 }
- 
 
+//output char class in the last 30 days (if anyone has logged in)
+if ($charactercount_cutoff) {
+   //get server class makeup data (with cutoff)
+   $tpl = <<<TPL
+   SELECT count(*) as count, avg(character_data.level) as level, character_data.class
+   FROM character_data
+   WHERE character_data.deleted_at IS NULL
+   AND character_data.last_login > '%s' 
+   GROUP BY character_data.class
+TPL;
+ 
+   $query = sprintf($tpl, $cb_history_cutoff);
+   $result = $cbsql->query($query);
+
+   $classes_cutoff = array();
+   if ($cbsql->rows($result)) {
+      $maxclasspercent = 0;
+      while ($row = $cbsql->nextrow($result)) {
+         $classpercent = $row['count']/$charactercount_cutoff;
+         $maxclasspercent = max($maxclasspercent, $classpercent);
+         $classes_cutoff[] = array(
+            'CLASS' => $dbclassnames[$row['class']],
+            'COUNT' => number_format($row['count']),
+            'ROUNDED_PERCENT' => round($classpercent * 100),
+            'CLEAN_PERCENT' => round($classpercent * 100, 2),
+            'RAW_PERCENT' => $classpercent,
+            'LEVEL' => round($row['level'])
+         );
+            
+      }
+   }
+
+   //calculate relative percents so the max percent 
+   //takes up the full width or height of the container
+   foreach ($classes_cutoff as $index => $value) {
+      $classes_cutoff[$index]['RELATIVE_CLEAN_PERCENT'] = round($classes_cutoff[$index]['RAW_PERCENT']/$maxclasspercent * 100, 2);
+   }
+}
+else {
+   //when no chars logged in since the cutoff, just show a "None" row
+   $classes_cutoff = array();
+   $classes_cutoff[] = array(
+      'CLASS' => $language['SERVER_NONE'],
+      'COUNT' => $language['SERVER_NONE'],
+      'ROUNDED_PERCENT' => 0,
+      'RELATIVE_CLEAN_PERCENT' => 0,
+      'CLEAN_PERCENT' => 0,
+      'RAW_PERCENT' => 0,
+      'LEVEL' => $language['SERVER_NONE']
+   );
+}
 
 //get level distribution
 $tpl = <<<TPL
@@ -220,14 +287,14 @@ $cb_template->set_filenames(array(
 
 
 $cb_template->assign_both_vars(array(  
-   'MIN_LEVEL' => number_format($minlevel),  
-   'MAX_LEVEL' => number_format($maxlevel),
-   'AVG_LEVEL' => number_format(round($avglevel)), 
-   'CHAR_COUNT' => number_format($charactercount),  
-   'MIN_LEVEL_CUTOFF' => number_format($minlevel_cutoff),  
-   'MAX_LEVEL_CUTOFF' => number_format($maxlevel_cutoff),
-   'AVG_LEVEL_CUTOFF' => number_format(round($avglevel_cutoff)), 
-   'CHAR_COUNT_CUTOFF' => number_format($charactercount_cutoff))
+   'MIN_LEVEL' => output_number($minlevel),  
+   'MAX_LEVEL' => output_number($maxlevel),
+   'AVG_LEVEL' => output_number(round($avglevel)), 
+   'CHAR_COUNT' => output_number($charactercount),  
+   'MIN_LEVEL_CUTOFF' => output_number($minlevel_cutoff),  
+   'MAX_LEVEL_CUTOFF' => output_number($maxlevel_cutoff),
+   'AVG_LEVEL_CUTOFF' => output_number(round($avglevel_cutoff)), 
+   'CHAR_COUNT_CUTOFF' => output_number($charactercount_cutoff))
 );
 
 $cb_template->assign_vars(array( 
@@ -239,6 +306,7 @@ $cb_template->assign_vars(array(
    'L_AVG_LEVEL' => $language['SERVER_AVG_LEVEL'],
    'L_CHAR_COUNT' => $language['SERVER_CHAR_COUNT'],
    'L_CLASSES' => $language['SERVER_CLASSES'],
+   'L_CLASSES_CUTOFF' => sprintf($language['SERVER_CLASSES_CUTOFF'], $cb_history_days),
    'L_LEVELS' => $language['SERVER_LEVELS'],
    'L_LEVELS_CUTOFF' => sprintf($language['SERVER_LEVELS_CUTOFF'], $cb_history_days),
    'L_CLASS' => $language['SERVER_CLASS'],
@@ -249,6 +317,10 @@ $cb_template->assign_vars(array(
 
 foreach ($classes as $class) {
    $cb_template->assign_both_block_vars('classes', $class);
+}
+
+foreach ($classes_cutoff as $class) {
+   $cb_template->assign_both_block_vars('classes_cutoff', $class);
 }
 
 foreach ($levelcounts as $levelcount) {

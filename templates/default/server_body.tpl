@@ -45,8 +45,9 @@
    <nav class='CB_Tab_Box CB_BottomTabs'>
       <ul>
          <li id='tab1' onclick="CB_displayTab('#charbrowser NAV.CB_BottomTabs UL LI', '#tab1', '#charbrowser DIV.PositionServer DIV.CB_ServerTabBoxes', '#tabbox1');">{L_CLASSES}</li> 
-         <li id='tab2' onclick="CB_displayTab('#charbrowser NAV.CB_BottomTabs UL LI', '#tab2', '#charbrowser DIV.PositionServer DIV.CB_ServerTabBoxes', '#tabbox2');populateChart();">{L_LEVELS}</li> 
-         <li id='tab3' onclick="CB_displayTab('#charbrowser NAV.CB_BottomTabs UL LI', '#tab3', '#charbrowser DIV.PositionServer DIV.CB_ServerTabBoxes', '#tabbox3');populateChart_Cutoff();">{L_LEVELS_CUTOFF}</li> 
+         <li id='tab2' onclick="CB_displayTab('#charbrowser NAV.CB_BottomTabs UL LI', '#tab2', '#charbrowser DIV.PositionServer DIV.CB_ServerTabBoxes', '#tabbox2');">{L_CLASSES_CUTOFF}</li> 
+         <li id='tab3' onclick="CB_displayTab('#charbrowser NAV.CB_BottomTabs UL LI', '#tab3', '#charbrowser DIV.PositionServer DIV.CB_ServerTabBoxes', '#tabbox3');populateChart();">{L_LEVELS}</li> 
+         <li id='tab4' onclick="CB_displayTab('#charbrowser NAV.CB_BottomTabs UL LI', '#tab4', '#charbrowser DIV.PositionServer DIV.CB_ServerTabBoxes', '#tabbox4');populateChart_Cutoff();">{L_LEVELS_CUTOFF}</li> 
       </ul>
    </nav>   
    <div id='tabbox1' class='CB_ServerTabBoxes'>
@@ -70,11 +71,33 @@
          <!-- END classes -->
          </tbody>
       </table>
-   </div>
+   </div>   
    <div id='tabbox2' class='CB_ServerTabBoxes'>
-      <canvas id="myChart" width="400" height="200">Your browser does not support the HTML5 canvas tag.</canvas>
+      <table class='CB_Table'>
+         <thead>
+            <tr>
+               <th>{L_CLASS}</th>    
+               <th>{L_PERCENT}</th> 
+               <th>{L_COUNT}</th> 
+               <th>{L_AVG_LEVEL}</th>
+            </tr>
+         </thead>
+         <tbody>
+         <!-- BEGIN classes_cutoff -->
+            <tr>
+               <td>{classes_cutoff.CLASS}</td>
+               <td class='CB_Chart_Bar'><div style='width:{classes_cutoff.RELATIVE_CLEAN_PERCENT}%;'><span>{classes_cutoff.ROUNDED_PERCENT}%</span></div></td>   
+               <td>{classes_cutoff.COUNT}</td>    
+               <td>{classes_cutoff.LEVEL}</td>
+            </tr>
+         <!-- END classes_cutoff -->
+         </tbody>
+      </table>
    </div>
    <div id='tabbox3' class='CB_ServerTabBoxes'>
+      <canvas id="myChart" width="400" height="200">Your browser does not support the HTML5 canvas tag.</canvas>
+   </div>
+   <div id='tabbox4' class='CB_ServerTabBoxes'>
       <canvas id="myChart_Cutoff" width="400" height="200">Your browser does not support the HTML5 canvas tag.</canvas>
    </div>
    <div class='CB_Button' onclick="cb_GoBackOnePage();">{L_BACK}</div>

@@ -1,3 +1,13 @@
+v3.6.1
+----------------------------------------------------------------------
+added class distribution with cutoff, code cleanup with flags
+
+Jun 11, 2023 - Added a Classes of last 30 days to the server view
+
+Jun 12, 2023 - Made functions that output flags to make the code
+               more readable. Moved old and new flag functions
+               and population queries to a new class.
+               
 v3.6.0
 ----------------------------------------------------------------------
 php/mysql version compatibility, cleanup warnings and notices, new

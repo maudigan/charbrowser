@@ -13,7 +13,10 @@
  *                                  Author:
  *                           Maudigan(Airwalking)
  *
- *   Decemeber 12, 2020 - Initial Revision. Centralize flag handling.
+ *   June 12, 2023 - Initial Revision. Centralize flag handling.
+ *                       (Maudigan)
+ *   June 14, 2023 - Made the query that preopulates data buckets
+ *                   work with other key naming conventions
  *                       (Maudigan)
  *
  ***************************************************************************/
@@ -129,8 +132,9 @@ TPL;
       SELECT `key`, `value` 
       FROM `data_buckets` 
       WHERE `key` LIKE '%s-%%'
+         OR `key` LIKE '%%-%s'
 TPL;
-      $query = sprintf($tpl, $this->_charID);
+      $query = sprintf($tpl, $this->_charID, $this->_charID);
       $result = $this->_sql->query($query);
       while($row = $this->_sql->nextrow($result)) {
          $this->_data_buckets[$row['key']] = $row['value']; 
@@ -182,12 +186,19 @@ TPL;
    // then returns that keys value for
    // the current character
    //-------------------------------------
-   function getdatabucket($key_suffix) { 
-      $key_name = $this->_charID."-".$key_suffix;
+   function getdatabucket($key_suffix_prefix) { 
+   
+      //check for key with suffix
+      $key_name = $this->_charID."-".$key_suffix_prefix;
+      if (array_key_exists($key_name, $this->_data_buckets))
+         return $this->_data_buckets[$key_name]; 
       
-      if (!array_key_exists($key_name, $this->_data_buckets)) return null; 
+      //check for key with prefix
+      $key_name = $key_suffix_prefix."-".$this->_charID;
+      if (array_key_exists($key_name, $this->_data_buckets))
+         return $this->_data_buckets[$key_name]; 
       
-      return $this->_data_buckets[$key_name]; 
+      return null; 
    } 
 
 
@@ -196,20 +207,13 @@ TPL;
    // query and explode a databucket
    // array
    //-------------------------------------
-   function getdatabucketarray($delimiter, $key_name) { 
+   function getdatabucketarray($delimiter, $key_suffix_prefix) { 
       
-      //get data buckets
-      $tpl = <<<TPL
-      SELECT `value` 
-      FROM `data_buckets` 
-      WHERE `key` = '%s'
-TPL;
-      $query = sprintf($tpl, $key_name);
-      $result = $this->_sql->query($query);
+      $key = getdatabucket($key_suffix_prefix);
       
-      if (!($row = $this->_sql->nextrow($result))) return null; 
+      if ($key === null) return null;
       
-      return explode($delimiter, $row['value']);
+      return explode($delimiter, $key);
    } 
 
 

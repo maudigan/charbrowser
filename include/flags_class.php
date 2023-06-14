@@ -209,7 +209,7 @@ TPL;
    //-------------------------------------
    function getdatabucketarray($delimiter, $key_suffix_prefix) { 
       
-      $key = getdatabucket($key_suffix_prefix);
+      $key = $this->getdatabucket($key_suffix_prefix);
       
       if ($key === null) return null;
       

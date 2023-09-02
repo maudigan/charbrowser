@@ -41,6 +41,7 @@
  *   October 28, 2022 - added adventure board language (maudigan)
  *   November 1, 2022 - added language for corpses page update (Maudigan)
  *   January 16, 2023 - added many missing and new messages
+ *   September 2, 2023 - add column headers for stats in search window
  ***************************************************************************/ 
   
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             
@@ -165,6 +166,16 @@ $language['INDEX_BY'] = "By";
 $language['SEARCH_RESULTS'] = "Results"; 
 $language['SEARCH_LEVEL'] = "Level"; 
 $language['SEARCH_CLASS'] = "Class"; 
+$language["SEARCH_AA_POINTS"] = "AA";   
+$language["SEARCH_HP"] = "HP"; 
+$language["SEARCH_MANA"] = "Mana"; 
+$language["SEARCH_ENDURANCE"] = "End";
+$language["SEARCH_ATTACK"] = "ATK"; 
+$language["SEARCH_AC"] = "AC"; 
+$language["SEARCH_HASTE"] = "Haste"; 
+$language["SEARCH_ACCURACY"] = "Accuracy"; 
+$language["SEARCH_HP_REGEN"] = "HP Reg."; 
+$language["SEARCH_MANA_REGEN"] = "Mana Reg."; 
 $language['SEARCH_NAME'] = "Name"; 
 $language['SEARCH_PREVIOUS'] = "Prev"; 
 $language['SEARCH_NEXT'] = "Next"; 

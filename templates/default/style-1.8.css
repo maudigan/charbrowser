@@ -40,6 +40,8 @@
  *   October 29, 2022
  *     added styles for adventure page
  *     added sticky table header style
+ *   September 2, 2023
+ *     wident search window for stats table data 
  *                      
  ***************************************************************************/ 
 
@@ -1998,7 +2000,7 @@ BODY.CB_Body {
 }
 
 #charbrowser .PositionSearch {
-   width: 600px;
+   width: 1300px;
    margin: 0 auto;
    position: relative;
 }

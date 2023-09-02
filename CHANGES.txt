@@ -1,3 +1,11 @@
+v3.6.3
+----------------------------------------------------------------------
+added stats to search page
+
+September 2, 2023 - we recently got the new character stats table
+                    this is a first cursory pass at adding those
+                    stats display as a leader board
+               
 v3.6.2
 ----------------------------------------------------------------------
 added databucket key naming convention
@@ -6,7 +14,7 @@ Jun 14, 2023 - updated databuckets to work with two different
                key naming conventions. Originally just 
                <charid>-<key> worked, now <key>-<charid> works too
                
-               v3.6.1
+v3.6.1
 ----------------------------------------------------------------------
 added class distribution with cutoff, code cleanup with flags
 

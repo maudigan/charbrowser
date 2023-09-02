@@ -44,6 +44,7 @@
  *     reduce the nyumber of queries, implement the where building function
  *   Devember 3, 2022 - Allow guild/name search criteria to be echoed back
  *      in the header search fields
+ *   September 2, 2023 - Add new stats table data to search results
  *
  ***************************************************************************/
  
@@ -64,7 +65,7 @@ include_once(__DIR__ . "/include/db.php");
              GET/VALIDATE VARS
 *********************************************/ 
 $start       = preg_Get_Post('start', '/^[0-9]+$/', '0', $language['MESSAGE_ERROR'], $language['MESSAGE_START_NUMERIC']);
-$orderby     = preg_Get_Post('orderby', '/^[a-zA-Z]*$/', 'name', $language['MESSAGE_ERROR'], $language['MESSAGE_ORDER_ALPHA']);
+$orderby     = preg_Get_Post('orderby', '/^[a-zA-Z\_]*$/', 'name', $language['MESSAGE_ERROR'], $language['MESSAGE_ORDER_ALPHA']);
 $direction   = preg_Get_Post('direction', '/^(DESC|ASC|desc|asc)$/', 'ASC');
 $name        = preg_Get_Post('name', '/^[a-zA-Z]*$/', '', $language['MESSAGE_NOTICE'], $language['MESSAGE_NAME_ALPHA']);
 $guild_dirty = preg_Get_Post('guild', '/^[a-zA-Z\-\ \']*$/', '', $language['MESSAGE_NOTICE'], $language['MESSAGE_GUILD_ALPHA']);
@@ -84,6 +85,18 @@ $header_name_search = $name;
 $header_guild_search = $guild_dirty;
  
  
+/*********************************************
+                FUNCTIONS
+*********************************************/ 
+
+function stat_out($stat)
+{
+   if ($stat == null) {
+      return "-";
+   }
+   return number_format($stat);
+}
+
 /*********************************************
         BUILD AND EXECUTE THE SEARCH
 *********************************************/ 
@@ -105,12 +118,24 @@ $where = generate_where($filters);
 $tpl = <<<TPL
 SELECT character_data.class, character_data.level, 
        character_data.name, guilds.name AS guildname, 
-       character_data.deleted_at, character_data.anon
+       character_data.deleted_at, character_data.anon,
+       character_stats_record.aa_points,
+       character_stats_record.hp,
+       character_stats_record.mana,
+       character_stats_record.endurance,
+       character_stats_record.attack,
+       character_stats_record.ac,
+       character_stats_record.haste,
+       character_stats_record.accuracy,
+       character_stats_record.hp_regen,
+       character_stats_record.mana_regen
 FROM character_data 
 LEFT JOIN guild_members
        ON character_data.id = guild_members.char_id 
 LEFT JOIN guilds
        ON guilds.id = guild_members.guild_id 
+LEFT JOIN character_stats_record
+       ON character_stats_record.character_id = character_data.id
 %s 
 ORDER BY %s %s
 TPL;
@@ -149,7 +174,17 @@ $cb_template->assign_vars(array(
    'L_RESULTS' => $language['SEARCH_RESULTS'],
    'L_NAME' => $language['SEARCH_NAME'],
    'L_LEVEL' => $language['SEARCH_LEVEL'],
-   'L_CLASS' => $language['SEARCH_CLASS'],)
+   'L_CLASS' => $language['SEARCH_CLASS'],
+   'L_AA_POINTS' => $language["SEARCH_AA_POINTS"],     
+   'L_HP' => $language["SEARCH_HP"],     
+   'L_MANA' => $language["SEARCH_MANA"],     
+   'L_ENDURANCE' => $language["SEARCH_ENDURANCE"],     
+   'L_ATTACK' => $language["SEARCH_ATTACK"],     
+   'L_AC' => $language["SEARCH_AC"],     
+   'L_HASTE' => $language["SEARCH_HASTE"],     
+   'L_ACCURACY' => $language["SEARCH_ACCURACY"],     
+   'L_HP_REGEN' => $language["SEARCH_HP_REGEN"],  
+   'L_MANA_REGEN' => $language["SEARCH_MANA_REGEN"])
 );
 
 //calculate last char index for this page
@@ -168,13 +203,23 @@ for ($i = $start; $i < $finish; $i++) {
    $cb_template->assign_both_block_vars("characters", array( 
       'CLASS' => $dbclassnames[$character["class"]],      
       'LEVEL' => $character["level"],     
+      'AA_POINTS' => stat_out($character["aa_points"]),     
+      'HP' => stat_out($character["hp"]),     
+      'MANA' => stat_out($character["mana"]),     
+      'ENDURANCE' => stat_out($character["endurance"]),     
+      'ATTACK' => stat_out($character["attack"]),     
+      'AC' => stat_out($character["ac"]),     
+      'HASTE' => stat_out($character["haste"]),     
+      'ACCURACY' => stat_out($character["accuracy"]),     
+      'HP_REGEN' => stat_out($character["hp_regen"]),  
+      'MANA_REGEN' => stat_out($character["mana_regen"]),    
       'DELETED' => (($character["deleted_at"]) ? " ".$language['CHAR_DELETED']:""),
       'NAME' => $character["name"],
       'GUILD_NAME' => $charguildname )
    );
 }
- 
- 
+
+
 /*********************************************
            OUTPUT BODY AND FOOTER
 *********************************************/

@@ -1,5 +1,34 @@
 v3.6.3
 ----------------------------------------------------------------------
+Fix error, compatibility changes for docker
+
+Febuary 11, 2024 - A spell not being found when creating the item
+                     HTML would cause the entire page to die with
+                     a message saying the spell couldn't be found.
+                     That is kind of overkill that caused problems.
+                     This was changed to just post "UNKNOWN" next to
+                     the items effect when not found.
+                  Added the ability to overwrite the config settings
+                     by using environmental variables to make this
+                     easier to integrate into docker container. The
+                     following environment variables will overwrite
+                     The values in the config file:
+                     
+                     DB_NAME overwrites $cb_db
+                     DB_HOST overwrites $cb_host
+                     DB_USER overwrites $cb_user
+                     DB_PASSWORD overwrites $cb_pass
+                     DB_PORT overwrites $cb_port
+
+                     CONTENT_DB_NAME overwrites $cb_content_db
+                     CONTENT_DB_HOST overwrites $cb_content_host
+                     CONTENT_DB_USER overwrites $cb_content_user
+                     CONTENT_DB_PASSWORD overwrites $cb_content_pass
+                     CONTENT_DB_PORT overwrites $cb_content_port
+                   
+                    
+v3.6.3
+----------------------------------------------------------------------
 added stats to search page
 
 September 2, 2023 - we recently got the new character stats table

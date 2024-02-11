@@ -49,6 +49,8 @@ if ( !defined('CB_COMMON_RUN') )
                  LOAD CONFIGURATION
    *********************************************/
    include_once(__DIR__ . "/config.php");
+   //docker config overwrites
+   include_once(__DIR__ . "/docker_config.php");
    
    
    //if developer mode is turned on, enable strict error reporting

@@ -163,8 +163,7 @@ TPL;
             $this->_cached_records[$row['id']] = $row;
          }
       }
-      else $this->_error->message_die($this->_language['MESSAGE_ERROR'], sprintf($this->_language['MESSAGE_SPELL_NOROWS'], $spell_id));
-      
+
       return true;
    }
    
@@ -196,7 +195,9 @@ TPL;
             //queried by PK, so only 1 row in the result set
             $this->_cached_records[$spell_id] = $this->_sql_content->nextrow($result);
          }
-         else $this->_error->message_die($this->_language['MESSAGE_ERROR'], sprintf($this->_language['MESSAGE_SPELL_NOROWS'], $spell_id));
+         else {
+            return false;
+         }
       }
 
       //hand the record over

@@ -337,63 +337,83 @@ function GetItem($item)
       if ($item["proceffect"] > 0 AND $item["proceffect"] < 65535) {
          $temp = QuickTemplate($link_spell, array('SPELL_ID' => $item["proceffect"]));
          $itemrow = $cbspellcache->get_spell($item["proceffect"]);
-         $Output .= "Proc Effect: <a href='" . $temp . "'>" . $itemrow['name'] . "</a>";
-         if ($item["proclevel2"] > 0)
-            $Output .= " <i>(Level " . $item["proclevel2"] . ")</i>";
+         if ($itemrow !== false) {
+            $Output .= "Proc Effect: <a href='" . $temp . "'>" . $itemrow['name'] . "</a>";
+            if ($item["proclevel2"] > 0)
+               $Output .= " <i>(Level " . $item["proclevel2"] . ")</i>";
 
-         $Output .= "<br>";
+            $Output .= "<br>";
+         }
+         else {
+            $Output .= $tab."Proc Effect: UNKNOWN";
+         }
       }
 
       // Worn Effect
       if ($item["worneffect"] > 0 AND $item["worneffect"] < 65535) {
          $temp = QuickTemplate($link_spell, array('SPELL_ID' => $item["worneffect"]));
          $itemrow = $cbspellcache->get_spell($item["worneffect"]);
-         $Output .= "Worn Effect: <a href='" . $temp . "'>"  . $itemrow['name'] . "</a>";
-         if ($item["wornlevel"] > 0)
-            $Output .= " <i>(Level " . $item["wornlevel"] . ")</i>";
+         if ($itemrow !== false) {
+            $Output .= "Worn Effect: <a href='" . $temp . "'>"  . $itemrow['name'] . "</a>";
+            if ($item["wornlevel"] > 0)
+               $Output .= " <i>(Level " . $item["wornlevel"] . ")</i>";
 
-         $Output .= "<br>";
+            $Output .= "<br>";
+         }
+         else {
+            $Output .= $tab."Worn Effect: UNKNOWN";
+         }
       }
 
       // Focus Effect
       if ($item["focuseffect"] > 0 AND $item["focuseffect"] < 65535) {
          $temp = QuickTemplate($link_spell, array('SPELL_ID' => $item["focuseffect"]));
          $itemrow = $cbspellcache->get_spell($item["focuseffect"]);
-         $Output .= "Focus Effect: <a href='" . $temp . "'>" . $itemrow['name'] . "</a>";
-         if ($item["focuslevel"] > 0)
-            $Output .= " <i>(Level " . $item["focuslevel"] . ")</i>";
+         if ($itemrow !== false) {
+            $Output .= "Focus Effect: <a href='" . $temp . "'>" . $itemrow['name'] . "</a>";
+            if ($item["focuslevel"] > 0)
+               $Output .= " <i>(Level " . $item["focuslevel"] . ")</i>";
 
-         $Output .= "<br>";
+            $Output .= "<br>";
+         }
+         else {
+            $Output .= $tab."Focus Effect: UNKNOWN";
+         }
       }
 
       // Click Effect
       if ($item["clickeffect"] > 0 AND $item["clickeffect"] < 65535) {
          $temp = QuickTemplate($link_spell, array('SPELL_ID' => $item["clickeffect"]));
          $itemrow = $cbspellcache->get_spell($item["clickeffect"]);
-         $Output .= $tab."Click Effect: <a href='".$temp."'>".$itemrow['name']."</a>";
-         $Output .= "&nbsp;(";
-         if ($item["clicktype"] == 1)
-            $Output .= "Any Slot, ";
+         if ($itemrow !== false) {
+            $Output .= $tab."Click Effect: <a href='".$temp."'>".$itemrow['name']."</a>";
+            $Output .= "&nbsp;(";
+            if ($item["clicktype"] == 1)
+               $Output .= "Any Slot, ";
 
-         if ($item["clicktype"] == 4)
-            $Output .= "Must Equip, ";
+            if ($item["clicktype"] == 4)
+               $Output .= "Must Equip, ";
 
-         if ($item["clicktype"] == 5)
-            $Output .= "Any Slot/Can Equip, ";
+            if ($item["clicktype"] == 5)
+               $Output .= "Any Slot/Can Equip, ";
 
-         $Output .= "Casting Time: ";
-         if ($item["casttime"] > 0) {
-            $casttime = sprintf("%.1f",$item["casttime"] / 1000);
-            $Output .= $casttime;
+            $Output .= "Casting Time: ";
+            if ($item["casttime"] > 0) {
+               $casttime = sprintf("%.1f",$item["casttime"] / 1000);
+               $Output .= $casttime;
+            }
+            else
+               $Output .= "Instant";
+
+            $Output .= ")";
+            if ($item["clicklevel"] > 0)
+               $Output .= " <i>(Level " . $item["clicklevel"] . ")</i>";
+
+            $Output .= "<br>";
          }
-         else
-            $Output .= "Instant";
-
-         $Output .= ")";
-         if ($item["clicklevel"] > 0)
-            $Output .= " <i>(Level " . $item["clicklevel"] . ")</i>";
-
-         $Output .= "<br>";
+         else {
+            $Output .= $tab."Click Effect: UNKNOWN";
+         }
       }
 
       // Stats / HP / Mana / Endurance
@@ -658,8 +678,13 @@ function GetItem($item)
       if ($item["scrolleffect"] > 0 AND $item["scrolleffect"] < 65535) {
          $temp = QuickTemplate($link_spell, array('SPELL_ID' => $item["scrolleffect"]));
          $itemrow = $cbspellcache->get_spell($item["scrolleffect"]);
-         $Output .= "Scroll Effect: <a href='" . $temp . "'>" . $itemrow['name'] . "</a>";
-         $Output .= "<br>";
+         if ($itemrow !== false) {
+            $Output .= "Scroll Effect: <a href='" . $temp . "'>" . $itemrow['name'] . "</a>";
+            $Output .= "<br>";
+         }
+         else {
+            $Output .= $tab."Scroll Effect: UNKNOWN";
+         }
       }
       
       $Output .= "Item Type: ".getitemtype($item['itemtype'])."<br>";
@@ -759,10 +784,15 @@ function GetItem($item)
          $temp = QuickTemplate($link_spell, array('SPELL_ID' => $item["proceffect"]));
          
          $itemrow = $cbspellcache->get_spell($item["proceffect"]);
-         $Output .= $tab."Effect: <a href='".$temp."'>".$itemrow['name']."</a>";
-         $Output .= "&nbsp;(Combat)";
-         $Output .= " <i>(Level ".$item["proclevel2"].")</i>";
-         $Output .= "<br>\n";
+         if ($itemrow !== false) {
+            $Output .= $tab."Effect: <a href='".$temp."'>".$itemrow['name']."</a>";
+            $Output .= "&nbsp;(Combat)";
+            $Output .= " <i>(Level ".$item["proclevel2"].")</i>";
+            $Output .= "<br>\n";
+         }
+         else {
+            $Output .= $tab."Effect: UNKNOWN";
+         }
       }
 
       // worn effect
@@ -770,10 +800,15 @@ function GetItem($item)
          //build the link from the spell template
          $temp = QuickTemplate($link_spell, array('SPELL_ID' => $item["worneffect"]));
          $itemrow = $cbspellcache->get_spell($item["worneffect"]);
-         $Output .= $tab."Effect: <a href='".$temp."'>".$itemrow['name']."</a>";
-         $Output .= "&nbsp;(Worn)";
-         $Output .= " <i>(Level ".$item["wornlevel"].")</i>";
-         $Output .= "<br>\n";
+         if ($itemrow !== false) {
+            $Output .= $tab."Effect: <a href='".$temp."'>".$itemrow['name']."</a>";
+            $Output .= "&nbsp;(Worn)";
+            $Output .= " <i>(Level ".$item["wornlevel"].")</i>";
+            $Output .= "<br>\n";
+         }
+         else {
+            $Output .= $tab."Effect: UNKNOWN";
+         }
       }
 
       // focus effect
@@ -781,9 +816,14 @@ function GetItem($item)
          //build the link from the spell template
          $temp = QuickTemplate($link_spell, array('SPELL_ID' => $item["focuseffect"]));
          $itemrow = $cbspellcache->get_spell($item["focuseffect"]);
-         $Output .= $tab."Focus: <a href='".$temp."'>".$itemrow['name']."</a>";
-         if ($item["focuslevel"]>0) { $Output .= " <i>(Level ".$item["focuslevel"].")</i>";  }
-         $Output .= "<br>\n";
+         if ($itemrow !== false) {
+            $Output .= $tab."Focus: <a href='".$temp."'>".$itemrow['name']."</a>";
+            if ($item["focuslevel"]>0) { $Output .= " <i>(Level ".$item["focuslevel"].")</i>";  }
+            $Output .= "<br>\n";
+         }
+         else {
+            $Output .= $tab."Focus: UNKNOWN";
+         }
       }
 
       // clicky effect
@@ -791,20 +831,25 @@ function GetItem($item)
          //build the link from the spell template
          $temp = QuickTemplate($link_spell, array('SPELL_ID' => $item["clickeffect"]));
          $itemrow = $cbspellcache->get_spell($item["clickeffect"]);
-         $Output .= $tab."Effect: <a href='".$temp."'>".$itemrow['name']."</a>";
-         $Output .= "&nbsp;(";
-         if ($item["clicktype"]==1) { $Output .= "Any Slot, "; }
-         if ($item["clicktype"]==4) { $Output .= "Must Equip, ";   }
-         if ($item["clicktype"]==5) { $Output .= "Any Slot/Can Equip, "; }
-         $Output .= "Casting Time: ";
-         if ($item["casttime"]>0) {
-            $casttime = sprintf("%.1f",$item["casttime"]/1000);
-            $Output .= $casttime;
+         if ($itemrow !== false) {
+            $Output .= $tab."Effect: <a href='".$temp."'>".$itemrow['name']."</a>";
+            $Output .= "&nbsp;(";
+            if ($item["clicktype"]==1) { $Output .= "Any Slot, "; }
+            if ($item["clicktype"]==4) { $Output .= "Must Equip, ";   }
+            if ($item["clicktype"]==5) { $Output .= "Any Slot/Can Equip, "; }
+            $Output .= "Casting Time: ";
+            if ($item["casttime"]>0) {
+               $casttime = sprintf("%.1f",$item["casttime"]/1000);
+               $Output .= $casttime;
+            }
+            else  { $Output .= "Instant"; }
+            $Output .= ")";
+            $Output .= " <i>(Level ".$item["clicklevel"].")</i>";
+            $Output .= "<br>\n";
          }
-         else  { $Output .= "Instant"; }
-         $Output .= ")";
-         $Output .= " <i>(Level ".$item["clicklevel"].")</i>";
-         $Output .= "<br>\n";
+         else {
+            $Output .= $tab."Effect: UNKNOWN";
+         }
       }
 
       // Stats / HP / Mana / Endurance
@@ -907,8 +952,13 @@ function GetItem($item)
          //build the link from the spell template
          $temp = QuickTemplate($link_spell, array('SPELL_ID' => $item["scrolleffect"]));
          $itemrow = $cbspellcache->get_spell($item["scrolleffect"]);
-         $Output .= $tab."Effect: <a href='".$temp."'>".$itemrow['name']."</a>";
-         $Output .= "<br>\n";
+         if ($itemrow !== false) {
+            $Output .= $tab."Effect: <a href='".$temp."'>".$itemrow['name']."</a>";
+            $Output .= "<br>\n";
+         }
+         else {
+            $Output .= $tab."Effect: UNKNOWN";
+         }
       }
       
       

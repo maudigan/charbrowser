@@ -6,7 +6,7 @@
 
 
    <!-- activate the item popups and other functions -->
-   <script type="text/javascript" src="{ROOT_URL}templates/default/functions-1.2.js"></script>
+   <script type="text/javascript" src="{ROOT_URL}templates/default/functions-1.3.js"></script>
 
    </div>
 </div>

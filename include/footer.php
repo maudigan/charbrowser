@@ -128,6 +128,7 @@ if (defined('DEVELOPER_MODE')) $cb_template->assign_var_from_handle('PAGE_EXECUT
 $cb_template->assign_vars(array(  
   'TITLE' => $mytitle,
   'VERSION' => $version,
+  'ROOT_URL' => $charbrowser_root_url,
   'ADVERTISEMENT' => $adscript)
 );
 

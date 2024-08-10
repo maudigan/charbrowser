@@ -1,4 +1,16 @@
-v3.6.3
+v3.7
+----------------------------------------------------------------------
+Add buffs, fix barter window, add DoN flags, remove calculated stats
+
+August 9, 2024 - The barter tables changed, updated the barter script
+                 to match the new table changes.
+                 The calculated stats and the tabs showing them have
+                 been removed. The inventory stats are now displayed
+                 from the calculated stats table.
+                 Buffs have been added to the inventory view
+                 Added DoN Norrath's Keepers and Dark Reign flags
+
+v3.6.4
 ----------------------------------------------------------------------
 Fix error, compatibility changes for docker
 

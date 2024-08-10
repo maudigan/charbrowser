@@ -78,6 +78,7 @@
  *      added checkParm() to quicky check if get/post variables are set 
  *      added the breakout_bits() function which helps output the class, race
  *         and deity lists on items.
+ *   August 9, 2024 - add a tick to times function -Maudigan
  *
  *
  ***************************************************************************/
@@ -703,6 +704,17 @@ function cb_generate_pagination($base_url, $num_items, $per_page, $start_item, $
 
    return $page_string;
    
+}
+
+
+//converts tics into a spell time
+function tics_to_time($tics) {
+   $tics *= 10;
+   if ($tics > 59) {
+      return floor($tics/60)."m";
+   }
+   
+   return $tics."s";
 }
 
 //This plugs values from an array into a template

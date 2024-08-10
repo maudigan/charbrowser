@@ -13,12 +13,7 @@
       <nav class='CB_Tab_Box'>
          <ul>
             <li id='tab1' onclick="CB_displayTab('#charbrowser NAV.CB_Tab_Box UL LI', '#tab1', '#charbrowser DIV.PositionInventory DIV.InventoryContents', '#tabbox1');">Gear</li> 
-            <li id='tab2' onclick="CB_displayTab('#charbrowser NAV.CB_Tab_Box UL LI', '#tab2', '#charbrowser DIV.PositionInventory DIV.InventoryContents', '#tabbox2');">HP</li> 
-            <li id='tab3' onclick="CB_displayTab('#charbrowser NAV.CB_Tab_Box UL LI', '#tab3', '#charbrowser DIV.PositionInventory DIV.InventoryContents', '#tabbox3');">End.</li> 
-            <li id='tab4' onclick="CB_displayTab('#charbrowser NAV.CB_Tab_Box UL LI', '#tab4', '#charbrowser DIV.PositionInventory DIV.InventoryContents', '#tabbox4');">Mana</li> 
-            <li id='tab5' onclick="CB_displayTab('#charbrowser NAV.CB_Tab_Box UL LI', '#tab5', '#charbrowser DIV.PositionInventory DIV.InventoryContents', '#tabbox5');">ATK</li> 
-            <li id='tab6' onclick="CB_displayTab('#charbrowser NAV.CB_Tab_Box UL LI', '#tab6', '#charbrowser DIV.PositionInventory DIV.InventoryContents', '#tabbox6');">AC</li> 
-            <li id='tab7' onclick="CB_displayTab('#charbrowser NAV.CB_Tab_Box UL LI', '#tab7', '#charbrowser DIV.PositionInventory DIV.InventoryContents', '#tabbox7');">Mit AC</li> 
+            <li id='tab2' onclick="CB_displayTab('#charbrowser NAV.CB_Tab_Box UL LI', '#tab2', '#charbrowser DIV.PositionInventory DIV.InventoryContents', '#tabbox2');">Augments</li> 
          </ul>
       </nav>      
       <div id='tabbox1' class='InventoryContents'>
@@ -98,200 +93,23 @@
          <!-- END invitem --> 
       </div>
 
-      <div id='tabbox2' class='InventoryContents CB_CalcBox'>       
-         <!-- BEGIN hp --> 
-         <table class='CB_Table CB_Highlight_Rows'> 
-            <thead>  
-               <tr>
-                  <th>{hp.TYPE_HEAD}</th>
-                  <th>{hp.VALUE_HEAD}</th>
-                  <th></th>
-               </tr> 
-            </thead>  
-            <tbody>  
-               <!-- BEGIN row -->
-               <tr>
-                  <td>{hp.row.DESCRIPTION}</td>
-                  <td>{hp.row.VALUE}</td>
-                  <td></td>
-               </tr> 
-               <!-- END row -->
-            </tbody>   
-            <!-- BEGIN footer -->
-            <tfoot>  
-               <tr>
-                  <td>{hp.footer.DESCRIPTION}</td>
-                  <td>{hp.footer.SUBTOTAL}</td>
-                  <td>{hp.footer.ROLLTOTAL}</td>
-               </tr> 
-            </tfoot>      
-            <!-- END footer -->
-         </table>
-         <!-- END hp -->     
-      </div>   
-
-      <div id='tabbox3' class='InventoryContents CB_CalcBox'>       
-         <!-- BEGIN endurance --> 
-         <table class='CB_Table CB_Highlight_Rows'> 
-            <thead>  
-               <tr>
-                  <th>{endurance.TYPE_HEAD}</th>
-                  <th>{endurance.VALUE_HEAD}</th>
-                  <th></th>
-               </tr> 
-            </thead>  
-            <tbody>  
-               <!-- BEGIN row -->
-               <tr>
-                  <td>{endurance.row.DESCRIPTION}</td>
-                  <td>{endurance.row.VALUE}</td>
-                  <td></td>
-               </tr> 
-               <!-- END row -->
-            </tbody>   
-            <!-- BEGIN footer -->
-            <tfoot>  
-               <tr>
-                  <td>{endurance.footer.DESCRIPTION}</td>
-                  <td>{endurance.footer.SUBTOTAL}</td>
-                  <td>{endurance.footer.ROLLTOTAL}</td>
-               </tr> 
-            </tfoot>      
-            <!-- END footer -->
-         </table>
-         <!-- END endurance -->     
-      </div> 
-
-      <div id='tabbox4' class='InventoryContents CB_CalcBox'>       
-         <!-- BEGIN mana --> 
-         <table class='CB_Table CB_Highlight_Rows'> 
-            <thead>  
-               <tr>
-                  <th>{mana.TYPE_HEAD}</th>
-                  <th>{mana.VALUE_HEAD}</th>
-                  <th></th>
-               </tr> 
-            </thead>  
-            <tbody>  
-               <!-- BEGIN row -->
-               <tr>
-                  <td>{mana.row.DESCRIPTION}</td>
-                  <td>{mana.row.VALUE}</td>
-                  <td></td>
-               </tr> 
-               <!-- END row -->
-            </tbody>   
-            <!-- BEGIN footer -->
-            <tfoot>  
-               <tr>
-                  <td>{mana.footer.DESCRIPTION}</td>
-                  <td>{mana.footer.SUBTOTAL}</td>
-                  <td>{mana.footer.ROLLTOTAL}</td>
-               </tr> 
-            </tfoot>      
-            <!-- END footer -->
-         </table>
-         <!-- END mana -->     
-      </div>   
-
-      <div id='tabbox5' class='InventoryContents CB_CalcBox'>       
-         <!-- BEGIN attack --> 
-         <table class='CB_Table CB_Highlight_Rows'> 
-            <thead>  
-               <tr>
-                  <th>{attack.TYPE_HEAD}</th>
-                  <th>{attack.VALUE_HEAD}</th>
-                  <th></th>
-               </tr> 
-            </thead>  
-            <tbody>  
-               <!-- BEGIN row -->
-               <tr>
-                  <td>{attack.row.DESCRIPTION}</td>
-                  <td>{attack.row.VALUE}</td>
-                  <td></td>
-               </tr> 
-               <!-- END row -->
-            </tbody>   
-            <!-- BEGIN footer -->
-            <tfoot>  
-               <tr>
-                  <td>{attack.footer.DESCRIPTION}</td>
-                  <td>{attack.footer.SUBTOTAL}</td>
-                  <td>{attack.footer.ROLLTOTAL}</td>
-               </tr> 
-            </tfoot>      
-            <!-- END footer -->
-         </table>
-         <!-- END attack -->     
-      </div> 
-
-      <div id='tabbox6' class='InventoryContents CB_CalcBox'>       
-         <!-- BEGIN ac --> 
-         <table class='CB_Table CB_Highlight_Rows'> 
-            <thead>  
-               <tr>
-                  <th>{ac.TYPE_HEAD}</th>
-                  <th>{ac.VALUE_HEAD}</th>
-                  <th></th>
-               </tr> 
-            </thead>  
-            <tbody>  
-               <!-- BEGIN row -->
-               <tr>
-                  <td>{ac.row.DESCRIPTION}</td>
-                  <td>{ac.row.VALUE}</td>
-                  <td></td>
-               </tr> 
-               <!-- END row -->
-            </tbody>   
-            <!-- BEGIN footer -->
-            <tfoot>  
-               <tr>
-                  <td>{ac.footer.DESCRIPTION}</td>
-                  <td>{ac.footer.SUBTOTAL}</td>
-                  <td>{ac.footer.ROLLTOTAL}</td>
-               </tr> 
-            </tfoot>      
-            <!-- END footer -->
-         </table>
-         <!-- END ac -->     
+      <div id='tabbox2' class='InventoryContents CB_CalcBox'>    
+         Coming Soon
       </div>  
-
-      <div id='tabbox7' class='InventoryContents CB_CalcBox'>       
-         <!-- BEGIN mit_ac --> 
-         <table class='CB_Table CB_Highlight_Rows'> 
-            <thead>  
-               <tr>
-                  <th>{mit_ac.TYPE_HEAD}</th>
-                  <th>{mit_ac.VALUE_HEAD}</th>
-                  <th></th>
-               </tr> 
-            </thead>  
-            <tbody>  
-               <!-- BEGIN row -->
-               <tr>
-                  <td>{mit_ac.row.DESCRIPTION}</td>
-                  <td>{mit_ac.row.VALUE}</td>
-                  <td></td>
-               </tr> 
-               <!-- END row -->
-            </tbody>   
-            <!-- BEGIN footer -->
-            <tfoot>  
-               <tr>
-                  <td>{mit_ac.footer.DESCRIPTION}</td>
-                  <td>{mit_ac.footer.SUBTOTAL}</td>
-                  <td>{mit_ac.footer.ROLLTOTAL}</td>
-               </tr> 
-            </tfoot>      
-            <!-- END footer -->
-         </table>
-         <!-- END mit_ac -->     
-      </div>  
-      
    </div> 
 
+   <!-- BUFF WINDOW -->
+   <div class='WindowSimple PositionBuffs CB_Can_Drag CB_Should_ZOrder' buffcount='{BUFFCOUNT}'> 
+      <div class="WindowTitleBar">Buffs</div>
+      <!-- BEGIN buffs -->
+      <a class="CB_SpellWrap Spell_{buffs.ICON}" title="{buffs.NAME} ({buffs.TIME})" href="{buffs.HREF}">
+         <span>{buffs.TIME}</span>
+      </a>
+      <!-- END buffs -->
+      <!-- BEGIN placeholderbuffs -->
+      <div class="CB_SpellWrap"></div>
+      <!-- END placeholderbuffs -->
+   </div>
 
    <!-- BANK WINDOW -->
    <div class='WindowSuperFancy PositionBank CB_Can_Drag'> 

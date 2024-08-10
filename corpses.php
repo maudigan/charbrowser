@@ -148,6 +148,8 @@ $cb_template->assign_both_vars(array(
    'NAME' => $name)
 );
 $cb_template->assign_vars(array( 
+   'ROOT_URL' => $charbrowser_root_url,
+   
    'L_CORPSES' => $language['CORPSES_CORPSES'],
    'L_DONE' => $language['BUTTON_DONE'])
 );

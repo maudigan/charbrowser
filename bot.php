@@ -142,6 +142,8 @@ $cb_template->assign_both_vars(array(
 );
 
 $cb_template->assign_vars(array(  
+   'ROOT_URL' => $charbrowser_root_url,
+   
    'L_HEADER_INVENTORY' => $language['CHAR_INVENTORY'],
    'L_REGEN' => $language['CHAR_REGEN'],
    'L_FT' => $language['CHAR_FT'],

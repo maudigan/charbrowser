@@ -156,6 +156,8 @@ $cb_template->assign_both_vars(array(
 );
 
 $cb_template->assign_vars(array(  
+   'ROOT_URL' => $charbrowser_root_url,
+   
    'L_HEADER_INVENTORY' => $language['CHAR_INVENTORY'],
    'L_WEIGHT' => $language['CHAR_WEIGHT'],
    'L_WEIGHT_MAX' => $language['CORPSE_WEIGHT_MAX'],

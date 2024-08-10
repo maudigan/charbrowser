@@ -38,6 +38,7 @@ class Charbrowser_Flags
    private $_quest_globals = array();
    private $_zone_flags = array();
    private $_data_buckets = array();
+   private $_data_buckets_character = array();
    
    //character this class was initialized for
    private $_charID = 0;
@@ -139,6 +140,18 @@ TPL;
       while($row = $this->_sql->nextrow($result)) {
          $this->_data_buckets[$row['key']] = $row['value']; 
       }
+
+      //get data buckets character scope
+      $tpl = <<<TPL
+      SELECT `key`, `value` 
+      FROM `data_buckets` 
+      WHERE `character_id` = %s
+TPL;
+      $query = sprintf($tpl, $this->_charID);
+      $result = $this->_sql->query($query);
+      while($row = $this->_sql->nextrow($result)) {
+         $this->_data_buckets_character[$row['key']] = $row['value']; 
+      }
    }
 
 
@@ -200,6 +213,43 @@ TPL;
       
       return null; 
    } 
+
+
+   //-------------------------------------
+   //          DATABUCKET CHAR SCOPE
+   // recieves a databucket key 
+   // then returns that keys value for
+   // the current character
+   //-------------------------------------
+   function getdatabucketcharacter($key_name) { 
+   
+      //check for key with suffix
+      if (array_key_exists($key_name, $this->_data_buckets_character))
+         return $this->_data_buckets_character[$key_name]; 
+      
+      return null; 
+   } 
+   
+   
+
+
+   //-------------------------------------
+   //        DATABUCKET CHAR BIT
+   // checks if a bit is set for a char
+   // char scope bit flag
+   //-------------------------------------
+   function getdatabucketcharacterbitflag($bitset, $key_name) { 
+      
+      $key = $this->getdatabucketcharacter($key_name);
+      
+      if ($key === null) return false; 
+      
+      if ($key & $bitset) return 1; 
+      
+      return 0; 
+   } 
+   
+  
 
 
    //-------------------------------------

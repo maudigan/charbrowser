@@ -60,6 +60,9 @@
  *     added item type to the API for each item
  *   January 11, 2023 - Maudigan
  *     removed language references to heroic stats as they aren't used
+ *   August 9, 2024 - Maudigan
+ *     removed the calculated stats and use the new stored values
+ *     add buffs
  *      
  ***************************************************************************/
   
@@ -143,6 +146,53 @@ TPL;
 }
 
 
+//FETCH BUFFS
+
+
+//---------------------------------
+//           BUFFS
+//---------------------------------
+//gets this chars buffs
+$buffs = $char->GetTable('character_buffs');
+$spell_ids = array();
+$buff_count = 0;
+if (is_array($buffs)) {
+
+   $buff_count = count($buffs);
+   //build a list of all the buff spell ids
+   foreach ($buffs as $slot => $buff) {
+      $spell_ids[] = $buff['spell_id'];
+   }
+   
+   //get all the spells
+   $tpl = <<<TPL
+   SELECT id,
+          new_icon,
+          name
+   FROM spells_new
+   WHERE id in (%s)
+TPL;
+   $query = sprintf($tpl, implode(',',$spell_ids));
+   $result = $cbsql->query($query);   
+   $spells = $cbsql->fetch_all($result); 
+   
+   //join the buffs and spells
+   $buffs = manual_join($buffs, 'spell_id', $spells, 'id', 'inner');
+}
+else {
+   $buffs = array();
+}
+//leave place holders if there's less than 5 buffs
+//just to fill out the buff container
+$min_buff_count = 10;
+$sparebuffs = $min_buff_count - $buff_count;
+
+//recalc the buffs to not be less than the min
+$buff_count = max($min_buff_count, $buff_count);
+
+
+
+
 //FETCH SHARED PLAT 
  $tpl = <<<TPL
 SELECT sharedplat
@@ -177,61 +227,6 @@ $cb_template->set_filenames(array(
   'character' => 'character_body.tpl')
 );
 
-
-//---------------------------------
-//HP CALCULATION
-//---------------------------------
-$totalHP = $char->CalcMaxHP($calc_rows_hp);
-foreach ($calc_rows_hp as $row) {
-   $cb_template->assign_both_block_vars($row['TYPE'], $row);
-}
-
-
-//---------------------------------
-//ENDURANCE CALCULATION
-//---------------------------------
-$totalEndurance = $char->CalcMaxEndurance($calc_rows_end);
-foreach ($calc_rows_end as $row) {
-   $cb_template->assign_both_block_vars($row['TYPE'], $row);
-}
-
-
-//---------------------------------
-//MANA CALCULATION
-//---------------------------------
-$totalMana = $char->CalcMaxMana($calc_rows_mana);
-foreach ($calc_rows_mana as $row) {
-   $cb_template->assign_both_block_vars($row['TYPE'], $row);
-}
-
-
-//---------------------------------
-// MITIGATION AC CALCULATION
-//---------------------------------
-$totalMitigationAC = $char->ACSum(false, $calc_rows_mitigation_ac);
-foreach ($calc_rows_mitigation_ac as $row) {
-   $cb_template->assign_both_block_vars($row['TYPE'], $row);
-}
-
-
-//---------------------------------
-//AC CALCULATION
-//---------------------------------
-$totalAC = $char->GetDisplayAC($calc_rows_ac);
-foreach ($calc_rows_ac as $row) {
-   $cb_template->assign_both_block_vars($row['TYPE'], $row);
-}
-
-
-//---------------------------------
-//ATTCK CALCULATION
-//---------------------------------
-$totalAttack = $char->GetTotalATK($calc_rows_atk);
-foreach ($calc_rows_atk as $row) {
-   $cb_template->assign_both_block_vars($row['TYPE'], $row);
-}
-
-
 $cb_template->assign_both_vars(array(  
    'HIGHLIGHT_GM' => (($highlightgm && $char->GetValue('gm'))? "GM":""),
    'GUILD' => getGuildLink($guild_name, $guild_rank),
@@ -253,12 +248,12 @@ $cb_template->assign_both_vars(array(
    'AVATAR_IMG' => getAvatarImage($char->GetValue('race'), $char->GetValue('gender'), $char->GetValue('face')),
    'CLASS_NUM' => $class,
    'DEITY' => $dbdeities[$char->GetValue('deity')],
-   'HP' => number_format($totalHP),
-   'MANA' => number_format($totalMana),
-   'ENDR' => number_format($totalEndurance),
-   'AC' => number_format($totalAC),
-   'MIT_AC' => number_format($totalMitigationAC),
-   'ATK' => number_format($totalAttack),
+   'HP' => number_format($char->GetValue('calculated_hp')),
+   'MANA' => number_format($char->GetValue('calculated_mana')),
+   'ENDR' => number_format($char->GetValue('calculated_endurance')),
+   'AC' => number_format($char->GetValue('calculated_ac')),
+   'MIT_AC' => number_format($char->GetValue('calculated_ac')),
+   'ATK' => number_format($char->GetValue('calculated_attack')),
    'STR' => number_format($char->getSTR()),
    'STA' => number_format($char->getSTA()),
    'DEX' => number_format($char->getDEX()),
@@ -298,6 +293,8 @@ $cb_template->assign_both_vars(array(
 );
 
 $cb_template->assign_vars(array(  
+   'ROOT_URL' => $charbrowser_root_url,
+   
    'L_HEADER_INVENTORY' => $language['CHAR_INVENTORY'],
    'L_HEADER_BANK' => $language['CHAR_BANK'],
    'L_SHARED_BANK' => $language['CHAR_SHARED_BANK'],
@@ -504,6 +501,32 @@ foreach ($allitems as $value) {
       );
    }
 }
+
+
+//---------------------------------
+//           BUFFS
+//---------------------------------
+//output buffs
+foreach ($buffs as $slot => $buff) {
+   $cb_template->assign_both_block_vars("buffs", array(
+      'ICON' => $buff['new_icon'],
+      'NAME' => $buff['name'],
+      'SPELL_ID' => $buff['spell_id'],
+      'TIME' => tics_to_time($buff['ticsremaining']),
+      'HREF' => QuickTemplate($link_spell, array('SPELL_ID' => $buff['spell_id'])),
+      'SLOT' => $slot)
+   );
+}
+
+//output extra buffs if needed to make sure we meet the minimum
+//number of buffs just to fill out the buff window so it's not
+//empty 
+for ($i = 0; $i <= $sparebuffs; $i++) {
+   $cb_template->assign_both_block_vars("placeholderbuffs", array());
+}
+
+//output a count
+$cb_template->assign_var('BUFFCOUNT',$buff_count);
  
  
 /*********************************************

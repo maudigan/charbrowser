@@ -873,6 +873,41 @@ BODY.CB_Body {
 }
 
 
+
+
+
+
+
+
+
+
+#charbrowser .CB_SpellWrap {
+    height: 40px;
+    width: 40px;
+    border: 0px;
+    margin: 1px;
+    padding: 0;
+    position: relative;
+    display: inline-block;
+}
+#charbrowser .CB_SpellWrap SPAN {
+    position: absolute;
+    right: 1px;
+    bottom: 1px;
+    font-size: 8px;
+    background-color: #404040;
+    padding: 0px;
+    margin: 0px;
+   color: #fff;
+}
+
+#charbrowser .CB_SpellWrap:hover {
+   cursor: pointer;
+}
+#charbrowser .CB_SpellWrap {
+   cursor: pointer;
+}
+
 /* ----------------------------------------------
           general window stylesheets
 ------------------------------------------------- */
@@ -1191,6 +1226,18 @@ BODY.CB_Body {
     These have to come AFTER the general
     window styles so they properly override
 ------------------------------------------------- */
+#charbrowser .PositionBuffs {
+   position: absolute;
+   top: -20px;
+   left: 670px;
+   font-size: 0px;
+   width: 269px;
+   padding-top: 11px;
+   padding-left: 2px;
+   padding-right: 2px;
+   padding-bottom: 2px;
+}
+
 #charbrowser .PositionMenu {
    position: absolute;
    top: 180px;
@@ -1319,7 +1366,7 @@ BODY.CB_Body {
    position: absolute;
    width: 265px;
    height: 305px;
-   top: 100px;
+   top: 245px;
    left: 650px;
 }
 #charbrowser .BankContents {

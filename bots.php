@@ -92,6 +92,8 @@ $cb_template->assign_both_vars(array(
    'NAME'        => $name)
 );
 $cb_template->assign_vars(array(  
+   'ROOT_URL' => $charbrowser_root_url,
+   
    'L_BOTS'  => $language['BOTS_BOTS'], 
    'L_DONE'      => $language['BUTTON_DONE'])
 );

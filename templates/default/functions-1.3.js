@@ -344,6 +344,43 @@ setTimeout(function () {
   });
   
   console.log("PositionItem Resizables rendered in [%s] seconds", (performance.now() - startTime) / 1000);
+
+
+  //loop through every resize element
+  //and make it resize and have a minimum
+  //slots take up 42x42 (including padding)
+  var buffBottomPad     = 0;
+  var buffSlotDimension = 42;
+  $('#charbrowser .PositionBuffs').resizable({
+    minHeight: buffSlotDimension + buffBottomPad,
+    minWidth: buffSlotDimension * 2,
+    resize: function (e, ui) {
+      var buffCount = $(this).attr('buffcount');
+      
+      if ($(this).data('ui-resizable').axis == 's') {
+        var rows      = Math.floor((ui.size.height - buffBottomPad) / buffSlotDimension);
+        var cols      = Math.ceil(buffCount / rows);
+        var maxHeight = buffCount * buffSlotDimension + buffBottomPad;
+        var minWidth  = cols * buffSlotDimension;
+        $('#area').html(maxHeight);
+        $('#test').html(ui.size.height);
+        if (ui.size.height > maxHeight) {
+          ui.size.height = maxHeight;
+        }
+        ui.size.width = minWidth;
+      } else {
+        var cols      = Math.floor(ui.size.width / buffSlotDimension);
+        var rows      = Math.ceil(buffCount / cols);
+        var minHeight = rows * buffSlotDimension + buffBottomPad;
+        var maxWidth  = buffCount * buffSlotDimension;
+        if (ui.size.width > maxWidth) {
+          ui.size.width = maxWidth;
+        }
+        ui.size.height = minHeight;
+      }
+    }
+  });
+  console.log("PositionBuff Resizables rendered in [%s] seconds", (performance.now() - startTime) / 1000);
   
   $('#charbrowser .PositionAdventure').resizable({
     minHeight: 498,

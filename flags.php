@@ -152,6 +152,11 @@ $flg->ozone(($flg->getflag(63, "mpg_group_trials")), $language['FLAG_OOW_MPG']);
 //TODO get criteria for MPG, zone flags?
 $flg->ozone(($flg->getflag(63, "mpg_raid_trials") && $flg->getflag(1, "oow_rss_taromani_insignias")), $language['FLAG_OOW_COA']); 
 
+//OOW
+$flg->oexpansion($language['FLAG_DON']); 
+$flg->ozone(($flg->getdatabucketcharacter("don_good") == 268435455), $language['FLAG_DON_GOOD']); 
+$flg->ozone(($flg->getdatabucketcharacter("don_evil") == 268435455), $language['FLAG_DON_EVIL']); 
+
 
 
 /*********************************************
@@ -356,6 +361,70 @@ $flg->oflag($flg->getbitflag(32, "mpg_raid_trials"), $language['FLAG_OOW_COA_COR
 $flg->oflag($flg->getbitflag(1, "oow_rss_taromani_insignias"), $language['FLAG_OOW_COA_TAROMANI']);
 
 
+
+
+/*********************************************
+           SECONDARY/SUB MENUS DON
+*********************************************/ 
+
+//norraths keepers
+$flg->otitle($language['FLAG_DON_GOOD']);
+$flg->oflag($flg->getdatabucketcharacterbitflag(1, "don_good"), $language['FLAG_DON_GOOD_1']);
+$flg->oflag($flg->getdatabucketcharacterbitflag(2, "don_good"), $language['FLAG_DON_GOOD_2']);
+$flg->oflag($flg->getdatabucketcharacterbitflag(4, "don_good"), $language['FLAG_DON_GOOD_3']);
+$flg->oflag($flg->getdatabucketcharacterbitflag(8, "don_good"), $language['FLAG_DON_GOOD_4']);
+$flg->oflag($flg->getdatabucketcharacterbitflag(16, "don_good"), $language['FLAG_DON_GOOD_5']);
+$flg->oflag($flg->getdatabucketcharacterbitflag(32, "don_good"), $language['FLAG_DON_GOOD_6']);
+$flg->oflag($flg->getdatabucketcharacterbitflag(64, "don_good"), $language['FLAG_DON_GOOD_7']);
+$flg->oflag($flg->getdatabucketcharacterbitflag(128, "don_good"), $language['FLAG_DON_GOOD_8']);
+$flg->oflag($flg->getdatabucketcharacterbitflag(256, "don_good"), $language['FLAG_DON_GOOD_9']);
+$flg->oflag($flg->getdatabucketcharacterbitflag(512, "don_good"), $language['FLAG_DON_GOOD_10']);
+$flg->oflag($flg->getdatabucketcharacterbitflag(1024, "don_good"), $language['FLAG_DON_GOOD_11']);
+$flg->oflag($flg->getdatabucketcharacterbitflag(2048, "don_good"), $language['FLAG_DON_GOOD_12']);
+$flg->oflag($flg->getdatabucketcharacterbitflag(4096, "don_good"), $language['FLAG_DON_GOOD_13']);
+$flg->oflag($flg->getdatabucketcharacterbitflag(8192, "don_good"), $language['FLAG_DON_GOOD_14']);
+$flg->oflag($flg->getdatabucketcharacterbitflag(16384, "don_good"), $language['FLAG_DON_GOOD_15']);
+$flg->oflag($flg->getdatabucketcharacterbitflag(32768, "don_good"), $language['FLAG_DON_GOOD_16']);
+$flg->oflag($flg->getdatabucketcharacterbitflag(65536, "don_good"), $language['FLAG_DON_GOOD_17']);
+$flg->oflag($flg->getdatabucketcharacterbitflag(131072, "don_good"), $language['FLAG_DON_GOOD_18']);
+$flg->oflag($flg->getdatabucketcharacterbitflag(262144, "don_good"), $language['FLAG_DON_GOOD_19']);
+$flg->oflag($flg->getdatabucketcharacterbitflag(524288, "don_good"), $language['FLAG_DON_GOOD_20']);
+$flg->oflag($flg->getdatabucketcharacterbitflag(1048576, "don_good"), $language['FLAG_DON_GOOD_21']);
+$flg->oflag($flg->getdatabucketcharacterbitflag(2097152, "don_good"), $language['FLAG_DON_GOOD_22']);
+$flg->oflag($flg->getdatabucketcharacterbitflag(4194304, "don_good"), $language['FLAG_DON_GOOD_23']);
+$flg->oflag($flg->getdatabucketcharacterbitflag(8388608, "don_good"), $language['FLAG_DON_GOOD_24']);
+$flg->oflag($flg->getdatabucketcharacterbitflag(16777216, "don_good"), $language['FLAG_DON_GOOD_25']);
+$flg->oflag($flg->getdatabucketcharacterbitflag(33554432, "don_good"), $language['FLAG_DON_GOOD_26']);
+$flg->oflag($flg->getdatabucketcharacterbitflag(67108864, "don_good"), $language['FLAG_DON_GOOD_27']);
+//dark reign
+$flg->otitle($language['FLAG_DON_EVIL']);
+$flg->oflag($flg->getdatabucketcharacterbitflag(1, "don_evil"), $language['FLAG_DON_EVIL_1']);
+$flg->oflag($flg->getdatabucketcharacterbitflag(2, "don_evil"), $language['FLAG_DON_EVIL_2']);
+$flg->oflag($flg->getdatabucketcharacterbitflag(4, "don_evil"), $language['FLAG_DON_EVIL_3']);
+$flg->oflag($flg->getdatabucketcharacterbitflag(8, "don_evil"), $language['FLAG_DON_EVIL_4']);
+$flg->oflag($flg->getdatabucketcharacterbitflag(16, "don_evil"), $language['FLAG_DON_EVIL_5']);
+$flg->oflag($flg->getdatabucketcharacterbitflag(32, "don_evil"), $language['FLAG_DON_EVIL_6']);
+$flg->oflag($flg->getdatabucketcharacterbitflag(64, "don_evil"), $language['FLAG_DON_EVIL_7']);
+$flg->oflag($flg->getdatabucketcharacterbitflag(128, "don_evil"), $language['FLAG_DON_EVIL_8']);
+$flg->oflag($flg->getdatabucketcharacterbitflag(256, "don_evil"), $language['FLAG_DON_EVIL_9']);
+$flg->oflag($flg->getdatabucketcharacterbitflag(512, "don_evil"), $language['FLAG_DON_EVIL_10']);
+$flg->oflag($flg->getdatabucketcharacterbitflag(1024, "don_evil"), $language['FLAG_DON_EVIL_11']);
+$flg->oflag($flg->getdatabucketcharacterbitflag(2048, "don_evil"), $language['FLAG_DON_EVIL_12']);
+$flg->oflag($flg->getdatabucketcharacterbitflag(4096, "don_evil"), $language['FLAG_DON_EVIL_13']);
+$flg->oflag($flg->getdatabucketcharacterbitflag(8192, "don_evil"), $language['FLAG_DON_EVIL_14']);
+$flg->oflag($flg->getdatabucketcharacterbitflag(16384, "don_evil"), $language['FLAG_DON_EVIL_15']);
+$flg->oflag($flg->getdatabucketcharacterbitflag(32768, "don_evil"), $language['FLAG_DON_EVIL_16']);
+$flg->oflag($flg->getdatabucketcharacterbitflag(65536, "don_evil"), $language['FLAG_DON_EVIL_17']);
+$flg->oflag($flg->getdatabucketcharacterbitflag(131072, "don_evil"), $language['FLAG_DON_EVIL_18']);
+$flg->oflag($flg->getdatabucketcharacterbitflag(262144, "don_evil"), $language['FLAG_DON_EVIL_19']);
+$flg->oflag($flg->getdatabucketcharacterbitflag(524288, "don_evil"), $language['FLAG_DON_EVIL_20']);
+$flg->oflag($flg->getdatabucketcharacterbitflag(1048576, "don_evil"), $language['FLAG_DON_EVIL_21']);
+$flg->oflag($flg->getdatabucketcharacterbitflag(2097152, "don_evil"), $language['FLAG_DON_EVIL_22']);
+$flg->oflag($flg->getdatabucketcharacterbitflag(4194304, "don_evil"), $language['FLAG_DON_EVIL_23']);
+$flg->oflag($flg->getdatabucketcharacterbitflag(8388608, "don_evil"), $language['FLAG_DON_EVIL_24']);
+$flg->oflag($flg->getdatabucketcharacterbitflag(16777216, "don_evil"), $language['FLAG_DON_EVIL_25']);
+$flg->oflag($flg->getdatabucketcharacterbitflag(33554432, "don_evil"), $language['FLAG_DON_EVIL_26']);
+$flg->oflag($flg->getdatabucketcharacterbitflag(67108864, "don_evil"), $language['FLAG_DON_EVIL_27']);
  
 /*********************************************
            OUTPUT BODY AND FOOTER

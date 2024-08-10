@@ -163,21 +163,21 @@ TPL;
 //QUERY ALL THE BUYER ITEMS, PREFILTERED BY BUYER FIELDS
 //build the where clause
 $filters = array();
-if ($buyer) $filters[] = "buychar.name = '".$buyer."'";
+if ($buyer) $filters[] = "buyer.char_name = '".$buyer."'";
 //cant buy from yourself
-if ($name) $filters[] = "buychar.name != '".$name."'";
+if ($name) $filters[] = "buyer.char_name != '".$name."'";
 $where = generate_where($filters);
 
 
 //no seller means we just show everything being bought
 $tpl = <<<TPL
-   SELECT buychar.name as charactername,
-          buyer.price as buyerprice,
-          buyer.itemid,
-          buyer.quantity 
-   FROM character_data buychar
-   INNER JOIN buyer
-           ON buychar.id = buyer.charid
+   SELECT buyer.char_name as charactername,
+          buyer_buy_lines.item_price as buyerprice,
+          buyer_buy_lines.item_id as itemid,
+          buyer_buy_lines.item_qty as quantity 
+   FROM buyer
+   INNER JOIN buyer_buy_lines
+           ON buyer_buy_lines.buyer_id = buyer.id
    %s
 TPL;
 

@@ -173,8 +173,8 @@ if (is_array($buffs)) {
    WHERE id in (%s)
 TPL;
    $query = sprintf($tpl, implode(',',$spell_ids));
-   $result = $cbsql->query($query);   
-   $spells = $cbsql->fetch_all($result); 
+   $result = $cbsql_content->query($query);   
+   $spells = $cbsql_content->fetch_all($result); 
    
    //join the buffs and spells
    $buffs = manual_join($buffs, 'spell_id', $spells, 'id', 'inner');

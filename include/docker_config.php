@@ -37,18 +37,18 @@ function env($variable, &$config)
 
 //overwrite the database config 
 //settings with environment variables
-env('DB_NAME' ,$cb_db);
-env('DB_HOST' ,$cb_host);
-env('DB_USER' ,$cb_user);
-env('DB_PASSWORD' ,$cb_pass);
-env('DB_PORT' ,$cb_port);
+env('CHARBROWSER_DB_NAME' ,$cb_db);
+env('CHARBROWSER_DB_HOST' ,$cb_host);
+env('CHARBROWSER_DB_USER' ,$cb_user);
+env('CHARBROWSER_DB_PASSWORD' ,$cb_pass);
+env('CHARBROWSER_DB_PORT' ,$cb_port);
 
 //overwrite content database settings
 // with environment variables
-env('CONTENT_DB_NAME' ,$cb_content_db);
-env('CONTENT_DB_HOST' ,$cb_content_host);
-env('CONTENT_DB_USER' ,$cb_content_user);
-env('CONTENT_DB_PASSWORD' ,$cb_content_pass);
-env('CONTENT_DB_PORT' ,$cb_content_port);
+env('CHARBROWSER_CONTENT_DB_NAME' ,$cb_content_db);
+env('CHARBROWSER_CONTENT_DB_HOST' ,$cb_content_host);
+env('CHARBROWSER_CONTENT_DB_USER' ,$cb_content_user);
+env('CHARBROWSER_CONTENT_DB_PASSWORD' ,$cb_content_pass);
+env('CHARBROWSER_CONTENT_DB_PORT' ,$cb_content_port);
 
 ?>

@@ -1,3 +1,12 @@
+v3.7.1
+----------------------------------------------------------------------
+fix EV and typos
+
+September 5, 2024 - Don flags had typos needing fixed - FryGuy
+                    EV's need prefix to distinguish from EV for other
+                    tools - Akkadius C/O Maudigan
+                    
+
 v3.7
 ----------------------------------------------------------------------
 Add buffs, fix barter window, add DoN flags, remove calculated stats

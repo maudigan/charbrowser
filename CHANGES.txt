@@ -1,3 +1,11 @@
+v3.7.2
+----------------------------------------------------------------------
+fix typo 
+
+September 5, 2024 - character.php was trying to read the spells_new
+                    table from the wrong database. Moved it to the
+                    content db. - Maudigan
+
 v3.7.1
 ----------------------------------------------------------------------
 fix EV and typos

@@ -120,21 +120,6 @@ class Charbrowser_Character
       "character_skills" => "skill_id",
       "character_languages" => "lang_id",
       "character_leadership_abilities" => "slot",
-      "character_buffs" => "slot_id",
-   );
-   
-   
-   
-   // the name of the primary charcter id pk of tables
-   // if not included, it is assumed the PK is "id"
-   // --------------------------------------------------------------
-   // SYNTAX:   "<TABLE>" => "<COLUMN>",
-   // --------------------------------------------------------------
-   // <TABLE>  = the name of the table
-   // <COLUMN> = the name of the tables character id column
-   private $_char_id_col = array (
-      "character_stats_record" => "character_id",
-      "character_buffs" => "character_id"
    );
 
 
@@ -251,77 +236,6 @@ class Charbrowser_Character
       "e_percent_to_aa" => array("character_data", "e_percent_to_aa", false),
       "e_expended_aa_spent" => array("character_data", "e_expended_aa_spent", false),
       "deleted_at" => array("character_data", "deleted_at", false),
-      "calculated_level" => array("character_stats_record", "level", false),
-      "calculated_class" => array("character_stats_record", "class", false),
-      "calculated_race" => array("character_stats_record", "race", false),
-      "calculated_aa_points" => array("character_stats_record", "aa_points", false),
-      "calculated_hp" => array("character_stats_record", "hp", false),
-      "calculated_mana" => array("character_stats_record", "mana", false),
-      "calculated_endurance" => array("character_stats_record", "endurance", false),
-      "calculated_ac" => array("character_stats_record", "ac", false),
-      "calculated_strength" => array("character_stats_record", "strength", false),
-      "calculated_stamina" => array("character_stats_record", "stamina", false),
-      "calculated_dexterity" => array("character_stats_record", "dexterity", false),
-      "calculated_agility" => array("character_stats_record", "agility", false),
-      "calculated_intelligence" => array("character_stats_record", "intelligence", false),
-      "calculated_wisdom" => array("character_stats_record", "wisdom", false),
-      "calculated_charisma" => array("character_stats_record", "charisma", false),
-      "calculated_magic_resist" => array("character_stats_record", "magic_resist", false),
-      "calculated_fire_resist" => array("character_stats_record", "fire_resist", false),
-      "calculated_cold_resist" => array("character_stats_record", "cold_resist", false),
-      "calculated_poison_resist" => array("character_stats_record", "poison_resist", false),
-      "calculated_disease_resist" => array("character_stats_record", "disease_resist", false),
-      "calculated_corruption_resist" => array("character_stats_record", "corruption_resist", false),
-      "calculated_heroic_strength" => array("character_stats_record", "heroic_strength", false),
-      "calculated_heroic_stamina" => array("character_stats_record", "heroic_stamina", false),
-      "calculated_heroic_dexterity" => array("character_stats_record", "heroic_dexterity", false),
-      "calculated_heroic_agility" => array("character_stats_record", "heroic_agility", false),
-      "calculated_heroic_intelligence" => array("character_stats_record", "heroic_intelligence", false),
-      "calculated_heroic_wisdom" => array("character_stats_record", "heroic_wisdom", false),
-      "calculated_heroic_charisma" => array("character_stats_record", "heroic_charisma", false),
-      "calculated_heroic_magic_resist" => array("character_stats_record", "heroic_magic_resist", false),
-      "calculated_heroic_fire_resist" => array("character_stats_record", "heroic_fire_resist", false),
-      "calculated_heroic_cold_resist" => array("character_stats_record", "heroic_cold_resist", false),
-      "calculated_heroic_poison_resist" => array("character_stats_record", "heroic_poison_resist", false),
-      "calculated_heroic_disease_resist" => array("character_stats_record", "heroic_disease_resist", false),
-      "calculated_heroic_corruption_resist" => array("character_stats_record", "heroic_corruption_resist", false),
-      "calculated_haste" => array("character_stats_record", "haste", false),
-      "calculated_accuracy" => array("character_stats_record", "accuracy", false),
-      "calculated_attack" => array("character_stats_record", "attack", false),
-      "calculated_avoidance" => array("character_stats_record", "avoidance", false),
-      "calculated_clairvoyance" => array("character_stats_record", "clairvoyance", false),
-      "calculated_combat_effects" => array("character_stats_record", "combat_effects", false),
-      "calculated_damage_shield_mitigation" => array("character_stats_record", "damage_shield_mitigation", false),
-      "calculated_damage_shield" => array("character_stats_record", "damage_shield", false),
-      "calculated_dot_shielding" => array("character_stats_record", "dot_shielding", false),
-      "calculated_hp_regen" => array("character_stats_record", "hp_regen", false),
-      "calculated_mana_regen" => array("character_stats_record", "mana_regen", false),
-      "calculated_endurance_regen" => array("character_stats_record", "endurance_regen", false),
-      "calculated_shielding" => array("character_stats_record", "shielding", false),
-      "calculated_spell_damage" => array("character_stats_record", "spell_damage", false),
-      "calculated_spell_shielding" => array("character_stats_record", "spell_shielding", false),
-      "calculated_strikethrough" => array("character_stats_record", "strikethrough", false),
-      "calculated_stun_resist" => array("character_stats_record", "stun_resist", false),
-      "calculated_backstab" => array("character_stats_record", "backstab", false),
-      "calculated_wind" => array("character_stats_record", "wind", false),
-      "calculated_brass" => array("character_stats_record", "brass", false),
-      "calculated_string" => array("character_stats_record", "string", false),
-      "calculated_percussion" => array("character_stats_record", "percussion", false),
-      "calculated_singing" => array("character_stats_record", "singing", false),
-      "calculated_baking" => array("character_stats_record", "baking", false),
-      "calculated_alchemy" => array("character_stats_record", "alchemy", false),
-      "calculated_tailoring" => array("character_stats_record", "tailoring", false),
-      "calculated_blacksmithing" => array("character_stats_record", "blacksmithing", false),
-      "calculated_fletching" => array("character_stats_record", "fletching", false),
-      "calculated_brewing" => array("character_stats_record", "brewing", false),
-      "calculated_jewelry" => array("character_stats_record", "jewelry", false),
-      "calculated_pottery" => array("character_stats_record", "pottery", false),
-      "calculated_research" => array("character_stats_record", "research", false),
-      "calculated_alcohol" => array("character_stats_record", "alcohol", false),
-      "calculated_fishing" => array("character_stats_record", "fishing", false),
-      "calculated_tinkering" => array("character_stats_record", "tinkering", false),
-      "calculated_created_at" => array("character_stats_record", "created_at", false),
-      "calculated_updated_at" => array("character_stats_record", "updated_at", false),
       "id" => array("character_currency", "id", false),
       "platinum" => array("character_currency", "platinum", false),
       "gold" => array("character_currency", "gold", false),
@@ -987,7 +901,7 @@ TPL;
          $tpl = <<<TPL
 SELECT `value`
 FROM `quest_globals` 
-WHERE `charid` = %d 
+WHERE `character_id` = %d 
 AND `name` = 'charbrowser_profile';
 TPL;
          $query = sprintf($tpl, $this->_char_id);
@@ -1100,7 +1014,53 @@ TPL;
    {
       return $this->_getValue($data_key, $default);
    }
-   
+
+   //given an item type, fetch this chars skill for that item
+   public function GetSkillValByItemType($type)
+   {
+      switch ($type) {
+         case 0: // 1H Slashing
+            return $this->_getValue('1h_slashing', 0);
+         case 1: // 2H Slashing
+            return $this->_getValue('2h_slashing', 0);
+         case 2: // Piercing
+            return $this->_getValue('piercing', 0);
+         case 3: // 1H Blunt
+            return $this->_getValue('1h_blunt', 0);
+         case 4: // 2H Blunt
+            return $this->_getValue('2h_blunt', 0);
+         case 35: // 2H Piercing
+            return $this->_getValue('2h_piercing', 0);
+         case 45: // Martial/Hand to Hand
+            return $this->_getValue('hand_to_hand', 0);
+         default: // All other types default to Hand to Hand
+            return $this->_getValue('hand_to_hand', 0);
+      }
+   }
+
+   //given an item type, fetch this chars skill for that item
+   public function GetSkillNameByItemType($type)
+   {
+      switch ($type) {
+         case 0: // 1H Slashing
+            return '1H Slashing';
+         case 1: // 2H Slashing
+            return '2H Slashing';
+         case 2: // Piercing
+            return 'Piercing';
+         case 3: // 1H Blunt
+            return '1H Blunt';
+         case 4: // 2H Blunt
+            return '2H Blunt';
+         case 35: // 2H Piercing
+            return '2H Piercing';
+         case 45: // Martial/Hand to Hand
+            return 'Hand to Hand';
+         default: // All other types default to Hand to Hand
+            return 'Hand to Hand';
+      }
+   }
+
 
    //return array of all the items for this character
    public function GetAllItems()
@@ -1110,136 +1070,1185 @@ TPL;
    }
 
 
+   //gets the name, rank and mod for an AA effect
+   public function GetAAModsByEffect($effectid)
+   {
+      //see if we already cached this effect id
+      if (array_key_exists($effectid, $this->_aa_effects)) {
+         return $this->_aa_effects[$effectid];
+      }
+
+      //this will load every rank of every aa with the $effect id.
+      //this first rank of that aa will be joined to the characters
+      //rank of that AA
+      $tpl = <<<TPL
+         SELECT aa_rank_effects.rank_id, aa_rank_effects.base1, 
+                aa_ranks.next_id, aa_ability.name  
+         FROM aa_rank_effects 
+         LEFT JOIN aa_ranks 
+            ON aa_ranks.id = aa_rank_effects.rank_id
+         LEFT JOIN aa_ability 
+            ON aa_ability.first_rank_id = aa_ranks.title_sid 
+         WHERE effect_id = '%s'
+TPL;
+      $query = sprintf($tpl, $effectid);
+      $result = $this->_sql_content->query($query);
+
+      //no aa with this effect
+      if(!$this->_sql_content->rows($result)) return array();
+
+      //first pass is to load all the AA with this effect into a linked array
+      //a secondary conditional will capture if the character has the aa and their rank
+      $aa_ranks = array();
+      $char_ranks = array();
+
+      //grab the cached character aas
+      $character_aas = $this->_getTableCache('character_alternate_abilities');
+
+      //return an empty result set if the char has no records
+      if (!is_array($character_aas)) return array();
+      
+      $char_rank = array();
+      while ($row = $this->_sql_content->nextrow($result)) {
+         //'linked' list of rank modifiers
+
+         $aa_rank = array(
+             'MODIFIER' => intval($row['base1']),
+             'NEXT'     => intval($row['next_id']),
+         );
+
+         $aa_ranks[intval($row['rank_id'])] = $aa_rank;
+
+         //if the character has this aa
+         if (!array_key_exists('rank_id', $character_aas)) continue;
+         
+         //get characters rank for this aa
+         $aa = $character_aas[$row['rank_id']];
+
+         //this chars rank
+         if (is_array($aa) && $aa['aa_value'] > 0) {
+            $char_rank[intval($row['rank_id'])] = array(
+                'RELATIVE_RANK' => $aa['aa_value'],
+                'NAME'          => $row['name'],
+            );
+         }
+      }
+
+      if (cb_count($char_rank) < 1) return array();
+
+
+      //calculate this char's modifier
+      $output = array();
+      foreach ($char_rank as $aa_id => $aa_data) {
+         //first rank
+         $rank_id = $aa_id;
+
+         //walk through the ranks to find the rank id
+         //if they're rank 3, we should look 2 times to
+         //jump forward 2 ranks to the 3rd rank modifier
+         for ($i = $aa_data['RELATIVE_RANK']; $i > 1; $i--) {
+            $rank_id = $aa_ranks[$rank_id]['NEXT'];
+         }
+
+         //log it if it worked
+         if ($rank_id) {
+            $output[] = array(
+               'RELATIVE_RANK' => $aa_data['RELATIVE_RANK'],
+               'AA_ID' => $aa_id,
+               'RANK_ID' => $rank_id,
+               'MODIFIER' => $aa_ranks[$rank_id]['MODIFIER'],
+               'NAME' => $aa_data['NAME']
+            );
+         }
+      }
+
+      $this->_aa_effects[$effectid] = $output;
+      return $output;
+   }
+
+   //gets the mod total for an AA effect
+   public function GetAAModTotalByEffect($effectid)
+   {
+      //get every rank for this effect
+      $effects = $this->GetAAModsByEffect($effectid);
+
+      $total = 0;
+      foreach($effects as $value) {
+         $total += $value['MODIFIER'];
+      }
+
+      return $total;
+   }
+
+
+   //function copied/converted from EQEMU sourcecode may 2, 2009
+   //gets I/W/N for the type of int/wis casting this char does
+   public function GetCasterClass(){
+      switch($this->_class)
+      {
+      case CB_CLASS_CLERIC:
+      case CB_CLASS_PALADIN:
+      case CB_CLASS_RANGER:
+      case CB_CLASS_DRUID:
+      case CB_CLASS_SHAMAN:
+      case CB_CLASS_BEASTLORD:
+         return 'W';
+         break;
+
+      case CB_CLASS_SHADOWKNIGHT:
+      case CB_CLASS_BARD:
+      case CB_CLASS_NECROMANCER:
+      case CB_CLASS_WIZARD:
+      case CB_CLASS_MAGICIAN:
+      case CB_CLASS_ENCHANTER:
+         return 'I';
+         break;
+
+      default:
+         return 'N';
+         break;
+      }
+   }
+
+
+   //pulled from EQEMU 20200316
+   //calculate the display mana
+   public function CalcMaxMana(&$calculation_description = 'unset') {
+      $base_val = $this->CalcBaseMana(); //base mana
+      $item_val = $this->getItemMana(); //item mana
+      $base_item_val = $base_val + $item_val;
+      $caster_class = $this->GetCasterClass();
+
+      if ($calculation_description == 'unset') {
+         if ($caster_class == 'N') return 0;
+         $max_mana = $this->GetAAModTotalByEffect(SE_MANAPOOL) + $base_item_val;  //mana bonus effect 97
+         return $max_mana;
+      }
+      else {
+         $max_val = $base_item_val;
+         $aa_mods = $this->GetAAModsByEffect(SE_MANAPOOL);
+         $aa_total_mod = 0;
+
+         $calculation_description = array();
+         $calculation_description[] = array('TYPE' => 'mana', 'TYPE_HEAD' => "Modifiers", 'VALUE_HEAD' => "Value");
+         $calculation_description[] = array('TYPE' => 'mana.row', 'DESCRIPTION' => 'Base Mana', 'VALUE' => number_format($base_val));
+         $calculation_description[] = array('TYPE' => 'mana.row', 'DESCRIPTION' => 'Item Modifiers', 'VALUE' => number_format($item_val));
+         $calculation_description[] = array('TYPE' => 'mana.footer', 'DESCRIPTION' => 'Equiped Subtotal', 'SUBTOTAL' => number_format($base_item_val), 'ROLLTOTAL' => number_format($max_val));
+
+
+         $calculation_description[] = array('TYPE' => 'mana', 'TYPE_HEAD' => "AA Modifiers", 'VALUE_HEAD' => "Value");
+         if (cb_count($aa_mods) > 0) {
+            foreach($aa_mods as $value) {
+               $aa_total_mod += $value['MODIFIER'];
+               $calculation_description[] = array('TYPE' => 'mana.row', 'DESCRIPTION' => $value['NAME']." ".$value['RELATIVE_RANK'], 'VALUE' => $value['MODIFIER']);
+            }
+         }
+         else {
+            $calculation_description[] = array('TYPE' => 'mana.row', 'DESCRIPTION' => 'None', 'VALUE' => '0');
+         }
+         $max_val = max($aa_total_mod + $max_val, 0);
+         $calculation_description[] = array('TYPE' => 'mana.footer', 'DESCRIPTION' => 'Mod Subtotal', 'SUBTOTAL' => number_format($aa_total_mod), 'ROLLTOTAL' => number_format($max_val));
+
+         //non casters lose all their mana
+         $class_mod = 0;
+         $class_mod_desc = 'None';
+         if ($caster_class == 'N') {
+            $class_mod = -$max_val;
+            $max_val = 0;
+            $class_mod_desc = 'Non-Caster Class';
+         }
+         $calculation_description[] = array('TYPE' => 'mana', 'TYPE_HEAD' => "Class Modifiers", 'VALUE_HEAD' => "Value");
+         $calculation_description[] = array('TYPE' => 'mana.row', 'DESCRIPTION' => $class_mod_desc, 'VALUE' => number_format($class_mod));
+         $calculation_description[] = array('TYPE' => 'mana.footer', 'DESCRIPTION' => 'Equiped Subtotal', 'SUBTOTAL' => number_format($class_mod), 'ROLLTOTAL' => number_format($max_val));
+         return $max_val;
+      }
+   }
+
+   //pulled from EQEMU 20200316
+   //gets basic mana without gear/effects/etc
+   public function CalcBaseMana()
+   {
+      $ConvertedWisInt = 0;
+      $WisInt = 0;
+      $max_m = 0;
+      switch ($this->GetCasterClass()) {
+         case 'I':
+            $WisInt = $this->getINT();
+
+            $ConvertedWisInt = $WisInt;
+            $over200 = $WisInt;
+            if ($WisInt > 100) {
+               if ($WisInt > 200) {
+                  $over200 = $this->_cppCastInt(($WisInt - 200) / -2 + $WisInt);
+               }
+               $ConvertedWisInt = $this->_cppCastInt((3 * $over200 - 300) / 2 + $over200);
+            }
+            $base_data = $this->_getBaseData();
+            if ($base_data) {
+               $max_m = $base_data['mana'] + ($ConvertedWisInt * $base_data['mana_fac']) + ($this->getHINT() * 10);
+            }
+
+            break;
+         case 'W':
+            $WisInt = $this->getWIS();
+            $ConvertedWisInt = $WisInt;
+            $over200 = $WisInt;
+            if ($WisInt > 100) {
+               if ($WisInt > 200) {
+                  $over200 = $this->_cppCastInt(($WisInt - 200) / -2 + $WisInt);
+               }
+               $ConvertedWisInt = $this->_cppCastInt((3 * $over200 - 300) / 2 + $over200);
+            }
+            $base_data = $this->_getBaseData();
+            if ($base_data) {
+               $max_m = $base_data['mana'] + ($ConvertedWisInt * $base_data['mana_fac']) + ($this->getHWIS() * 10);
+            }
+            break;
+         case 'N': {
+               $max_m = 0;
+               break;
+            }
+      }
+      return $this->_cppCastInt($max_m);
+   }
+
+
+   //pulled from EQEMU 20200316
+   //calculate the display endurance
+   public function CalcMaxEndurance(&$calculation_description = 'unset') {
+      $base_val = $this->CalcBaseEndurance(); //base endurance
+      $item_val = $this->getItemEndurance(); //item endurance
+      $base_item_val = $base_val + $item_val;
+      if ($calculation_description == 'unset') {
+         $max_val = $this->GetAAModTotalByEffect(SE_ENDURANCEPOOL) + $base_item_val; //aa effects 190
+         return max(0, $max_val);
+      }
+      else {
+         $max_val = $base_item_val;
+         $aa_mods = $this->GetAAModsByEffect(SE_ENDURANCEPOOL);
+         $aa_total_mod = 0;
+
+         $calculation_description = array();
+         $calculation_description[] = array('TYPE' => 'endurance', 'TYPE_HEAD' => "Modifiers", 'VALUE_HEAD' => "Value");
+         $calculation_description[] = array('TYPE' => 'endurance.row', 'DESCRIPTION' => 'Base Endurance', 'VALUE' => number_format($base_val));
+         $calculation_description[] = array('TYPE' => 'endurance.row', 'DESCRIPTION' => 'Item Modifiers', 'VALUE' => number_format($item_val));
+         $calculation_description[] = array('TYPE' => 'endurance.footer', 'DESCRIPTION' => 'Equiped Subtotal', 'SUBTOTAL' => number_format($base_item_val), 'ROLLTOTAL' => number_format($max_val));
+
+
+         $calculation_description[] = array('TYPE' => 'endurance', 'TYPE_HEAD' => "AA Modifiers", 'VALUE_HEAD' => "Value");
+         if (cb_count($aa_mods) > 0) {
+            foreach($aa_mods as $value) {
+               $aa_total_mod += $value['MODIFIER'];
+               $calculation_description[] = array('TYPE' => 'endurance.row', 'DESCRIPTION' => $value['NAME']." ".$value['RELATIVE_RANK'], 'VALUE' => $value['MODIFIER']);
+            }
+         }
+         else {
+            $calculation_description[] = array('TYPE' => 'endurance.row', 'DESCRIPTION' => 'None', 'VALUE' => '0');
+         }
+         $max_val = max($aa_total_mod + $max_val, 0);
+         $calculation_description[] = array('TYPE' => 'endurance.footer', 'DESCRIPTION' => 'Mod Subtotal', 'SUBTOTAL' => number_format($aa_total_mod), 'ROLLTOTAL' => number_format($max_val));
+         return $max_val;
+      }
+   }
+
+
+   //pulled from EQEMU 20200316
+   //gets basic endurance without gear/effects/etc
+   public function CalcBaseEndurance() {
+      $base_end = 0;
+
+      $heroic_stats = ($this->getHSTR() + $this->getHSTA() + $this->getHDEX() + $this->getHAGI()) / 4.0;
+      $stats = ($this->getSTR() + $this->getSTA() + $this->getDEX() + $this->getAGI()) / 4.0;
+      if ($stats > 201.0) {
+         $stats = 1.25 * ($stats - 201.0) + 352.5;
+      }
+      else if ($stats > 100.0) {
+         $stats = 2.5 * ($stats - 100.0) + 100.0;
+      }
+      $base_data = $this->_getBaseData();
+      if ($base_data) {
+         $base_end = $this->_cppCastInt($base_data['end'] + ($heroic_stats * 10.0) + ($base_data['end_fac'] * $stats));
+      }
+
+      return $this->_cppCastInt($base_end);
+   }
+
+
+   //pulled from EQEMU 20200316
+   //calculate the display hp
+   public function CalcMaxHP(&$calculation_description = 'unset') {
+      $base_val = $this->CalcBaseHP(); //base HP
+      $item_val = $this->getItemHP(); //item HP
+      $base_item_val = $this->_cppCastInt($base_val + $item_val);
+      $max_val = $base_item_val;
+      if ($calculation_description == 'unset') {
+         $nd = 10000;
+         $nd += $this->GetAAModTotalByEffect(SE_MAXHPCHANGE);   //Natural Durability, Physical Enhancement, Planar Durability effect 214
+         $max_val = $this->_cppCastInt((float)$max_val * (float)$nd / (float)10000); //this is to fix the HP-above-495k issue
+         //leaving these out, these are HP buffs that can be added by item worn/focus effects
+         //theres only 3 items that I can see that add HP by effect and its a whole lot more code
+         //and load on the database for a few rare items (spell effect 69 & 214)
+         //$max_val += spellbonuses.HP + aabonuses.HP;
+         //$max_val += $max_val * ((spellbonuses.MaxHPChange + itembonuses.MaxHPChange) / 10000.0f);
+         $max_val += $this->GetAAModTotalByEffect(SE_TOTALHP); //effect 69
+         return $this->_cppCastInt($max_val);
+      }
+      else {
+         $aa_mods_pct = $this->GetAAModsByEffect(SE_MAXHPCHANGE);
+         $aa_mods = $this->GetAAModsByEffect(SE_TOTALHP);
+         $aa_total_mod = 0;
+         $aa_total_mod_pct = 10000;
+
+         $calculation_description = array();
+         $calculation_description[] = array('TYPE' => 'hp', 'TYPE_HEAD' => "Modifiers", 'VALUE_HEAD' => "Value");
+         $calculation_description[] = array('TYPE' => 'hp.row', 'DESCRIPTION' => 'Base Hitpoints', 'VALUE' => number_format($base_val));
+         $calculation_description[] = array('TYPE' => 'hp.row', 'DESCRIPTION' => 'Item Modifiers', 'VALUE' => number_format($item_val));
+         $calculation_description[] = array('TYPE' => 'hp.footer', 'DESCRIPTION' => 'Equiped Subtotal', 'SUBTOTAL' => number_format($base_item_val), 'ROLLTOTAL' => number_format($max_val));
+
+         //percent aa mods
+         $calculation_description[] = array('TYPE' => 'hp', 'TYPE_HEAD' => "AA Percent Modifiers", 'VALUE_HEAD' => "Value");
+         $calculation_description[] = array('TYPE' => 'hp.row', 'DESCRIPTION' => "Basic Hitpoints", 'VALUE' => "100%");
+         foreach($aa_mods_pct as $value) {
+            $aa_total_mod_pct += $value['MODIFIER'];
+            $calculation_description[] = array('TYPE' => 'hp.row', 'DESCRIPTION' => $value['NAME']." ".$value['RELATIVE_RANK'], 'VALUE' => ($value['MODIFIER']/100)."%");
+         }
+         $nd = $aa_total_mod_pct;
+         $max_val = $this->_cppCastInt((float)$max_val * (float)$nd / (float)10000);
+         $calculation_description[] = array('TYPE' => 'hp.footer', 'DESCRIPTION' => 'Percent Mod Subtotal', 'SUBTOTAL' => ($aa_total_mod_pct/100)."%", 'ROLLTOTAL' => number_format($max_val));
+
+         //aa mods
+         $calculation_description[] = array('TYPE' => 'hp', 'TYPE_HEAD' => "AA Modifiers", 'VALUE_HEAD' => "Value");
+         if (cb_count($aa_mods) > 0) {
+            foreach($aa_mods as $value) {
+               $aa_total_mod += $value['MODIFIER'];
+               $calculation_description[] = array('TYPE' => 'hp.row', 'DESCRIPTION' => $value['NAME']." ".$value['RELATIVE_RANK'], 'VALUE' => $value['MODIFIER']);
+            }
+         }
+         else {
+            $calculation_description[] = array('TYPE' => 'hp.row', 'DESCRIPTION' => 'None', 'VALUE' => '0');
+         }
+         $max_val = $aa_total_mod + $max_val;
+         $calculation_description[] = array('TYPE' => 'hp.footer', 'DESCRIPTION' => 'Mod Subtotal', 'SUBTOTAL' => number_format($aa_total_mod), 'ROLLTOTAL' => number_format($max_val));
+         return $max_val;
+      }
+   }
+
+
+
+   //pulled from EQEMU 20200316
+   //gets basic hp without gear/effects/etc
+   public function CalcBaseHP() {
+      $stats = $this->getSTA();
+      if ($stats > 255) {
+         $stats = $this->_cppCastInt(($stats - 255) / 2);
+         $stats += 255;
+      }
+      $base_hp = 5;
+      $base_data = $this->_getBaseData();
+      if ($base_data) {
+         $base_hp += $base_data['hp'] + ($base_data['hp_fac'] * $stats);
+         $base_hp += ($this->getHSTA() * 10);
+      }
+
+      return $this->_cppCastInt($base_hp);
+   }
+
+
+   //pulled from EQEMU 20200316
+   //based on dev quotes
+   public function compute_defense(&$calculation_description = 'unset') {
+      $defense_mod = $this->_cppCastInt($this->_getValue('defense', 0) * 400 / 225);
+      $agi_mod = $this->_cppCastInt((8000 * ($this->getAGI() - 40)) / 36000);
+      $hagi_mod = $this->_cppCastInt($this->getHAGI() / 10);
+      $def_total = $this->_cppCastInt($defense_mod + $agi_mod + $hagi_mod);
+      $def_return = max(1, $def_total);
+      if ($calculation_description == 'unset') {
+         $defense = $this->_cppCastInt($this->_getValue('defense', 0) * 400 / 225);
+         $defense += $this->_cppCastInt((8000 * ($this->getAGI() - 40)) / 36000);
+         $defense += $this->_cppCastInt($this->getHAGI() / 10);
+         //no items effects yet TODO
+         //$defense += itembonuses.AvoidMeleeChance; // item mod2
+         return $def_return;
+      }
+      else {
+         $calculation_description = array();
+         $calculation_description[] = array('TYPE' => 'ac', 'TYPE_HEAD' => "Modifiers", 'VALUE_HEAD' => "Value");
+         $calculation_description[] = array('TYPE' => 'ac.row', 'DESCRIPTION' => 'Defense x 16/9', 'VALUE' => number_format($defense_mod));
+         $calculation_description[] = array('TYPE' => 'ac.row', 'DESCRIPTION' => '(Agility - 40) x 8/36', 'VALUE' => number_format($agi_mod));
+         $calculation_description[] = array('TYPE' => 'ac.row', 'DESCRIPTION' => 'Heroic Agility / 10', 'VALUE' => number_format($hagi_mod));
+         $calculation_description[] = array('TYPE' => 'ac.footer', 'DESCRIPTION' => 'Defense Mod', 'SUBTOTAL' => number_format($def_total), 'ROLLTOTAL' => number_format($def_return));
+
+         return $def_return;
+      }
+   }
+
+
+   //pulled from EQEMU 20200316
+   //get the displayed attack value
+   public function GetTotalATK(&$calculation_description = 'unset') {
+      $AttackRating = 0;
+      $mainhandSkillID = $this->GetMainhandSkillID();
+      $mainhandSkill = $this->GetSkillValByItemType($mainhandSkillID);
+      $atkoffense_mod = $this->_getValue('offense', 0) * 1.345;
+      $atkitem_mod = $this->getItemATK() * 1.342;
+      $atkstr_mod = ($this->getSTR() - 66) * 0.9;
+      $atkmainhand_mod = $mainhandSkill * 2.69;
+
+      $atksubtotal = $this->_cppCastInt($atkitem_mod + $atkoffense_mod + $atkstr_mod + $atkmainhand_mod);
+      $max_val = $atksubtotal;
+
+      if ($calculation_description == 'unset') {
+         $max_val += $this->GetAAModTotalByEffect(SE_ATK); //aa attack mods by effectid 2
+         return max(10, $max_val);
+      }
+      else {
+         $aa_mods = $this->GetAAModsByEffect(SE_ATK);
+         $mainhandSkillName = $this->GetSkillNameByItemType($mainhandSkillID);
+         $aa_total_mod = 0;
+
+         $calculation_description = array();
+         $calculation_description[] = array('TYPE' => 'attack', 'TYPE_HEAD' => "Modifiers", 'VALUE_HEAD' => "Value");
+         $calculation_description[] = array('TYPE' => 'attack.row', 'DESCRIPTION' => 'Item Base x 1.342', 'VALUE' => number_format($atkitem_mod));
+         $calculation_description[] = array('TYPE' => 'attack.row', 'DESCRIPTION' => 'Offense x 1.345', 'VALUE' => number_format($atkoffense_mod));
+         $calculation_description[] = array('TYPE' => 'attack.row', 'DESCRIPTION' => '(Strength - 66) x 0.9', 'VALUE' => number_format($atkstr_mod));
+         $calculation_description[] = array('TYPE' => 'attack.row', 'DESCRIPTION' => $mainhandSkillName.' x 2.69', 'VALUE' => number_format($atkmainhand_mod));
+         $calculation_description[] = array('TYPE' => 'attack.footer', 'DESCRIPTION' => 'Equiped Subtotal', 'SUBTOTAL' => number_format($atksubtotal), 'ROLLTOTAL' => number_format($atksubtotal));
+
+         $calculation_description[] = array('TYPE' => 'attack', 'TYPE_HEAD' => "AA Modifiers", 'VALUE_HEAD' => "Value");
+         if (cb_count($aa_mods) > 0) {
+            foreach($aa_mods as $value) {
+               $aa_total_mod += $value['MODIFIER'];
+               $calculation_description[] = array('TYPE' => 'attack.row', 'DESCRIPTION' => $value['NAME']." ".$value['RELATIVE_RANK'], 'VALUE' => $value['MODIFIER']);
+            }
+         }
+         else {
+            $calculation_description[] = array('TYPE' => 'attack.row', 'DESCRIPTION' => 'None', 'VALUE' => '0');
+         }
+         $max_val = max($aa_total_mod + $max_val, 0);
+         $calculation_description[] = array('TYPE' => 'attack.footer', 'DESCRIPTION' => 'Mod Subtotal', 'SUBTOTAL' => number_format($aa_total_mod), 'ROLLTOTAL' => number_format($max_val));
+         return max(10, $max_val);
+      }
+   }
+
+
+   //pulled from EQEMU 20200316
+   //get the AC cap where returns diminish
+   public function GetACSoftcap()
+   {
+      // from test server Resources/ACMitigation.txt
+      $war_softcaps = array(
+         312, 314, 316, 318, 320, 322, 324, 326, 328, 330, 332, 334, 336, 338, 340, 342, 344, 346, 348, 350, 352,
+         354, 356, 358, 360, 362, 364, 366, 368, 370, 372, 374, 376, 378, 380, 382, 384, 386, 388, 390, 392, 394,
+         396, 398, 400, 402, 404, 406, 408, 410, 412, 414, 416, 418, 420, 422, 424, 426, 428, 430, 432, 434, 436,
+         438, 440, 442, 444, 446, 448, 450, 452, 454, 456, 458, 460, 462, 464, 466, 468, 470, 472, 474, 476, 478,
+         480, 482, 484, 486, 488, 490, 492, 494, 496, 498, 500, 502, 504, 506, 508, 510, 512, 514, 516, 518, 520
+      );
+
+      $clrbrdmnk_softcaps = array(
+         274, 276, 278, 278, 280, 282, 284, 286, 288, 290, 292, 292, 294, 296, 298, 300, 302, 304, 306, 308, 308,
+         310, 312, 314, 316, 318, 320, 322, 322, 324, 326, 328, 330, 332, 334, 336, 336, 338, 340, 342, 344, 346,
+         348, 350, 352, 352, 354, 356, 358, 360, 362, 364, 366, 366, 368, 370, 372, 374, 376, 378, 380, 380, 382,
+         384, 386, 388, 390, 392, 394, 396, 396, 398, 400, 402, 404, 406, 408, 410, 410, 412, 414, 416, 418, 420,
+         422, 424, 424, 426, 428, 430, 432, 434, 436, 438, 440, 440, 442, 444, 446, 448, 450, 452, 454, 454, 456
+      );
+
+      $palshd_softcaps = array(
+         298, 300, 302, 304, 306, 308, 310, 312, 314, 316, 318, 320, 322, 324, 326, 328, 330, 332, 334, 336, 336,
+         338, 340, 342, 344, 346, 348, 350, 352, 354, 356, 358, 360, 362, 364, 366, 368, 370, 372, 374, 376, 378,
+         380, 382, 384, 384, 386, 388, 390, 392, 394, 396, 398, 400, 402, 404, 406, 408, 410, 412, 414, 416, 418,
+         420, 422, 424, 426, 428, 430, 432, 432, 434, 436, 438, 440, 442, 444, 446, 448, 450, 452, 454, 456, 458,
+         460, 462, 464, 466, 468, 470, 472, 474, 476, 478, 480, 480, 482, 484, 486, 488, 490, 492, 494, 496, 498
+      );
+
+      $rng_softcaps = array(
+         286, 288, 290, 292, 294, 296, 298, 298, 300, 302, 304, 306, 308, 310, 312, 314, 316, 318, 320, 322, 322,
+         324, 326, 328, 330, 332, 334, 336, 338, 340, 342, 344, 344, 346, 348, 350, 352, 354, 356, 358, 360, 362,
+         364, 366, 368, 368, 370, 372, 374, 376, 378, 380, 382, 384, 386, 388, 390, 390, 392, 394, 396, 398, 400,
+         402, 404, 406, 408, 410, 412, 414, 414, 416, 418, 420, 422, 424, 426, 428, 430, 432, 434, 436, 436, 438,
+         440, 442, 444, 446, 448, 450, 452, 454, 456, 458, 460, 460, 462, 464, 466, 468, 470, 472, 474, 476, 478
+      );
+
+      $dru_softcaps = array(
+         254, 256, 258, 260, 262, 264, 264, 266, 268, 270, 272, 272, 274, 276, 278, 280, 282, 282, 284, 286, 288,
+         290, 290, 292, 294, 296, 298, 300, 300, 302, 304, 306, 308, 308, 310, 312, 314, 316, 318, 318, 320, 322,
+         324, 326, 328, 328, 330, 332, 334, 336, 336, 338, 340, 342, 344, 346, 346, 348, 350, 352, 354, 354, 356,
+         358, 360, 362, 364, 364, 366, 368, 370, 372, 372, 374, 376, 378, 380, 382, 382, 384, 386, 388, 390, 390,
+         392, 394, 396, 398, 400, 400, 402, 404, 406, 408, 410, 410, 412, 414, 416, 418, 418, 420, 422, 424, 426
+      );
+
+      $rogshmbstber_softcaps = array(
+         264, 266, 268, 270, 272, 272, 274, 276, 278, 280, 282, 282, 284, 286, 288, 290, 292, 294, 294, 296, 298,
+         300, 302, 304, 306, 306, 308, 310, 312, 314, 316, 316, 318, 320, 322, 324, 326, 328, 328, 330, 332, 334,
+         336, 338, 340, 340, 342, 344, 346, 348, 350, 350, 352, 354, 356, 358, 360, 362, 362, 364, 366, 368, 370,
+         372, 374, 374, 376, 378, 380, 382, 384, 384, 386, 388, 390, 392, 394, 396, 396, 398, 400, 402, 404, 406,
+         408, 408, 410, 412, 414, 416, 418, 418, 420, 422, 424, 426, 428, 430, 430, 432, 434, 436, 438, 440, 442
+      );
+
+      $necwizmagenc_softcaps = array(
+         248, 250, 252, 254, 256, 256, 258, 260, 262, 264, 264, 266, 268, 270, 272, 272, 274, 276, 278, 280, 280,
+         282, 284, 286, 288, 288, 290, 292, 294, 296, 296, 298, 300, 302, 304, 304, 306, 308, 310, 312, 312, 314,
+         316, 318, 320, 320, 322, 324, 326, 328, 328, 330, 332, 334, 336, 336, 338, 340, 342, 344, 344, 346, 348,
+         350, 352, 352, 354, 356, 358, 360, 360, 362, 364, 366, 368, 368, 370, 372, 374, 376, 376, 378, 380, 382,
+         384, 384, 386, 388, 390, 392, 392, 394, 396, 398, 400, 400, 402, 404, 406, 408, 408, 410, 412, 414, 416
+      );
+
+      //max level and zero index fix
+      $level = min(105, $this->_level) - 1;
+
+      switch ($this->_class) {
+         case CB_CLASS_WARRIOR:
+            return $war_softcaps[$level];
+         case CB_CLASS_CLERIC:
+         case CB_CLASS_BARD:
+         case CB_CLASS_MONK:
+            return $clrbrdmnk_softcaps[$level];
+         case CB_CLASS_PALADIN:
+         case CB_CLASS_SHADOWKNIGHT:
+            return $palshd_softcaps[$level];
+         case CB_CLASS_RANGER:
+            return $rng_softcaps[$level];
+         case CB_CLASS_DRUID:
+            return $dru_softcaps[$level];
+         case CB_CLASS_ROGUE:
+         case CB_CLASS_SHAMAN:
+         case CB_CLASS_BEASTLORD:
+         case CB_CLASS_BERSERKER:
+            return $rogshmbstber_softcaps[$level];
+         case CB_CLASS_NECROMANCER:
+         case CB_CLASS_WIZARD:
+         case CB_CLASS_MAGICIAN:
+         case CB_CLASS_ENCHANTER:
+            return $necwizmagenc_softcaps[$level];
+         default:
+            return 350;
+      }
+   }
+
+
+   //pulled from EQEMU 20200316
+   //get the percent of return after your pass the soft cap
+   public function GetSoftcapReturns()
+   {
+      // These are based on the dev post, they seem to be correct for every level
+      // AKA no more hard caps
+      switch ($this->_class) {
+         case CB_CLASS_WARRIOR:
+            return 0.35;
+         case CB_CLASS_CLERIC:
+         case CB_CLASS_BARD:
+         case CB_CLASS_MONK:
+            return 0.3;
+         case CB_CLASS_PALADIN:
+         case CB_CLASS_SHADOWKNIGHT:
+            return 0.33;
+         case CB_CLASS_RANGER:
+            return 0.315;
+         case CB_CLASS_DRUID:
+            return 0.265;
+         case CB_CLASS_ROGUE:
+         case CB_CLASS_SHAMAN:
+         case CB_CLASS_BEASTLORD:
+         case CB_CLASS_BERSERKER:
+            return 0.28;
+         case CB_CLASS_NECROMANCER:
+         case CB_CLASS_WIZARD:
+         case CB_CLASS_MAGICIAN:
+         case CB_CLASS_ENCHANTER:
+            return 0.25;
+         default:
+            return 0.3;
+      }
+   }
+
+
+   //pulled from EQEMU 20200316
+   //fetch the AC bonus for this chars class
+   public function GetClassRaceACBonus()
+   {
+      $ac_bonus = 0;
+      if ($this->_class == CB_CLASS_MONK) {
+         $hardcap = 30;
+         $softcap = 14;
+         if ($this->_level > 99) {
+            $hardcap = 58;
+            $softcap = 35;
+         }
+         else if ($this->_level > 94) {
+            $hardcap = 57;
+            $softcap = 34;
+         }
+         else if ($this->_level > 89) {
+            $hardcap = 56;
+            $softcap = 33;
+         }
+         else if ($this->_level > 84) {
+            $hardcap = 55;
+            $softcap = 32;
+         }
+         else if ($this->_level > 79) {
+            $hardcap = 54;
+            $softcap = 31;
+         }
+         else if ($this->_level > 74) {
+            $hardcap = 53;
+            $softcap = 30;
+         }
+         else if ($this->_level > 69) {
+            $hardcap = 53;
+            $softcap = 28;
+         }
+         else if ($this->_level > 64) {
+            $hardcap = 53;
+            $softcap = 26;
+         }
+         else if ($this->_level > 63) {
+            $hardcap = 50;
+            $softcap = 24;
+         }
+         else if ($this->_level > 61) {
+            $hardcap = 47;
+            $softcap = 24;
+         }
+         else if ($this->_level > 59) {
+            $hardcap = 45;
+            $softcap = 24;
+         }
+         else if ($this->_level > 54) {
+            $hardcap = 40;
+            $softcap = 20;
+         }
+         else if ($this->_level > 50) {
+            $hardcap = 38;
+            $softcap = 18;
+         }
+         else if ($this->_level > 44) {
+            $hardcap = 36;
+            $softcap = 17;
+         }
+         else if ($this->_level > 29) {
+            $hardcap = 34;
+            $softcap = 16;
+         }
+         else if ($this->_level > 14) {
+            $hardcap = 32;
+            $softcap = 15;
+         }
+         $weight = $this->_cppCastInt($this->getWT()/10);
+         if ($weight < $hardcap - 1) {
+            $temp = $this->_level + 5;
+            if ($weight > $softcap) {
+               $redux = ($weight - $softcap) * 6.66667;
+               $redux = (100.0 - min(100.0, $redux)) * 0.01;
+               $temp = max(0.0, $temp * $redux);
+            }
+            $ac_bonus = $this->_cppCastInt((4.0 * $temp) / 3.0);
+         }
+         else if ($weight > $hardcap + 1) {
+            $temp = $this->_level + 5;
+            $multiplier = min(1.0, ($weight - ($hardcap - 10.0)) / 100.0);
+            $temp = (4.0 * $temp) / 3.0;
+            $ac_bonus -= $this->_cppCastInt($temp * $multiplier);
+         }
+      }
+
+      if ($this->_class == CB_CLASS_ROGUE) {
+         $AGI = $this->getAGI();
+         $level_scaler = $this->_level - 26;
+         if ($AGI < 80)
+            $ac_bonus = $this->_cppCastInt($level_scaler / 4);
+         else if ($AGI < 85)
+            $ac_bonus = $this->_cppCastInt(($level_scaler * 2) / 4);
+         else if ($AGI < 90)
+            $ac_bonus = $this->_cppCastInt(($level_scaler * 3) / 4);
+         else if ($AGI < 100)
+            $ac_bonus = $this->_cppCastInt(($level_scaler * 4) / 4);
+         else if ($AGI >= 100)
+            $ac_bonus = $this->_cppCastInt(($level_scaler * 5) / 4);
+         if ($ac_bonus > 12)
+            $ac_bonus = 12;
+      }
+
+      if ($this->_class == CB_CLASS_BEASTLORD) {
+         $level_scaler = $this->_level - 6;
+         $AGI = $this->getAGI();
+         if ($AGI < 80)
+            $ac_bonus = $this->_cppCastInt($level_scaler / 5);
+         else if ($AGI < 85)
+            $ac_bonus = $this->_cppCastInt(($level_scaler * 2) / 5);
+         else if ($AGI < 90)
+            $ac_bonus = $this->_cppCastInt(($level_scaler * 3) / 5);
+         else if ($AGI < 100)
+            $ac_bonus = $this->_cppCastInt(($level_scaler * 4) / 5);
+         else if ($AGI >= 100)
+            $ac_bonus = $this->_cppCastInt(($level_scaler * 5) / 5);
+         if ($ac_bonus > 16)
+            $ac_bonus = 16;
+      }
+
+      if ($this->_race == CB_RACE_IKSAR) {
+         $ac_bonus += max(10, min($this->_level, 35));
+      }
+
+      return $this->_cppCastInt($ac_bonus);
+   }
+
+
+   //pulled from https://gist.github.com/fe1c0e77a5f9c40d6ce037c8efe2cf9a
+   //calculates the AC that is displayed in the inventory window
+   public function GetDisplayAC(&$calculation_description = 'unset') {
+      $ac_sum_skipcaps = $this->ACSum(true);
+      $ac_defense = $this->compute_defense($calculation_description);
+      $ac_def_total = $this->_cppCastInt(1000 * ($ac_sum_skipcaps + $ac_defense) / 847);
+      if ($calculation_description == 'unset') {
+         return $ac_def_total;
+      }
+      else {
+         if (!is_array($calculation_description)) $calculation_description = array();
+         $calculation_description[] = array('TYPE' => 'ac', 'TYPE_HEAD' => "Modifiers", 'VALUE_HEAD' => "Value");
+         $calculation_description[] = array('TYPE' => 'ac.row', 'DESCRIPTION' => 'Uncapped Mitigation AC / 0.847', 'VALUE' => number_format($ac_sum_skipcaps/0.847));
+         $calculation_description[] = array('TYPE' => 'ac.row', 'DESCRIPTION' => 'Defense Mod / 0.847', 'VALUE' => number_format($ac_defense/0.847));
+         $calculation_description[] = array('TYPE' => 'ac.footer', 'DESCRIPTION' => 'Subtotal', 'SUBTOTAL' => number_format($ac_def_total), 'ROLLTOTAL' => number_format($ac_def_total));
+
+         return $ac_def_total;
+      }
+   }
+
+   //pulled from EQEMU 20200316
+   //AKA mitigation AC, this is the value used for combat, not the one displayed (which isnt used)
+   public function ACSumOriginal($skip_caps = false)
+   {
+
+      $ac = 0; // this should be base AC whenever shrouds come around
+      $ac += $this->getItemAC(); // items + food + tribute
+
+      $shield_ac = 0;
+
+      /* need to implement shield modifier TODO
+      if (HasShieldEquiped()) {
+         auto client = CastToClient();
+         auto inst = client->GetInv().GetItem(EQEmu::invslot::slotSecondary);
+         if (inst) {
+            if (inst->GetItemRecommendedLevel(true) <= GetLevel())
+               shield_ac = inst->GetItemArmorClass(true);
+            else
+               shield_ac = client->CalcRecommendedLevelBonus(GetLevel(), inst->GetItemRecommendedLevel(true), inst->GetItemArmorClass(true));
+         }
+         shield_ac += client->GetHeroicSTR() / 10;
+      }*/
+
+      // EQ math
+      $ac = $this->_cppCastInt(($ac * 4) / 3);
+
+      // anti-twink,
+      if (!$skip_caps && $this->_level < 50) {
+         $ac = $this->_cppCastInt(min($ac, 25 + 6 * $this->_level));
+      }
+
+      $ac = $this->_cppCastInt(max(0, $ac + $this->GetClassRaceACBonus()));
+
+      $spell_aa_ac = $this->GetAAModTotalByEffect(1) + $this->GetAAModTotalByEffect(416); //aa AC bonuses effect 1 a& 416
+      if ($this->_class >= CB_CLASS_NECROMANCER && $this->_class <= CB_CLASS_ENCHANTER) {
+         $ac += $this->_cppCastInt($this->_getValue('defense', 0) / 2 + $spell_aa_ac / 3);
+      }
+      else {
+         $ac += $this->_cppCastInt($this->_getValue('defense', 0) / 3 + $spell_aa_ac / 4);
+      }
+
+      $AGI = $this->getAGI();
+      if ($AGI > 70)
+         $ac += $this->_cppCastInt($AGI / 20);
+
+      if ($ac < 0)
+         $ac = 0;
+
+
+      if (!$skip_caps) { //pulled from https://gist.github.com/fe1c0e77a5f9c40d6ce037c8efe2cf9a
+         $softcap = $this->GetACSoftcap();
+         $returns = $this->GetSoftcapReturns();
+         $total_aclimitmod = $this->GetAAModTotalByEffect(259); //combat stability effect 259;
+         if ($total_aclimitmod) {
+            $softcap = ($softcap * (100 + $total_aclimitmod)) / 100;
+         }
+         $softcap += $shield_ac;
+
+         if ($ac > $softcap) {
+            $over_cap = $ac - $softcap;
+            $ac = $softcap + $this->_cppCastInt($over_cap * $returns);
+         }
+      }
+
+      return $this->_cppCastInt($ac);
+   }
+
+   //pulled from EQEMU 20200316
+   //AKA mitigation AC, this is the value used for combat, not the one displayed (which isnt used)
+   public function ACSum($skip_caps = false, &$calculation_description = 'unset')
+   {
+      $shield_ac = 0;
+      if (!is_array($calculation_description)) $calculation_description = array();
+
+      $aa_mods1 = $this->GetAAModsByEffect(SE_ARMORCLASS); //effect 1
+      $aa_mods2 = $this->GetAAModsByEffect(SE_ACV2); //effect 416
+      $aa_total_mod1 = 0;
+      $calculation_description[] = array('TYPE' => 'mit_ac', 'TYPE_HEAD' => "AC Alt Abilities", 'VALUE_HEAD' => "Value");
+      if (cb_count($aa_mods1) + cb_count($aa_mods2) < 1) {
+         $calculation_description[] = array('TYPE' => 'mit_ac.row', 'DESCRIPTION' => 'None', 'VALUE' => '0');
+      }
+      else {
+         foreach($aa_mods1 as $value) {
+            $aa_total_mod1 += $value['MODIFIER'];
+            $calculation_description[] = array('TYPE' => 'mit_ac.row', 'DESCRIPTION' => $value['NAME']." ".$value['RELATIVE_RANK'], 'VALUE' => $value['MODIFIER']);
+         }
+         foreach($aa_mods2 as $value) {
+            $aa_total_mod1 += $value['MODIFIER'];
+            $calculation_description[] = array('TYPE' => 'mit_ac.row', 'DESCRIPTION' => $value['NAME']." ".$value['RELATIVE_RANK'], 'VALUE' => $value['MODIFIER']);
+         }
+      }
+      $calculation_description[] = array('TYPE' => 'mit_ac.footer', 'DESCRIPTION' => 'AC AA Total', 'SUBTOTAL' => number_format($aa_total_mod1), 'ROLLTOTAL' => number_format($aa_total_mod1));
+
+
+      $aa_mods3 = $this->GetAAModsByEffect(SE_COMBATSTABILITY); //effect 259
+      $aa_total_mod2 = 0;
+      $calculation_description[] = array('TYPE' => 'mit_ac', 'TYPE_HEAD' => "Stability Alt Abilities", 'VALUE_HEAD' => "Value");
+      if (cb_count($aa_mods3) < 1) {
+         $calculation_description[] = array('TYPE' => 'mit_ac.row', 'DESCRIPTION' => 'None', 'VALUE' => '0');
+      }
+      else {
+         foreach($aa_mods3 as $value) {
+            $aa_total_mod2 += $value['MODIFIER'];
+            $calculation_description[] = array('TYPE' => 'mit_ac.row', 'DESCRIPTION' => $value['NAME']." ".$value['RELATIVE_RANK'], 'VALUE' => $value['MODIFIER']);
+         }
+      }
+      $calculation_description[] = array('TYPE' => 'mit_ac.footer', 'DESCRIPTION' => 'Stability AA Total', 'SUBTOTAL' => number_format($aa_total_mod2), 'ROLLTOTAL' => number_format($aa_total_mod2));
+
+      //softcap vars
+      if (!$skip_caps) { //pulled from https://gist.github.com/fe1c0e77a5f9c40d6ce037c8efe2cf9a
+         $softcap = $this->GetACSoftcap();
+         $original_softcap = $softcap;
+         $softcapreturns = $this->GetSoftcapReturns();
+         if ($aa_total_mod2) {
+            $softcap = ($softcap * (100 + $aa_total_mod2)) / 100;
+         }
+         $softcap += $shield_ac;
+         $calculation_description[] = array('TYPE' => 'mit_ac', 'TYPE_HEAD' => "Softcap Vars", 'VALUE_HEAD' => "Value");
+         $calculation_description[] = array('TYPE' => 'mit_ac.row', 'DESCRIPTION' => "Base Softcap", 'VALUE' => number_format($original_softcap));
+         $calculation_description[] = array('TYPE' => 'mit_ac.row', 'DESCRIPTION' => "Softcap After Stability AA", 'VALUE' => number_format($softcap));
+         $calculation_description[] = array('TYPE' => 'mit_ac.row', 'DESCRIPTION' => "Softcap Returns", 'VALUE' => $softcapreturns);
+      }
+
+      $totalAC = 0; // this should be base AC whenever shrouds come around
+
+      /* need to implement shield modifier TODO
+      if (HasShieldEquiped()) {
+         auto client = CastToClient();
+         auto inst = client->GetInv().GetItem(EQEmu::invslot::slotSecondary);
+         if (inst) {
+            if (inst->GetItemRecommendedLevel(true) <= GetLevel())
+               shield_ac = inst->GetItemArmorClass(true);
+            else
+               shield_ac = client->CalcRecommendedLevelBonus(GetLevel(), inst->GetItemRecommendedLevel(true), inst->GetItemArmorClass(true));
+         }
+         shield_ac += client->GetHeroicSTR() / 10;
+      }*/
+
+
+      $calculation_description[] = array('TYPE' => 'mit_ac', 'TYPE_HEAD' => "Modifiers", 'VALUE_HEAD' => "Value");
+
+      // EQ math
+      $item_mod = $this->_cppCastInt(($this->getItemAC() * 4) / 3); // items + food + tribute
+      $calculation_description[] = array('TYPE' => 'mit_ac.row', 'DESCRIPTION' => "Item AC x 4/3", 'VALUE' => number_format($item_mod));
+      $totalAC = $item_mod;
+
+      // anti-twink,
+      $level_cap_mod = 0;
+      if (!$skip_caps && $this->_level < 50) {
+         $levelcap_ac = 25 + 6 * $this->_level;
+         if ($levelcap_ac  < $item_mod ) {
+            $level_cap_mod = $item_mod - $levelcap_ac;
+            $calculation_description[] = array('TYPE' => 'mit_ac.row', 'DESCRIPTION' => "Level Cap Mod", 'VALUE' => number_format($level_cap_mod));
+         }
+      }
+      $totalAC += $level_cap_mod;
+
+      //race class bonus
+      $race_class_mod = $this->_cppCastInt($this->GetClassRaceACBonus());
+      $temptotal = $item_mod + $level_cap_mod + $race_class_mod;
+      if ($temptotal < 0) {
+         $race_class_mod -= $temptotal;
+      }
+      $calculation_description[] = array('TYPE' => 'mit_ac.row', 'DESCRIPTION' => "Race-Class Bonus", 'VALUE' => number_format($race_class_mod));
+      $totalAC += $race_class_mod;
+
+
+
+      //int caster mod
+      if ($this->_class >= CB_CLASS_NECROMANCER && $this->_class <= CB_CLASS_ENCHANTER) {
+         $int_caster_mod = $this->_cppCastInt($this->_getValue('defense', 0) / 2 + $aa_total_mod1 / 3);
+         $calculation_description[] = array('TYPE' => 'mit_ac.row', 'DESCRIPTION' => "Defense Skill / 2", 'VALUE' => number_format($this->_cppCastInt($this->_getValue('defense', 0) / 2)));
+         $calculation_description[] = array('TYPE' => 'mit_ac.row', 'DESCRIPTION' => "AC AA / 3", 'VALUE' => number_format($this->_cppCastInt($aa_total_mod1 / 3)));
+      }
+      else {
+         $int_caster_mod = $this->_cppCastInt($this->_getValue('defense', 0) / 3 + $aa_total_mod1 / 4);
+         $calculation_description[] = array('TYPE' => 'mit_ac.row', 'DESCRIPTION' => "Defense Skill / 3", 'VALUE' => number_format($this->_cppCastInt($this->_getValue('defense', 0) / 3)));
+         $calculation_description[] = array('TYPE' => 'mit_ac.row', 'DESCRIPTION' => "AC AA / 4", 'VALUE' => number_format($this->_cppCastInt($aa_total_mod1 / 4)));
+      }
+      $totalAC += $int_caster_mod;
+
+
+      //agility bonus
+      $AGI = $this->getAGI();
+      $agi_bonus_mod = 0;
+      if ($AGI > 70) {
+         $agi_bonus_mod = $this->_cppCastInt($AGI / 20);
+         $calculation_description[] = array('TYPE' => 'mit_ac.row', 'DESCRIPTION' => "AGI / 20", 'VALUE' => number_format($agi_bonus_mod));
+      }
+      $totalAC += $agi_bonus_mod;
+
+      //cant go below 0
+      if ($totalAC < 0) {
+         $calculation_description[] = array('TYPE' => 'mit_ac.row', 'DESCRIPTION' => "Min AC Correction", 'VALUE' => "+".number_format($totalAC));
+         $totalAC = 0;
+      }
+
+
+      if (!$skip_caps) 
+      { //pulled from https://gist.github.com/fe1c0e77a5f9c40d6ce037c8efe2cf9a
+         $softcap_mod = 0;
+         
+         if ($totalAC > $softcap) {
+            $tempTotalAC = $totalAC;
+            $over_cap = $totalAC - $softcap;
+            $totalAC = $softcap + $this->_cppCastInt($over_cap * $softcapreturns);
+            $softcap_mod = 0 - ($tempTotalAC - $totalAC);
+         }
+
+         $calculation_description[] = array('TYPE' => 'mit_ac.row', 'DESCRIPTION' => "Softcap Mod", 'VALUE' => number_format($softcap_mod));
+      }
+
+      $totalAC = $this->_cppCastInt($totalAC);
+      $calculation_description[] = array('TYPE' => 'mit_ac.footer', 'DESCRIPTION' => 'Mitigation AC', 'SUBTOTAL' => number_format($totalAC), 'ROLLTOTAL' => number_format($totalAC));
+      return $totalAC;
+   }
+
+
+   //get the skill id for your mainhand attack
+   public function GetMainhandSkillID()
+   {
+      $mainhandslot = 13;
+      $handtohand = 45;
+      if (array_key_exists($mainhandslot, $this->_allitems)) {
+         return $this->_allitems[$mainhandslot]->skill();
+      }
+      else {
+         return $handtohand;
+      }
+   }
+
+
    //get stats including items
    public function getSTR()
    {
-      return $this->_getValue('calculated_strength', 0);
+      $this->_populateItems();
+      return $this->_getValue('str', 0) + $this->_itemstats->STR();
    }
 
    public function getSTA()
    {
-      return $this->_getValue('calculated_stamina', 0);
+      $this->_populateItems();
+      return $this->_getValue('sta', 0) + $this->_itemstats->STA();
    }
 
    public function getDEX()
    {
-      return $this->_getValue('calculated_dexterity', 0);
+      $this->_populateItems();
+      return $this->_getValue('dex', 0) + $this->_itemstats->DEX();
    }
 
    public function getAGI()
    {
-      return $this->_getValue('calculated_agility', 0);
+      $this->_populateItems();
+      return $this->_getValue('agi', 0) + $this->_itemstats->AGI();
    }
 
    public function getINT()
    {
-      return $this->_getValue('calculated_intelligence', 0);
+      $this->_populateItems();
+      return $this->_getValue('int', 0) + $this->_itemstats->INT();
    }
 
    public function getWIS()
    {
-      return $this->_getValue('calculated_wisdom', 0);
+      $this->_populateItems();
+      return $this->_getValue('wis', 0) + $this->_itemstats->WIS();
    }
 
    public function getCHA()
    {
-      return $this->_getValue('calculated_charisma', 0);
+      $this->_populateItems();
+      return $this->_getValue('cha', 0) + $this->_itemstats->CHA();
    }
 
    public function getHSTR()
    {
-      return $this->_getValue('calculated_heroic_strength', 0);
+      $this->_populateItems();
+      return $this->_itemstats->HSTR();
    }
 
    public function getHSTA()
    {
-      return $this->_getValue('calculated_heroic_stamina', 0);
+      $this->_populateItems();
+      return $this->_itemstats->HSTA();
    }
 
    public function getHDEX()
    {
-      return $this->_getValue('calculated_heroic_dexterity', 0);
+      $this->_populateItems();
+      return $this->_itemstats->HDEX();
    }
 
    public function getHAGI()
    {
-      return $this->_getValue('calculated_heroic_agility', 0);
+      $this->_populateItems();
+      return $this->_itemstats->HAGI();
    }
 
    public function getHINT()
    {
-      return $this->_getValue('calculated_heroic_intelligence', 0);
+      $this->_populateItems();
+      return $this->_itemstats->HINT();
    }
 
    public function getHWIS()
    {
-      return $this->_getValue('calculated_heroic_wisdom', 0);
+      $this->_populateItems();
+      return $this->_itemstats->HWIS();
    }
 
    public function getHCHA()
    {
-      return $this->_getValue('calculated_heroic_charisma', 0);
+      $this->_populateItems();
+      return $this->_itemstats->HCHA();
    }
 
    public function getPR()
    {
-      return $this->_getValue('calculated_poison_resist', 0);
+      $this->_populateItems();
+
+      $byClass = array(0,0,0,0,4,0,0,0,8,0,0,0,0,0,0,0);
+
+      if($this->_race == 8) $retval =  20;
+      else if($this->_race == 330) $retval = 30;
+      else if($this->_race == 74) $retval =  30;
+      else if($this->_race == 11) $retval =  20;
+      else $retval =  15;
+
+      $retval += $byClass[$this->_class] + $this->_itemstats->PR();
+
+      return $retval;
    }
 
    public function getMR()
    {
-      return $this->_getValue('calculated_magic_resist', 0);
+      $this->_populateItems();
+
+      $byClass = array(0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
+
+      if($this->_race == 8) $retval = 30;
+      else if($this->_race == 3) $retval = 30;
+      else if($this->_race == 330) $retval = 30;
+      else if($this->_race == 74) $retval = 30;
+      else $retval = 25;
+
+      $retval += $byClass[$this->_class] + $this->_itemstats->MR();
+
+      return $retval;
    }
 
    public function getDR()
    {
-      return $this->_getValue('calculated_disease_resist', 0);
+      $this->_populateItems();
+
+      $byClass = array(0,0,8,0,4,0,0,0,0,0,0,0,0,0,4,0);
+
+      if($this->_race == 3) $retval = 10;
+      else if($this->_race == 11) $retval = 20;
+      else $retval = 15;
+
+      $retval += $byClass[$this->_class] + $this->_itemstats->DR();
+
+      return $retval;
    }
 
    public function getFR()
    {
-      return $this->_getValue('calculated_fire_resist', 0);
+      $this->_populateItems();
+
+      $byClass = array(0,0,0,4,0,0,8,0,0,0,0,0,0,0,0,0);
+
+      if($this->_race == 128) $retval = 30;
+      else if($this->_race == 9) $retval = 5;
+      else $retval = 25;
+
+      $retval += $byClass[$this->_class] + $this->_itemstats->FR();
+
+      return $retval;
    }
 
    public function getCR()
    {
-      return $this->_getValue('calculated_cold_resist', 0);
+      $this->_populateItems();
+
+      $byClass = array(0,0,0,4,0,0,0,0,0,0,0,0,0,0,4,0);
+
+      if($this->_race == 2) $retval = 35;
+      else if($this->_race == 128) $retval = 15;
+      else $retval = 25;
+
+      $retval += $byClass[$this->_class] + $this->_itemstats->CR();
+
+      return $retval;
    }
 
    public function getCOR()
    {
-      return $this->_getValue('calculated_corruption_resist', 0);
+      $this->_populateItems();
+      return $this->_itemstats->COR();
    }
 
    public function getHPR()
    {
-      return $this->_getValue('calculated_heroic_poison_resist', 0);
+      $this->_populateItems();
+      return $this->_itemstats->HPR();
    }
 
    public function getHFR()
    {
-      return $this->_getValue('calculated_heroic_fire_resist', 0);
+      $this->_populateItems();
+      return $this->_itemstats->HFR();
    }
 
    public function getHMR()
    {
-      return $this->_getValue('calculated_heroic_magic_resist', 0);
+      $this->_populateItems();
+      return $this->_itemstats->HMR();
    }
 
    public function getHDR()
    {
-      return $this->_getValue('calculated_heroic_disease_resist', 0);
+      $this->_populateItems();
+      return $this->_itemstats->HDR();
    }
 
    public function getHCR()
    {
-      return $this->_getValue('calculated_heroic_cold_resist', 0);
+      $this->_populateItems();
+      return $this->_itemstats->HCR();
    }
-
 
    public function getHCOR()
    {
-      return $this->_getValue('calculated_heroic_corruption_resist', 0);
+      $this->_populateItems();
+      return $this->_itemstats->HCOR();
    }
 
    public function getWT()
@@ -1308,6 +2317,14 @@ TPL;
 **            PRIVATE FUNCTIONS            **
 ********************************************/
 
+   //we have converted c++ code here
+   //much of it stores floats in integers
+   //causing an implicit conversion
+   //this does that same conversion
+   private function _cppCastInt($val)
+   {
+      return floor($val);
+   }
 
    //fetches base data for this character
    private function _getBaseData()
@@ -1351,20 +2368,20 @@ TPL;
       $this->_allitems = array();
 
       //FETCH INVENTORY ROWS
-      // pull characters inventory slotid is loaded as
-      // "myslot" since items table also has a slotid field.
+      // pull characters inventory slot_id is loaded as
+      // "myslot" since items table also has a slot_id field.
       $tpl = <<<TPL
-      SELECT itemid, 
-             augslot1, 
-             augslot2, 
-             augslot3, 
-             augslot4, 
-             augslot5, 
-             augslot6,
-             slotid AS myslot,
+      SELECT item_id, 
+             augment_one, 
+             augment_two, 
+             augment_three, 
+             augment_four, 
+             augment_five, 
+             augment_six,
+             slot_id AS myslot,
              charges
       FROM inventory
-      WHERE charid = '%s'  
+      WHERE character_id = '%s'  
 TPL;
       $query = sprintf($tpl, $this->_char_id);
       $result = $this->_sql->query($query);
@@ -1372,20 +2389,20 @@ TPL;
       
       
       //FETCH SHARED BANK ROWS
-      // pull characters shared bank, slotid is loaded as
-      // "myslot" since items table also has a slotid field.
+      // pull characters shared bank, slot_id is loaded as
+      // "myslot" since items table also has a slot_id field.
       $tpl = <<<TPL
-      SELECT itemid, 
-             augslot1, 
-             augslot2, 
-             augslot3, 
-             augslot4, 
-             augslot5,
-             augslot6,
-             slotid AS myslot,
+      SELECT item_id, 
+             augment_one, 
+             augment_two, 
+             augment_three, 
+             augment_four, 
+             augment_five,
+             augment_six,
+             slot_id AS myslot,
              charges
       FROM sharedbank
-      WHERE acctid = '%s'  
+      WHERE account_id = '%s'  
 TPL;
       $query = sprintf($tpl, $this->_getValue('account_id', 0));
       $result = $this->_sql->query($query);
@@ -1409,7 +2426,7 @@ TPL;
       // item to be pasted into its respective div later
       foreach ($inventory_results as $row)
       {
-         $itemrow = $cbitemcache->get_item($row['itemid']);
+         $itemrow = $cbitemcache->get_item($row['item_id']);
          //merge the inventory and item row
          $row = array_merge($itemrow, $row);
          $tempitem = new Charbrowser_Item($row);
@@ -1440,7 +2457,7 @@ TPL;
       // item to be pasted into its respective div later
       foreach ($bank_results as $row)
       {
-         $itemrow = $cbitemcache->get_item($row['itemid']);
+         $itemrow = $cbitemcache->get_item($row['item_id']);
          //merge the inventory and item row
          $row      = array_merge($itemrow, $row);
          $tempitem = new Charbrowser_Item($row);
@@ -1505,7 +2522,7 @@ TPL;
       //make sure our column exists in the record
       if (!array_key_exists($column_name, $cached_record))
       {
-         return $default;
+            $this->_error->message_die($this->_language['MESSAGE_ERROR'], sprintf($this->_language['MESSAGE_PROF_NOCACHE'], $data_key, $table_name, $column_name));
       }
 
       //return the value
@@ -1577,7 +2594,7 @@ TPL;
             //we just store it in the root structure
             $this->_cached_records[$table_name] = $this->_sql->nextrow($result);
          }
-         else $this->_cached_records[$table_name] = array();
+         else $this->_error->message_die($this->_language['MESSAGE_ERROR'], sprintf($this->_language['MESSAGE_PROF_NOROWS'], $table_name));
       }
 
       //hand the table/record over
@@ -1588,26 +2605,13 @@ TPL;
    //we even get ones we dont need; they'll get cached for later use
    private function _doCharacterQuery($table_name)
    {
-      //TODO: fix this cludge
-      //the new character stats table doesn't use 'id' as the PK, it uses
-      //character_id. This is hacky for now, hoping to get the column name
-      //changed. If that doesn't happen maybe there needs to be a second
-      //locator array with the name of the character ID column for
-      //each table
-      $id_column = "id";
-      if (array_key_exists($table_name, $this->_char_id_col)) {
-         $id_column = $this->_char_id_col[$table_name];
-      }
-      
-      
       //build the query
       $tpl = <<<TPL
       SELECT * 
       FROM `%s` 
-      WHERE `%s` = '%d'
+      WHERE `id` = '%d'
 TPL;
-      $query = sprintf($tpl, $table_name, $id_column, $this->_char_id);
-
+      $query = sprintf($tpl, $table_name, $this->_char_id);
 
       //get the result/error
       $result = $this->_sql->query($query);

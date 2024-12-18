@@ -336,7 +336,107 @@ case ($this->_myslot >= 7810 && $this->_myslot <= 7820):
 case ($this->_myslot >= 8010 && $this->_myslot <= 8020): 
     $this->_mytype = 2009; 
     $this->_myvslot = $this->_myslot - 8009; 
-    break; 			
+    break; 
+case ($this->_myslot >= 4010 && $this->_myslot <= 4019): 
+    $this->_mytype = 1001; 
+    $this->_myvslot = $this->_myslot - 4009; 
+    break;
+case ($this->_myslot >= 4210 && $this->_myslot <= 4219): 
+    $this->_mytype = 1002; 
+    $this->_myvslot = $this->_myslot - 4209; 
+    break;
+case ($this->_myslot >= 4410 && $this->_myslot <= 4419): 
+    $this->_mytype = 1003; 
+    $this->_myvslot = $this->_myslot - 4409; 
+    break;
+case ($this->_myslot >= 4610 && $this->_myslot <= 4619): 
+    $this->_mytype = 1004; 
+    $this->_myvslot = $this->_myslot - 4609; 
+    break;
+case ($this->_myslot >= 4810 && $this->_myslot <= 4819): 
+    $this->_mytype = 1005; 
+    $this->_myvslot = $this->_myslot - 4809; 
+    break;
+case ($this->_myslot >= 5010 && $this->_myslot <= 5019): 
+    $this->_mytype = 1006; 
+    $this->_myvslot = $this->_myslot - 5009; 
+    break;
+case ($this->_myslot >= 5210 && $this->_myslot <= 5219): 
+    $this->_mytype = 1007; 
+    $this->_myvslot = $this->_myslot - 5209; 
+    break;
+case ($this->_myslot >= 5410 && $this->_myslot <= 5419): 
+    $this->_mytype = 1008; 
+    $this->_myvslot = $this->_myslot - 5409; 
+    break;
+case ($this->_myslot >= 5610 && $this->_myslot <= 5619): 
+    $this->_mytype = 1009; 
+    $this->_myvslot = $this->_myslot - 5609; 
+    break;
+case ($this->_myslot >= 5810 && $this->_myslot <= 5819): 
+    $this->_mytype = 1010; 
+    $this->_myvslot = $this->_myslot - 5809; 
+    break;
+case ($this->_myslot >= 6010 && $this->_myslot <= 6019): 
+    $this->_mytype = 1011; 
+    $this->_myvslot = $this->_myslot - 6009; 
+    break;
+    $this->_mytype = 1001; 
+    $this->_myvslot = $this->_myslot - 4009; 
+    break;
+    $this->_mytype = 1002; 
+    $this->_myvslot = $this->_myslot - 4209; 
+    break;
+    $this->_mytype = 1003; 
+    $this->_myvslot = $this->_myslot - 4409; 
+    break;
+    $this->_mytype = 1004; 
+    $this->_myvslot = $this->_myslot - 4609; 
+    break;
+    $this->_mytype = 1005; 
+    $this->_myvslot = $this->_myslot - 4809; 
+    break;
+    $this->_mytype = 1011; 
+    $this->_myvslot = $this->_myslot - 6009; 
+    break;
+    $this->_mytype = 2000; 
+    $this->_myvslot = $this->_myslot - 6209; 
+    break;
+    $this->_mytype = 2001; 
+    $this->_myvslot = $this->_myslot - 6409; 
+    break;
+    $this->_mytype = 2002; 
+    $this->_myvslot = $this->_myslot - 6609; 
+    break;
+    $this->_mytype = 2003; 
+    $this->_myvslot = $this->_myslot - 6809; 
+    break;
+    $this->_mytype = 2004; 
+    $this->_myvslot = $this->_myslot - 7009; 
+    break;
+    $this->_mytype = 2005; 
+    $this->_myvslot = $this->_myslot - 7209; 
+    break;
+    $this->_mytype = 2006; 
+    $this->_myvslot = $this->_myslot - 7409; 
+    break;
+    $this->_mytype = 2007; 
+    $this->_myvslot = $this->_myslot - 7609; 
+    break;
+    $this->_mytype = 2008; 
+    $this->_myvslot = $this->_myslot - 7809; 
+    break;
+    $this->_mytype = 2009; 
+    $this->_myvslot = $this->_myslot - 8009; 
+    break;
+case ($this->_myslot >= 11010 && $this->_myslot <= 11019): 
+    $this->_mytype = 3000; 
+    $this->_myvslot = $this->_myslot - 11009; 
+    break;
+case ($this->_myslot >= 11210 && $this->_myslot <= 11219): 
+    $this->_mytype = 3001; 
+    $this->_myvslot = $this->_myslot - 11209; 
+    break;
          default: 
             $this->_mytype = 0; 
             $this->_myvslot = 0; 
@@ -445,5 +545,4 @@ case ($this->_myslot >= 8010 && $this->_myslot <= 8020):
   
 }
 ?>
-
 

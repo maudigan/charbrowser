@@ -296,7 +296,47 @@ class Charbrowser_Item
          case ($this->_myslot >= 2541 && $this->_myslot <= 2550): 
             $this->_mytype = 2501; 
             $this->_myvslot = $this->_myslot - 2540; 
-            break; 
+            break;
+case ($this->_myslot >= 6210 && $this->_myslot <= 6220): 
+    $this->_mytype = 2000; 
+    $this->_myvslot = $this->_myslot - 6209; 
+    break; 
+case ($this->_myslot >= 6410 && $this->_myslot <= 6420): 
+    $this->_mytype = 2001; 
+    $this->_myvslot = $this->_myslot - 6409; 
+    break; 
+case ($this->_myslot >= 6610 && $this->_myslot <= 6620): 
+    $this->_mytype = 2002; 
+    $this->_myvslot = $this->_myslot - 6609; 
+    break; 
+case ($this->_myslot >= 6810 && $this->_myslot <= 6820): 
+    $this->_mytype = 2003; 
+    $this->_myvslot = $this->_myslot - 6809; 
+    break; 
+case ($this->_myslot >= 7010 && $this->_myslot <= 7020): 
+    $this->_mytype = 2004; 
+    $this->_myvslot = $this->_myslot - 7009; 
+    break; 
+case ($this->_myslot >= 7210 && $this->_myslot <= 7220): 
+    $this->_mytype = 2005; 
+    $this->_myvslot = $this->_myslot - 7209; 
+    break; 
+case ($this->_myslot >= 7410 && $this->_myslot <= 7420): 
+    $this->_mytype = 2006; 
+    $this->_myvslot = $this->_myslot - 7409; 
+    break; 
+case ($this->_myslot >= 7610 && $this->_myslot <= 7620): 
+    $this->_mytype = 2007; 
+    $this->_myvslot = $this->_myslot - 7609; 
+    break; 
+case ($this->_myslot >= 7810 && $this->_myslot <= 7820): 
+    $this->_mytype = 2008; 
+    $this->_myvslot = $this->_myslot - 7809; 
+    break; 
+case ($this->_myslot >= 8010 && $this->_myslot <= 8020): 
+    $this->_mytype = 2009; 
+    $this->_myvslot = $this->_myslot - 8009; 
+    break; 			
          default: 
             $this->_mytype = 0; 
             $this->_myvslot = 0; 
@@ -405,3 +445,5 @@ class Charbrowser_Item
   
 }
 ?>
+
+

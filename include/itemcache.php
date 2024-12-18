@@ -123,13 +123,6 @@ class Charbrowser_ItemCache
             "augment_four",
             "augment_five",
             "augment_six",
-            "item_id",
-            "augment_1",
-            "augment_2",
-            "augment_3",
-            "augment_4",
-            "augment_5",
-            "augment_6",
       );
       
       //store all the ID's found on any of the inventory rows

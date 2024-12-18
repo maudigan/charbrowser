@@ -116,13 +116,13 @@ class Charbrowser_ItemCache
       if (!is_array($inventory)) return false;
       
       $item_fields = array(
-            "itemid",
-            "augslot1",
-            "augslot2",
-            "augslot3",
-            "augslot4",
-            "augslot5",
-            "augslot6",
+            "item_id",
+            "augment_one",
+            "augment_two",
+            "augment_three",
+            "augment_four",
+            "augment_five",
+            "augment_six",
             "item_id",
             "augment_1",
             "augment_2",

@@ -596,7 +596,7 @@ function GetGuildPermissions($char_id) {
    $tpl = <<<TPL
 SELECT `value`
 FROM `quest_globals` 
-WHERE `charid` = %d 
+WHERE `character_id` = %d 
 AND `name` = 'charbrowser_guild';
 TPL;
    $query = sprintf($tpl, $char_id);

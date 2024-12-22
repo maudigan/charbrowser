@@ -116,13 +116,13 @@ class Charbrowser_ItemCache
       if (!is_array($inventory)) return false;
       
       $item_fields = array(
-            "item_id",
-            "augment_one",
-            "augment_two",
-            "augment_three",
-            "augment_four",
-            "augment_five",
-            "augment_six",
+            "itemid",
+            "augslot1",
+            "augslot2",
+            "augslot3",
+            "augslot4",
+            "augslot5",
+            "augslot6",
       );
       
       //store all the ID's found on any of the inventory rows

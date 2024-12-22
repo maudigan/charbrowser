@@ -628,8 +628,6 @@ TPL;
       $this->_allitems = array();
 
       //FETCH INVENTORY ROWS
-      // pull bots inventory slotid is loaded as
-      // "myslot" since items table also has a slotid field.
       $tpl = <<<TPL
       SELECT item_id AS itemid, 
              augment_1 AS augslot1, 

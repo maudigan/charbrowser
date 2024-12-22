@@ -124,32 +124,32 @@ if ($name)
    //we need to filter certain slots out if the seller has privacy settings
    if ($char->Permission('bags')) 
    {
-      $filters[] = 'inventory.slotid NOT BETWEEN '.SLOT_INVENTORY_START.' AND '.SLOT_INVENTORY_END;
-      $filters[] = 'inventory.slotid NOT BETWEEN '.SLOT_INVENTORY_BAGS_START.' AND '.SLOT_INVENTORY_BAGS_END;
+      $filters[] = 'inventory.slot_id NOT BETWEEN '.SLOT_INVENTORY_START.' AND '.SLOT_INVENTORY_END;
+      $filters[] = 'inventory.slot_id NOT BETWEEN '.SLOT_INVENTORY_BAGS_START.' AND '.SLOT_INVENTORY_BAGS_END;
    }
    if ($char->Permission('bank'))
    {
-      $filters[] = 'inventory.slotid NOT BETWEEN '.SLOT_BANK_START.' AND '.SLOT_BANK_END;
-      $filters[] = 'inventory.slotid NOT BETWEEN '.SLOT_BANK_BAGS_START.' AND '.SLOT_BANK_BAGS_END;
+      $filters[] = 'inventory.slot_id NOT BETWEEN '.SLOT_BANK_START.' AND '.SLOT_BANK_END;
+      $filters[] = 'inventory.slot_id NOT BETWEEN '.SLOT_BANK_BAGS_START.' AND '.SLOT_BANK_BAGS_END;
    }
    if ($char->Permission('sharedbank'))
    {
-      $filters[] = 'inventory.slotid NOT BETWEEN '.SLOT_SHAREDBANK_START.' AND '.SLOT_SHAREDBANK_END;
-      $filters[] = 'inventory.slotid NOT BETWEEN '.SLOT_SHAREDBANK_BAG_START.' AND '.SLOT_SHAREDBANK_BAG_END;
+      $filters[] = 'inventory.slot_id NOT BETWEEN '.SLOT_SHAREDBANK_START.' AND '.SLOT_SHAREDBANK_END;
+      $filters[] = 'inventory.slot_id NOT BETWEEN '.SLOT_SHAREDBANK_BAG_START.' AND '.SLOT_SHAREDBANK_BAG_END;
    }
    
    $where = generate_where($filters);
 
 
    $tpl = <<<TPL
-      SELECT inventory.itemid, 
+      SELECT inventory.item_id as itemid, 
              COUNT(*) as seller_qty,
              SUM(charges) as seller_charges
       FROM inventory
       LEFT JOIN character_data
-             ON inventory.charid = character_data.id
+             ON inventory.character_id = character_data.id
       %s
-      GROUP BY inventory.itemid
+      GROUP BY inventory.item_id
 TPL;
 
    $query = sprintf($tpl, $where);

@@ -987,7 +987,7 @@ TPL;
          $tpl = <<<TPL
 SELECT `value`
 FROM `quest_globals` 
-WHERE `character_id` = %d 
+WHERE `charid` = %d 
 AND `name` = 'charbrowser_profile';
 TPL;
          $query = sprintf($tpl, $this->_char_id);
@@ -1351,16 +1351,14 @@ TPL;
       $this->_allitems = array();
 
       //FETCH INVENTORY ROWS
-      // pull characters inventory slot_id is loaded as
-      // "myslot" since items table also has a slot_id field.
       $tpl = <<<TPL
-      SELECT item_id, 
-             augment_one, 
-             augment_two, 
-             augment_three, 
-             augment_four, 
-             augment_five, 
-             augment_six,
+      SELECT item_id AS itemid, 
+             augment_one   AS augslot1, 
+             augment_two   AS augslot2, 
+             augment_three AS augslot3, 
+             augment_four  AS augslot4, 
+             augment_five  AS augslot5,
+             augment_six   AS augslot6,
              slot_id AS myslot,
              charges
       FROM inventory
@@ -1372,16 +1370,14 @@ TPL;
       
       
       //FETCH SHARED BANK ROWS
-      // pull characters shared bank, slot_id is loaded as
-      // "myslot" since items table also has a slot_id field.
       $tpl = <<<TPL
-      SELECT item_id, 
-             augment_one, 
-             augment_two, 
-             augment_three, 
-             augment_four, 
-             augment_five,
-             augment_six,
+      SELECT item_id AS itemid, 
+             augment_one   AS augslot1, 
+             augment_two   AS augslot2, 
+             augment_three AS augslot3, 
+             augment_four  AS augslot4, 
+             augment_five  AS augslot5,
+             augment_six   AS augslot6,
              slot_id AS myslot,
              charges
       FROM sharedbank
@@ -1409,7 +1405,7 @@ TPL;
       // item to be pasted into its respective div later
       foreach ($inventory_results as $row)
       {
-         $itemrow = $cbitemcache->get_item($row['item_id']);
+         $itemrow = $cbitemcache->get_item($row['itemid']);
          //merge the inventory and item row
          $row = array_merge($itemrow, $row);
          $tempitem = new Charbrowser_Item($row);
@@ -1440,7 +1436,7 @@ TPL;
       // item to be pasted into its respective div later
       foreach ($bank_results as $row)
       {
-         $itemrow = $cbitemcache->get_item($row['item_id']);
+         $itemrow = $cbitemcache->get_item($row['itemid']);
          //merge the inventory and item row
          $row      = array_merge($itemrow, $row);
          $tempitem = new Charbrowser_Item($row);

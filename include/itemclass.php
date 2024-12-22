@@ -135,6 +135,20 @@ class Charbrowser_Item
       }
 
 
+      //determine the type for this item, types define what part of the inventory
+      //it will be placed, 
+      //1 is equiped items,
+      //2 is the top level inventory items, like your bags (but not their contents)
+      //3 is top level items in the bank, like bags (but not their contents)
+      //4 is top level item in the shared bank, like bags (but not their contents)
+      //5 is the item on the cursor
+      //other items that are inside of bags will have their type set to the slot
+      //of their containing bag. For example, the bag in slot 23 is in the general
+      //inventory so it has a type of 2 which is top level inventory items. Inside of
+      //that bag are slots 251 to 260. If an item was in 251 it would have a type
+      //of 23, which is its parents slot. 
+      //in short, all items types are 1-4 if they aren't in a bag, and if they are
+      //in a bag, their type is their parents slot #.
       switch (true)
       { 
          case ($this->_myslot >= 0 && $this->_myslot <= 22):
@@ -145,6 +159,20 @@ class Charbrowser_Item
             $this->_mytype = 2; 
             $this->_myvslot = $this->_myslot; 
             break; 
+         case ($this->_myslot >= 2000 && $this->_myslot <= 2023): 
+            $this->_mytype = 3; 
+            $this->_myvslot = $this->_myslot; 
+            break; 
+         case ($this->_myslot >= 2500 && $this->_myslot <= 2501): 
+            $this->_mytype = 4; 
+            $this->_myvslot = $this->_myslot; 
+            break; 
+         case ($this->_myslot == 33): 
+            $this->_mytype = 5; 
+            $this->_myvslot = $this->_myslot; 
+            break; 
+            
+         //SMALL BAGS inventory bag slots
          case ($this->_myslot >= 251 && $this->_myslot <= 260): 
             $this->_mytype = 23; 
             $this->_myvslot = $this->_myslot - 250; 
@@ -185,10 +213,14 @@ class Charbrowser_Item
             $this->_mytype = 32; 
             $this->_myvslot = $this->_myslot - 340; 
             break; 
-         case ($this->_myslot >= 2000 && $this->_myslot <= 2023): 
-            $this->_mytype = 3; 
-            $this->_myvslot = $this->_myslot; 
+            
+         //SMALL BAGS cursor bag slots
+         case ($this->_myslot >= 351 && $this->_myslot <= 360): 
+            $this->_mytype = 33; 
+            $this->_myvslot = $this->_myslot - 350; 
             break; 
+            
+         //SMALL BAGS bank bag slots
          case ($this->_myslot >= 2031 && $this->_myslot <= 2040): 
             $this->_mytype = 2000; 
             $this->_myvslot = $this->_myslot - 2030; 
@@ -285,10 +317,8 @@ class Charbrowser_Item
             $this->_mytype = 2023; 
             $this->_myvslot = $this->_myslot - 2260; 
             break; 
-         case ($this->_myslot >= 2500 && $this->_myslot <= 2501): 
-            $this->_mytype = 4; 
-            $this->_myvslot = $this->_myslot; 
-            break; 
+            
+         //SMALL BAGS shared bank bag slots
          case ($this->_myslot >= 2531 && $this->_myslot <= 2540): 
             $this->_mytype = 2500; 
             $this->_myvslot = $this->_myslot - 2530; 
@@ -297,146 +327,163 @@ class Charbrowser_Item
             $this->_mytype = 2501; 
             $this->_myvslot = $this->_myslot - 2540; 
             break;
-case ($this->_myslot >= 6210 && $this->_myslot <= 6220): 
-    $this->_mytype = 2000; 
-    $this->_myvslot = $this->_myslot - 6209; 
-    break; 
-case ($this->_myslot >= 6410 && $this->_myslot <= 6420): 
-    $this->_mytype = 2001; 
-    $this->_myvslot = $this->_myslot - 6409; 
-    break; 
-case ($this->_myslot >= 6610 && $this->_myslot <= 6620): 
-    $this->_mytype = 2002; 
-    $this->_myvslot = $this->_myslot - 6609; 
-    break; 
-case ($this->_myslot >= 6810 && $this->_myslot <= 6820): 
-    $this->_mytype = 2003; 
-    $this->_myvslot = $this->_myslot - 6809; 
-    break; 
-case ($this->_myslot >= 7010 && $this->_myslot <= 7020): 
-    $this->_mytype = 2004; 
-    $this->_myvslot = $this->_myslot - 7009; 
-    break; 
-case ($this->_myslot >= 7210 && $this->_myslot <= 7220): 
-    $this->_mytype = 2005; 
-    $this->_myvslot = $this->_myslot - 7209; 
-    break; 
-case ($this->_myslot >= 7410 && $this->_myslot <= 7420): 
-    $this->_mytype = 2006; 
-    $this->_myvslot = $this->_myslot - 7409; 
-    break; 
-case ($this->_myslot >= 7610 && $this->_myslot <= 7620): 
-    $this->_mytype = 2007; 
-    $this->_myvslot = $this->_myslot - 7609; 
-    break; 
-case ($this->_myslot >= 7810 && $this->_myslot <= 7820): 
-    $this->_mytype = 2008; 
-    $this->_myvslot = $this->_myslot - 7809; 
-    break; 
-case ($this->_myslot >= 8010 && $this->_myslot <= 8020): 
-    $this->_mytype = 2009; 
-    $this->_myvslot = $this->_myslot - 8009; 
-    break; 
-case ($this->_myslot >= 4010 && $this->_myslot <= 4019): 
-    $this->_mytype = 1001; 
-    $this->_myvslot = $this->_myslot - 4009; 
-    break;
-case ($this->_myslot >= 4210 && $this->_myslot <= 4219): 
-    $this->_mytype = 1002; 
-    $this->_myvslot = $this->_myslot - 4209; 
-    break;
-case ($this->_myslot >= 4410 && $this->_myslot <= 4419): 
-    $this->_mytype = 1003; 
-    $this->_myvslot = $this->_myslot - 4409; 
-    break;
-case ($this->_myslot >= 4610 && $this->_myslot <= 4619): 
-    $this->_mytype = 1004; 
-    $this->_myvslot = $this->_myslot - 4609; 
-    break;
-case ($this->_myslot >= 4810 && $this->_myslot <= 4819): 
-    $this->_mytype = 1005; 
-    $this->_myvslot = $this->_myslot - 4809; 
-    break;
-case ($this->_myslot >= 5010 && $this->_myslot <= 5019): 
-    $this->_mytype = 1006; 
-    $this->_myvslot = $this->_myslot - 5009; 
-    break;
-case ($this->_myslot >= 5210 && $this->_myslot <= 5219): 
-    $this->_mytype = 1007; 
-    $this->_myvslot = $this->_myslot - 5209; 
-    break;
-case ($this->_myslot >= 5410 && $this->_myslot <= 5419): 
-    $this->_mytype = 1008; 
-    $this->_myvslot = $this->_myslot - 5409; 
-    break;
-case ($this->_myslot >= 5610 && $this->_myslot <= 5619): 
-    $this->_mytype = 1009; 
-    $this->_myvslot = $this->_myslot - 5609; 
-    break;
-case ($this->_myslot >= 5810 && $this->_myslot <= 5819): 
-    $this->_mytype = 1010; 
-    $this->_myvslot = $this->_myslot - 5809; 
-    break;
-case ($this->_myslot >= 6010 && $this->_myslot <= 6019): 
-    $this->_mytype = 1011; 
-    $this->_myvslot = $this->_myslot - 6009; 
-    break;
-    $this->_mytype = 1001; 
-    $this->_myvslot = $this->_myslot - 4009; 
-    break;
-    $this->_mytype = 1002; 
-    $this->_myvslot = $this->_myslot - 4209; 
-    break;
-    $this->_mytype = 1003; 
-    $this->_myvslot = $this->_myslot - 4409; 
-    break;
-    $this->_mytype = 1004; 
-    $this->_myvslot = $this->_myslot - 4609; 
-    break;
-    $this->_mytype = 1005; 
-    $this->_myvslot = $this->_myslot - 4809; 
-    break;
-    $this->_mytype = 1011; 
-    $this->_myvslot = $this->_myslot - 6009; 
-    break;
-    $this->_mytype = 2000; 
-    $this->_myvslot = $this->_myslot - 6209; 
-    break;
-    $this->_mytype = 2001; 
-    $this->_myvslot = $this->_myslot - 6409; 
-    break;
-    $this->_mytype = 2002; 
-    $this->_myvslot = $this->_myslot - 6609; 
-    break;
-    $this->_mytype = 2003; 
-    $this->_myvslot = $this->_myslot - 6809; 
-    break;
-    $this->_mytype = 2004; 
-    $this->_myvslot = $this->_myslot - 7009; 
-    break;
-    $this->_mytype = 2005; 
-    $this->_myvslot = $this->_myslot - 7209; 
-    break;
-    $this->_mytype = 2006; 
-    $this->_myvslot = $this->_myslot - 7409; 
-    break;
-    $this->_mytype = 2007; 
-    $this->_myvslot = $this->_myslot - 7609; 
-    break;
-    $this->_mytype = 2008; 
-    $this->_myvslot = $this->_myslot - 7809; 
-    break;
-    $this->_mytype = 2009; 
-    $this->_myvslot = $this->_myslot - 8009; 
-    break;
-case ($this->_myslot >= 11010 && $this->_myslot <= 11019): 
-    $this->_mytype = 3000; 
-    $this->_myvslot = $this->_myslot - 11009; 
-    break;
-case ($this->_myslot >= 11210 && $this->_myslot <= 11219): 
-    $this->_mytype = 3001; 
-    $this->_myvslot = $this->_myslot - 11209; 
-    break;
+            
+         //BIG BAGS inventory bag slots
+         case ($this->_myslot >= 4010 && $this->_myslot <= 4209): 
+             $this->_mytype = 23; 
+             $this->_myvslot = $this->_myslot - 4009; 
+             break;
+         case ($this->_myslot >= 4210 && $this->_myslot <= 4409): 
+             $this->_mytype = 24; 
+             $this->_myvslot = $this->_myslot - 4209; 
+             break;
+         case ($this->_myslot >= 4410 && $this->_myslot <= 4609): 
+             $this->_mytype = 25; 
+             $this->_myvslot = $this->_myslot - 4409; 
+             break;
+         case ($this->_myslot >= 4610 && $this->_myslot <= 4809): 
+             $this->_mytype = 26; 
+             $this->_myvslot = $this->_myslot - 4609; 
+             break;
+         case ($this->_myslot >= 4810 && $this->_myslot <= 5009): 
+             $this->_mytype = 27; 
+             $this->_myvslot = $this->_myslot - 4809; 
+             break;
+         case ($this->_myslot >= 5010 && $this->_myslot <= 5209): 
+             $this->_mytype = 28; 
+             $this->_myvslot = $this->_myslot - 5009; 
+             break;
+         case ($this->_myslot >= 5210 && $this->_myslot <= 5409): 
+             $this->_mytype = 29; 
+             $this->_myvslot = $this->_myslot - 5209; 
+             break;
+         case ($this->_myslot >= 5410 && $this->_myslot <= 5609): 
+             $this->_mytype = 30; 
+             $this->_myvslot = $this->_myslot - 5409; 
+             break;
+         case ($this->_myslot >= 5610 && $this->_myslot <= 5809): 
+             $this->_mytype = 31; 
+             $this->_myvslot = $this->_myslot - 5609; 
+             break;
+         case ($this->_myslot >= 5810 && $this->_myslot <= 6009): 
+             $this->_mytype = 32; 
+             $this->_myvslot = $this->_myslot - 5809; 
+             break;
+             
+         //BIG BAGS cursor bag slots
+         case ($this->_myslot >= 6010 && $this->_myslot <= 6209): 
+             $this->_mytype = 33; 
+             $this->_myvslot = $this->_myslot - 6009; 
+             break;
+             
+         //BIG BAGS shared bank bag slots
+         case ($this->_myslot >= 6210 && $this->_myslot <= 6409): 
+             $this->_mytype = 2000; 
+             $this->_myvslot = $this->_myslot - 6209; 
+             break; 
+         case ($this->_myslot >= 6410 && $this->_myslot <= 6609): 
+             $this->_mytype = 2001; 
+             $this->_myvslot = $this->_myslot - 6409; 
+             break; 
+         case ($this->_myslot >= 6610 && $this->_myslot <= 6809): 
+             $this->_mytype = 2002; 
+             $this->_myvslot = $this->_myslot - 6609; 
+             break; 
+         case ($this->_myslot >= 6810 && $this->_myslot <= 7009): 
+             $this->_mytype = 2003; 
+             $this->_myvslot = $this->_myslot - 6809; 
+             break; 
+         case ($this->_myslot >= 7010 && $this->_myslot <= 7209): 
+             $this->_mytype = 2004; 
+             $this->_myvslot = $this->_myslot - 7009; 
+             break; 
+         case ($this->_myslot >= 7210 && $this->_myslot <= 7409): 
+             $this->_mytype = 2005; 
+             $this->_myvslot = $this->_myslot - 7209; 
+             break; 
+         case ($this->_myslot >= 7410 && $this->_myslot <= 7609): 
+             $this->_mytype = 2006; 
+             $this->_myvslot = $this->_myslot - 7409; 
+             break; 
+         case ($this->_myslot >= 7610 && $this->_myslot <= 7809): 
+             $this->_mytype = 2007; 
+             $this->_myvslot = $this->_myslot - 7609; 
+             break; 
+         case ($this->_myslot >= 7810 && $this->_myslot <= 8009): 
+             $this->_mytype = 2008; 
+             $this->_myvslot = $this->_myslot - 7809; 
+             break; 
+         case ($this->_myslot >= 8010 && $this->_myslot <= 8209): 
+             $this->_mytype = 2009; 
+             $this->_myvslot = $this->_myslot - 8009; 
+             break;
+         case ($this->_myslot >= 8210 && $this->_myslot <= 8409): 
+             $this->_mytype = 2010; 
+             $this->_myvslot = $this->_myslot - 8209; 
+             break;
+         case ($this->_myslot >= 8410 && $this->_myslot <= 8609): 
+             $this->_mytype = 2011; 
+             $this->_myvslot = $this->_myslot - 8409; 
+             break;
+         case ($this->_myslot >= 8610 && $this->_myslot <= 8809): 
+             $this->_mytype = 2012; 
+             $this->_myvslot = $this->_myslot - 8609; 
+             break;
+         case ($this->_myslot >= 8810 && $this->_myslot <= 9009): 
+             $this->_mytype = 2013; 
+             $this->_myvslot = $this->_myslot - 8809; 
+             break;
+         case ($this->_myslot >= 9010 && $this->_myslot <= 9209): 
+             $this->_mytype = 2014; 
+             $this->_myvslot = $this->_myslot - 9009; 
+             break;
+         case ($this->_myslot >= 9210 && $this->_myslot <= 9409): 
+             $this->_mytype = 2015; 
+             $this->_myvslot = $this->_myslot - 9209; 
+             break;
+         case ($this->_myslot >= 9410 && $this->_myslot <= 9609): 
+             $this->_mytype = 2016; 
+             $this->_myvslot = $this->_myslot - 9409; 
+             break;
+         case ($this->_myslot >= 9610 && $this->_myslot <= 9809): 
+             $this->_mytype = 2017; 
+             $this->_myvslot = $this->_myslot - 9609; 
+             break;
+         case ($this->_myslot >= 9810 && $this->_myslot <= 10009): 
+             $this->_mytype = 2018; 
+             $this->_myvslot = $this->_myslot - 9809; 
+             break;
+         case ($this->_myslot >= 10010 && $this->_myslot <= 10209): 
+             $this->_mytype = 2019; 
+             $this->_myvslot = $this->_myslot - 10009; 
+             break;
+         case ($this->_myslot >= 10210 && $this->_myslot <= 10409): 
+             $this->_mytype = 2020; 
+             $this->_myvslot = $this->_myslot - 10209; 
+             break;
+         case ($this->_myslot >= 10410 && $this->_myslot <= 10609): 
+             $this->_mytype = 2021; 
+             $this->_myvslot = $this->_myslot - 10409; 
+             break;
+         case ($this->_myslot >= 10610 && $this->_myslot <= 10809): 
+             $this->_mytype = 2022; 
+             $this->_myvslot = $this->_myslot - 10609; 
+             break;
+         case ($this->_myslot >= 10810 && $this->_myslot <= 11009): 
+             $this->_mytype = 2023; 
+             $this->_myvslot = $this->_myslot - 10809; 
+             break;
+             
+         //BIG BAGS shared bank bag slots
+         case ($this->_myslot >= 11010 && $this->_myslot <= 11209): 
+             $this->_mytype = 2500; 
+             $this->_myvslot = $this->_myslot - 11009; 
+             break;
+         case ($this->_myslot >= 11210 && $this->_myslot <= 11409): 
+             $this->_mytype = 2501; 
+             $this->_myvslot = $this->_myslot - 11209; 
+             break;
+    
          default: 
             $this->_mytype = 0; 
             $this->_myvslot = 0; 
@@ -544,5 +591,6 @@ case ($this->_myslot >= 11210 && $this->_myslot <= 11219):
    } 
   
 }
-?>
 
+
+?>

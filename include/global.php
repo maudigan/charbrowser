@@ -59,6 +59,7 @@ define("EQUIPMENT", 1);
 define("INVENTORY", 2);
 define("BANK", 3);
 define("SHAREDBANK", 4);
+define("CURSOR", 5);
 
 //spell effect types
 define("SE_ARMORCLASS", 1);

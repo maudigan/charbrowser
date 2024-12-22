@@ -52,7 +52,7 @@ if ( !defined('INCHARBROWSER') )
 
 //max bag slots, this will cap larger bags
 //to only display so many slots
-define("MAX_BAG_SLOTS", 10);
+define("MAX_BAG_SLOTS", 200);
 
 //few constants for allitems.type
 define("EQUIPMENT", 1);

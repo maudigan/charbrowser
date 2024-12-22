@@ -126,7 +126,7 @@ TPL;
          $row = $this->_sql->nextrow($result);
          //save it
          $this->_cached_corpse = $row;
-         $this->_char_id = $row['charid'];
+         $this->_char_id = $row['character_id'];
          $this->_corpse_id = $row['id'];
       }   
       else $this->_error->message_die($this->_language['MESSAGE_ERROR'],$this->_language['MESSAGE_NO_FIND']);
@@ -209,16 +209,16 @@ TPL;
       $this->_allitems = array();
 
       //FETCH INVENTORY ROWS
-      // pull bots inventory slotid is loaded as
-      // "myslot" since items table also has a slotid field.
+      // pull bots inventory slot_id is loaded as
+      // "myslot" since items table also has a slot_id field.
       $tpl = <<<TPL
-      SELECT item_id AS itemid, 
-             aug_1 AS augslot1, 
-             aug_2 AS augslot2, 
-             aug_3 AS augslot3, 
-             aug_4 AS augslot4, 
-             aug_5 AS augslot5, 
-             aug_6 AS augslot6,
+      SELECT item_id AS item_id, 
+             aug_1 AS augment_one, 
+             aug_2 AS augment_two, 
+             aug_3 AS augment_three, 
+             aug_4 AS augment_four, 
+             aug_5 AS augment_five, 
+             aug_6 AS augment_six,
              equip_slot AS myslot, 
              charges AS charges
       FROM character_corpse_items
@@ -242,7 +242,7 @@ TPL;
       // item to be pasted into its respective div later
       foreach ($inventory_results as $row)
       {
-         $itemrow = $cbitemcache->get_item($row['itemid']);
+         $itemrow = $cbitemcache->get_item($row['item_id']);
          //merge the inventory and item row
          $row = array_merge($itemrow, $row);
          $tempitem = new Charbrowser_Item($row);

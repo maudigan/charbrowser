@@ -987,7 +987,7 @@ TPL;
          $tpl = <<<TPL
 SELECT `value`
 FROM `quest_globals` 
-WHERE `charid` = %d 
+WHERE `character_id` = %d 
 AND `name` = 'charbrowser_profile';
 TPL;
          $query = sprintf($tpl, $this->_char_id);
@@ -1351,20 +1351,20 @@ TPL;
       $this->_allitems = array();
 
       //FETCH INVENTORY ROWS
-      // pull characters inventory slotid is loaded as
-      // "myslot" since items table also has a slotid field.
+      // pull characters inventory slot_id is loaded as
+      // "myslot" since items table also has a slot_id field.
       $tpl = <<<TPL
-      SELECT itemid, 
-             augslot1, 
-             augslot2, 
-             augslot3, 
-             augslot4, 
-             augslot5, 
-             augslot6,
-             slotid AS myslot,
+      SELECT item_id, 
+             augment_one, 
+             augment_two, 
+             augment_three, 
+             augment_four, 
+             augment_five, 
+             augment_six,
+             slot_id AS myslot,
              charges
       FROM inventory
-      WHERE charid = '%s'  
+      WHERE character_id = '%s'  
 TPL;
       $query = sprintf($tpl, $this->_char_id);
       $result = $this->_sql->query($query);
@@ -1372,20 +1372,20 @@ TPL;
       
       
       //FETCH SHARED BANK ROWS
-      // pull characters shared bank, slotid is loaded as
-      // "myslot" since items table also has a slotid field.
+      // pull characters shared bank, slot_id is loaded as
+      // "myslot" since items table also has a slot_id field.
       $tpl = <<<TPL
-      SELECT itemid, 
-             augslot1, 
-             augslot2, 
-             augslot3, 
-             augslot4, 
-             augslot5,
-             augslot6,
-             slotid AS myslot,
+      SELECT item_id, 
+             augment_one, 
+             augment_two, 
+             augment_three, 
+             augment_four, 
+             augment_five,
+             augment_six,
+             slot_id AS myslot,
              charges
       FROM sharedbank
-      WHERE acctid = '%s'  
+      WHERE account_id = '%s'  
 TPL;
       $query = sprintf($tpl, $this->_getValue('account_id', 0));
       $result = $this->_sql->query($query);
@@ -1409,7 +1409,7 @@ TPL;
       // item to be pasted into its respective div later
       foreach ($inventory_results as $row)
       {
-         $itemrow = $cbitemcache->get_item($row['itemid']);
+         $itemrow = $cbitemcache->get_item($row['item_id']);
          //merge the inventory and item row
          $row = array_merge($itemrow, $row);
          $tempitem = new Charbrowser_Item($row);
@@ -1440,7 +1440,7 @@ TPL;
       // item to be pasted into its respective div later
       foreach ($bank_results as $row)
       {
-         $itemrow = $cbitemcache->get_item($row['itemid']);
+         $itemrow = $cbitemcache->get_item($row['item_id']);
          //merge the inventory and item row
          $row      = array_merge($itemrow, $row);
          $tempitem = new Charbrowser_Item($row);
